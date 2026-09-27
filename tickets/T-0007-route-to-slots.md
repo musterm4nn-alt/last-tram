@@ -31,8 +31,10 @@ Change `sim/systems/action_system.gd`, `sim/actions/interactions.gd`, and tests
   -> bool` (it scans people; there's no extra saved state).
 - `QUEUED` front action, in `step()`:
   1. If the person already stands on a free slot of the target → `PERFORMING` (as in T-0006).
-  2. Otherwise, among free slots whose cell is walkable, pick the one with the **shortest
-     path** (ties: lowest index). Set `slot_index`, `person.path` (via `sim.nav`), and
+  2. Otherwise, for each free slot whose cell is walkable, compute
+     `sim.nav.find_path(person.cell(), slot_cell)` (T-0003: the cells after the start, empty
+     if unreachable) and ignore empty results. Pick the **shortest path** by `path.size()`
+     (ties: lowest slot index). Set `slot_index`, `person.path` to that path, and
      `state = ROUTING`; emit `&"action_routing"`.
   3. If no free slot → fail with reason `"no_free_slot"`; if no path to any free slot →
      reason `"no_path"`.
