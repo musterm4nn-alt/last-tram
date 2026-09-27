@@ -1,12 +1,12 @@
 ---
 id: T-0004
 title: Follow paths and WalkToCommand
-status: todo
+status: review
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0003]
-builder:
+builder: OpenCode / Muse Spark 1.3
 review_rounds: 0
 ---
 
@@ -100,6 +100,19 @@ Change `sim/people/person.gd`, `sim/systems/movement_system.gd`,
 - [ ] `tools/check.sh` passes (`test_commands.gd` covers registration and round trip).
 
 ## Implementation notes
+- Added `Person.path: Array[Vector3i]` (saved as list of `Ser.cell()`, loaded with
+  `d.get("path", [])` default so old saves load with an empty path).
+- `MovementSystem.step()`: non-zero `move_intent` moves directly as before (path ignored);
+  otherwise follows the path via new `static func follow_path()` copied exactly from the
+  ticket spec (budget = `walk_speed * cells_per_step`, leftover carries to next waypoint,
+  blocked next waypoint clears path + emits `path_blocked`).
+- `SetMoveIntentCommand.apply()`: non-zero direction clears `person.path`; zero leaves it.
+- New `WalkToCommand` (`"walk_to"`, registered in `CommandRegistry`): unknown person ignored;
+  target == own cell clears path + intent with no event; empty `find_path` emits
+  `path_failed` and keeps the old path; otherwise sets path and zeroes intent.
+- New `tests/sim/test_walk_to.gd` (10 tests, one per acceptance bullet).
+- Verified: `tools/check.sh` → 147 passed, 0 failed (incl. 10 new walk_to tests and the
+  `test_commands.gd` registration round-trip). No screenshot (no visual change).
 
 ## Questions
 

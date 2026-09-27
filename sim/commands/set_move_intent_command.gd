@@ -21,6 +21,8 @@ func apply(sim: Sim) -> void:
 	if person == null:
 		return
 	person.move_intent = direction.limit_length(1.0)
+	if direction != Vector2.ZERO:
+		person.path.clear()
 
 
 func to_dict() -> Dictionary:
