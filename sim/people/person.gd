@@ -7,6 +7,8 @@ extends RefCounted
 const RADIUS: float = 0.3
 ## Everyone in the game is an adult (AGENTS.md content rules).
 const MIN_AGE: int = 18
+## How many actions the player may queue (visible in command mode, each cancellable).
+const MAX_QUEUE: int = 6
 
 var id: int = 0
 var first_name: String = ""
@@ -41,6 +43,8 @@ var walk_speed: float = 4.5
 var path: Array[Vector3i] = []
 ## Needs 0-100 (100 = fully satisfied). Keys are need ids from data/needs.json.
 var needs: Dictionary[String, float] = {}
+## Queued interactions; the front action (index 0) is the current one.
+var action_queue: Array[Action] = []
 
 ## NOT saved: position before the latest step, only used to draw smooth movement.
 var prev_pos: Vector2 = Vector2.ZERO
@@ -66,6 +70,9 @@ func to_dict() -> Dictionary:
 	var path_out: Array = []
 	for cell: Vector3i in path:
 		path_out.append(Ser.cell(cell))
+	var queue_out: Array = []
+	for action: Action in action_queue:
+		queue_out.append(action.to_dict())
 	return {
 		"id": id,
 		"first_name": first_name,
@@ -83,6 +90,7 @@ func to_dict() -> Dictionary:
 		"walk_speed": walk_speed,
 		"path": path_out,
 		"needs": needs_out,
+		"action_queue": queue_out,
 	}
 
 
@@ -112,6 +120,12 @@ static func from_dict(d: Dictionary) -> Person:
 	if path_data is Array:
 		for entry: Variant in (path_data as Array):
 			p.path.append(Ser.to_cell(entry))
+	p.action_queue = []
+	var queue_data: Variant = d.get("action_queue", [])
+	if queue_data is Array:
+		for entry: Variant in (queue_data as Array):
+			if entry is Dictionary:
+				p.action_queue.append(Action.from_dict(entry))
 	p.needs = {}
 	var stored: Variant = d.get("needs", {})
 	if stored is Dictionary:

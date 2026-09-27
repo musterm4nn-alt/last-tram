@@ -1,0 +1,68 @@
+{
+	"_doc": "Interactions people can perform on objects (T-0006). Exactly one of duration_minutes or until_need (with min_minutes and max_minutes). need_rates are per game hour and apply on top of normal decay; finish_needs are one-off gains at the end; advertise is what autonomy scoring expects. object_tags must each be used by at least one object in data/objects/.",
+	"interactions": [
+		{
+			"id": "sleep",
+			"name": "Sleep",
+			"object_tags": [
+				"bed"
+			],
+			"until_need": "energy",
+			"min_minutes": 60,
+			"max_minutes": 720,
+			"need_rates": {
+				"energy": 16.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"energy": 80
+			}
+		},
+		{
+			"id": "grab_snack",
+			"name": "Grab a snack",
+			"object_tags": [
+				"fridge"
+			],
+			"duration_minutes": 5,
+			"need_rates": {},
+			"finish_needs": {
+				"hunger": 25
+			},
+			"advertise": {
+				"hunger": 25
+			}
+		},
+		{
+			"id": "watch_tv",
+			"name": "Watch TV",
+			"object_tags": [
+				"tv"
+			],
+			"duration_minutes": 60,
+			"need_rates": {
+				"fun": 25.0,
+				"comfort": -2.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"fun": 25
+			}
+		},
+		{
+			"id": "sit",
+			"name": "Sit down",
+			"object_tags": [
+				"seat"
+			],
+			"duration_minutes": 30,
+			"need_rates": {
+				"comfort": 30.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"comfort": 30
+			}
+		}
+	]
+}

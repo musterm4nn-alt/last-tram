@@ -10,6 +10,10 @@ static func create(type_id: String) -> Command:
 			return SetMoveIntentCommand.new()
 		"walk_to":
 			return WalkToCommand.new()
+		"queue_interaction":
+			return QueueInteractionCommand.new()
+		"cancel_action":
+			return CancelActionCommand.new()
 	return null
 
 

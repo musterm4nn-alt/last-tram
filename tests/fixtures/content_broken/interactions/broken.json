@@ -1,0 +1,53 @@
+{
+	"_doc": "Deliberately broken interactions. Do not fix.",
+	"interactions": [
+		{
+			"id": "bad_need",
+			"name": "Bad need",
+			"object_tags": [
+				"bed"
+			],
+			"duration_minutes": 10,
+			"need_rates": {
+				"no_such_need": 5.0
+			},
+			"finish_needs": {},
+			"advertise": {}
+		},
+		{
+			"id": "both_times",
+			"name": "Both times",
+			"object_tags": [
+				"bed"
+			],
+			"duration_minutes": 10,
+			"until_need": "energy",
+			"min_minutes": 5,
+			"max_minutes": 60,
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
+		},
+		{
+			"id": "neither_time",
+			"name": "Neither time",
+			"object_tags": [
+				"bed"
+			],
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
+		},
+		{
+			"id": "ghost_tag",
+			"name": "Ghost tag",
+			"object_tags": [
+				"no_such_tag"
+			],
+			"duration_minutes": 10,
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
+		}
+	]
+}
