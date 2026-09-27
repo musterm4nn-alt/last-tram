@@ -8,8 +8,10 @@ owner approves every look.
 Until the art gate (after M3) everything is a readable placeholder:
 - Terrain: flat colour tiles generated at runtime from `debug_color` in `data/terrain.json`
   (`game/view2d/placeholder_tiles.gd`).
-- People: body, head and facing dot drawn in `PersonView2D._draw()`. The player is yellow,
-  NPCs blue.
+- People: drawn from their appearance and outfit by `PersonDrawer2D` (T-0019): body width
+  from the build, height from the height, skin tone, hair by style (`ViewConfig.HAIR_SHAPE`)
+  and colour, facial hair, glasses, clothes and headwear in their colours. The player has a
+  small yellow marker above the head. Unknown ids draw magenta so mistakes show.
 - Objects (M1): a coloured footprint with a short label.
 
 Placeholder rules: every kind of thing must be distinguishable at zoom 2, colours stay in the

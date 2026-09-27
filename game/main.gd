@@ -3,6 +3,7 @@ extends Node2D
 ##
 ## Command-line options (after `--`), used by tools/run.sh and tools/screenshot.sh:
 ##   --seed=N            world seed (default 1)
+##   --random-character  the new game's player is a random CharacterSpec (seeded by --seed)
 ##   --load=PATH         load a save file instead of starting a new game
 ##   --advance=N         run N game minutes before showing anything
 ##   --walk=X,Y          hold a walking direction, e.g. --walk=1,0 walks east
@@ -36,7 +37,12 @@ func _ready() -> void:
 	if args.has("load") and Session.load_from(String(args["load"])):
 		pass
 	else:
-		Session.new_game(int(args.get("seed", "1")))
+		var spec: CharacterSpec = null
+		if args.has("random-character"):
+			var character_rng := RandomNumberGenerator.new()
+			character_rng.seed = int(args.get("seed", "1"))
+			spec = CharacterSpec.random(Session.content, character_rng)
+		Session.new_game(int(args.get("seed", "1")), spec)
 	if args.has("advance"):
 		Session.advance_minutes(int(args["advance"]))
 	if args.has("walk"):
