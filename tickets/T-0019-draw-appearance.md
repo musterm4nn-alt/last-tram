@@ -20,7 +20,6 @@ creator (T-0021) will draw the same figure in its preview.
 - `docs/design/character-and-appearance.md`, `docs/art.md` → "Now: placeholders on purpose"
 - `game/view2d/person_view_2d.gd` (you replace its `_draw`), `game/view2d/view_config.gd`,
   `game/main.gd` (command-line options)
-
 - T-0018 as merged: `person.appearance` is an `Appearance` (`skin_tone`, `height_cm`,
   `build`, `hair_style`, `hair_colour`, `eye_colour`, `facial_hair`, `features`);
   `person.outfit.get_item(slot)` returns a `WornItem` (`clothing_id`, `colour`) or null when
