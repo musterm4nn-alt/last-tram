@@ -20,6 +20,10 @@ in T-0007.
 - `docs/design/actions-and-autonomy.md` (whole file; this ticket implements "Interactions",
   "Actions (runtime)" steps 2–3, and the queue)
 - T-0001 (`ObjectDef`, `WorldObject`, slots) and T-0005 (needs) as merged in `main`
+  (needs, as merged: `person.needs: Dictionary[String, float]`, `ContentDB.needs` /
+  `ContentDB.need(id)` which returns null for an unknown id, `NeedsSystem` in
+  `sim/systems/needs_system.gd`; `ContentDB` loads needs before the world, so validate
+  interaction need ids with `need(id) != null`)
 - `docs/cookbook.md` → "Add a new kind of content", "Add a Command", "Add a system"
 
 ## Scope
