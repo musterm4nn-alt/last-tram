@@ -48,7 +48,8 @@ sim/                      pure simulation (no Nodes)
   sim_factory.gd          new games and ASCII test worlds
   core/                   SimClock, SimRng, EventLog, Command, CommandRegistry, Ser
   commands/               one file per Command subclass
-  content/                ContentDB + *Def classes (the only sim code allowed to read files)
+  content/                ContentDB, ContentReader, one *Loader per kind of content, *Def
+                          classes (the only sim code allowed to read files)
   world/                  World (all entities), WorldGrid (cells, levels, terrain)
   people/                 Person (later: needs, personality, skills, memory...)
   systems/                SimSystem subclasses (MovementSystem, later NeedsSystem...)
@@ -129,7 +130,9 @@ reports and "run 30 days headless" tests trustworthy. To keep it:
 
 - Content is JSON in `data/` plus ASCII maps for districts. `ContentDB` loads it once, checks
   every field and every cross-reference, and collects errors instead of crashing. A test
-  requires zero errors.
+  requires zero errors. Each kind of content has its own static `*Loader` (terrain, needs,
+  names, appearance, clothing, world...) that reads through `ContentReader`; `load_from()`
+  calls them in dependency order.
 - Saves store **ids**, not indices (the grid saves a terrain palette), so adding or reordering
   content never breaks saves.
 - `debug_color` is the only view-related field allowed in content. Real art is mapped by id in

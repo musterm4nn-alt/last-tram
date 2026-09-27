@@ -30,6 +30,10 @@ New game → main menu → character creator → the town.
   ("paper doll") that updates with every choice. The same portrait is reused in the wardrobe
   and the person inspector.
 - The first version (T-0020) is only a name screen; the full creator follows (T-0021).
+- There is **no preset main character**: the player always names their own. A built-in
+  stand-in ("Alex Novak", `data/appearance/default_player.json`) is used only when the
+  menu is skipped (tools, tests, quick starts) and, until T-0021, for everything the name
+  screen doesn't ask yet (age, gender, looks, clothes).
 
 ## Identity and appearance (sim state)
 
@@ -98,6 +102,8 @@ record. Numbers live in data and get tuned later.
 
 - **Everyone is an adult.** The age minimum in data can't go below 18 (a content error), and
   a test checks that every person in a new game and every generated character is 18 or
-  older.
+  older. The code enforces it even if data were wrong: `Person.age_years` never stores less
+  than 18 (so no spec, save or bug can lower it), random characters never get a younger
+  age, and `CharacterSpec.validate()` rejects anything under 18.
 - Customisation covers looks, clothes and life, **not sexual content**: there are no body-part
   sliders beyond height and build, and no nudity or exposure mechanics.

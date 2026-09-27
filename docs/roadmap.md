@@ -47,10 +47,10 @@ objects to fill them, and time passes.
   eyes, facial hair, features, and a starter outfit, with a live preview and randomise buttons
   ([design/character-and-appearance.md](design/character-and-appearance.md)). A name screen
   comes first, then the full creator.
-- World objects from data (bed, fridge, stove, toilet, shower, sink, sofa, TV, table, chairs)
+- World objects from data (bed, fridge, stove, shower, sink, sofa, TV, table, chairs)
   with placeholder visuals.
 - Grid pathfinding; click to walk.
-- Needs (hunger, energy, bladder, hygiene, fun, social, comfort) and mood; needs panel.
+- Needs (hunger, energy, hygiene, fun, social, comfort) and mood; needs panel.
 - Interactions and the action queue: walk to the object, use it, finish, cancel.
 - Control modes: direct (WASD + `E` to interact) and command (`Tab`: click objects for a menu,
   click the ground to walk). The player gets the same menu both ways.

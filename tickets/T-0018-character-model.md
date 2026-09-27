@@ -1,13 +1,13 @@
 ---
 id: T-0018
 title: Identity, appearance and outfit on every person; CharacterSpec; save v2
-status: todo
+status: done
 milestone: M1
 size: L
 owner: builder
 depends_on: [T-0017]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark 1.3 Free
+review_rounds: 1
 ---
 
 ## Goal
@@ -35,8 +35,8 @@ Create: `sim/people/appearance.gd`, `sim/people/worn_item.gd`, `sim/people/outfi
 `sim/people/character_spec.gd`, `data/appearance/default_player.json`,
 `tests/sim/test_character.gd`, `tests/sim/test_content_rules.gd`,
 `tests/fixtures/saves/v2_basic.json` (via the tool).
-Change: `sim/people/person.gd`, `sim/sim_factory.gd`, `sim/content/appearance_loader.gd`
-(default player load, wired from `ContentDB.load_from()`), `sim/save/save_codec.gd` (version 2), `sim/save/save_migrations.gd`,
+Change: `sim/people/person.gd`, `sim/sim_factory.gd`, `sim/content/content_db.gd`
+(default player), `sim/save/save_codec.gd` (version 2), `sim/save/save_migrations.gd`,
 `game/session.gd` (`new_game` signature), `game/ui/debug_overlay.gd` (show display name and
 age).
 **Out of scope:** drawing appearance (T-0019), menus and creator UI (T-0020/T-0021),
@@ -164,7 +164,49 @@ Save all of them in `to_dict()` / `from_dict()` (keys: `nickname`, `gender`, `pr
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Implemented on branch `t/0018-character-model`.
+- New: `sim/people/appearance.gd`, `worn_item.gd`, `outfit.gd`, `character_spec.gd`
+  (all `RefCounted`, typed, `validate`/`copy`/`to_dict`/`from_dict`/`random` with the
+  deterministic draw orders from the spec; `random` takes a caller-supplied
+  `RandomNumberGenerator` so sim purity holds).
+- New: `data/appearance/default_player.json` (Alex Novak, nonbinary/they, 27, exactly the
+  values in the spec).
+- Changed: `Person` (+ nickname/gender/pronouns/age_years/appearance/outfit,
+  `display_name()`, saved under the specified keys); `SimFactory.new_game(content, seed,
+  spec=null)` / `_spawn_player(sim, cell, spec)` via `apply_to`, `from_rows` uses the
+  default player, `PLAYER_*` constants removed; `ContentDB.default_player: Dictionary`
+  loaded after the world and validated via `CharacterSpec.from_dict(...).validate(self)`
+  with the path prefixed; `SAVE_VERSION = 2` with `_v1_to_v2` writing the default
+  player's values as literals; `Session.new_game(seed, spec=null)`; debug overlay shows
+  `display_name()` + age.
+- One deviation from the spec text: `ContentDB.default_player` is a `Dictionary`
+  (as the spec's ContentDB line says), so `CharacterSpec.default_player(content)` parses
+  it with `from_dict` on each call.
+- Verified: `tools/check.sh` → 81 passed, 0 failed (includes the 200-seed random-spec
+  validity/determinism tests, all listed `validate` rejections, deep-copy, save/load
+  round-trip, v1-fixture migration → valid appearance/outfit, v2 fixture loads).
+  Fixture generated with `tools/make_fixture_save.sh v2_basic`; `v1_basic.json`
+  untouched.
+- Screenshot: no visible change (data/systems only; drawing is T-0019), so none taken.
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** Every criterion is met and tested; the random draw orders,
+the frozen v1->v2 migration and the v2 fixture match the spec, `v1_basic.json` is untouched,
+and the default player keeps its needs (T-0005). Reviewer fixes, made before merging:
+- **Adult ages enforced in code, not only by data** (content rules): `Person.MIN_AGE = 18`;
+  `Person.age_years` has a setter that never stores less (covers `apply_to`, loading saves,
+  any future code); `CharacterSpec.random()` clamps the catalog range to 18+. The game keeps
+  running with content errors, so wrong data must not be able to produce a minor. New tests
+  in `test_content_rules.gd` (a private ContentDB with ages 12-17; a save with age 15).
+- `test_identity_appearance_and_outfit_survive_save_load` now saves a non-default character
+  and checks every identity field; before, a field missing from `Person.to_dict()` (e.g.
+  gender) went unnoticed. A mutation check confirmed all three strengthened tests fail
+  without the code they guard.
+- Docs: the `random()` comments name the real draw order; the `default_player.json` note no
+  longer calls itself the migration's source (the migration keeps a frozen copy); removed
+  the unused `"clothing_id"` fallback in `WornItem.from_dict`; design doc "Rules" updated.
+- The debug overlay change was visible after all (F3 shows "player #1 Alex (27)"); the
+  reviewer took the screenshot.

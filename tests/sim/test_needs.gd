@@ -98,10 +98,10 @@ func test_mood_one_empty_need_lowers_by_thirty_times_weight() -> void:
 	assert_near(Mood.compute(player, content()), expected_hunger, 0.000001)
 	for need_def: NeedDef in content().needs:
 		player.needs[need_def.id] = 100.0
-	player.needs["bladder"] = 0.0
-	var bladder_def: NeedDef = content().need("bladder")
-	var expected_bladder: float = 20.0 - 30.0 * bladder_def.urgency_weight
-	assert_near(Mood.compute(player, content()), expected_bladder, 0.000001)
+	player.needs["energy"] = 0.0
+	var energy_def: NeedDef = content().need("energy")
+	var expected_energy: float = 20.0 - 30.0 * energy_def.urgency_weight
+	assert_near(Mood.compute(player, content()), expected_energy, 0.000001)
 
 
 func test_mood_more_empty_needs_is_lower() -> void:
@@ -112,7 +112,7 @@ func test_mood_more_empty_needs_is_lower() -> void:
 	var full: float = Mood.compute(player, content())
 	player.needs["hunger"] = 0.0
 	var one_empty: float = Mood.compute(player, content())
-	player.needs["bladder"] = 0.0
+	player.needs["energy"] = 0.0
 	var two_empty: float = Mood.compute(player, content())
 	assert_true(one_empty < full, "%s should be below %s" % [one_empty, full])
 	assert_true(two_empty < one_empty, "%s should be below %s" % [two_empty, one_empty])
@@ -183,3 +183,28 @@ func test_broken_need_definition_is_rejected() -> void:
 	assert_true(all.contains("'start' must be within 0..100"), all)
 	assert_true(all.contains("'urgency_weight' must be > 0"), all)
 	assert_true(all.contains("'critical_below' must be within 0..100"), all)
+
+
+func test_needs_the_game_no_longer_has_are_dropped_on_load() -> void:
+	var data := SaveCodec.to_dict(SimFactory.from_rows(content(), ROOM, 5))
+	var people: Array = (data["world"] as Dictionary)["people"]
+	((people[0] as Dictionary)["needs"] as Dictionary)["bladder"] = 42.0
+	var errors: Array[String] = []
+	var loaded := SaveCodec.from_dict(data, content(), errors)
+	assert_true(loaded != null, "load failed: %s" % [errors])
+	if loaded == null:
+		return
+	var player := loaded.world.player()
+	assert_false(player.needs.has("bladder"), "a need the game no longer has must be dropped")
+	assert_eq(player.needs.size(), content().needs.size())
+
+
+func test_v2_fixture_has_no_bladder_after_loading() -> void:
+	var sim := SaveCodec.from_json(FileAccess.get_file_as_string("res://tests/fixtures/saves/v2_basic.json"), content())
+	assert_true(sim != null, "the v2 fixture (saved with a bladder need) must still load")
+	if sim == null:
+		return
+	assert_false(sim.world.player().needs.has("bladder"))
+	for need_def: NeedDef in content().needs:
+		assert_true(sim.world.player().needs.has(need_def.id), "missing need " + need_def.id)
+

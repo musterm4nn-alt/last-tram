@@ -2,13 +2,8 @@ class_name ContentDB
 extends RefCounted
 ## All game content from data/, loaded once at startup and validated. Read-only at runtime.
 ## Loading never crashes: problems are collected in `errors` (tests require it to be empty).
-##
-## To add a new kind of content (objects, interactions, jobs...):
-##   1. a *Def class in sim/content/
-##   2. a *Loader class in sim/content/ (see TerrainLoader), using ContentReader
-##   3. a call to it in load_from(), in dependency order (needs before world, ...)
-##   4. validation of every reference it makes (ids that must exist)
-##   5. a test in tests/sim/test_content.gd
+## Each kind of content has its own loader in sim/content/ (TerrainLoader, NeedsLoader...).
+## To add a new kind, see docs/cookbook.md -> "Add a new kind of content".
 
 const DATA_ROOT: String = "res://data"
 ## Name lists every game must have (data/names/names.json).
@@ -31,6 +26,9 @@ var clothing_colours: Dictionary[String, ColorOption] = {}
 ## First names per name list (see FIRST_NAME_LISTS).
 var first_names: Dictionary[String, PackedStringArray] = {}
 var last_names: PackedStringArray = PackedStringArray()
+## The default player identity (data/appearance/default_player.json) in CharacterSpec
+## to_dict() shape, used for new games when no character was created.
+var default_player: Dictionary = {}
 
 var _terrain_by_id: Dictionary[String, int] = {}
 var _terrain_by_glyph: Dictionary[String, int] = {}
@@ -53,12 +51,26 @@ func load_from(root: String) -> void:
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
 	WorldLoader.load(self, reader, root.path_join("world"))
+	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
 		errors.append(problem)
 
 
 func is_valid() -> bool:
 	return errors.is_empty()
+
+
+## Appends a terrain and indexes its id and glyph (TerrainLoader reports duplicates first).
+func add_terrain(t: TerrainDef) -> void:
+	_terrain_by_id[t.id] = terrains.size()
+	_terrain_by_glyph[t.glyph] = terrains.size()
+	terrains.append(t)
+
+
+## Appends a need and indexes its id (NeedsLoader reports duplicates first).
+func add_need(n: NeedDef) -> void:
+	_need_by_id[n.id] = n
+	needs.append(n)
 
 
 # --- Queries ---------------------------------------------------------------------------

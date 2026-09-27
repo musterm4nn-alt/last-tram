@@ -1,13 +1,13 @@
 ---
 id: T-0019
 title: Draw people from their appearance and outfit (placeholders)
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0018]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark 1.3 Free
+review_rounds: 1
 ---
 
 ## Goal
@@ -20,6 +20,10 @@ creator (T-0021) will draw the same figure in its preview.
 - `docs/design/character-and-appearance.md`, `docs/art.md` → "Now: placeholders on purpose"
 - `game/view2d/person_view_2d.gd` (you replace its `_draw`), `game/view2d/view_config.gd`,
   `game/main.gd` (command-line options)
+- T-0018 as merged: `person.appearance` is an `Appearance` (`skin_tone`, `height_cm`,
+  `build`, `hair_style`, `hair_colour`, `eye_colour`, `facial_hair`, `features`);
+  `person.outfit.get_item(slot)` returns a `WornItem` (`clothing_id`, `colour`) or null when
+  nothing is worn there; `Session.new_game(seed_value, spec)` takes a `CharacterSpec`.
 
 ## Scope
 Create `game/view2d/person_drawer_2d.gd`. Change `game/view2d/person_view_2d.gd`,
@@ -50,9 +54,10 @@ Create `game/view2d/person_drawer_2d.gd`. Change `game/view2d/person_view_2d.gd`
   `ponytail`→cap plus tail, `bun`→cap plus bun, `afro`→big round, `mohawk`→centre stripe.
   Facing up (walking away) shows the back of the head: hair covers the whole head circle
   unless bald.
-- Colours come from content lookups (`Session.content.appearance.skin_tones[id].color`,
-  `Session.content.clothing_colours[id].color`, ...), with a visible fallback (magenta) for
-  unknown ids so mistakes show up in screenshots.
+- Colours come from lookups in the `content` parameter (`PersonView2D` passes
+  `Session.content`): `content.appearance.skin_tones[id].color`, `hair_colours`,
+  `eye_colours`, and `content.clothing_colours[worn.colour].color` for clothes, with a
+  visible fallback (magenta) for unknown ids so mistakes show up in screenshots.
 - `game/main.gd`: new option `--random-character`. The quickstart new game uses
   `CharacterSpec.random(Session.content, rng)` with an RNG seeded from `--seed`. Document it
   in the option list at the top of the file.
@@ -69,7 +74,55 @@ Create `game/view2d/person_drawer_2d.gd`. Change `game/view2d/person_view_2d.gd`
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Implemented on branch `t/0019-draw-appearance`, stacked on unmerged `t/0018-character-model`
+(T-0019 needs the T-0018 model classes; rebase onto main once T-0018 merges).
+- New: `game/view2d/person_drawer_2d.gd` (`PersonDrawer2D`, RefCounted, static `draw`
+  exactly per the spec signature; feet at (0, 0); layers shadow → shoes → legs → torso →
+  outer (2 px top stripe when facing down) → head → hair → facial hair → glasses →
+  head item → yellow player marker; magenta `UNKNOWN_ID_COLOR` fallback for bad ids).
+- Changed: `ViewConfig` (+ `BUILD_WIDTH`/`DEFAULT_BUILD_WIDTH`, `HAIR_SHAPE`,
+  `PLAYER_MARKER_COLOR`, `UNKNOWN_ID_COLOR`; removed the now-unused `PLAYER_COLOR`,
+  `NPC_COLOR`, `SKIN_COLOR`); `PersonView2D._draw()` is one `PersonDrawer2D.draw` call;
+  `game/main.gd` documents and handles `--random-character`
+  (`CharacterSpec.random(Session.content, rng)` seeded from `--seed`).
+- New headless test `tests/game/test_person_draw_tables.gd`: every catalog build has a
+  sane width, every hair style maps to a known shape (drawing itself is verified by
+  screenshots, which can't run headless).
+- Verified: `tools/check.sh` → 83 passed, 0 failed.
+- Screenshots (all opened and inspected):
+  - `out/t0019_default.png`: default Alex — dark-brown short-hair cap, skin face, grey
+    hoodie with a thin black top stripe down the middle, denim legs, white trainers,
+    yellow triangle marker above the head. Matches.
+  - `out/t0019_seed{1,2,3}.png`: three clearly different people (seed1: darker skin,
+    navy/red clothes and dark shoes; seed2: lighter skin, green-tinted hair, grey top,
+    black bottom, red shoes; seed3: slim build, red cap of hair, navy top, black
+    bottom). Matches.
+  - `out/t0019_back.png` (`--walk=0,-1 --frames=40`): player walked north, facing away;
+    the head circle is fully covered in dark-brown hair, no face. Matches.
+- Bug found while looking at the first screenshots: the open-jacket stripe was drawn
+  2 cells wide instead of 2 px, hiding the outer layer. Fixed (`2.0 / px` cells) and
+  re-took all screenshots.
+- Left for the reviewer: `docs/art.md` still describes the old placeholder ("The player
+  is yellow, NPCs blue"); not touched since docs edits are outside this ticket's scope.
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** The five ticket screenshots match the criteria (re-taken by
+the reviewer), and `tools/check.sh` passes. The reviewer also rendered every hair shape
+(seeds 4, 5, 6, 8, 10, 16, 20, 22, 26, 30) and found three drawing bugs outside the named
+screenshots, fixed before merging:
+- **Long hair covered the face.** `long`/`braids`/`dreadlocks` drew the long back over the
+  head, so about one random person in five looked faceless or turned away, with glasses and
+  beards floating on the hair. The long back is now `_draw_long_back()`, drawn before the
+  head: from the front it frames the face and falls over the shoulders, from behind it runs
+  down the back.
+- The mohawk stripe ran down the middle of the face; it now stays on top of the head.
+- The ponytail hung on the facing side (in front of the face when walking sideways); it now
+  hangs behind the head.
+- Notes corrections: legs are drawn before shoes (so the shoes show; the spec's order would
+  hide them), and seed 2 is a green beanie on a bald head, not green hair.
+- `docs/art.md` now describes the new placeholder people.
+Lesson for future visual tickets: ask for a screenshot of every variant (here, each hair
+shape), not only a few random seeds.

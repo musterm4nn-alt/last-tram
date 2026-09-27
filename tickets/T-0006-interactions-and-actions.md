@@ -29,14 +29,15 @@ in T-0007.
 ## Scope
 Create:
 - `data/interactions/basics.json`
-- `sim/content/interaction_def.gd`
+- `sim/content/interaction_def.gd`, `sim/content/interaction_loader.gd` (`InteractionLoader`,
+  the T-0022 loader pattern: `static func load(db: ContentDB, reader: ContentReader, dir:
+  String)`, called from `ContentDB.load_from()` after the objects)
 - `sim/actions/action.gd`, `sim/actions/interactions.gd`
 - `sim/systems/action_system.gd`
 - `sim/commands/queue_interaction_command.gd`, `sim/commands/cancel_action_command.gd`
 - `tests/sim/test_actions.gd`
 
-Change: `sim/content/interaction_loader.gd` (new; load and validate interactions, wired
-from `ContentDB.load_from()`), `Person` (queue, saved), `CommandRegistry`, `Sim.default_systems()`,
+Change: `ContentDB` (field, query, one `load_from()` line), `Person` (queue, saved), `CommandRegistry`, `Sim.default_systems()`,
 `game/ui/debug_overlay.gd` (show the player's action queue).
 **Out of scope:** walking to slots, slot reservation and direct-input cancelling (T-0007);
 menus and UI (T-0010); autonomy (T-0012).

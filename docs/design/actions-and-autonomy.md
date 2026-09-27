@@ -16,7 +16,7 @@ An **interaction** is something a person can do, defined in `data/interactions/*
 | `finish_effects` | one-off effects at the end: needs, moodlets, skill XP, money, items, memories, relationship deltas |
 | `advertise` | the need gains autonomy expects (for scoring); may differ from reality (a TV promises more fun than it gives) |
 | `requirements` | skills, items, money, ownership/access, time window, relationship, life stage |
-| `privacy` | wants to be alone in the room (toilet, shower) |
+| `privacy` | wants to be alone in the room (shower, getting changed) |
 | `interruptible`, `priority` | how easily it's cancelled or overridden |
 | `crime` (M4) | crime type and severity if witnessed |
 | `anim` | animation tag for the view only |
@@ -71,7 +71,7 @@ When a person is idle (queue empty), and at most every few minutes:
          + small noise
    urgency(v) = ((100 − v) / 100)² × weight(need)
    ```
-   Urgency rises steeply as a need empties, so a desperate bladder beats a slightly bored
+   Urgency rises steeply as a need empties, so a starving stomach beats a slightly bored
    mind.
 3. **Pick** randomly among the top 3, weighted by score (rng stream `"autonomy"`), so
    people are sensible but not robotic.

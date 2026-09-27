@@ -24,7 +24,7 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		n.critical_below = reader.read_num(d, "critical_below", ctx)
 		if n.id.is_empty():
 			reader.error("%s: need id must not be empty" % path)
-		if db._need_by_id.has(n.id):
+		if db.need(n.id) != null:
 			reader.error("%s: duplicate need id" % ctx)
 		if n.decay_per_hour < 0.0:
 			reader.error("%s: 'decay_per_hour' must be >= 0" % ctx)
@@ -34,5 +34,4 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			reader.error("%s: 'critical_below' must be within 0..100" % ctx)
 		if n.urgency_weight <= 0.0:
 			reader.error("%s: 'urgency_weight' must be > 0" % ctx)
-		db._need_by_id[n.id] = n
-		db.needs.append(n)
+		db.add_need(n)

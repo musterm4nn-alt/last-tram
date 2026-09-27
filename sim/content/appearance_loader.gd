@@ -50,6 +50,18 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 				reader.error("%s: gender '%s' uses unknown name list '%s'" % [path, gender.id, list_id])
 
 
+## Read the default player (data/appearance/default_player.json, CharacterSpec.to_dict()
+## shape) into `db.default_player` and validate it with CharacterSpec. Runs last, after
+## everything a character refers to (names, appearance, clothing) is loaded.
+static func load_default_player(db: ContentDB, reader: ContentReader, path: String) -> void:
+	var root: Variant = reader.read_json(path)
+	if not root is Dictionary:
+		return
+	db.default_player = root
+	for problem: String in CharacterSpec.from_dict(root).validate(db):
+		reader.error("%s: %s" % [path, problem])
+
+
 ## Gender options keyed by id.
 static func load_genders(reader: ContentReader, entries: Variant, ctx: String) -> Dictionary[String, GenderOption]:
 	var out: Dictionary[String, GenderOption] = {}

@@ -30,12 +30,10 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			reader.error("%s: debug_color '%s' is not a colour like #aabbcc" % [ctx, color_text])
 		if t.glyph.length() != 1:
 			reader.error("%s: glyph must be exactly one character" % ctx)
-		if db._terrain_by_id.has(t.id):
+		if db.terrain_index(t.id) >= 0:
 			reader.error("%s: duplicate terrain id" % ctx)
-		if db._terrain_by_glyph.has(t.glyph):
+		if db.terrain_index_for_glyph(t.glyph) >= 0:
 			reader.error("%s: glyph '%s' already used by another terrain" % [ctx, t.glyph])
-		db._terrain_by_id[t.id] = db.terrains.size()
-		db._terrain_by_glyph[t.glyph] = db.terrains.size()
-		db.terrains.append(t)
+		db.add_terrain(t)
 	if db.terrain_index("void") < 0:
 		reader.error("%s: a terrain with id 'void' is required (used outside the map)" % path)

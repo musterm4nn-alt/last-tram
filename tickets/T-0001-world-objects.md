@@ -5,7 +5,7 @@ status: todo
 milestone: M1
 size: M
 owner: builder
-depends_on: []
+depends_on: [T-0022]
 builder:
 review_rounds: 0
 ---
@@ -19,13 +19,14 @@ yet (T-0006).
 - `AGENTS.md`, `docs/conventions.md`, `docs/cookbook.md` ("Add a new kind of content",
   "Add a field to Person (or any saved entity)")
 - `docs/design/world-and-map.md` → "Objects (M1)"
-- Code to copy patterns from: `sim/content/` loaders (loading and validation, see
-  `TerrainLoader`), `sim/content/terrain_def.gd`, `sim/world/world.gd`, `sim/world/world_grid.gd`,
-  `sim/people/person.gd` (to_dict/from_dict)
+- Code to copy patterns from: `sim/content/needs_loader.gd` and `content_reader.gd`
+  (loading and validation, after T-0022), `sim/content/terrain_def.gd`,
+  `sim/world/world.gd`, `sim/world/world_grid.gd`, `sim/people/person.gd` (to_dict/from_dict)
 
 ## Scope
 Create:
 - `sim/content/object_def.gd`, `sim/content/use_slot_def.gd`, `sim/content/object_placement.gd`
+- `sim/content/object_loader.gd` (`ObjectLoader`, the T-0022 loader pattern)
 - `sim/world/world_object.gd`
 - `data/objects/furniture.json`
 - `data/world/districts/altstadt/objects.json`
@@ -34,8 +35,8 @@ Create:
   `tests/sim/test_content.gd`
 
 Change:
-- `sim/content/object_loader.gd` (new; load objects and district object placements
-  and validate, wired from `ContentDB.load_from()` before `WorldLoader`)
+- `sim/content/content_db.gd` (the `objects` field, `object_def()`, one `load_from()` line)
+- `sim/content/world_loader.gd` (district object placements; validate)
 - `sim/content/district_def.gd` (add `objects`)
 - `sim/world/world_grid.gd` (object blockers)
 - `sim/world/world.gd` (objects collection, add/remove/query, save)
@@ -126,12 +127,12 @@ facing (1, 0), which is to its left, looking right.
 ### ContentDB
 - `var objects: Dictionary[String, ObjectDef]`, `func object_def(id: String) -> ObjectDef`
   (null if unknown).
-- `ObjectLoader.load(db, reader, dir)` (in `sim/content/object_loader.gd`) is called from
-  `load_from()` **before** `WorldLoader`. Validate:
+- `ObjectLoader.load(db: ContentDB, reader: ContentReader, dir: String)` is called from
+  `load_from()` **before** `WorldLoader.load(...)`. Validate:
   unique id, size ≥ 1×1, at least one use slot, facing is a unit cardinal vector,
   price ≥ 0, valid colour, `tags` is a list of strings.
-- `DistrictDef.objects: Array[ObjectPlacement]` loaded from the district's optional
-  `objects.json` (`{"objects": [{"def": "fridge", "cell": [x, y, level], "rotation": 0}]}`,
+- `DistrictDef.objects: Array[ObjectPlacement]` loaded in `WorldLoader.load_district()` from the
+  district's optional `objects.json` (`{"objects": [{"def": "fridge", "cell": [x, y, level], "rotation": 0}]}`,
   local coordinates). Validate: known def; rotation 0..3; every footprint cell is inside the
   district and on walkable terrain (glyph lookup in that level's rows); no two placements
   overlap; at least one use slot cell is walkable and not covered by another placement.

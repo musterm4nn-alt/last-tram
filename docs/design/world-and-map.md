@@ -34,7 +34,7 @@
   homes rent and tenant. Being on a private lot without permission is **trespassing** (M4).
   One building can hold many lots: each flat is a lot on its level.
 - **Rooms** (M2) are computed, not authored: a flood fill bounded by walls and doors. They are
-  used for privacy (toilets, showers, bedrooms), roof cut-away, "indoors", and what witnesses
+  used for privacy (bathrooms, bedrooms), roof cut-away, "indoors", and what witnesses
   can see.
 
 ## Districts
