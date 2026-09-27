@@ -48,7 +48,8 @@ routing) actions.
   1. `free` = slot indices of the target that are not `slot_taken(...)`. If `free` is empty
      → fail with reason `"no_free_slot"`.
   2. For each free slot (index order) whose cell `grid.is_walkable`, compute
-     `sim.nav.find_path(person.cell(), slot_cell)`; ignore empty results. Pick the smallest
+     `sim.nav.find_path(person.cell(), slot_cell)`; ignore empty results, except that a
+     free slot on `person.cell()` itself counts as a path of length 0. Pick the smallest
      `path.size()` (ties: lowest slot index). None → fail with reason `"no_path"`.
   3. Set `action.slot_index`, `person.path` to that path, `action.state = Action.ROUTING`,
      and emit `&"action_routing"` `{"person_id", "interaction_id", "target_id", "slot_index"}`.
