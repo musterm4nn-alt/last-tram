@@ -20,7 +20,9 @@ Clicking an object in command mode, or pressing E next to one in direct mode, op
 - Queue panel: bottom-centre, max 6, cancel → CancelActionCommand.
 - The panel's first row is the current action with a progress bar (moved here from T-0008):
   interaction name + minutes_done / duration, or the need value for until_need actions.
-- Trend arrows on the needs panel (T-0008) fit here too, once actions can raise needs.
+- Trend arrows on the needs panel fit here too, once actions can raise needs. T-0008 as
+  merged: `NeedsPanel` (`game/ui/needs_panel.gd`) with `show_person(person, content)`,
+  bars in `_bars`/`_fills` by need id, placed bottom-left by `Hud`.
 
 ## Implementation notes
 

@@ -27,6 +27,15 @@ func _ready() -> void:
 	hint_label.text = "WASD move   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   F3 debug"
 	hint_label.modulate = Color(1, 1, 1, 0.75)
 
+	var needs_panel := NeedsPanel.new()
+	needs_panel.anchor_top = 1.0
+	needs_panel.anchor_bottom = 1.0
+	needs_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	needs_panel.offset_left = 12
+	needs_panel.offset_top = -56
+	needs_panel.offset_bottom = -56
+	add_child(needs_panel)
+
 	_notice_label = Label.new()
 	_notice_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	_notice_label.offset_top = 16

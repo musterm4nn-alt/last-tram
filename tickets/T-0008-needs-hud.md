@@ -1,12 +1,12 @@
 ---
 id: T-0008
 title: Needs panel in the HUD
-status: todo
+status: done
 milestone: M1
 size: S
 owner: builder
 depends_on: []
-builder:
+builder: OpenCode / DeepSeek V4.1 Flash
 review_rounds: 0
 ---
 
@@ -110,6 +110,38 @@ add_child(needs_panel)
 
 ## Implementation notes
 
+- Added `game/ui/needs_panel.gd` (`NeedsPanel extends PanelContainer`): `bar_color()` static
+  helper (GOOD >= 60, OK >= 30, LOW below), `_ready()` sets the same `StyleBoxFlat` as
+  `Hud._panel()` and calls `build(Session.content)`, `build()` creates one HBox row per
+  `NeedDef` (name label, width 74, font 13) plus a `ProgressBar` (0..100, no %, 120×10,
+  vertical shrink-centre) with its own fill `StyleBoxFlat` stored in `_fills`, then the mood
+  `Label` (font 14). `show_person()` sets each bar value and fill colour, and the label from
+  `Mood.label(Mood.compute(...))`. `_process()` reads `Session.sim.world.player()` and
+  `Session.content` every frame; it never writes sim state.
+- `game/ui/hud.gd`: `_ready()` now adds a `NeedsPanel` anchored bottom-left, offset -56 from
+  the bottom so it sits just above the key hints panel (exact snippet from the ticket). The
+  HUD is hidden until `game_loaded`, so the panel appears with it.
+- Added `tests/game/test_needs_panel.gd` with the four ticket tests. Panels are built with
+  `NeedsPanel.new()` + `build(content())` outside the tree and freed at the end, like
+  `test_name_screen.gd`.
+- Verified: `tools/check.sh` → **107 passed, 0 failed** (incl. the 4 new tests, confirmed
+  with `tools/test.sh --filter=needs_panel`: 4 passed).
+- Screenshots (opened and checked):
+  - `out/t0008_start.png` — panel bottom-left above the hints, no overlap; six green bars
+    ("Hunger".."Comfort") and "Mood: Fine".
+  - `out/t0008_4h.png` (`--advance=240`, Day 1 12:00) — Hunger, Fun and Comfort yellow;
+    Energy, Hygiene and Social green; "Mood: Okay".
+  - `out/t0008_8h.png` (`--advance=480`, Day 1 16:00) — Comfort red; the other five yellow;
+    "Mood: Uneasy".
+- Not in scope (as the ticket says): current action/queue (T-0010), trend arrows, hover
+  moodlets (M2).
+
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed with no changes.** Built from the latest `main` (the new
+"pull first" step worked). Code matches the spec, the four tests check real values and
+colours, and the reviewer's own three screenshots match every visual criterion (six green
+bars and "Mood: Fine"; the 4-hour mix and "Mood: Okay"; comfort red and "Mood: Uneasy"),
+with no overlap with the key hints.
