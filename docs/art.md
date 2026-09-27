@@ -38,9 +38,18 @@ the owner picks one:
 | **Asset pack**: LimeZu *Modern Interiors* and *Modern Exteriors* (paid, 16/32/48 px), or Kenney (free, CC0) | Fast and consistent; covers a huge amount | Not unique; must fit the tone; licence terms |
 | **AI-drawn in Aseprite** (Opus via the Aseprite MCP) | Fully custom and consistent with the setting | Slower; quality varies; animation is hard |
 | **ChatGPT Images → Aseprite cleanup** (owner's ChatGPT Plus, Opus cleans up) | Rich concepts, fast ideation | Output isn't real pixel art: it needs downscaling, palette locking and cleanup, and consistency takes discipline |
+| **Text grids** (Opus writes each sprite as a grid of characters; Node scripts assemble them and export PNGs) | Fully custom; every change is a small text edit; palette locked; people tinted from the creator's data | Opus draws every piece; big detailed pieces and animation take longest |
 
 A mix is likely: a pack for the bulk plus custom pieces for signature things (the tram, the
 Späti, characters).
+
+### Art test 1: text grids
+
+The Altmarkt by day and night, drawn this way from the real district map (not wired into the
+game yet): images in `docs/img/art-test/`, sources and the build script in `art/src/textgrid/`
+(`node art/src/textgrid/build.mjs`). It shows an issue every 3/4 route shares: tall buildings on
+the south side of a street hide the street behind them, so the view will need to fade a
+building while the player is behind it.
 
 ## Technical spec (applies to every route)
 
