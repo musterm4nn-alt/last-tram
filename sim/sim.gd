@@ -10,6 +10,8 @@ var content: ContentDB
 var world: World
 var clock: SimClock
 var rng: SimRng
+## Walking routes (a derived cache: never saved, rebuilds itself from the grid).
+var nav: Pathfinder
 var events: EventLog = EventLog.new()
 var systems: Array[SimSystem] = []
 
@@ -23,6 +25,7 @@ func _init(p_content: ContentDB, p_world: World, p_clock: SimClock, p_rng: SimRn
 	world = p_world
 	clock = p_clock
 	rng = p_rng
+	nav = Pathfinder.new(world)
 	systems = default_systems()
 
 

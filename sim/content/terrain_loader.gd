@@ -23,6 +23,9 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		t.blocks_sight = reader.read_bool(d, "blocks_sight", ctx)
 		t.indoor = reader.read_bool(d, "indoor", ctx)
 		t.surface = reader.read_str(d, "surface", ctx)
+		t.path_cost = reader.read_num(d, "path_cost", ctx)
+		if t.path_cost < 1.0:
+			reader.error("%s: 'path_cost' %s must be >= 1.0" % [ctx, t.path_cost])
 		var color_text := reader.read_str(d, "debug_color", ctx)
 		if Color.html_is_valid(color_text):
 			t.debug_color = Color.html(color_text)

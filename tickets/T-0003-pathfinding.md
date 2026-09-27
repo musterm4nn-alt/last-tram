@@ -1,12 +1,12 @@
 ---
 id: T-0003
 title: Grid pathfinding (single level, surface costs)
-status: todo
+status: review
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0001]
-builder:
+builder: OpenCode / Muse Spark
 review_rounds: 0
 ---
 
@@ -65,6 +65,31 @@ by a blocking object, and adding or removing an object bumps `grid.revision`.
 - [ ] `tools/check.sh` passes; content validation rejects a missing or < 1 `path_cost`.
 
 ## Implementation notes
+- `Pathfinder` (`sim/world/pathfinder.gd`, RefCounted): one `AStarGrid2D` per level,
+  region = grid bounds, `cell_size` (1,1), `DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES`,
+  octile heuristics; solid = `not grid.is_walkable()`, weight = terrain `path_cost`.
+  Lazy rebuild per level when `grid.revision` changed. `find_path` drops the start
+  cell (`get_id_path` includes it). `is_reachable` is `not find_path().is_empty()`,
+  except from == to counts as reached when the cell is walkable (standing there).
+- `Sim` owns `var nav: Pathfinder`, built in `_init` from its world; never saved
+  (`SaveCodec` only stores clock/rng/world/pending, and `from_dict` builds a new
+  `Sim`, so `nav` always matches the loaded world).
+- `path_cost` added to `data/terrain.json` exactly per spec (floors/doors/sidewalk/
+  cobblestone/bridge/crossing 1.0; grass 1.5; road/tram_track 4.0; non-walkable 1.0),
+  `TerrainDef.path_cost` (default 1.0), loader reads it and errors when < 1.0
+  (a missing key also trips `read_num`'s "must be a number" plus this error).
+- Tests (`tests/sim/test_pathfinding.gd`, 12 tests) cover every acceptance criterion;
+  `tests/fixtures/terrain_bad_cost.json` is a minimal terrain file with one 0.5-cost
+  entry for the < 1 rejection test (existing `content_broken/terrain.json` covers
+  the missing-key case). Road test: the pavement detour is the same step count as
+  the road (diagonals) but ~3x cheaper, so the assertion is "zero road cells".
+- Verified: `tools/check.sh` → 137 passed, 0 failed (was 125 before; +12 new).
+- Altstadt (seed 1): spawn (50,26,0) → Späti north door (5,23,0): path length 50 cells,
+  cold query incl. full 72×44 graph build ~3.1 ms, warm query ~16 µs (M3 Pro, headless,
+  measured once each). Return trip also 50 cells.
+- Uncertain / left out: nothing in scope left out. `is_reachable(from, from)` returns
+  true on walkable ground by my choice (spec only defined `find_path` for that case);
+  reviewer may prefer false — one-line change either way.
 
 ## Questions
 
