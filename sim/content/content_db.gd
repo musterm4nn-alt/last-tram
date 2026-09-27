@@ -10,6 +10,8 @@ extends RefCounted
 ##   4. a test in tests/sim/test_content.gd
 
 const DATA_ROOT: String = "res://data"
+## Name lists every game must have (data/names/names.json).
+const FIRST_NAME_LISTS: PackedStringArray = ["feminine", "masculine", "neutral"]
 
 var terrains: Array[TerrainDef] = []
 var districts: Dictionary[String, DistrictDef] = {}
@@ -17,6 +19,16 @@ var districts: Dictionary[String, DistrictDef] = {}
 var district_order: Array[String] = []
 var start_district: String = ""
 var errors: PackedStringArray = []
+
+## Every choice the character creator offers (genders, colours, hair, names...).
+var appearance: AppearanceCatalog = AppearanceCatalog.new()
+## Clothing items by id, loaded from every file in data/clothing/items/.
+var clothing: Dictionary[String, ClothingDef] = {}
+## Clothing colour options by id, from data/clothing/colours.json.
+var clothing_colours: Dictionary[String, ColorOption] = {}
+## First names per name list (see FIRST_NAME_LISTS).
+var first_names: Dictionary[String, PackedStringArray] = {}
+var last_names: PackedStringArray = PackedStringArray()
 
 var _terrain_by_id: Dictionary[String, int] = {}
 var _terrain_by_glyph: Dictionary[String, int] = {}
@@ -30,6 +42,9 @@ static func load_default() -> ContentDB:
 
 func load_from(root: String) -> void:
 	_load_terrains(root.path_join("terrain.json"))
+	_load_names(root.path_join("names").path_join("names.json"))
+	_load_appearance(root.path_join("appearance").path_join("appearance.json"))
+	_load_clothing(root.path_join("clothing"))
 	_load_world(root.path_join("world"))
 
 
@@ -60,6 +75,11 @@ func place_at(cell: Vector3i) -> PlaceDef:
 			if place.contains(cell):
 				return place
 	return null
+
+
+## The clothing item with this id, or null.
+func clothing_def(id: String) -> ClothingDef:
+	return clothing.get(id)
 
 
 # --- Terrain ---------------------------------------------------------------------------
@@ -98,6 +118,280 @@ func _load_terrains(path: String) -> void:
 		terrains.append(t)
 	if terrain_index("void") < 0:
 		errors.append("%s: a terrain with id 'void' is required (used outside the map)" % path)
+
+
+# --- Names -----------------------------------------------------------------------------
+
+func _load_names(path: String) -> void:
+	var root: Variant = _read_json(path)
+	if not root is Dictionary:
+		return
+	var d: Dictionary = root
+	var lists: Variant = d.get("first_names")
+	if not lists is Dictionary:
+		errors.append("%s: 'first_names' must be an object of name lists" % path)
+	else:
+		for key: Variant in lists:
+			var list_id := String(key)
+			first_names[list_id] = _name_list(lists[key], "%s: first_names '%s'" % [path, list_id])
+		for list_id: String in FIRST_NAME_LISTS:
+			if not first_names.has(list_id):
+				errors.append("%s: first_names is missing the '%s' list" % [path, list_id])
+	last_names = _name_list(d.get("last_names"), "%s: last_names" % path)
+
+
+func _name_list(value: Variant, ctx: String) -> PackedStringArray:
+	var names := PackedStringArray()
+	if not value is Array:
+		errors.append("%s must be a list of names" % ctx)
+		return names
+	for entry: Variant in value:
+		if not entry is String:
+			errors.append("%s: every name must be a string" % ctx)
+			continue
+		var name := String(entry)
+		if not Names.is_valid(name):
+			errors.append("%s: '%s' is not a name (1..%d letters; spaces, hyphens and apostrophes allowed)" % [ctx, name, Names.MAX_LENGTH])
+			continue
+		names.append(name)
+	if names.is_empty():
+		errors.append("%s must not be empty" % ctx)
+	return names
+
+
+# --- Appearance ------------------------------------------------------------------------
+
+func _load_appearance(path: String) -> void:
+	var root: Variant = _read_json(path)
+	if not root is Dictionary:
+		return
+	var d: Dictionary = root
+
+	var age_ctx := "%s: age_years" % path
+	var age: Dictionary = _obj(d, "age_years", path)
+	appearance.age_min = int(_num(age, "min", age_ctx))
+	appearance.age_max = int(_num(age, "max", age_ctx))
+	if appearance.age_min < 18:
+		errors.append("%s: min is %d, but everyone in the game is an adult (at least 18)" % [age_ctx, appearance.age_min])
+	if appearance.age_max < appearance.age_min:
+		errors.append("%s: max %d is below min %d" % [age_ctx, appearance.age_max, appearance.age_min])
+	if appearance.age_max > 100:
+		errors.append("%s: max %d is above 100" % [age_ctx, appearance.age_max])
+
+	var height_ctx := "%s: height_cm" % path
+	var height: Dictionary = _obj(d, "height_cm", path)
+	appearance.height_min = int(_num(height, "min", height_ctx))
+	appearance.height_max = int(_num(height, "max", height_ctx))
+	if appearance.height_min < 120 or appearance.height_min >= appearance.height_max or appearance.height_max > 230:
+		errors.append("%s: must satisfy 120 <= min < max <= 230, got %d..%d" % [height_ctx, appearance.height_min, appearance.height_max])
+
+	appearance.genders = _load_genders(d.get("genders"), "%s: genders" % path)
+	appearance.pronouns = _load_pronouns(d.get("pronouns"), "%s: pronouns" % path)
+	appearance.skin_tones = _load_color_options(d.get("skin_tones"), "%s: skin_tones" % path)
+	appearance.hair_colours = _load_color_options(d.get("hair_colours"), "%s: hair_colours" % path)
+	appearance.eye_colours = _load_color_options(d.get("eye_colours"), "%s: eye_colours" % path)
+	appearance.hair_styles = _load_named_options(d.get("hair_styles"), "%s: hair_styles" % path)
+	appearance.builds = _load_named_options(d.get("builds"), "%s: builds" % path)
+	appearance.facial_hair = _load_named_options(d.get("facial_hair"), "%s: facial_hair" % path)
+	appearance.features = _load_named_options(d.get("features"), "%s: features" % path)
+
+	if not appearance.facial_hair.has("none"):
+		errors.append("%s: facial_hair must contain 'none'" % path)
+	for gender: GenderOption in appearance.genders.values():
+		if not appearance.pronouns.has(gender.default_pronouns):
+			errors.append("%s: gender '%s' uses unknown pronouns '%s'" % [path, gender.id, gender.default_pronouns])
+		for list_id: String in gender.name_lists:
+			if not first_names.has(list_id):
+				errors.append("%s: gender '%s' uses unknown name list '%s'" % [path, gender.id, list_id])
+
+
+func _load_genders(entries: Variant, ctx: String) -> Dictionary[String, GenderOption]:
+	var out: Dictionary[String, GenderOption] = {}
+	if not entries is Array:
+		errors.append("%s must be a list" % ctx)
+		return out
+	for entry: Variant in entries:
+		if not entry is Dictionary:
+			errors.append("%s: every entry must be an object" % ctx)
+			continue
+		var d: Dictionary = entry
+		var gender := GenderOption.new()
+		gender.id = _str(d, "id", ctx)
+		var entry_ctx := "%s '%s'" % [ctx, gender.id]
+		gender.name = _str(d, "name", entry_ctx)
+		gender.default_pronouns = _str(d, "default_pronouns", entry_ctx)
+		gender.name_lists = _str_array(d, "name_lists", entry_ctx)
+		if gender.id.is_empty():
+			continue
+		if out.has(gender.id):
+			errors.append("%s: duplicate id" % entry_ctx)
+			continue
+		out[gender.id] = gender
+	if out.is_empty():
+		errors.append("%s must not be empty" % ctx)
+	return out
+
+
+func _load_pronouns(entries: Variant, ctx: String) -> Dictionary[String, PronounSet]:
+	var out: Dictionary[String, PronounSet] = {}
+	if not entries is Array:
+		errors.append("%s must be a list" % ctx)
+		return out
+	for entry: Variant in entries:
+		if not entry is Dictionary:
+			errors.append("%s: every entry must be an object" % ctx)
+			continue
+		var d: Dictionary = entry
+		var pronouns := PronounSet.new()
+		pronouns.id = _str(d, "id", ctx)
+		var entry_ctx := "%s '%s'" % [ctx, pronouns.id]
+		pronouns.name = _str(d, "name", entry_ctx)
+		pronouns.subject = _str(d, "subject", entry_ctx)
+		pronouns.object = _str(d, "object", entry_ctx)
+		pronouns.possessive = _str(d, "possessive", entry_ctx)
+		pronouns.reflexive = _str(d, "reflexive", entry_ctx)
+		if pronouns.id.is_empty():
+			continue
+		if out.has(pronouns.id):
+			errors.append("%s: duplicate id" % entry_ctx)
+			continue
+		out[pronouns.id] = pronouns
+	if out.is_empty():
+		errors.append("%s must not be empty" % ctx)
+	return out
+
+
+func _load_named_options(entries: Variant, ctx: String) -> Dictionary[String, NamedOption]:
+	var out: Dictionary[String, NamedOption] = {}
+	if not entries is Array:
+		errors.append("%s must be a list" % ctx)
+		return out
+	for entry: Variant in entries:
+		if not entry is Dictionary:
+			errors.append("%s: every entry must be an object" % ctx)
+			continue
+		var d: Dictionary = entry
+		var option := NamedOption.new()
+		option.id = _str(d, "id", ctx)
+		var entry_ctx := "%s '%s'" % [ctx, option.id]
+		option.name = _str(d, "name", entry_ctx)
+		if option.id.is_empty():
+			continue
+		if out.has(option.id):
+			errors.append("%s: duplicate id" % entry_ctx)
+			continue
+		out[option.id] = option
+	if out.is_empty():
+		errors.append("%s must not be empty" % ctx)
+	return out
+
+
+func _load_color_options(entries: Variant, ctx: String) -> Dictionary[String, ColorOption]:
+	var out: Dictionary[String, ColorOption] = {}
+	if not entries is Array:
+		errors.append("%s must be a list" % ctx)
+		return out
+	for entry: Variant in entries:
+		if not entry is Dictionary:
+			errors.append("%s: every entry must be an object" % ctx)
+			continue
+		var d: Dictionary = entry
+		var option := ColorOption.new()
+		option.id = _str(d, "id", ctx)
+		var entry_ctx := "%s '%s'" % [ctx, option.id]
+		option.name = _str(d, "name", entry_ctx)
+		var color_text := _str(d, "color", entry_ctx)
+		if Color.html_is_valid(color_text):
+			option.color = Color.html(color_text)
+		else:
+			errors.append("%s: color '%s' is not a colour like #aabbcc" % [entry_ctx, color_text])
+		if d.has("natural"):
+			option.natural = _bool(d, "natural", entry_ctx)
+		if option.id.is_empty():
+			continue
+		if out.has(option.id):
+			errors.append("%s: duplicate id" % entry_ctx)
+			continue
+		out[option.id] = option
+	if out.is_empty():
+		errors.append("%s must not be empty" % ctx)
+	return out
+
+
+# --- Clothing --------------------------------------------------------------------------
+
+func _load_clothing(dir: String) -> void:
+	_load_clothing_colours(dir.path_join("colours.json"))
+	var items_dir := dir.path_join("items")
+	var listing := DirAccess.open(items_dir)
+	if listing == null:
+		errors.append("%s: folder not found" % items_dir)
+		return
+	var files := listing.get_files()
+	files.sort()
+	for file: String in files:
+		if file.get_extension() == "json":
+			_load_clothing_items(items_dir.path_join(file))
+	for slot: String in ClothingDef.REQUIRED_SLOTS:
+		var found := false
+		for item: ClothingDef in clothing.values():
+			if item.slot == slot and item.starter:
+				found = true
+				break
+		if not found:
+			errors.append("%s: no starter item in required slot '%s' (a person always wears top, bottom and feet)" % [items_dir, slot])
+
+
+func _load_clothing_colours(path: String) -> void:
+	var root: Variant = _read_json(path)
+	if not root is Dictionary:
+		return
+	var d: Dictionary = root
+	clothing_colours = _load_color_options(d.get("colours"), "%s: colours" % path)
+
+
+func _load_clothing_items(path: String) -> void:
+	var root: Variant = _read_json(path)
+	if not root is Dictionary:
+		return
+	for entry: Variant in _arr(root, "items", path):
+		if not entry is Dictionary:
+			errors.append("%s: every item must be an object" % path)
+			continue
+		var d: Dictionary = entry
+		var item := ClothingDef.new()
+		item.id = _str(d, "id", path)
+		var ctx := "%s: item '%s'" % [path, item.id]
+		item.name = _str(d, "name", ctx)
+		item.slot = _str(d, "slot", ctx)
+		item.styles = _str_array(d, "styles", ctx)
+		item.colours = _str_array(d, "colours", ctx)
+		item.price = int(_num(d, "price", ctx))
+		item.formality = int(_num(d, "formality", ctx))
+		item.concealment = int(_num(d, "concealment", ctx))
+		item.warmth = int(_num(d, "warmth", ctx))
+		item.starter = _bool(d, "starter", ctx)
+		if item.id.is_empty():
+			continue
+		if clothing.has(item.id):
+			errors.append("%s: duplicate clothing id" % ctx)
+			continue
+		if not ClothingDef.SLOTS.has(item.slot):
+			errors.append("%s: slot '%s' is not one of: %s" % [ctx, item.slot, ", ".join(ClothingDef.SLOTS)])
+		if item.colours.is_empty():
+			errors.append("%s: colours must not be empty" % ctx)
+		for colour_id: String in item.colours:
+			if not clothing_colours.has(colour_id):
+				errors.append("%s: unknown colour '%s' (see data/clothing/colours.json)" % [ctx, colour_id])
+		if item.price < 0:
+			errors.append("%s: price %d is negative" % [ctx, item.price])
+		if item.formality < -2 or item.formality > 3:
+			errors.append("%s: formality %d must be -2..3" % [ctx, item.formality])
+		if item.concealment < 0 or item.concealment > 3:
+			errors.append("%s: concealment %d must be 0..3" % [ctx, item.concealment])
+		if item.warmth < 0 or item.warmth > 3:
+			errors.append("%s: warmth %d must be 0..3" % [ctx, item.warmth])
+		clothing[item.id] = item
 
 
 # --- World & districts -----------------------------------------------------------------
@@ -250,3 +544,25 @@ func _arr(d: Dictionary, key: String, ctx: String) -> Array:
 		errors.append("%s: '%s' must be a list" % [ctx, key])
 		return []
 	return v
+
+
+func _obj(d: Dictionary, key: String, ctx: String) -> Dictionary:
+	var v: Variant = d.get(key)
+	if not v is Dictionary:
+		errors.append("%s: '%s' must be an object" % [ctx, key])
+		return {}
+	return v
+
+
+func _str_array(d: Dictionary, key: String, ctx: String) -> PackedStringArray:
+	var v: Variant = d.get(key)
+	if not v is Array:
+		errors.append("%s: '%s' must be a list of strings" % [ctx, key])
+		return PackedStringArray()
+	var out := PackedStringArray()
+	for entry: Variant in v:
+		if not entry is String:
+			errors.append("%s: every entry of '%s' must be a string" % [ctx, key])
+			continue
+		out.append(String(entry))
+	return out

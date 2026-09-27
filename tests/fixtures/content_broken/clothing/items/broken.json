@@ -1,0 +1,9 @@
+{
+	"_doc": "Deliberately broken content for tests/sim/test_appearance_content.gd: unknown colour, invalid slot, duplicate id, and no starter item for the required slot 'bottom'. Do not fix.",
+	"items": [
+		{ "id": "broken_top", "name": "Broken Top", "slot": "top", "styles": ["casual"], "colours": ["neon_green"], "price": 100, "formality": 0, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "broken_hat", "name": "Broken Hat", "slot": "hat", "styles": ["casual"], "colours": ["black"], "price": 100, "formality": 0, "concealment": 1, "warmth": 1, "starter": false },
+		{ "id": "broken_dup", "name": "Broken Duplicate One", "slot": "feet", "styles": ["casual"], "colours": ["black"], "price": 100, "formality": 0, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "broken_dup", "name": "Broken Duplicate Two", "slot": "feet", "styles": ["casual"], "colours": ["black"], "price": 100, "formality": 0, "concealment": 1, "warmth": 1, "starter": true }
+	]
+}

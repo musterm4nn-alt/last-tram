@@ -1,0 +1,21 @@
+{
+	"_doc": "Colours clothing items can come in. Items in data/clothing/items/ list ids from here; the creator shows them as swatches. Saves store ids, so ids must never be renamed.",
+	"colours": [
+		{ "id": "black", "name": "Black", "color": "#17181a" },
+		{ "id": "white", "name": "White", "color": "#f2f0ec" },
+		{ "id": "grey", "name": "Grey", "color": "#8b8f96" },
+		{ "id": "charcoal", "name": "Charcoal", "color": "#3a3d42" },
+		{ "id": "navy", "name": "Navy", "color": "#1f2a4a" },
+		{ "id": "denim", "name": "Denim", "color": "#4a6a96" },
+		{ "id": "red", "name": "Red", "color": "#a8322d" },
+		{ "id": "burgundy", "name": "Burgundy", "color": "#6b2433" },
+		{ "id": "olive", "name": "Olive", "color": "#6b6b3a" },
+		{ "id": "forest", "name": "Forest Green", "color": "#2f5a3a" },
+		{ "id": "mustard", "name": "Mustard", "color": "#c8a13a" },
+		{ "id": "beige", "name": "Beige", "color": "#cfc0a0" },
+		{ "id": "brown", "name": "Brown", "color": "#6a4a30" },
+		{ "id": "pink", "name": "Pink", "color": "#d889a8" },
+		{ "id": "purple", "name": "Purple", "color": "#6a4a8a" },
+		{ "id": "orange", "name": "Orange", "color": "#d07830" }
+	]
+}

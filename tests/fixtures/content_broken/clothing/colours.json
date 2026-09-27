@@ -1,0 +1,6 @@
+{
+	"_doc": "Deliberately broken content for tests/sim/test_appearance_content.gd: 'neon_green' is used by an item but is not defined here. Do not fix.",
+	"colours": [
+		{ "id": "black", "name": "Black", "color": "#17181a" }
+	]
+}

@@ -1,0 +1,32 @@
+{
+	"_doc": "Deliberately broken content for tests/sim/test_appearance_content.gd: age_years.min is 17, below the adult minimum of 18. Do not fix.",
+	"age_years": { "min": 17, "max": 80 },
+	"height_cm": { "min": 150, "max": 205 },
+	"genders": [
+		{ "id": "woman", "name": "Woman", "default_pronouns": "she", "name_lists": ["feminine"] }
+	],
+	"pronouns": [
+		{ "id": "she", "name": "she/her", "subject": "she", "object": "her", "possessive": "her", "reflexive": "herself" }
+	],
+	"skin_tones": [
+		{ "id": "skin_01", "name": "Porcelain", "color": "#f7e3d6" }
+	],
+	"hair_colours": [
+		{ "id": "black", "name": "Black", "color": "#1d1a18", "natural": true }
+	],
+	"eye_colours": [
+		{ "id": "brown", "name": "Brown", "color": "#5a3a22" }
+	],
+	"hair_styles": [
+		{ "id": "short", "name": "Short" }
+	],
+	"builds": [
+		{ "id": "average", "name": "Average" }
+	],
+	"facial_hair": [
+		{ "id": "none", "name": "None" }
+	],
+	"features": [
+		{ "id": "freckles", "name": "Freckles" }
+	]
+}
