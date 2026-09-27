@@ -21,6 +21,11 @@ creator (T-0021) will draw the same figure in its preview.
 - `game/view2d/person_view_2d.gd` (you replace its `_draw`), `game/view2d/view_config.gd`,
   `game/main.gd` (command-line options)
 
+- T-0018 as merged: `person.appearance` is an `Appearance` (`skin_tone`, `height_cm`,
+  `build`, `hair_style`, `hair_colour`, `eye_colour`, `facial_hair`, `features`);
+  `person.outfit.get_item(slot)` returns a `WornItem` (`clothing_id`, `colour`) or null when
+  nothing is worn there; `Session.new_game(seed_value, spec)` takes a `CharacterSpec`.
+
 ## Scope
 Create `game/view2d/person_drawer_2d.gd`. Change `game/view2d/person_view_2d.gd`,
 `game/view2d/view_config.gd`, and `game/main.gd` (one new option).
@@ -50,9 +55,10 @@ Create `game/view2d/person_drawer_2d.gd`. Change `game/view2d/person_view_2d.gd`
   `ponytail`→cap plus tail, `bun`→cap plus bun, `afro`→big round, `mohawk`→centre stripe.
   Facing up (walking away) shows the back of the head: hair covers the whole head circle
   unless bald.
-- Colours come from content lookups (`Session.content.appearance.skin_tones[id].color`,
-  `Session.content.clothing_colours[id].color`, ...), with a visible fallback (magenta) for
-  unknown ids so mistakes show up in screenshots.
+- Colours come from lookups in the `content` parameter (`PersonView2D` passes
+  `Session.content`): `content.appearance.skin_tones[id].color`, `hair_colours`,
+  `eye_colours`, and `content.clothing_colours[worn.colour].color` for clothes, with a
+  visible fallback (magenta) for unknown ids so mistakes show up in screenshots.
 - `game/main.gd`: new option `--random-character`. The quickstart new game uses
   `CharacterSpec.random(Session.content, rng)` with an RNG seeded from `--seed`. Document it
   in the option list at the top of the file.
