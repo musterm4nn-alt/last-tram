@@ -155,7 +155,8 @@ facing (1, 0), which is to its left, looking right.
   index, rebuilt on load).
 - Save: `to_dict()` adds `"objects": [...]`; `from_dict()` reads `d.get("objects", [])` (old
   saves have none, so **no** save-version bump is needed) and re-adds each object so blockers
-  and the index are rebuilt.
+  and the index are rebuilt. Objects whose def id is unknown (for example from a content pack
+  that was removed later) are **skipped without logging errors**.
 
 ### SimFactory
 `new_game()` places every district's objects after stamping terrain (ids from
@@ -182,6 +183,8 @@ in the living room. Keep door cells and their neighbours free.
   objects present → `test_objects.gd` + existing `test_save.gd`
 - [ ] The old fixture `tests/fixtures/saves/v1_basic.json` still loads (no objects) → existing
   test
+- [ ] A save containing an object with an unknown def id loads, skips that object, and logs no
+  errors → `test_objects.gd`
 - [ ] `tools/check.sh` passes
 
 ## Implementation notes

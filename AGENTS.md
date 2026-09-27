@@ -103,3 +103,9 @@ tried twice and the tests still fail.) Set `status: blocked`, write your questio
 - No sexual-violence mechanics of any kind. No nudity or sexual content in character
   customisation.
 - Romance is between adults, and intimacy fades to black.
+- The core game never contains explicit or sexual content. **Never write any**, including in
+  tests, fixtures and examples. Never open, read or edit the owner's content packs: they
+  live in the game's user data folder (or a git-ignored `packs/` folder at the repo root).
+  The only pack agents may work on is the safe-for-work example in `examples/packs/`.
+- Content packs are data only: never add a way for packs to run code or to get around these
+  rules ([docs/design/content-packs.md](docs/design/content-packs.md)).

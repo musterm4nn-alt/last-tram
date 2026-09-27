@@ -84,3 +84,12 @@ and wardrobe, with none of its sexual content. Identity, appearance and outfit a
 state on every Person (NPCs are generated from the same data) and validated by
 `CharacterSpec`. Placeholders draw from appearance data now; the layered sprites chosen at the
 art gate will use the same data.
+
+**D20 · Data-only content packs; the core stays off-screen; an adult layer for the owner.**
+The owner can add or override content with data-only packs (JSON and images, never code),
+stored outside the repo in the game's user data folder. The core game presents intimacy
+off-screen (a fade-to-black scene) and never contains explicit content; no agent writes any.
+An "Adult content packs" setting (off by default, 18+ confirmation) lets the owner's own packs
+replace that presentation. Engine-enforced rules (adults only, mutual consent, never tied to
+crime, violence or incapacity) apply to all content, and no pack can change them. Details:
+`docs/design/content-packs.md`.

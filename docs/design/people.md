@@ -113,3 +113,5 @@ There are no births: the population renews through newcomers moving to town.
 - No pregnancy or childbirth (and no adoption).
 - Romance is between adults (everyone is) and intimacy fades to black. No sexual-violence
   mechanics.
+- Owner-made content packs, adult ones included, are held to the same rules
+  ([content-packs.md](content-packs.md)).

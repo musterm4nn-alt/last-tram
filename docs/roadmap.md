@@ -14,7 +14,7 @@ Legend: ✅ done · ▶ current · ◻ planned
 | M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ◻ |
 | ◆ | Art direction gate | pick the art style from real side-by-side tests | ◻ |
 | M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ◻ |
-| M5 | Home Sweet Home | redecorate, rebuild, buy property | ◻ |
+| M5 | Home Sweet Home | redecorate, rebuild, buy property; add your own content packs | ◻ |
 | M6 | Love & Relationships | date, move in, marry, share a flat, play as your partner | ◻ |
 | M7 | Getting Around | ride trams and buses to a second district | ◻ |
 
@@ -81,6 +81,9 @@ continues identically.
   memories, moodlets, thought/speech bubbles.
 - Person inspector: click anyone to see their needs, mood, relationship to you and what they
   remember.
+- **Scenes:** short text moments (with optional images) in a popup, triggered by interactions
+  and events. They're flavour for now, and the base for the owner's own content later
+  ([design/content-packs.md](design/content-packs.md)).
 
 **Done when:** a 7-day headless run with 30 residents stays healthy (everyone eats, sleeps at
 home, socialises, and relationships form); sim cost is within budget; the owner can watch the
@@ -150,6 +153,9 @@ through save/load; NPC crime happens at believable rates in long headless runs.
 - Home comfort score that affects mood.
 - **Town editor:** build mode without limits that saves back to the district files, so the
   owner can hand-craft the town in-game.
+- **Content packs:** add or override objects, clothes, interactions, dialogue, scenes and
+  images with data-only packs from the game's data folder; a Packs screen; an example pack;
+  and a plain-language guide (`docs/modding.md`) for the owner.
 
 ## M6 · Love & Relationships
 
@@ -157,6 +163,9 @@ through save/load; NPC crime happens at believable rates in long headless runs.
 
 - Romance ladder: flirt, date, partner, move in, marry; jealousy, cheating, breakups, divorce.
   Intimacy is off-screen (fade to black).
+- **Adult content packs** setting (off by default, 18+ confirmation): the owner's own adult
+  packs can replace the off-screen scene, within engine-enforced rules (adults only, mutual
+  consent, never tied to crime or violence).
 - Attraction settings in the character creator (who your character is attracted to).
 - Households: couples and flatmates, merging, moving out, shared money.
 - Switch control to another household member (your partner or a flatmate).

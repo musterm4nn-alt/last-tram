@@ -75,6 +75,10 @@ memory + circumstances, not from scripts.
   - No sexual-violence mechanics of any kind.
   - Romance is in (dating, partners, moving in, marriage); intimacy happens off-screen
     (fade to black).
+  - The core game never contains explicit content. The owner can add their own content
+    later, including adult content packs (data only, off by default), and the engine holds
+    that content to these rules too: adults only, mutual consent, never tied to crime or
+    violence. See [design/content-packs.md](design/content-packs.md).
 
 ## Time and space
 
@@ -89,7 +93,7 @@ memory + circumstances, not from scripts.
 
 ## Not planned for now
 
-Multiplayer, mod support, a procedurally generated city, realistic 3D graphics, voice acting,
+Multiplayer, code mods (content packs are data only), a procedurally generated city, realistic 3D graphics, voice acting,
 console ports, monetisation, and a Steam release polish pass. Some of these may come later;
 none should shape today's code, except that it must stay clean enough to allow them.
 

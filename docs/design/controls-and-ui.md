@@ -3,7 +3,7 @@
 ## Main menu and character creator (M1)
 
 Starting the game shows the **main menu**: New game, Continue (the latest save), Load (T-0014),
-Quit. **New game** opens the character creator
+Packs (M5), Quit. **New game** opens the character creator
 ([character-and-appearance.md](character-and-appearance.md)), then drops you into your flat.
 Tools and tests skip the menu with command-line options (`--quickstart`, `--screenshot`, ...).
 
@@ -63,7 +63,7 @@ Keys are physical positions, so they work on QWERTZ.
 ## Settings (Esc → Settings)
 
 Free will on/off · simulation detail (the fidelity dial: tiered / full) · ageing
-(off / slow / normal) · content toggles (weapons) · UI scale · (later) key rebinding, audio.
+(off / slow / normal) · content toggles (weapons; **adult content packs**: off by default, with an 18+ confirmation, M6) · UI scale · (later) key rebinding, audio.
 
 ## UI implementation rules
 

@@ -44,6 +44,14 @@ of the third person shifts, scaled by how much they trust the speaker. That's ho
 reputations, scandals and "everyone knows you stole from the Späti" spread. Distortion
 (rumours that grow) comes later.
 
+## Intimacy (M6)
+
+Intimate interactions are social interactions in category `intimate`. They are always
+consent-based (the target can refuse), only possible between people who are awake, sober
+enough and close enough, never tied to crime or violence, and presented off-screen through a
+scene. The owner can add their own adult presentation later with content packs
+([content-packs.md](content-packs.md)).
+
 ## The seam for LLM dialogue
 
 Every social action produces a **`SocialExchange`** record, emitted as an event:

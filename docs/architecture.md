@@ -181,6 +181,7 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 | One district | Many districts | Districts are data with an origin; the world is their union. |
 | Placeholder art | Real sprites or tiles | Art is looked up by content id with a fallback to the placeholder. `TILE_PX` is one constant. |
 | Placeholder figures | Layered character sprites and portraits | Appearance and outfit are sim data (ids); the view maps ids to simple shapes now and to sprite layers later. |
+| Core content only | The owner's own content packs, adult ones included | Packs are data-only folders loaded after `data/` through the same validators. Presentation goes through scene ids; packs add scene variants, and adult ones are used only when the adult setting is on. The guardrails live in sim code and validation, never in data ([design/content-packs.md](design/content-packs.md)). |
 
 ## Performance budget
 
@@ -204,7 +205,10 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 | M2 | Lots, households, residents | `sim/world/lot.gd`, `sim/people/household.gd`, `sim/people/generator.gd` |
 | M2 | Relationships, memories | `sim/social/` |
 | M2 | Simulation tiers | `sim/systems/tier_system.gd` |
+| M2 | Scenes (presentation only) | `sim/content/scene_def.gd`, `data/scenes/`, `game/ui/scene_popup.gd` |
 | M3 | Money, items, shops, jobs | `sim/economy/`, `sim/jobs/` (with `WorkSession`) |
 | M4 | Health, crime, witnesses, police | `sim/crime/`, `sim/health/` |
 | M5 | Build mode rules | `sim/build/` (commands + validation) |
+| M5 | Content packs, settings | `sim/content/pack_loader.gd`, `game/settings.gd`, `game/ui/packs_screen.gd`, `examples/packs/` |
+| M6 | Intimacy rules (consent, capacity, no crime) | `sim/social/intimacy_rules.gd` |
 | M7 | Transit, vehicles | `sim/transport/` |

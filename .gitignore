@@ -1,6 +1,9 @@
 # Godot cache (rebuilt by `godot --import`; tools/check.sh does this)
 .godot/
 
+# The owner's content packs belong in the game's user data folder, never in the repo
+/packs/
+
 # Local output: screenshots, sim reports, exports
 /out/
 /export/
