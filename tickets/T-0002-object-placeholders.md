@@ -1,13 +1,13 @@
 ---
 id: T-0002
 title: Draw world objects as placeholders
-status: todo
+status: done
 milestone: M1
 size: S
 owner: builder
 depends_on: [T-0001]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark 1.3 Free
+review_rounds: 1
 ---
 
 ## Goal
@@ -53,7 +53,58 @@ Create `game/view2d/objects_view_2d.gd` (`ObjectsView2D`) and `game/view2d/objec
 - [ ] `tools/check.sh` passes (compile and boundary lints cover the new files).
 
 ## Implementation notes
+- `game/view2d/objects_view_2d.gd` (`ObjectsView2D`): mirrors `PeopleView2D` — owns
+  `Dictionary[int, ObjectView2D]`, `rebuild()` on `Session.game_loaded`, incremental
+  `_add`/`erase` on `object_added` / `object_removed` (`data.object_id`).
+- `game/view2d/object_view_2d.gd` (`ObjectView2D`): node stays at origin, `_draw()`
+  paints absolute cell coords — one fill rect over `WorldObject.cells()` in the def's
+  `debug_color`, 1 px outline in `debug_color.darkened(0.35)`, centred label
+  (`short_label()`: last word of the def name, up to 3 chars — "Double bed" -> "Bed"),
+  `ThemeDB.fallback_font` size 8, white on dark fills / near-black on light fills
+  (`label_color()`, by luminance). Slot dots (pale-yellow centre, dark rim) draw only
+  when the static `ObjectView2D.show_slots` is true. `_process()` only updates
+  `visible` (origin level vs `Session.viewed_level`) and re-queues a redraw when the
+  flag flips — no per-frame repositioning.
+- Debug flag choice: a static on `ObjectView2D`, synced from `game/main.gd._process()`
+  (`ObjectView2D.show_slots = _debug_overlay.visible`). Main already owns both the
+  overlay and a per-frame hook, so no `Session` or `DebugOverlay` change was needed
+  and the ticket stays inside the named files.
+- `game/main.gd`: `add_child(ObjectsView2D.new())` after `WorldView2D`, before
+  `PeopleView2D` (objects under people), plus the one-line flag sync.
+- Tests: `tests/game/test_objects_view_2d.gd` — 6 tests: label table incl. "Double
+  bed" -> "Bed", label contrast, footprint rect, rebuild-twice yields no duplicates,
+  added/removed events update views, visibility follows `viewed_level`.
+- Screenshots (all opened and checked): `out/t0002.png --zoom=3` shows the player
+  (yellow marker) on top of the flat with the "Fri" fridge block and "Tel" TV block
+  labelled; the bed/sofa are outside that tight frame, so `out/t0002_wide.png
+  --zoom=1` proves the full criterion — pale "Fri" fridge (kitchen, NE), black "Tel"
+  TV, orange "Sof" sofa (living room, SW) and blue 2x2 "Bed" (bedroom, SE), all with
+  dark outlines and centred labels, player drawn over the bedroom floor.
+  `out/t0002_debug.png --zoom=3 --debug` shows the fridge slot dot; the wide debug
+  shot shows all six dots (1 fridge, 1 TV, 2 sofa, 2 bed) as pale dots with dark rims.
+- Quickload: `rebuild()` frees (`queue_free`) every old view and clears `_views`
+  before re-adding from `Session.sim.world.objects`, and `Session._after_load()`
+  drains stale sim events before emitting `game_loaded` exactly once — so a
+  quickload (F8) rebuilds exactly one view per object. Covered by the
+  rebuild-twice test (code inspection + reasoning, as the ticket allows).
+- Verified: `tools/check.sh` → 125 passed, 0 failed (6 new tests included).
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with two small reviewer fixes.** Built from the latest
+`main`; clean views that mirror `PeopleView2D`, a sensible static flag for the slot dots,
+and honest notes. The reviewer's screenshots at the default zoom (`--zoom=2`, 3x) show all
+four objects as labelled blocks under the player, with slot dots only under F3.
+- **The zoom in the criteria was the ticket's mistake:** `--zoom=3` is the fourth zoom step
+  (4x), which crops the bed and sofa. The builder spotted it and added a wide shot.
+- Fixed: the TV's display name is now "TV" (`data/objects/furniture.json`); the label read
+  "Tel", like a telephone.
+- Fixed: `test_rebuild_creates_one_view_per_object_and_clears` only counted `_views`, which
+  stays at 2 even if old view nodes are never freed (they would keep drawing). It now checks
+  that the old views are queued for deletion and replaced; a mutation check confirmed it
+  fails without the `queue_free()`.
+- Notes nit: the wide shot shows the player in the entrance room, not the bedroom.
+- For later: the bed's east slot dot sits on a wall (allowed; one usable slot is enough).
+  A future debug view could mark unusable slots in another colour.

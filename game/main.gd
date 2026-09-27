@@ -30,6 +30,7 @@ var _frame: int = 0
 func _ready() -> void:
 	InputActions.register()
 	add_child(WorldView2D.new())
+	add_child(ObjectsView2D.new())
 	add_child(PeopleView2D.new())
 	_camera = CameraRig2D.new()
 	add_child(_camera)
@@ -65,6 +66,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if is_instance_valid(_debug_overlay):
+		ObjectView2D.show_slots = _debug_overlay.visible
 	if _screenshot_path.is_empty():
 		return
 	_frame += 1
