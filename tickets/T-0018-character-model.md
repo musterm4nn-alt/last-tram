@@ -35,8 +35,8 @@ Create: `sim/people/appearance.gd`, `sim/people/worn_item.gd`, `sim/people/outfi
 `sim/people/character_spec.gd`, `data/appearance/default_player.json`,
 `tests/sim/test_character.gd`, `tests/sim/test_content_rules.gd`,
 `tests/fixtures/saves/v2_basic.json` (via the tool).
-Change: `sim/people/person.gd`, `sim/sim_factory.gd`, `sim/content/content_db.gd`
-(default player), `sim/save/save_codec.gd` (version 2), `sim/save/save_migrations.gd`,
+Change: `sim/people/person.gd`, `sim/sim_factory.gd`, `sim/content/appearance_loader.gd`
+(default player load, wired from `ContentDB.load_from()`), `sim/save/save_codec.gd` (version 2), `sim/save/save_migrations.gd`,
 `game/session.gd` (`new_game` signature), `game/ui/debug_overlay.gd` (show display name and
 age).
 **Out of scope:** drawing appearance (T-0019), menus and creator UI (T-0020/T-0021),
