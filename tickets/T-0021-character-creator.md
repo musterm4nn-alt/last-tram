@@ -18,6 +18,9 @@ everything, and a live preview: the top-down figure in all four directions plus 
 front-facing portrait ("paper doll").
 
 ## Notes for the architect (to detail before this becomes todo)
+- Lesson from T-0019 (long hair covered faces, unseen in its three random screenshots):
+  require a screenshot that shows **every** option (each hair style, build, facial hair,
+  feature and clothing slot), e.g. a debug gallery screen, not only random seeds.
 - Split model from UI so most of it is testable headless: `game/ui/creator_model.gd` holds a
   `CharacterSpec` and offers `next(field)`, `previous(field)`, `set_colour(slot, colour)`,
   `toggle_feature(id)`, `randomise(section)`, `randomise_all()`, `errors()`. Tests cover
