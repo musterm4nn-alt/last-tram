@@ -1,13 +1,13 @@
 ---
 id: T-0020
 title: Main menu, launch options, and choosing your name
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0019]
 builder: OpenCode / Muse Spark 1.3 Free
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -120,3 +120,24 @@ Implemented on branch `t/0020-main-menu-and-name`, stacked on unmerged
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** Launch options, `skip_menu()`, the menu, Continue and
+the tools' quick start all work as specified. The reviewer drove the real game with
+simulated mouse and keyboard (xdotool on Xvfb): New game, typing a name, Start, F3 shows
+the typed name; F5, relaunch, Continue loads it; Random name fills valid names. No script
+errors, including gameplay keys pressed on the menu. Reviewer fixes, made before merging:
+- **The name fields start empty** (the owner's intent: the player names their character;
+  the ticket was clarified after this branch started, so this is not a builder mistake).
+  An untouched form shows a grey hint ("Type a first and last name, or press Random
+  name.") instead of red errors; typed invalid names still show red errors.
+- Start is disabled while the spec has *any* problem (the spec), not only name problems.
+- The hidden name screen reacted to Enter/Esc while the menu was showing (Enter could
+  start a game as the stand-in without ever seeing the name screen); it now ignores input
+  while hidden.
+- Keyboard flow: the cursor starts in First name (`NameScreen.focus_first_field()`); Esc
+  goes back even while a field is being edited (handled in `_input`); fields keep editing
+  after Enter on an unfinished form (`keep_editing_on_text_submit`); back on the menu,
+  New game is selected again (`MainMenu.focus_new_game()`).
+- Tests: `test_name_screen.gd` rewritten for the empty start, typed names starting with the
+  default look, a hidden screen ignoring Enter, and Esc; mutation checks confirmed they
+  fail without the fixes.

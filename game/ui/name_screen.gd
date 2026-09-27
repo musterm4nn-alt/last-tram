@@ -1,11 +1,17 @@
 class_name NameScreen
 extends CanvasLayer
 ## First step of the character creator (the full creator is T-0021): first name, last
-## name and an optional nickname. Start puts the typed names on the default spec.
-## Enter = Start (when valid), Esc = Back.
+## name and an optional nickname. The fields start empty: the player names their
+## character. Start puts the typed names on the default spec. Enter = Start (when valid),
+## Esc = Back.
 
+## Start was pressed with a valid spec (the default player with the typed names).
 signal start_pressed(spec: CharacterSpec)
 signal back_pressed
+
+const HINT: String = "Type a first and last name, or press Random name."
+const HINT_COLOR: Color = Color(1, 1, 1, 0.6)
+const ERROR_COLOR: Color = Color("#e06c6c")
 
 var _first: LineEdit
 var _last: LineEdit
@@ -41,17 +47,12 @@ func _ready() -> void:
 	_first = _field(box, "First name", 24)
 	_last = _field(box, "Last name", 24)
 	_nick = _field(box, "Nickname (optional)", 16)
-	var defaults := CharacterSpec.default_player(Session.content)
-	_first.text = defaults.first_name
-	_last.text = defaults.last_name
-	_nick.text = defaults.nickname
 	var random_button := Button.new()
 	random_button.text = "Random name"
 	random_button.pressed.connect(_on_random_name)
 	box.add_child(random_button)
 	_error = Label.new()
 	_error.add_theme_font_size_override("font_size", 14)
-	_error.modulate = Color("#e06c6c")
 	_error.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_error.custom_minimum_size = Vector2(320, 0)
 	box.add_child(_error)
@@ -71,11 +72,23 @@ func _ready() -> void:
 	_refresh()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_accept"):
-		_try_start()
-	elif event.is_action_pressed("ui_cancel"):
+## Puts the keyboard cursor in the first name field (call when the screen is shown).
+func focus_first_field() -> void:
+	_first.grab_focus()
+
+
+## Esc = Back, even while a name field is being edited (the field would otherwise take
+## the first Esc just to stop editing).
+func _input(event: InputEvent) -> void:
+	if visible and event.is_action_pressed("ui_cancel"):
+		if is_inside_tree():
+			get_viewport().set_input_as_handled()
 		back_pressed.emit()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and event.is_action_pressed("ui_accept"):
+		_try_start()
 
 
 func _field(parent: Control, label_text: String, max_length: int) -> LineEdit:
@@ -85,6 +98,8 @@ func _field(parent: Control, label_text: String, max_length: int) -> LineEdit:
 	var field := LineEdit.new()
 	field.custom_minimum_size = Vector2(320, 0)
 	field.max_length = max_length
+	# Enter on an unfinished form must not stop typing in the field.
+	field.keep_editing_on_text_submit = true
 	field.text_changed.connect(func(_new_text: String) -> void: _refresh())
 	field.text_submitted.connect(func(_new_text: String) -> void: _try_start())
 	parent.add_child(field)
@@ -113,10 +128,19 @@ func _refresh() -> void:
 	spec.first_name = _first.text.strip_edges()
 	spec.last_name = _last.text.strip_edges()
 	spec.nickname = _nick.text.strip_edges()
-	var problems := PackedStringArray()
-	for problem: String in spec.validate(Session.content):
-		if problem.contains("name"):
-			problems.append(problem)
-	_error.text = "\n".join(problems)
+	var problems := spec.validate(Session.content)
+	# Explain names the player typed that don't work; empty fields only get a hint.
+	var shown := PackedStringArray()
+	for problem: String in problems:
+		if (problem.begins_with("first name") and not spec.first_name.is_empty()) \
+				or (problem.begins_with("last name") and not spec.last_name.is_empty()) \
+				or problem.begins_with("nickname"):
+			shown.append(problem)
+	if shown.is_empty() and (spec.first_name.is_empty() or spec.last_name.is_empty()):
+		_error.text = HINT
+		_error.modulate = HINT_COLOR
+	else:
+		_error.text = "\n".join(shown)
+		_error.modulate = ERROR_COLOR
 	_start.disabled = not problems.is_empty()
 	_spec = spec

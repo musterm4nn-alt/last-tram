@@ -111,11 +111,13 @@ func _start_quick() -> void:
 func _show_name_screen() -> void:
 	_menu.visible = false
 	_name_screen.visible = true
+	_name_screen.focus_first_field()
 
 
 func _show_menu() -> void:
 	_name_screen.visible = false
 	_menu.visible = true
+	_menu.focus_new_game()
 
 
 func _start_named_game(spec: CharacterSpec) -> void:

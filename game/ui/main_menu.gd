@@ -5,6 +5,7 @@ extends CanvasLayer
 
 signal new_game_requested
 
+var _new_button: Button
 var _continue_button: Button
 
 
@@ -34,15 +35,21 @@ func _ready() -> void:
 	var spacer := Control.new()
 	spacer.custom_minimum_size = Vector2(1, 12)
 	box.add_child(spacer)
-	var new_button := _button(box, "New game")
-	new_button.pressed.connect(func() -> void: new_game_requested.emit())
+	_new_button = _button(box, "New game")
+	_new_button.pressed.connect(func() -> void: new_game_requested.emit())
 	_continue_button = _button(box, "Continue")
 	_continue_button.disabled = not FileAccess.file_exists(Session.QUICKSAVE_PATH)
 	_continue_button.pressed.connect(_on_continue)
 	var quit_button := _button(box, "Quit")
 	quit_button.pressed.connect(func() -> void: get_tree().quit())
-	new_button.grab_focus()
+	focus_new_game()
 	Session.game_loaded.connect(_on_game_loaded)
+
+
+## Selects New game, so Enter works right away (also after coming back from the name
+## screen, where the keyboard focus was in a text field).
+func focus_new_game() -> void:
+	_new_button.grab_focus()
 
 
 func _button(parent: Control, text: String) -> Button:
