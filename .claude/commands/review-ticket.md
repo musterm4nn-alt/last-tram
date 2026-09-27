@@ -14,7 +14,8 @@ Review ticket $ARGUMENTS as the architect, following "Reviewing" in CLAUDE.md.
 4. Pass → set `status: done` (keep `builder`, set `review_rounds`), commit on the branch, merge
    with `git checkout main && git merge --no-ff <branch>`, run `tools/check.sh` on main, push
    main, delete the branch locally and on origin. Then check whether later tickets need
-   updating to match the real code.
+   updating to match the real code, and tick the ticket's stops on the owner's playbook
+   page (see "The owner's playbook page" in CLAUDE.md).
 5. Changes needed → write specific "Review feedback" in the ticket (what, where, what done
    looks like), set `status: changes-requested`, increment `review_rounds`, commit, push the
    branch, and check out main again. Trivial fixes you may make yourself instead (note them).

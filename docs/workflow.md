@@ -3,6 +3,10 @@
 This page is for **the owner**: what to type, where, and in what order. You never need to read
 code. The agents prove their work with tests, checks and screenshots.
 
+**Your playbook:** [Last Tram Playbook](https://claude.ai/artifact/LPBmF4KMEeaBRh5zrJNEk8) is a private page that shows your next step,
+the exact text to paste, and which model and reasoning level to use. Claude Code keeps it up
+to date as tickets are merged and planned.
+
 ## Who does what
 
 | Who | Tool | Job |

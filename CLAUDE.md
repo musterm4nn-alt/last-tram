@@ -62,3 +62,24 @@ Follow `docs/art.md`. Tools available in your sessions: the Aseprite MCP (pixel 
 Blender MCP (3D, later), and ChatGPT Images through the owner's app (concepts; outputs
 need cleanup). Record every third-party asset in `art/LICENSES.md`. Always show the owner a
 screenshot and get approval before merging art.
+
+## The owner's playbook page (keep it in sync)
+
+The owner follows a private page, **Last Tram Playbook** (https://claude.ai/artifact/LPBmF4KMEeaBRh5zrJNEk8), that shows the next step,
+where to type it, and which model and reasoning level to use. Its route lives in the page's
+database (use the `ArtifactData` tool with that URL): collection `steps`, one document per
+stop, with the fields `order` (number), `phase`, `ticket`, `kind` (setup / build / review /
+plan / play), `title`, `where` ("You", "OpenCode", "Claude Code", "Claude Code (cloud)"),
+`prompt`, `model`, `reasoning`, `detail`, `done` (bool) and `done_at` (ISO time or null).
+- **After merging a ticket** (review passed): set `done: true` and `done_at` on its
+  `t<nnnn>-build` and `t<nnnn>-review` stops (read them first and pin `if_version`).
+- **After writing new `todo` tickets** (`/next`): add a build stop and a review stop for each
+  ticket (ids `t<nnnn>-build` / `t<nnnn>-review`, `order` after the existing stops of their
+  phase, prompts "Implement ticket T-NNNN. Follow AGENTS.md." and "/review-ticket T-NNNN",
+  model and reasoning as in the page's table: Muse Spark 1.3 xhigh for M/L, DS v4.1 Flash for
+  small data tickets, reviews by Opus 5.5 at medium, or high for L). Add a `play` stop
+  whenever something new becomes playable. Use one `batch` write.
+- Never untick or delete the owner's stops, and never tick "You" stops yourself.
+- Change the page's layout only by reading it with the Artifact tool and republishing to the
+  same URL.
+
