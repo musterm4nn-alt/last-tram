@@ -1,0 +1,76 @@
+class_name LaunchOptions
+extends RefCounted
+## Command-line options for tools/run.sh and tools/screenshot.sh (everything main.gd
+## understands). Tools start straight into the game; the menu shows only when no
+## quickstart option is given (see skip_menu()).
+
+
+var seed_value: int = 1
+var seed_given: bool = false
+var load_path: String = ""
+var advance_minutes: int = 0
+var walk: Vector2 = Vector2.ZERO
+var debug: bool = false
+var zoom: int = -1
+var screenshot_path: String = ""
+var screenshot_frames: int = 20
+var random_character: bool = false
+var quickstart: bool = false
+var menu: bool = false
+## "" or "name": open the name screen directly.
+var screen: String = ""
+
+
+## Parses "--seed=5 --debug" style arguments (unknown ones are ignored).
+static func parse(args: PackedStringArray) -> LaunchOptions:
+	var out := LaunchOptions.new()
+	for arg: String in args:
+		if not arg.begins_with("--"):
+			continue
+		var key := arg.substr(2)
+		var value := ""
+		var eq := key.find("=")
+		if eq >= 0:
+			value = key.substr(eq + 1)
+			key = key.substr(0, eq)
+		match key:
+			"seed":
+				out.seed_value = value.to_int()
+				out.seed_given = true
+			"load":
+				out.load_path = value
+			"advance":
+				out.advance_minutes = value.to_int()
+			"walk":
+				out.walk = _parse_walk(value)
+			"debug":
+				out.debug = true
+			"zoom":
+				out.zoom = value.to_int()
+			"screenshot":
+				out.screenshot_path = value
+			"frames":
+				out.screenshot_frames = value.to_int()
+			"random-character":
+				out.random_character = true
+			"quickstart":
+				out.quickstart = true
+			"menu":
+				out.menu = true
+			"screen":
+				out.screen = value
+	return out
+
+
+## True when the game should start immediately, without the menu.
+func skip_menu() -> bool:
+	if menu:
+		return false
+	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 or walk != Vector2.ZERO or random_character or seed_given
+
+
+static func _parse_walk(value: String) -> Vector2:
+	var parts := value.split(",")
+	if parts.size() == 2:
+		return Vector2(parts[0].to_float(), parts[1].to_float())
+	return Vector2.ZERO
