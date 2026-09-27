@@ -80,7 +80,8 @@ static func from_dict(d: Dictionary) -> Appearance:
 	return out
 
 
-## Deterministic random appearance; draws from `rng` in field order.
+## Deterministic random appearance. Draws from `rng` in this order: skin tone, build, hair
+## style, eye colour, height (two draws), hair colour, facial hair, then each feature.
 static func random(content: ContentDB, rng: RandomNumberGenerator) -> Appearance:
 	var out := Appearance.new()
 	var catalog: AppearanceCatalog = content.appearance

@@ -1,13 +1,13 @@
 ---
 id: T-0018
 title: Identity, appearance and outfit on every person; CharacterSpec; save v2
-status: review
+status: done
 milestone: M1
 size: L
 owner: builder
 depends_on: [T-0017]
 builder: OpenCode / Muse Spark 1.3 Free
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -192,3 +192,21 @@ Implemented on branch `t/0018-character-model`.
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** Every criterion is met and tested; the random draw orders,
+the frozen v1->v2 migration and the v2 fixture match the spec, `v1_basic.json` is untouched,
+and the default player keeps its needs (T-0005). Reviewer fixes, made before merging:
+- **Adult ages enforced in code, not only by data** (content rules): `Person.MIN_AGE = 18`;
+  `Person.age_years` has a setter that never stores less (covers `apply_to`, loading saves,
+  any future code); `CharacterSpec.random()` clamps the catalog range to 18+. The game keeps
+  running with content errors, so wrong data must not be able to produce a minor. New tests
+  in `test_content_rules.gd` (a private ContentDB with ages 12-17; a save with age 15).
+- `test_identity_appearance_and_outfit_survive_save_load` now saves a non-default character
+  and checks every identity field; before, a field missing from `Person.to_dict()` (e.g.
+  gender) went unnoticed. A mutation check confirmed all three strengthened tests fail
+  without the code they guard.
+- Docs: the `random()` comments name the real draw order; the `default_player.json` note no
+  longer calls itself the migration's source (the migration keeps a frozen copy); removed
+  the unused `"clothing_id"` fallback in `WornItem.from_dict`; design doc "Rules" updated.
+- The debug overlay change was visible after all (F3 shows "player #1 Alex (27)"); the
+  reviewer took the screenshot.

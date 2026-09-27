@@ -22,5 +22,4 @@ func to_dict() -> Dictionary:
 
 
 static func from_dict(d: Dictionary) -> WornItem:
-	var item_id := String(d.get("item", d.get("clothing_id", "")))
-	return WornItem.new(item_id, String(d.get("colour", "")))
+	return WornItem.new(String(d.get("item", "")), String(d.get("colour", "")))

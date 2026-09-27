@@ -98,6 +98,8 @@ record. Numbers live in data and get tuned later.
 
 - **Everyone is an adult.** The age minimum in data can't go below 18 (a content error), and
   a test checks that every person in a new game and every generated character is 18 or
-  older.
+  older. The code enforces it even if data were wrong: `Person.age_years` never stores less
+  than 18 (so no spec, save or bug can lower it), random characters never get a younger
+  age, and `CharacterSpec.validate()` rejects anything under 18.
 - Customisation covers looks, clothes and life, **not sexual content**: there are no body-part
   sliders beyond height and build, and no nudity or exposure mechanics.

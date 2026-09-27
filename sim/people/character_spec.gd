@@ -28,8 +28,8 @@ func validate(content: ContentDB) -> PackedStringArray:
 		problems.append("unknown gender '%s'" % gender)
 	if not content.appearance.pronouns.has(pronouns):
 		problems.append("unknown pronouns '%s'" % pronouns)
-	if age_years < 18:
-		problems.append("age %d is below 18 (everyone in the game is an adult)" % age_years)
+	if age_years < Person.MIN_AGE:
+		problems.append("age %d is below %d (everyone in the game is an adult)" % [age_years, Person.MIN_AGE])
 	elif age_years < content.appearance.age_min or age_years > content.appearance.age_max:
 		problems.append("age %d is outside %d–%d" % [age_years, content.appearance.age_min, content.appearance.age_max])
 	for problem: String in appearance.validate(content):
@@ -44,7 +44,8 @@ static func default_player(content: ContentDB) -> CharacterSpec:
 	return CharacterSpec.from_dict(content.default_player)
 
 
-## Deterministic random character; draws from `rng` in field order.
+## Deterministic random character. Draws from `rng` in this order: gender, pronouns, name
+## list, first name, last name, age, then Appearance.random() and Outfit.random().
 static func random(content: ContentDB, rng: RandomNumberGenerator) -> CharacterSpec:
 	var out := CharacterSpec.new()
 	var catalog: AppearanceCatalog = content.appearance
@@ -61,7 +62,8 @@ static func random(content: ContentDB, rng: RandomNumberGenerator) -> CharacterS
 	out.first_name = String(firsts[rng.randi_range(0, firsts.size() - 1)])
 	out.last_name = String(content.last_names[rng.randi_range(0, content.last_names.size() - 1)])
 	out.nickname = ""
-	out.age_years = rng.randi_range(catalog.age_min, catalog.age_max)
+	# Never below 18, even if the content's age range were wrong.
+	out.age_years = rng.randi_range(maxi(Person.MIN_AGE, catalog.age_min), maxi(Person.MIN_AGE, catalog.age_max))
 	out.appearance = Appearance.random(content, rng)
 	out.outfit = Outfit.random(content, rng)
 	return out

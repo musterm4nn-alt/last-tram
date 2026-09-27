@@ -1,5 +1,5 @@
 {
-	"_doc": "The default player (Alex Novak) used when no CharacterSpec is given and as the source for the v1→v2 save migration. This is the CharacterSpec.to_dict() shape; saves store ids, so ids must never be renamed.",
+	"_doc": "The default player (Alex Novak), used when no CharacterSpec is given. This is the CharacterSpec.to_dict() shape. The v1->v2 save migration keeps its own frozen copy of these values, so changing this file never changes old saves.",
 	"first_name": "Alex",
 	"last_name": "Novak",
 	"nickname": "",

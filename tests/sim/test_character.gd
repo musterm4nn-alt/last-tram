@@ -112,7 +112,11 @@ func test_apply_to_deep_copies() -> void:
 
 func test_identity_appearance_and_outfit_survive_save_load() -> void:
 	var db := content()
-	var sim := SimFactory.new_game(db, 7)
+	# Not the default player: values that differ from Person's defaults prove every field is saved.
+	var spec := _random_spec(3)
+	spec.nickname = "Mo"
+	spec.age_years = 44
+	var sim := SimFactory.new_game(db, 7, spec)
 	sim.run_minutes(30)
 	var errors: Array[String] = []
 	var loaded := SaveCodec.from_json(SaveCodec.to_json(sim), db, errors)
@@ -122,10 +126,15 @@ func test_identity_appearance_and_outfit_survive_save_load() -> void:
 	assert_eq(SaveCodec.to_json(loaded), SaveCodec.to_json(sim))
 	var before := sim.world.player()
 	var after := loaded.world.player()
-	assert_eq(after.display_name(), before.display_name())
-	assert_eq(after.age_years, before.age_years)
-	assert_eq(after.appearance.to_dict(), before.appearance.to_dict())
-	assert_eq(after.outfit.to_dict(), before.outfit.to_dict())
+	assert_eq(before.nickname, "Mo")
+	assert_eq(after.first_name, spec.first_name)
+	assert_eq(after.last_name, spec.last_name)
+	assert_eq(after.nickname, "Mo")
+	assert_eq(after.gender, spec.gender)
+	assert_eq(after.pronouns, spec.pronouns)
+	assert_eq(after.age_years, 44)
+	assert_eq(after.appearance.to_dict(), spec.appearance.to_dict())
+	assert_eq(after.outfit.to_dict(), spec.outfit.to_dict())
 
 
 func test_v1_fixture_migrates_to_valid_character() -> void:
