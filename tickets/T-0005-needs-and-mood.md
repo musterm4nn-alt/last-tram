@@ -1,13 +1,13 @@
 ---
 id: T-0005
 title: Needs and mood
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: []
 builder: OpenCode / Muse Spark 1.3 Free
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -113,3 +113,9 @@ Left out / uncertain: nothing. Moodlets, refills, and HUD panel are out of scope
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** All criteria met and tested; simrun sample checked.
+The `sim/world/world.gd` change outside the listed scope is justified (`Person.from_dict`
+has no content to read start values from). Reviewer fix: `test_broken_need_definition_is_rejected`
+now matches the exact error messages (it matched the bare word "start", which any future
+content error could contain).
