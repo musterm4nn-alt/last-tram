@@ -36,6 +36,9 @@ var facing: Vector2 = Vector2.DOWN
 var move_intent: Vector2 = Vector2.ZERO
 ## Walking speed in cells per game minute. At 1x speed that is cells per real second.
 var walk_speed: float = 4.5
+## Remaining cells to walk through, set by WalkToCommand and followed by MovementSystem.
+## Saved as a list of Ser.cell().
+var path: Array[Vector3i] = []
 ## Needs 0-100 (100 = fully satisfied). Keys are need ids from data/needs.json.
 var needs: Dictionary[String, float] = {}
 
@@ -60,6 +63,9 @@ func to_dict() -> Dictionary:
 	var needs_out: Dictionary = {}
 	for key: String in needs:
 		needs_out[key] = needs[key]
+	var path_out: Array = []
+	for cell: Vector3i in path:
+		path_out.append(Ser.cell(cell))
 	return {
 		"id": id,
 		"first_name": first_name,
@@ -75,6 +81,7 @@ func to_dict() -> Dictionary:
 		"facing": Ser.vec2(facing),
 		"move_intent": Ser.vec2(move_intent),
 		"walk_speed": walk_speed,
+		"path": path_out,
 		"needs": needs_out,
 	}
 
@@ -100,6 +107,11 @@ static func from_dict(d: Dictionary) -> Person:
 	p.move_intent = Ser.to_vec2(d["move_intent"])
 	p.walk_speed = float(d["walk_speed"])
 	p.prev_pos = p.pos
+	p.path = []
+	var path_data: Variant = d.get("path", [])
+	if path_data is Array:
+		for entry: Variant in (path_data as Array):
+			p.path.append(Ser.to_cell(entry))
 	p.needs = {}
 	var stored: Variant = d.get("needs", {})
 	if stored is Dictionary:

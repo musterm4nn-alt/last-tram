@@ -8,6 +8,8 @@ static func create(type_id: String) -> Command:
 	match type_id:
 		"set_move_intent":
 			return SetMoveIntentCommand.new()
+		"walk_to":
+			return WalkToCommand.new()
 	return null
 
 

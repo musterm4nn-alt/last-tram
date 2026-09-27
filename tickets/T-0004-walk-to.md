@@ -1,13 +1,13 @@
 ---
 id: T-0004
 title: Follow paths and WalkToCommand
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0003]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark 1.3
+review_rounds: 1
 ---
 
 ## Goal
@@ -100,7 +100,37 @@ Change `sim/people/person.gd`, `sim/systems/movement_system.gd`,
 - [ ] `tools/check.sh` passes (`test_commands.gd` covers registration and round trip).
 
 ## Implementation notes
+- Added `Person.path: Array[Vector3i]` (saved as list of `Ser.cell()`, loaded with
+  `d.get("path", [])` default so old saves load with an empty path).
+- `MovementSystem.step()`: non-zero `move_intent` moves directly as before (path ignored);
+  otherwise follows the path via new `static func follow_path()` copied exactly from the
+  ticket spec (budget = `walk_speed * cells_per_step`, leftover carries to next waypoint,
+  blocked next waypoint clears path + emits `path_blocked`).
+- `SetMoveIntentCommand.apply()`: non-zero direction clears `person.path`; zero leaves it.
+- New `WalkToCommand` (`"walk_to"`, registered in `CommandRegistry`): unknown person ignored;
+  target == own cell clears path + intent with no event; empty `find_path` emits
+  `path_failed` and keeps the old path; otherwise sets path and zeroes intent.
+- New `tests/sim/test_walk_to.gd` (10 tests, one per acceptance bullet).
+- Verified: `tools/check.sh` → 147 passed, 0 failed (incl. 10 new walk_to tests and the
+  `test_commands.gd` registration round-trip). No screenshot (no visual change).
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with two test fixes by the reviewer.** Built from the latest
+`main`, in a fresh OpenCode session started by the architect with the playbook's model
+(Muse Spark 1.3 free, xhigh). The code matches the spec exactly, the notes are accurate, and
+`follow_path` is the ticket's code as written. A mutation check found three gaps in the
+tests:
+- Fixed: `test_save_and_continue_walk_equals_uninterrupted_run` saved at step 30, but the
+  walk ends after about 22 steps, so it never saved mid-walk. Not saving the path at all
+  still passed. It now saves at step 10 and asserts the path is still long; not saving or
+  not loading the path now fails it.
+- Added `test_walk_to_takes_over_from_direct_input`: nothing checked that WalkTo clears
+  `move_intent` (both the walk and the "own cell" stop). Removing either line passed every
+  test; now each one fails it. (The criteria did not spell this out; the ticket's gap.)
+- Doc: `MovementSystem`'s class comment now mentions path following.
+- Seven mutations in all (no carry-over, no blocked check, intent keeps the path, path not
+  saved, path not loaded, facing not set, WalkTo keeps the intent): each fails a test.
+- No visible change yet (click-to-walk is T-0009); `tools/simrun.sh --days=1` runs clean.

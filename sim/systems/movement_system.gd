@@ -1,6 +1,7 @@
 class_name MovementSystem
 extends SimSystem
-## Moves people along their move_intent (direct control), sliding along walls.
+## Moves people by their move_intent (direct control), or else along their path (set by
+## WalkToCommand), sliding along walls.
 ## Collision: a person is a box of half-size Person.RADIUS that may only overlap walkable
 ## cells. X and Y are resolved separately, so walking diagonally into a wall slides along it.
 
@@ -12,11 +13,37 @@ func step(sim: Sim) -> void:
 	var cells_per_step := 1.0 / SimClock.STEPS_PER_GAME_MINUTE
 	for person: Person in sim.world.people.values():
 		person.prev_pos = person.pos
-		if person.move_intent == Vector2.ZERO:
-			continue
-		var direction := person.move_intent.limit_length(1.0)
-		person.facing = _cardinal(direction)
-		move_person(sim.world.grid, person, direction * person.walk_speed * cells_per_step)
+		if person.move_intent != Vector2.ZERO:
+			var direction := person.move_intent.limit_length(1.0)
+			person.facing = _cardinal(direction)
+			move_person(sim.world.grid, person, direction * person.walk_speed * cells_per_step)
+		elif not person.path.is_empty():
+			follow_path(sim, person, person.walk_speed * cells_per_step)
+
+
+## Walks `person` along their path, covering up to `budget` cells this step.
+## Leftover distance carries on to the next waypoint in the same step.
+static func follow_path(sim: Sim, person: Person, budget: float) -> void:
+	while budget > 0.0 and not person.path.is_empty():
+		var next: Vector3i = person.path[0]
+		if not sim.world.grid.is_walkable(next):
+			# Something now blocks the route (e.g. an object was placed).
+			person.path.clear()
+			sim.emit_event(&"path_blocked", {"person_id": person.id})
+			return
+		var centre := Vector2(next.x + 0.5, next.y + 0.5)
+		var to_centre := centre - person.pos
+		var dist := to_centre.length()
+		if dist > 0.0:
+			person.facing = _cardinal(to_centre)
+		if dist <= budget:
+			# A cell centre on a walkable cell is always a legal spot.
+			person.pos = centre
+			person.path.remove_at(0)
+			budget -= dist
+		else:
+			move_person(sim.world.grid, person, to_centre / dist * budget)
+			budget = 0.0
 
 
 ## Moves `person` by `delta` cells, stopping at non-walkable cells.
