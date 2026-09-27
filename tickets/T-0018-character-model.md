@@ -19,6 +19,12 @@ Old saves are upgraded by the **first save migration** (v1 → v2).
 ## Read first
 - `docs/design/character-and-appearance.md`, `docs/design/people.md` → "Identity"
 - T-0017's catalog classes and data (merged in `main`)
+  (as merged: `content.appearance: AppearanceCatalog`, `content.clothing` and
+  `content.clothing_def(id)` (null if unknown), `content.clothing_colours`,
+  `content.first_names[list_id]`, `content.last_names`, `ClothingDef.SLOTS` /
+  `REQUIRED_SLOTS`, `Names.is_valid(text, max_length)` and `Names.MAX_LENGTH`.
+  `ContentDB.load_from()` now loads terrain, needs, names, appearance, clothing, then world;
+  load and validate `default_player` after the world.)
 - `docs/cookbook.md` → "Add a field to Person", **"Change the save format"** (you do it for
   real here)
 - Code: `sim/people/person.gd`, `sim/sim_factory.gd`, `sim/save/save_codec.gd`,
@@ -121,7 +127,8 @@ Save all of them in `to_dict()` / `from_dict()` (keys: `nickname`, `gender`, `pr
 ### SimFactory and Session
 - `SimFactory.new_game(content, seed_value, spec: CharacterSpec = null)`: null → the
   default player. The spec is assumed valid (the creator validates it).
-  `_spawn_player(sim, cell, spec)` uses `spec.apply_to(person)`. `from_rows` uses the
+  `_spawn_player(sim, cell, spec)` uses `spec.apply_to(person)` and keeps setting every
+  need to its `start` value (T-0005). `from_rows` uses the
   default player. Remove the `PLAYER_FIRST_NAME` / `PLAYER_LAST_NAME` constants.
 - `Session.new_game(seed_value: int, spec: CharacterSpec = null)` passes the spec through.
 
