@@ -38,13 +38,14 @@ Change `sim/systems/action_system.gd`, `sim/actions/interactions.gd`, and tests
      `state = ROUTING`; emit `&"action_routing"`.
   3. If no free slot → fail with reason `"no_free_slot"`; if no path to any free slot →
      reason `"no_path"`.
-- `ROUTING` front action, in `step()`:
-  - arrived (path empty and `person.cell()` == slot cell) → snap to the cell centre →
-    `PERFORMING` (emit `action_started`);
-  - path empty but not arrived (e.g. `path_blocked`) → try routing once more; if that fails,
-    fail with `"no_path"`;
-  - the person has a non-zero `move_intent` → cancel with reason `"moved"` (the player took
-    over).
+- `ROUTING` front action, in `step()`, checked in this order:
+  1. the person has a non-zero `move_intent` → cancel with reason `"moved"` (the player
+     took over; `SetMoveIntentCommand` has already cleared the path, T-0004);
+  2. arrived (path empty and `person.cell()` == slot cell) → snap `pos` to the cell centre →
+     `PERFORMING` (emit `action_started`);
+  3. path empty but not arrived (e.g. after `path_blocked`) → route again exactly like
+     `QUEUED` step 2 (it may pick another slot); if that finds no free slot or no path, fail
+     with `"no_free_slot"` or `"no_path"`. No retry counter is stored.
 - `PERFORMING` front action + non-zero `move_intent` → cancel with reason `"moved"`.
 - Cancelling or failing a `ROUTING` action clears `person.path`.
 - Remove the `not_at_slot` failure from T-0006 (walking replaces it) and update its test.

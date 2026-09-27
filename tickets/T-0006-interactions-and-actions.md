@@ -24,6 +24,10 @@ in T-0007.
   `ContentDB.need(id)` which returns null for an unknown id, `NeedsSystem` in
   `sim/systems/needs_system.gd`; `ContentDB` loads needs before the world, so validate
   interaction need ids with `need(id) != null`)
+- Use slots, as merged (T-0001): `WorldObject.slot_count(content) -> int`,
+  `slot_cell(content, index) -> Vector3i` and `slot_facing(content, index) -> Vector2i`
+  (a person's `facing` is a `Vector2`: `person.facing = Vector2(obj.slot_facing(...))`).
+  `world.get_object(id)` returns null for an unknown id.
 - `docs/cookbook.md` → "Add a new kind of content", "Add a Command", "Add a system"
 
 ## Scope
@@ -124,7 +128,9 @@ the current one. `MAX_QUEUE := 6`.
 Build worlds with `from_rows` and `world.add_object()`; place the person on a slot by setting
 `pos` in the test.
 - [ ] Sleep on a bed from energy 20: runs until energy is 100 (≥ min_minutes), then
-  finishes; the event sequence is queued → started → finished.
+  finishes; the event sequence is queued → started → finished. (NeedsSystem runs after
+  ActionSystem in the same minute, so just after the finish energy is a hair under 100:
+  assert `>= 99.9`, and that `action_finished` reports `minutes >= 60`.)
 - [ ] grab_snack takes exactly 5 minutes and adds 25 hunger at the end.
 - [ ] Rates stack with decay: after 60 min of watch_tv, fun changed by (+25 − 6).
 - [ ] Not on a slot → `action_failed` with reason `not_at_slot`; the queue moves on to the next
