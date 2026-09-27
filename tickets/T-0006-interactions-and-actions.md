@@ -38,8 +38,9 @@ Create:
   String)`, called from `ContentDB.load_from()` after the objects, plus
   `static func load_file(db, reader, path)` for one file, exactly like `ObjectLoader`)
 - `tests/fixtures/content_broken/interactions/broken.json` (deliberately bad entries for the
-  validation tests; load it with `InteractionLoader.load_file` into a db that already has
-  `content()`'s needs and objects, or check `ContentDB.load_from` on `content_broken`)
+  validation tests). Load it with `InteractionLoader.load_file` into a **fresh**
+  `ContentDB.load_default()` and a new `ContentReader`, never into the shared `content()`
+  that every test uses.
 - `sim/actions/action.gd`, `sim/actions/interactions.gd`
 - `sim/systems/action_system.gd`
 - `sim/commands/queue_interaction_command.gd`, `sim/commands/cancel_action_command.gd`
