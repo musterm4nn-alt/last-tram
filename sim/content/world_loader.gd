@@ -126,6 +126,7 @@ static func load_objects(db: ContentDB, reader: ContentReader, district: Distric
 	if not root is Dictionary:
 		return
 	var occupied: Dictionary = {}
+	var placed: Array[ObjectPlacement] = []
 	for entry: Variant in reader.read_arr(root, "objects", path):
 		if not entry is Dictionary:
 			reader.error("%s: every object must be an object" % path)
@@ -170,32 +171,33 @@ static func load_objects(db: ContentDB, reader: ContentReader, district: Distric
 				break
 		if bad:
 			continue
-		var footprint_set: Dictionary = {}
-		for foot: Vector3i in footprint:
-			footprint_set[foot] = true
-		var usable := false
-		for slot: UseSlotDef in def.use_slots:
-			var rotated := ObjectDef.rotate_offset(slot.offset, def.size, rotation)
-			var slot_world := world_cell + Vector3i(rotated.x, rotated.y, 0)
-			var slot_local := slot_world - Vector3i(district.origin.x, district.origin.y, 0)
-			if not _local_in_bounds(district, slot_local):
-				continue
-			if not _local_walkable(db, district, slot_local):
-				continue
-			if occupied.has(slot_world) or footprint_set.has(slot_world):
-				continue
-			usable = true
-			break
-		if not usable:
-			reader.error("%s: object '%s' at %s has no usable use slot (every slot is blocked or not walkable)" % [path, def_id, local])
-			continue
 		var placement := ObjectPlacement.new()
 		placement.def_id = def_id
 		placement.cell = world_cell
 		placement.rotation = rotation
-		district.objects.append(placement)
+		placed.append(placement)
 		for foot: Vector3i in footprint:
 			occupied[foot] = true
+	# Second pass, once every object is placed: a later object may cover an earlier one's slots.
+	for placement: ObjectPlacement in placed:
+		if _has_usable_slot(db, district, placement, occupied):
+			district.objects.append(placement)
+		else:
+			var local := placement.cell - Vector3i(district.origin.x, district.origin.y, 0)
+			reader.error("%s: object '%s' at %s has no usable use slot (every slot is blocked or not walkable)" % [path, placement.def_id, local])
+
+
+## True if at least one use slot of `placement` is inside the district, walkable and not
+## covered by any placed object (`occupied` holds every placed footprint cell).
+static func _has_usable_slot(db: ContentDB, district: DistrictDef, placement: ObjectPlacement, occupied: Dictionary) -> bool:
+	var def := db.object_def(placement.def_id)
+	for slot: UseSlotDef in def.use_slots:
+		var rotated := ObjectDef.rotate_offset(slot.offset, def.size, placement.rotation)
+		var slot_world := placement.cell + Vector3i(rotated.x, rotated.y, 0)
+		var slot_local := slot_world - Vector3i(district.origin.x, district.origin.y, 0)
+		if _local_walkable(db, district, slot_local) and not occupied.has(slot_world):
+			return true
+	return false
 
 
 static func _is_num(v: Variant) -> bool:

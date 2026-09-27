@@ -1,13 +1,13 @@
 ---
 id: T-0001
 title: World objects in the sim (data, placement, blocking, saving)
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0022]
 builder: OpenCode / Muse Spark
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -242,3 +242,19 @@ Verification:
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with two reviewer fixes.** Built from the latest `main`. The
+rotation maths, blockers, `can_place` reasons, save/load (including unknown defs) and the
+Haus 12 layout are right, and the tests are strong. The reviewer printed the flat with its
+objects and use slots: fridge in the kitchen, bed in the bedroom (its east slot is a wall,
+allowed), sofa and TV in the living room, spawn room and doors clear, zero content errors.
+Fixed before merging:
+- **Use-slot check was order-dependent.** `WorldLoader.load_objects` checked "at least one
+  usable slot" only against objects listed *earlier*, so a later object could cover an
+  earlier object's only slot unreported. The check now runs in a second pass over the final
+  layout (`_has_usable_slot()`); new fixture `tests/fixtures/objects_covered_slot/` and test
+  `test_a_later_object_covering_the_only_use_slot_is_reported` (failed before the fix).
+- **Two broken-content assertions could not fail:** "not walkable" also matched the fixture's
+  unrelated player-spawn error, and "rotation" was too loose. They now match the exact
+  object messages; a mutation check confirmed the wall assertion fails without the check.
+- Note for later tickets: new games place objects first, so the player's id is no longer 1.

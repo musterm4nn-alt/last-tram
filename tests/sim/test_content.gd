@@ -53,8 +53,8 @@ func test_broken_objects_are_reported_not_crashed() -> void:
 	assert_true(all.contains("unit cardinal"), "bad facing must be reported: " + all)
 	assert_true(all.contains("unknown object"), "placement with an unknown def must be reported: " + all)
 	assert_true(all.contains("overlaps another object"), "overlapping placement must be reported: " + all)
-	assert_true(all.contains("not walkable"), "placement in a wall must be reported: " + all)
-	assert_true(all.contains("rotation"), "bad rotation must be reported: " + all)
+	assert_true(all.contains("object 'crate' at (0, 0, 0) is on 'wall', which is not walkable"), "placement in a wall must be reported: " + all)
+	assert_true(all.contains("rotation 5 must be 0..3"), "bad rotation must be reported: " + all)
 	assert_true(all.contains("no usable use slot"), "placement with no usable slot must be reported: " + all)
 
 

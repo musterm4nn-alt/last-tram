@@ -170,3 +170,16 @@ func test_save_with_unknown_def_id_skips_it_without_errors() -> void:
 	assert_eq(loaded.world.objects.size(), 1)
 	assert_true(loaded.world.get_object(999) == null)
 	loaded.run_minutes(1)
+
+
+func test_a_later_object_covering_the_only_use_slot_is_reported() -> void:
+	var district := DistrictDef.new()
+	district.id = "test"
+	district.levels[0] = PackedStringArray([".....", ".....", ".....", ".....", "....."])
+	district.size = Vector2i(5, 5)
+	var reader := ContentReader.new()
+	WorldLoader.load_objects(content(), reader, district, "res://tests/fixtures/objects_covered_slot")
+	var all := "\n".join(reader.errors)
+	assert_true(all.contains("object 'fridge' at (1, 1, 0) has no usable use slot"), "covered slot not reported: " + all)
+	assert_eq(district.objects.size(), 1, "the unusable fridge is skipped, the sofa stays")
+

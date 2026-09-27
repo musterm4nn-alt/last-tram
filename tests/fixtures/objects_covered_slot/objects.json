@@ -1,0 +1,7 @@
+{
+	"_doc": "T-0001 review: a fridge whose only use slot (the cell below it) is covered by a sofa listed after it. The fridge must be reported. Do not fix.",
+	"objects": [
+		{ "def": "fridge", "cell": [1, 1, 0], "rotation": 0 },
+		{ "def": "sofa", "cell": [1, 2, 0], "rotation": 0 }
+	]
+}
