@@ -17,6 +17,7 @@ tools/run.sh
 
 Or open Godot → **Import** → `project.godot` → press **F5**.
 After cloning on a new machine, run `tools/setup.sh` once (it enables the pre-commit check).
+Claude Code cloud sessions do this automatically at startup (`.claude/settings.json`).
 
 WASD move · Space pause · 1/2/3 speed · mouse wheel zoom · F5 save · F8 load · F3 debug
 
