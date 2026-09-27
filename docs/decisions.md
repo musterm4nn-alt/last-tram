@@ -98,3 +98,11 @@ crime, violence or incapacity) apply to all content, and no pack can change them
 game and the plan. People have six needs (hunger, energy, hygiene, fun, social, comfort), and
 the M1 flat has no toilet object. Saves from before the change load fine: `World.from_dict`
 drops any need the content no longer defines, as it already fills in new ones.
+
+**D22 · Content loading is split by kind; code files stay under 350 lines.** `ContentDB` holds
+the loaded content and its queries. Each kind of content has a static `*Loader` in
+`sim/content/` that reads through a `ContentReader` (which collects problems instead of
+crashing), and `ContentDB.load_from()` calls the loaders in dependency order. Loaders never
+touch `ContentDB`'s private fields; they use helpers like `add_terrain()`. A lint test fails
+any file in `sim/`, `game/` or `tools/` over 350 lines, so big files are split before they get
+hard for builders to work in (T-0022).

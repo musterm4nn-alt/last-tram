@@ -1,13 +1,13 @@
 ---
 id: T-0022
 title: Split ContentDB into per-domain loader files
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: []
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark
+review_rounds: 1
 ---
 
 ## Goal
@@ -182,7 +182,60 @@ func test_code_files_stay_small() -> void
 - [ ] `tools/simrun.sh --days=1` still ends with `LAST_TRAM_SIMRUN: OK`.
 
 ## Implementation notes
+Pure move, no behaviour change. `sim/content/content_db.gd` (621 lines) is now 98 lines:
+fields, `load_from()`, `is_valid()` and the query methods. New files, all in `sim/content/`:
+- `content_reader.gd` (`ContentReader`): the 7 JSON readers as `read_json/read_str/read_num/
+  read_bool/read_arr/read_obj/read_str_array` plus `error()`. Errors accumulate in a plain
+  `Array[String]` buffer (packed arrays are copied when passed between objects, so loader
+  appends to `PackedStringArray` would not stick); `ContentDB.load_from()` drains the buffer
+  into its public `errors: PackedStringArray` at the end, in order.
+- `terrain_loader.gd`, `needs_loader.gd`, `names_loader.gd`, `appearance_loader.gd`,
+  `clothing_loader.gd`, `world_loader.gd`: one `static func load(db, reader, path/dir)` each,
+  called from `load_from()` in the original order. Bodies are line-identical to the moved
+  code except `_str` -> `reader.read_str` etc. and `errors.append` -> `reader.error`.
+- Loaders touch `db`'s lookup tables via `db._terrain_by_id` / `db._need_by_id` directly;
+  precedent exists (`sim_rng.gd`, `world_grid.gd`, `world.gd` do the same). No new ContentDB
+  API; all public fields, queries, `errors`, `is_valid()`, `load_from()` unchanged.
+- `ClothingLoader` reuses `AppearanceLoader.load_color_options` for clothing colours (same
+  file shape) instead of duplicating the parser.
+- New lint test `tests/lint/test_file_lengths.gd`: fails any `.gd` file under `sim/` over
+  350 lines (headroom over the ~300 convention). Decision on the ticket's open question: yes,
+  enforced at 350. Largest sim file is now `appearance_loader.gd` at 171 lines.
+- Updated scope lines in T-0001 (now `object_loader.gd` + `ObjectLoader.load` in the
+  ContentDB spec), T-0006 (now `interaction_loader.gd`) and T-0018 (default player load now
+  in `appearance_loader.gd`). Note: T-0018's branch already implements `_load_default_player`
+  inside `content_db.gd`, so it will need a rebase onto this split on merge.
+- Left stale on purpose (out of scope, needs architect approval): `docs/cookbook.md` "Add a
+  new kind of content" still says to add a `_load_<things>()` function inside ContentDB.
+
+Verified: `tools/check.sh` passes — 69 passed, 0 failed, including the unchanged
+`test_content`, `test_needs`, `test_appearance_content` (broken-content error strings are
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, finished by the architect.** The builder's local `main` was
+out of date: the branch started at 81e9b21 (before T-0018, T-0019, T-0020 and this ticket's
+final spec), so it implemented the earlier *draft* of T-0022. That was a process gap, not a
+builder mistake: AGENTS.md now tells builders to `git pull` before starting. The move itself
+was careful and faithful (every message verbatim), so instead of a redo the architect merged
+`main` into the branch and finished it:
+- **As built, the API differs from the Specification above**; the as-built one is canonical
+  (the cookbook, T-0001 and T-0006 describe it): each loader is
+  `static func load(db: ContentDB, reader: ContentReader, path: String)`; `ContentReader`
+  collects problems in its own `errors` list and `load_from()` copies them into
+  `ContentDB.errors` at the end; the option-list readers live in `AppearanceLoader`
+  (`ClothingLoader` reuses `load_color_options`); the lint is `test_file_lengths.gd`.
+- Ported T-0018's default player (merged after the branch started):
+  `AppearanceLoader.load_default_player()` and `ContentDB.default_player`, loaded last, as
+  before.
+- Loaders no longer write `ContentDB`'s private indexes: new `add_terrain()` / `add_need()`.
+- The size lint now covers `sim/`, `game/` and `tools/` (350 lines); checked that a 361-line
+  file fails it.
+- Added `tests/sim/test_content_reader.gd` (reader defaults and messages, problems reaching
+  `db.errors`, the index helpers). Updated the cookbook recipe (the builder correctly left it
+  for the architect), `docs/architecture.md`, and `docs/decisions.md` (D22).
+- Reverted the builder's edits to T-0001, T-0006 and T-0018 (tickets are the architect's;
+  the draft's note was meant for the architect) and re-pointed T-0001 and T-0006 at the
+  as-built API.

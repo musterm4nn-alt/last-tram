@@ -86,12 +86,19 @@ the pattern of the nearest existing example. Run `tools/check.sh` at the end of 
 
 1. `sim/content/<thing>_def.gd` with typed fields and `##` docs.
 2. `data/<things>.json` (or a folder of files) with a `"_doc"` key.
-3. In `ContentDB`: a dictionary `things: Dictionary[String, ThingDef]`, a `_load_things()`
-   called from `load_from()`, reading every field through `_str/_num/_bool/_arr` and
-   validating every reference (for example, an interaction's `object_tags` must exist on some
-   object).
-4. Tests in `tests/sim/test_content.gd`: the real data loads without errors, and a broken
-   example (in `tests/fixtures/content_broken/`) is reported with a clear message.
+3. `sim/content/<thing>_loader.gd`: a `<Thing>Loader` (RefCounted, static functions only)
+   with `static func load(db: ContentDB, reader: ContentReader, path: String) -> void`.
+   Read every field through the reader (`reader.read_str/read_num/read_bool/read_arr/
+   read_obj/read_str_array`), report problems with
+   `reader.error("<file>: <thing> '<id>': <problem>")`, validate every reference (for
+   example, an interaction's `object_tags` must exist on some object) and store the results
+   in `db`. Copy `sim/content/needs_loader.gd`. Never touch `ContentDB`'s `_private` fields:
+   if it keeps an index, give it a helper like `add_terrain()`.
+4. In `ContentDB`: a field `things: Dictionary[String, ThingDef]`, a query
+   `thing(id) -> ThingDef` (null if unknown), and one line in `load_from()` that calls the
+   loader after everything it references.
+5. Tests: the real data loads without errors (`test_content.gd`), and a broken example in
+   `tests/fixtures/content_broken/` is reported with a clear message.
 
 ### Tell the view something happened (events)
 

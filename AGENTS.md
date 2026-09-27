@@ -55,12 +55,14 @@ Other docs, for when a ticket points you there: [vision](docs/vision.md) ·
 
 ## Builder protocol (implementing a ticket)
 
-1. Pick the ticket you were given. If told "next ready ticket", run `tools/tickets.sh ready`
-   and take the first one. Only tickets with `status: todo` whose `depends_on` are all `done`
+1. **Update first:** `git checkout main && git pull --ff-only`. The architect changes tickets
+   and docs on `main` all the time; an old copy means building from an old ticket. Then pick
+   the ticket you were given. If told "next ready ticket", run `tools/tickets.sh ready` and
+   take the first one. Only tickets with `status: todo` whose `depends_on` are all `done`
    are ready.
-2. `git checkout main && git checkout -b t/NNNN-short-slug`. (If the branch already exists
-   because the ticket came back from review, check it out and read the "Review feedback"
-   section first.)
+2. `git checkout -b t/NNNN-short-slug` (from the updated `main`). (If the branch already
+   exists because the ticket came back from review, check it out and read the "Review
+   feedback" section first.)
 3. In the ticket's front matter set `status: in-progress` and `builder: <tool> / <model>`.
 4. Implement **exactly** the scope. Stay inside the files and areas the ticket names. If you
    must touch something else, explain why in your notes.

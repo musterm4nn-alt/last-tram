@@ -30,8 +30,8 @@ in T-0007.
 Create:
 - `data/interactions/basics.json`
 - `sim/content/interaction_def.gd`, `sim/content/interaction_loader.gd` (`InteractionLoader`,
-  the T-0022 loader pattern: `load_interactions(r: ContentReader, dir: String)`, called from
-  `ContentDB.load_from()` after the objects)
+  the T-0022 loader pattern: `static func load(db: ContentDB, reader: ContentReader, dir:
+  String)`, called from `ContentDB.load_from()` after the objects)
 - `sim/actions/action.gd`, `sim/actions/interactions.gd`
 - `sim/systems/action_system.gd`
 - `sim/commands/queue_interaction_command.gd`, `sim/commands/cancel_action_command.gd`

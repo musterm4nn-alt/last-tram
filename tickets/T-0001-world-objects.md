@@ -127,11 +127,11 @@ facing (1, 0), which is to its left, looking right.
 ### ContentDB
 - `var objects: Dictionary[String, ObjectDef]`, `func object_def(id: String) -> ObjectDef`
   (null if unknown).
-- `ObjectLoader.load_objects(r: ContentReader, dir: String)` is called from `load_from()`
-  **before** `WorldLoader.load_world(...)`. Validate:
+- `ObjectLoader.load(db: ContentDB, reader: ContentReader, dir: String)` is called from
+  `load_from()` **before** `WorldLoader.load(...)`. Validate:
   unique id, size ≥ 1×1, at least one use slot, facing is a unit cardinal vector,
   price ≥ 0, valid colour, `tags` is a list of strings.
-- `DistrictDef.objects: Array[ObjectPlacement]` loaded in `WorldLoader._district()` from the
+- `DistrictDef.objects: Array[ObjectPlacement]` loaded in `WorldLoader.load_district()` from the
   district's optional `objects.json` (`{"objects": [{"def": "fridge", "cell": [x, y, level], "rotation": 0}]}`,
   local coordinates). Validate: known def; rotation 0..3; every footprint cell is inside the
   district and on walkable terrain (glyph lookup in that level's rows); no two placements
