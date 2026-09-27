@@ -1,13 +1,13 @@
 ---
 id: T-0019
 title: Draw people from their appearance and outfit (placeholders)
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0018]
 builder: OpenCode / Muse Spark 1.3 Free
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -103,3 +103,21 @@ Implemented on branch `t/0019-draw-appearance`, stacked on unmerged `t/0018-char
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** The five ticket screenshots match the criteria (re-taken by
+the reviewer), and `tools/check.sh` passes. The reviewer also rendered every hair shape
+(seeds 4, 5, 6, 8, 10, 16, 20, 22, 26, 30) and found three drawing bugs outside the named
+screenshots, fixed before merging:
+- **Long hair covered the face.** `long`/`braids`/`dreadlocks` drew the long back over the
+  head, so about one random person in five looked faceless or turned away, with glasses and
+  beards floating on the hair. The long back is now `_draw_long_back()`, drawn before the
+  head: from the front it frames the face and falls over the shoulders, from behind it runs
+  down the back.
+- The mohawk stripe ran down the middle of the face; it now stays on top of the head.
+- The ponytail hung on the facing side (in front of the face when walking sideways); it now
+  hangs behind the head.
+- Notes corrections: legs are drawn before shoes (so the shoes show; the spec's order would
+  hide them), and seed 2 is a green beanie on a bald head, not green hair.
+- `docs/art.md` now describes the new placeholder people.
+Lesson for future visual tickets: ask for a screenshot of every variant (here, each hair
+shape), not only a few random seeds.

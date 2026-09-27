@@ -38,8 +38,10 @@ static func draw(canvas: CanvasItem, content: ContentDB, appearance: Appearance,
 	# Head, then hair, face and headwear back to front.
 	var head_r: float = 0.24
 	var head := Vector2(0, -height - head_r * 0.75) * px
-	canvas.draw_circle(head, head_r * px, skin)
 	var shape := str(ViewConfig.HAIR_SHAPE.get(appearance.hair_style, "cap"))
+	if shape == "long":
+		_draw_long_back(canvas, head, head_r * px, hair_color)
+	canvas.draw_circle(head, head_r * px, skin)
 	if facing_up:
 		if shape != "none":
 			canvas.draw_circle(head, head_r * px, hair_color)
@@ -72,11 +74,11 @@ static func _draw_hair(canvas: CanvasItem, head: Vector2, r: float, skin: Color,
 			for side: float in [-1.0, 1.0]:
 				canvas.draw_rect(Rect2(head + Vector2(side * r - side_w / 2.0, -r * 0.2), Vector2(side_w, r * 1.4)), hair_color)
 		"long":
-			_fan(canvas, head, r, PI, TAU, hair_color)
-			canvas.draw_rect(Rect2(head + Vector2(-r * 1.1, -r * 0.2), Vector2(r * 2.2, r * 1.8)), hair_color)
+			_fan(canvas, head, r, PI, TAU, hair_color)  # the long back is drawn behind the head
 		"tail":
 			_fan(canvas, head, r, PI, TAU, hair_color)
-			var side := signf(facing.x) if absf(facing.x) > 0.5 else 1.0
+			# The tail hangs behind the head: opposite the facing side (right when facing down).
+			var side := -signf(facing.x) if absf(facing.x) > 0.5 else 1.0
 			canvas.draw_circle(head + Vector2(side * r * 0.95, r * 0.85), r * 0.35, hair_color)
 		"bun":
 			_fan(canvas, head, r, PI, TAU, hair_color)
@@ -85,9 +87,15 @@ static func _draw_hair(canvas: CanvasItem, head: Vector2, r: float, skin: Color,
 			canvas.draw_circle(head + Vector2(0, -r * 0.15), r * 1.45, hair_color)
 			canvas.draw_circle(head + Vector2(0, r * 0.3), r * 0.8, skin)
 		"mohawk":
-			canvas.draw_rect(Rect2(head + Vector2(-r * 0.28, -r * 1.05), Vector2(r * 0.56, r * 1.6)), hair_color)
+			canvas.draw_rect(Rect2(head + Vector2(-r * 0.28, -r * 1.05), Vector2(r * 0.56, r * 0.95)), hair_color)
 		_:
 			_fan(canvas, head, r, PI, TAU, hair_color)
+
+
+## Long hair hanging behind the head: drawn before the head, so from the front it frames
+## the face and falls over the shoulders, and from behind it runs down the back.
+static func _draw_long_back(canvas: CanvasItem, head: Vector2, r: float, hair_color: Color) -> void:
+	canvas.draw_rect(Rect2(head + Vector2(-r * 1.1, -r * 0.2), Vector2(r * 2.2, r * 1.8)), hair_color)
 
 
 ## A darker arc on the lower head, never when facing up (handled by the caller).
