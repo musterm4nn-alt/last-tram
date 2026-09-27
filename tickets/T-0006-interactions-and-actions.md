@@ -35,7 +35,11 @@ Create:
 - `data/interactions/basics.json`
 - `sim/content/interaction_def.gd`, `sim/content/interaction_loader.gd` (`InteractionLoader`,
   the T-0022 loader pattern: `static func load(db: ContentDB, reader: ContentReader, dir:
-  String)`, called from `ContentDB.load_from()` after the objects)
+  String)`, called from `ContentDB.load_from()` after the objects, plus
+  `static func load_file(db, reader, path)` for one file, exactly like `ObjectLoader`)
+- `tests/fixtures/content_broken/interactions/broken.json` (deliberately bad entries for the
+  validation tests; load it with `InteractionLoader.load_file` into a db that already has
+  `content()`'s needs and objects, or check `ContentDB.load_from` on `content_broken`)
 - `sim/actions/action.gd`, `sim/actions/interactions.gd`
 - `sim/systems/action_system.gd`
 - `sim/commands/queue_interaction_command.gd`, `sim/commands/cancel_action_command.gd`
