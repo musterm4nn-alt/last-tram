@@ -67,6 +67,8 @@ static func _spawn_player(sim: Sim, cell: Vector3i) -> Person:
 	person.level = cell.z
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
 	person.prev_pos = person.pos
+	for need_def: NeedDef in sim.content.needs:
+		person.needs[need_def.id] = need_def.start
 	sim.world.add_person(person)
 	sim.world.player_id = person.id
 	sim.emit_event(&"person_spawned", {"person_id": person.id})

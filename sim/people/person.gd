@@ -19,6 +19,8 @@ var facing: Vector2 = Vector2.DOWN
 var move_intent: Vector2 = Vector2.ZERO
 ## Walking speed in cells per game minute. At 1x speed that is cells per real second.
 var walk_speed: float = 4.5
+## Needs 0-100 (100 = fully satisfied). Keys are need ids from data/needs.json.
+var needs: Dictionary[String, float] = {}
 
 ## NOT saved: position before the latest step, only used to draw smooth movement.
 var prev_pos: Vector2 = Vector2.ZERO
@@ -33,6 +35,9 @@ func cell() -> Vector3i:
 
 
 func to_dict() -> Dictionary:
+	var needs_out: Dictionary = {}
+	for key: String in needs:
+		needs_out[key] = needs[key]
 	return {
 		"id": id,
 		"first_name": first_name,
@@ -42,6 +47,7 @@ func to_dict() -> Dictionary:
 		"facing": Ser.vec2(facing),
 		"move_intent": Ser.vec2(move_intent),
 		"walk_speed": walk_speed,
+		"needs": needs_out,
 	}
 
 
@@ -56,4 +62,9 @@ static func from_dict(d: Dictionary) -> Person:
 	p.move_intent = Ser.to_vec2(d["move_intent"])
 	p.walk_speed = float(d["walk_speed"])
 	p.prev_pos = p.pos
+	p.needs = {}
+	var stored: Variant = d.get("needs", {})
+	if stored is Dictionary:
+		for key: Variant in (stored as Dictionary):
+			p.needs[String(key)] = float((stored as Dictionary)[key])
 	return p
