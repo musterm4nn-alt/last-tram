@@ -1,0 +1,8 @@
+{
+	"_doc": "Deliberately broken terrain for tests/sim/test_pathfinding.gd: 'mud' costs less than 1. Do not fix.",
+	"terrains": [
+		{ "id": "void", "name": "Nothing", "glyph": " ", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "none", "path_cost": 1.0, "debug_color": "#000000" },
+		{ "id": "floor", "name": "Floor", "glyph": ".", "walkable": true, "blocks_sight": false, "indoor": true, "surface": "floor", "path_cost": 1.0, "debug_color": "#aa8855" },
+		{ "id": "mud", "name": "Mud", "glyph": "m", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "grass", "path_cost": 0.5, "debug_color": "#665533" }
+	]
+}

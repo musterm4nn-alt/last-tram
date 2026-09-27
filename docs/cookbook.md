@@ -8,7 +8,9 @@ the pattern of the nearest existing example. Run `tools/check.sh` at the end of 
 ### Add a terrain type
 
 1. Add an entry to `data/terrain.json` with a unique `id`, a unique one-character `glyph`, and
-   all fields (`walkable`, `blocks_sight`, `indoor`, `surface`, `debug_color`).
+   all fields (`walkable`, `blocks_sight`, `indoor`, `surface`, `path_cost`, `debug_color`).
+   `path_cost` (at least 1.0) is how much people avoid walking on it: pavements and floors 1,
+   grass 1.5, road and tram tracks 4. Non-walkable terrain uses 1.0.
 2. Use the glyph in a district map.
 3. If it needs a special placeholder look, add a case in
    `game/view2d/placeholder_tiles.gd::_paint`.

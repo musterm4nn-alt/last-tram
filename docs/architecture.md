@@ -50,7 +50,8 @@ sim/                      pure simulation (no Nodes)
   commands/               one file per Command subclass
   content/                ContentDB, ContentReader, one *Loader per kind of content, *Def
                           classes (the only sim code allowed to read files)
-  world/                  World (all entities), WorldGrid (cells, levels, terrain)
+  world/                  World (all entities), WorldGrid (cells, levels, terrain),
+                          WorldObject, Pathfinder (walking routes, `sim.nav`)
   people/                 Person (later: needs, personality, skills, memory...)
   systems/                SimSystem subclasses (MovementSystem, later NeedsSystem...)
   save/                   SaveCodec, SaveMigrations
@@ -83,13 +84,13 @@ art/                      art sources and exports (after the art gate)
 
 ### State: World and entities
 
-- `World` owns everything that changes: `grid`, `people`, and later `objects`, `lots`,
+- `World` owns everything that changes: `grid`, `people`, `objects`, and later `lots`,
   `households`, `vehicles`...
 - **Entities reference each other by integer id**, never by object reference, in anything that
   is saved. Ids come from `World.new_id()` and are unique across all kinds of entity.
-- Derived caches (walkability, pathfinding graphs, spatial indexes) are allowed, but must be
-  rebuildable from saved state and are never saved themselves. `WorldGrid.revision` tells
-  caches when to rebuild.
+- Derived caches (walkability, pathfinding graphs in `sim.nav`, spatial indexes) are allowed,
+  but must be rebuildable from saved state and are never saved themselves.
+  `WorldGrid.revision` tells caches when to rebuild.
 
 ### Systems
 

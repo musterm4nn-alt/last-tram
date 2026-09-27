@@ -6,8 +6,8 @@
   x grows east, y grows south, and level is the floor (0 = street, 1 = first floor,
   −1 = basement or metro).
 - Each cell has a **terrain** (data: `data/terrain.json`): floor, wall, door, window, road,
-  sidewalk, rail, grass, water... Terrain decides `walkable`, `blocks_sight`, `indoor` and
-  `surface`.
+  sidewalk, rail, grass, water... Terrain decides `walkable`, `blocks_sight`, `indoor`,
+  `surface` and `path_cost` (see Navigation).
 - **Walls occupy whole cells** ([decisions D3](../decisions.md)). Doors are walkable but block
   sight; windows block movement but not sight.
 - Outside the grid is void (not walkable).
@@ -63,9 +63,12 @@
 ## Navigation (M1+)
 
 - One `AStarGrid2D` per level, built from walkability (a derived cache, never saved), plus
-  stair links between levels.
-- Pedestrian costs by surface: sidewalk / floor / crossing 1, grass 1.5, road and rail 4.
-  People prefer pavements and zebra crossings but can jaywalk.
+  stair links between levels (M2). Built in T-0003: `sim.nav` (`Pathfinder`) with
+  `find_path(from, to)` (the cells to walk through, excluding the start) and
+  `is_reachable(from, to)`. Diagonal steps are allowed but never cut a blocked corner, and
+  each level's graph is rebuilt lazily when `WorldGrid.revision` changes.
+- Pedestrian costs by surface (terrain `path_cost`): sidewalk / floor / crossing 1,
+  grass 1.5, road and rail 4. People prefer pavements and zebra crossings but can jaywalk.
 - Private lots are excluded from a person's paths unless they're allowed in (from M2).
   Burglars ignore that (M4).
 
