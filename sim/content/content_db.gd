@@ -12,6 +12,7 @@ extends RefCounted
 const DATA_ROOT: String = "res://data"
 
 var terrains: Array[TerrainDef] = []
+var needs: Array[NeedDef] = []
 var districts: Dictionary[String, DistrictDef] = {}
 ## District ids in the order they are stamped into the world.
 var district_order: Array[String] = []
@@ -20,6 +21,7 @@ var errors: PackedStringArray = []
 
 var _terrain_by_id: Dictionary[String, int] = {}
 var _terrain_by_glyph: Dictionary[String, int] = {}
+var _need_by_id: Dictionary[String, NeedDef] = {}
 
 
 static func load_default() -> ContentDB:
@@ -30,6 +32,7 @@ static func load_default() -> ContentDB:
 
 func load_from(root: String) -> void:
 	_load_terrains(root.path_join("terrain.json"))
+	_load_needs(root.path_join("needs.json"))
 	_load_world(root.path_join("world"))
 
 
@@ -51,6 +54,13 @@ func terrain_index_for_glyph(glyph: String) -> int:
 
 func terrain(index: int) -> TerrainDef:
 	return terrains[index]
+
+
+## The NeedDef with the given id, or null.
+func need(need_id: String) -> NeedDef:
+	if _need_by_id.has(need_id):
+		return _need_by_id[need_id]
+	return null
 
 
 ## The place containing a world cell, or null.
@@ -98,6 +108,41 @@ func _load_terrains(path: String) -> void:
 		terrains.append(t)
 	if terrain_index("void") < 0:
 		errors.append("%s: a terrain with id 'void' is required (used outside the map)" % path)
+
+
+# --- Needs -----------------------------------------------------------------------------
+
+func _load_needs(path: String) -> void:
+	var root: Variant = _read_json(path)
+	if not root is Dictionary:
+		return
+	for entry: Variant in _arr(root, "needs", path):
+		if not entry is Dictionary:
+			errors.append("%s: every need must be an object" % path)
+			continue
+		var d: Dictionary = entry
+		var n := NeedDef.new()
+		n.id = _str(d, "id", path)
+		var ctx := "%s: need '%s'" % [path, n.id]
+		n.name = _str(d, "name", ctx)
+		n.decay_per_hour = _num(d, "decay_per_hour", ctx)
+		n.start = _num(d, "start", ctx)
+		n.urgency_weight = _num(d, "urgency_weight", ctx)
+		n.critical_below = _num(d, "critical_below", ctx)
+		if n.id.is_empty():
+			errors.append("%s: need id must not be empty" % path)
+		if _need_by_id.has(n.id):
+			errors.append("%s: duplicate need id" % ctx)
+		if n.decay_per_hour < 0.0:
+			errors.append("%s: 'decay_per_hour' must be >= 0" % ctx)
+		if n.start < 0.0 or n.start > 100.0:
+			errors.append("%s: 'start' must be within 0..100" % ctx)
+		if n.critical_below < 0.0 or n.critical_below > 100.0:
+			errors.append("%s: 'critical_below' must be within 0..100" % ctx)
+		if n.urgency_weight <= 0.0:
+			errors.append("%s: 'urgency_weight' must be > 0" % ctx)
+		_need_by_id[n.id] = n
+		needs.append(n)
 
 
 # --- World & districts -----------------------------------------------------------------

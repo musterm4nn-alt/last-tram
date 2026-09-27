@@ -46,6 +46,11 @@ func _process(_delta: float) -> void:
 		lines.append("  pos (%.2f, %.2f)  cell (%d, %d, %d)" % [player.pos.x, player.pos.y, cell.x, cell.y, cell.z])
 		lines.append("  terrain %s   intent (%.2f, %.2f)" % [
 			sim.world.grid.terrain_def_at(cell).id, player.move_intent.x, player.move_intent.y])
+		var need_parts: PackedStringArray = []
+		for need_def: NeedDef in sim.content.needs:
+			need_parts.append("%s %.0f" % [need_def.id, float(player.needs.get(need_def.id, need_def.start))])
+		var mood_value: float = Mood.compute(player, sim.content)
+		lines.append("  needs %s   mood %.0f (%s)" % [" ".join(need_parts), mood_value, Mood.label(mood_value)])
 	lines.append("recent events:")
 	var recent := sim.events.recent
 	for i: int in range(maxi(0, recent.size() - 6), recent.size()):

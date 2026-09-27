@@ -43,9 +43,13 @@ func _initialize() -> void:
 func _report(sim: Sim) -> void:
 	var player := sim.world.player()
 	var place: PlaceDef = sim.content.place_at(player.cell())
-	print("[%s] people %d | player (%.1f, %.1f) %s" % [
+	var need_parts: PackedStringArray = []
+	for need_def: NeedDef in sim.content.needs:
+		need_parts.append("%s=%.1f" % [need_def.id, float(player.needs.get(need_def.id, need_def.start))])
+	print("[%s] people %d | player (%.1f, %.1f) %s | needs %s | mood %.1f (%s)" % [
 		sim.clock.format(), sim.world.people.size(), player.pos.x, player.pos.y,
-		place.name if place != null else "-"])
+		place.name if place != null else "-", " ".join(need_parts),
+		Mood.compute(player, sim.content), Mood.label(Mood.compute(player, sim.content))])
 
 
 func _parse_args() -> Dictionary:

@@ -30,6 +30,7 @@ func _init(p_content: ContentDB, p_world: World, p_clock: SimClock, p_rng: SimRn
 static func default_systems() -> Array[SimSystem]:
 	return [
 		MovementSystem.new(),
+		NeedsSystem.new(),
 	]
 
 

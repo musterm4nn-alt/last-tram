@@ -54,5 +54,9 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 	world._next_id = int(d["next_id"])
 	world.player_id = int(d["player_id"])
 	for entry: Variant in d["people"]:
-		world.add_person(Person.from_dict(entry))
+		var person := Person.from_dict(entry)
+		for need_def: NeedDef in content.needs:
+			if not person.needs.has(need_def.id):
+				person.needs[need_def.id] = need_def.start
+		world.add_person(person)
 	return world
