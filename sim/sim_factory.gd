@@ -14,11 +14,8 @@ extends RefCounted
 ## New games start on Monday at 08:00.
 const START_TICK: int = 8 * SimClock.MINUTES_PER_HOUR * SimClock.STEPS_PER_GAME_MINUTE
 
-const PLAYER_FIRST_NAME: String = "Alex"
-const PLAYER_LAST_NAME: String = "Novak"
 
-
-static func new_game(content: ContentDB, seed_value: int) -> Sim:
+static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = null) -> Sim:
 	var world_size := Vector2i.ZERO
 	for district_id: String in content.district_order:
 		var district: DistrictDef = content.districts[district_id]
@@ -30,7 +27,7 @@ static func new_game(content: ContentDB, seed_value: int) -> Sim:
 			grid.stamp_rows(level, district.origin, district.levels[level])
 	var sim := _make_sim(content, grid, seed_value)
 	var start: DistrictDef = content.districts[content.start_district]
-	_spawn_player(sim, start.player_spawn)
+	_spawn_player(sim, start.player_spawn, spec if spec != null else CharacterSpec.default_player(content))
 	return sim
 
 
@@ -49,7 +46,7 @@ static func from_rows(content: ContentDB, rows: PackedStringArray, seed_value: i
 	grid.stamp_rows(0, Vector2i.ZERO, clean)
 	var sim := _make_sim(content, grid, seed_value)
 	if spawn.x >= 0:
-		_spawn_player(sim, spawn)
+		_spawn_player(sim, spawn, CharacterSpec.default_player(content))
 	return sim
 
 
@@ -59,11 +56,10 @@ static func _make_sim(content: ContentDB, grid: WorldGrid, seed_value: int) -> S
 	return Sim.new(content, World.new(content, grid), clock, SimRng.new(seed_value))
 
 
-static func _spawn_player(sim: Sim, cell: Vector3i) -> Person:
+static func _spawn_player(sim: Sim, cell: Vector3i, spec: CharacterSpec) -> Person:
 	var person := Person.new()
 	person.id = sim.world.new_id()
-	person.first_name = PLAYER_FIRST_NAME
-	person.last_name = PLAYER_LAST_NAME
+	spec.apply_to(person)
 	person.level = cell.z
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
 	person.prev_pos = person.pos

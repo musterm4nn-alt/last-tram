@@ -21,10 +21,45 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 	var d := data.duplicate(true)
 	while version < SaveCodec.SAVE_VERSION:
 		match version:
-			# 1: d = _v1_to_v2(d)
+			1:
+				d = _v1_to_v2(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v1 people have no identity, appearance or outfit: everyone gets the default look.
+static func _v1_to_v2(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	var world: Dictionary = d["world"]
+	if not world.get("people") is Array:
+		return d
+	for person: Variant in world["people"]:
+		if not person is Dictionary:
+			continue
+		var p: Dictionary = person
+		p["nickname"] = ""
+		p["gender"] = "nonbinary"
+		p["pronouns"] = "they"
+		p["age_years"] = 27
+		p["appearance"] = {
+			"skin_tone": "skin_04",
+			"height_cm": 174,
+			"build": "average",
+			"hair_style": "short",
+			"hair_colour": "dark_brown",
+			"eye_colour": "hazel",
+			"facial_hair": "none",
+			"features": [],
+		}
+		p["outfit"] = {
+			"top": {"item": "t_shirt", "colour": "black"},
+			"bottom": {"item": "jeans", "colour": "denim"},
+			"feet": {"item": "trainers", "colour": "white"},
+			"outer": {"item": "hoodie", "colour": "grey"},
+		}
 	return d

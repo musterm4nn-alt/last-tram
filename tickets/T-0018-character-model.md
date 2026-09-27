@@ -1,12 +1,12 @@
 ---
 id: T-0018
 title: Identity, appearance and outfit on every person; CharacterSpec; save v2
-status: todo
+status: review
 milestone: M1
 size: L
 owner: builder
 depends_on: [T-0017]
-builder:
+builder: OpenCode / Muse Spark 1.3 Free
 review_rounds: 0
 ---
 
@@ -164,6 +164,30 @@ Save all of them in `to_dict()` / `from_dict()` (keys: `nickname`, `gender`, `pr
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Implemented on branch `t/0018-character-model`.
+- New: `sim/people/appearance.gd`, `worn_item.gd`, `outfit.gd`, `character_spec.gd`
+  (all `RefCounted`, typed, `validate`/`copy`/`to_dict`/`from_dict`/`random` with the
+  deterministic draw orders from the spec; `random` takes a caller-supplied
+  `RandomNumberGenerator` so sim purity holds).
+- New: `data/appearance/default_player.json` (Alex Novak, nonbinary/they, 27, exactly the
+  values in the spec).
+- Changed: `Person` (+ nickname/gender/pronouns/age_years/appearance/outfit,
+  `display_name()`, saved under the specified keys); `SimFactory.new_game(content, seed,
+  spec=null)` / `_spawn_player(sim, cell, spec)` via `apply_to`, `from_rows` uses the
+  default player, `PLAYER_*` constants removed; `ContentDB.default_player: Dictionary`
+  loaded after the world and validated via `CharacterSpec.from_dict(...).validate(self)`
+  with the path prefixed; `SAVE_VERSION = 2` with `_v1_to_v2` writing the default
+  player's values as literals; `Session.new_game(seed, spec=null)`; debug overlay shows
+  `display_name()` + age.
+- One deviation from the spec text: `ContentDB.default_player` is a `Dictionary`
+  (as the spec's ContentDB line says), so `CharacterSpec.default_player(content)` parses
+  it with `from_dict` on each call.
+- Verified: `tools/check.sh` → 81 passed, 0 failed (includes the 200-seed random-spec
+  validity/determinism tests, all listed `validate` rejections, deep-copy, save/load
+  round-trip, v1-fixture migration → valid appearance/outfit, v2 fixture loads).
+  Fixture generated with `tools/make_fixture_save.sh v2_basic`; `v1_basic.json`
+  untouched.
+- Screenshot: no visible change (data/systems only; drawing is T-0019), so none taken.
 
 ## Questions
 

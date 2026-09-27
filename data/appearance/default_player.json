@@ -1,0 +1,25 @@
+{
+	"_doc": "The default player (Alex Novak) used when no CharacterSpec is given and as the source for the v1→v2 save migration. This is the CharacterSpec.to_dict() shape; saves store ids, so ids must never be renamed.",
+	"first_name": "Alex",
+	"last_name": "Novak",
+	"nickname": "",
+	"gender": "nonbinary",
+	"pronouns": "they",
+	"age_years": 27,
+	"appearance": {
+		"skin_tone": "skin_04",
+		"height_cm": 174,
+		"build": "average",
+		"hair_style": "short",
+		"hair_colour": "dark_brown",
+		"eye_colour": "hazel",
+		"facial_hair": "none",
+		"features": []
+	},
+	"outfit": {
+		"top": {"item": "t_shirt", "colour": "black"},
+		"bottom": {"item": "jeans", "colour": "denim"},
+		"feet": {"item": "trainers", "colour": "white"},
+		"outer": {"item": "hoodie", "colour": "grey"}
+	}
+}

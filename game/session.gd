@@ -42,8 +42,8 @@ func _ready() -> void:
 		push_error("Content error: " + error)
 
 
-func new_game(seed_value: int) -> void:
-	sim = SimFactory.new_game(content, seed_value)
+func new_game(seed_value: int, spec: CharacterSpec = null) -> void:
+	sim = SimFactory.new_game(content, seed_value, spec)
 	_after_load()
 
 
