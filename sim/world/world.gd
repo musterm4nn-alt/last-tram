@@ -58,5 +58,9 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		for need_def: NeedDef in content.needs:
 			if not person.needs.has(need_def.id):
 				person.needs[need_def.id] = need_def.start
+		# Needs the game no longer has (e.g. bladder, removed after v2 saves existed) are dropped.
+		for need_id: String in person.needs.keys():
+			if content.need(need_id) == null:
+				person.needs.erase(need_id)
 		world.add_person(person)
 	return world

@@ -23,14 +23,15 @@ interactions.
 |---|---|---|
 | Hunger | 6 | eating (fridge snack, cooking, Döner, café) |
 | Energy | 4.5 | sleeping, napping, coffee (small) |
-| Bladder | 12 | toilet (or, grittily, a Hinterhof corner) |
 | Hygiene | 4 | shower, washing hands, sink |
 | Fun | 6 | TV, games, bar, park, gossip, drugs (M4) |
 | Social | 4 | talking, drinking together, calls |
 | Comfort | 8 while standing, recovers when seated | sofa, bed, chairs, benches |
 
-At 0, bad things happen: pass out (energy), wet yourself (bladder), faint or health loss
-(hunger), and social consequences (hygiene).
+At 0, bad things happen: pass out (energy), faint or health loss (hunger), and social
+consequences (hygiene).
+
+There is **no bladder need** and no toilet gameplay: the owner's call (D21). Don't add one.
 
 ## Mood
 

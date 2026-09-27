@@ -11,7 +11,7 @@ review_rounds: 0
 ---
 
 ## Goal
-The player sees their seven needs as coloured bars with a mood label, bottom-left of the
+The player sees their six needs as coloured bars with a mood label, bottom-left of the
 screen, above the key hints. (The current action and queue come with T-0010's action panel;
 trend arrows come once needs can go up, after T-0006.)
 
@@ -91,7 +91,7 @@ add_child(needs_panel)
 `build(content())` directly; don't add them to the tree; read `_bars`, `_fills` and
 `_mood_label` directly, like `test_name_screen.gd` does; `free()` the panel at the end):
 - [ ] `test_one_bar_per_need_in_data_order`: `_bars.keys()` equals the ids of
-  `content().needs`, in order (7 bars).
+  `content().needs`, in order (6 bars).
 - [ ] `test_bars_show_values_and_colours`: a `Person.new()` with every need at 80, then hunger
   12 and energy 55: after `show_person`, hunger's bar value is 12 and its fill is
   `LOW_COLOR`, energy's is 55 and `OK_COLOR`, fun's is 80 and `GOOD_COLOR`.
@@ -99,10 +99,13 @@ add_child(needs_panel)
 - [ ] `test_bar_color_thresholds`: `bar_color` gives GOOD at 60 and 100, OK at 59.9 and 30,
   LOW at 29.9 and 0.
 - [ ] `tools/screenshot.sh out/t0008_start.png` shows the panel bottom-left, above the key
-  hints, not overlapping them: seven green bars and "Mood: Fine".
-- [ ] `tools/screenshot.sh out/t0008_4h.png --advance=240` (4 game hours later): bladder is
-  red, hunger, fun and comfort are yellow, energy, hygiene and social are green, and the
-  label says "Mood: Okay". Open both PNGs and describe them in your notes.
+  hints, not overlapping them: six green bars and "Mood: Fine".
+- [ ] `tools/screenshot.sh out/t0008_4h.png --advance=240` (4 game hours later): hunger, fun
+  and comfort are yellow, energy, hygiene and social are green, and the label says
+  "Mood: Okay".
+- [ ] `tools/screenshot.sh out/t0008_8h.png --advance=480`: comfort is red, the other five
+  are yellow, and the label says "Mood: Uneasy". Open all three PNGs and describe them in
+  your notes.
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes

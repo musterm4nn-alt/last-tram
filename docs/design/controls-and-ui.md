@@ -49,7 +49,7 @@ Keys are physical positions, so they work on QWERTZ.
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Needs panel:** 7 bars with colour and trend arrows, plus a mood face; hover a bar for the
+- **Needs panel:** one bar per need (six) with colour and trend arrows, plus a mood face; hover a bar for the
   moodlets.
 - **Action queue:** the current action with progress, then queued actions, each cancellable.
 - **Interaction menu:** a list at the cursor (or above the target in direct mode), with

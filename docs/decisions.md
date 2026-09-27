@@ -93,3 +93,8 @@ An "Adult content packs" setting (off by default, 18+ confirmation) lets the own
 replace that presentation. Engine-enforced rules (adults only, mutual consent, never tied to
 crime, violence or incapacity) apply to all content, and no pack can change them. Details:
 `docs/design/content-packs.md`.
+
+**D21 · No bladder need.** The owner removed the bladder need and toilet gameplay from the
+game and the plan. People have six needs (hunger, energy, hygiene, fun, social, comfort), and
+the M1 flat has no toilet object. Saves from before the change load fine: `World.from_dict`
+drops any need the content no longer defines, as it already fills in new ones.

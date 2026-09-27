@@ -3,7 +3,6 @@
 	"needs": [
 		{ "id": "hunger", "name": "Hunger", "decay_per_hour": 6.0, "start": 80.0, "urgency_weight": 1.2, "critical_below": 15.0 },
 		{ "id": "energy", "name": "Energy", "decay_per_hour": 4.5, "start": 80.0, "urgency_weight": 1.0, "critical_below": 15.0 },
-		{ "id": "bladder", "name": "Bladder", "decay_per_hour": 12.0, "start": 70.0, "urgency_weight": 1.5, "critical_below": 15.0 },
 		{ "id": "hygiene", "name": "Hygiene", "decay_per_hour": 4.0, "start": 80.0, "urgency_weight": 1.0, "critical_below": 15.0 },
 		{ "id": "fun", "name": "Fun", "decay_per_hour": 6.0, "start": 80.0, "urgency_weight": 1.0, "critical_below": 15.0 },
 		{ "id": "social", "name": "Social", "decay_per_hour": 4.0, "start": 80.0, "urgency_weight": 1.0, "critical_below": 15.0 },
