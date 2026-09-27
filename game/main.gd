@@ -7,14 +7,21 @@ extends Node2D
 ##   --load=PATH         load a save file instead of starting a new game
 ##   --advance=N         run N game minutes before showing anything
 ##   --walk=X,Y          hold a walking direction, e.g. --walk=1,0 walks east
-##   --debug             start with the F3 debug overlay open
+##   --debug             start with the F3 debug overlay open (once a game loads)
 ##   --zoom=N            start at zoom level N (index into ViewConfig.ZOOM_LEVELS, 0 = widest)
 ##   --screenshot=PATH   save a PNG after --frames frames, then quit
 ##   --frames=N          frames to wait before the screenshot (default 20)
+##   --quickstart        skip the menu and start straight into a new game
+##   --menu              force the menu even with quickstart options
+##   --screen=name       open the name screen directly (with the menu)
 
 var _controller: PlayerController
 var _camera: CameraRig2D
+var _hud: Hud
 var _debug_overlay: DebugOverlay
+var _menu: MainMenu
+var _name_screen: NameScreen
+var _options: LaunchOptions
 var _screenshot_path: String = ""
 var _screenshot_frames: int = 20
 var _frame: int = 0
@@ -26,36 +33,35 @@ func _ready() -> void:
 	add_child(PeopleView2D.new())
 	_camera = CameraRig2D.new()
 	add_child(_camera)
-	add_child(Hud.new())
+	_hud = Hud.new()
+	_hud.visible = false
+	add_child(_hud)
 	_debug_overlay = DebugOverlay.new()
 	add_child(_debug_overlay)
 	_controller = PlayerController.new()
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
+	Session.game_loaded.connect(_on_game_loaded)
 
-	var args := _parse_args()
-	if args.has("load") and Session.load_from(String(args["load"])):
-		pass
+	_options = LaunchOptions.parse(OS.get_cmdline_user_args())
+	if _options.zoom >= 0:
+		_camera.set_zoom_index(_options.zoom)
+	if not _options.screenshot_path.is_empty():
+		_screenshot_path = _options.screenshot_path
+		_screenshot_frames = _options.screenshot_frames
+	if _options.skip_menu():
+		_start_quick()
 	else:
-		var spec: CharacterSpec = null
-		if args.has("random-character"):
-			var character_rng := RandomNumberGenerator.new()
-			character_rng.seed = int(args.get("seed", "1"))
-			spec = CharacterSpec.random(Session.content, character_rng)
-		Session.new_game(int(args.get("seed", "1")), spec)
-	if args.has("advance"):
-		Session.advance_minutes(int(args["advance"]))
-	if args.has("walk"):
-		var parts := String(args["walk"]).split(",")
-		if parts.size() == 2:
-			_controller.forced_direction = Vector2(parts[0].to_float(), parts[1].to_float())
-	if args.has("debug"):
-		_debug_overlay.visible = true
-	if args.has("zoom"):
-		_camera.set_zoom_index(int(args["zoom"]))
-	if args.has("screenshot"):
-		_screenshot_path = String(args["screenshot"])
-		_screenshot_frames = int(args.get("frames", "20"))
+		_menu = MainMenu.new()
+		add_child(_menu)
+		_menu.new_game_requested.connect(_show_name_screen)
+		_name_screen = NameScreen.new()
+		_name_screen.visible = false
+		add_child(_name_screen)
+		_name_screen.back_pressed.connect(_show_menu)
+		_name_screen.start_pressed.connect(_start_named_game)
+		if _options.screen == "name":
+			_show_name_screen()
 
 
 func _process(_delta: float) -> void:
@@ -85,15 +91,46 @@ func _unhandled_input(event: InputEvent) -> void:
 		Session.quickload()
 
 
-## "--seed=5 --debug" -> {"seed": "5", "debug": ""}
-func _parse_args() -> Dictionary:
-	var out: Dictionary = {}
-	for arg: String in OS.get_cmdline_user_args():
-		if not arg.begins_with("--"):
-			continue
-		var eq := arg.find("=")
-		if eq < 0:
-			out[arg.substr(2)] = ""
-		else:
-			out[arg.substr(2, eq - 2)] = arg.substr(eq + 1)
-	return out
+## "--seed=5 --debug" -> quickstart without the menu; nothing -> main menu.
+func _start_quick() -> void:
+	if not _options.load_path.is_empty() and Session.load_from(_options.load_path):
+		pass
+	else:
+		var spec: CharacterSpec = null
+		if _options.random_character:
+			var character_rng := RandomNumberGenerator.new()
+			character_rng.seed = _options.seed_value
+			spec = CharacterSpec.random(Session.content, character_rng)
+		Session.new_game(_options.seed_value, spec)
+	if _options.advance_minutes > 0:
+		Session.advance_minutes(_options.advance_minutes)
+	if _options.walk != Vector2.ZERO:
+		_controller.forced_direction = _options.walk
+
+
+func _show_name_screen() -> void:
+	_menu.visible = false
+	_name_screen.visible = true
+	_name_screen.focus_first_field()
+
+
+func _show_menu() -> void:
+	_name_screen.visible = false
+	_menu.visible = true
+	_menu.focus_new_game()
+
+
+func _start_named_game(spec: CharacterSpec) -> void:
+	Session.new_game(randi(), spec)
+
+
+func _on_game_loaded() -> void:
+	_hud.visible = true
+	if _options != null and _options.debug:
+		_debug_overlay.visible = true
+	if is_instance_valid(_menu):
+		_menu.queue_free()
+		_menu = null
+	if is_instance_valid(_name_screen):
+		_name_screen.queue_free()
+		_name_screen = null

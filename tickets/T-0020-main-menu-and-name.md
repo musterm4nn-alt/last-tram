@@ -1,13 +1,13 @@
 ---
 id: T-0020
 title: Main menu, launch options, and choosing your name
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0019]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark 1.3 Free
+review_rounds: 1
 ---
 
 ## Goal
@@ -84,7 +84,62 @@ menu, anything in `sim/`.
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Implemented on branch `t/0020-main-menu-and-name`, stacked on unmerged
+`t/0019-draw-appearance` (rebase onto main once the stack merges).
+- New: `game/launch_options.gd` (`LaunchOptions.parse(PackedStringArray)`, `skip_menu()`
+  exactly per spec: `menu` forces the menu; otherwise any of quickstart, screenshot,
+  load, advance > 0, walk, random-character, seed_given skips it).
+- New: `game/ui/main_menu.gd` (full-screen dark `LAST TRAM` + subtitle + New game /
+  Continue / Quit; Continue disabled when no quicksave exists; closes itself on
+  `Session.game_loaded`) and `game/ui/name_screen.gd` (First/Last/Nickname fields
+  prefilled with Alex Novak, Random name via `CharacterSpec.random` with a fresh RNG,
+  error label with the name messages from `CharacterSpec.validate()`, Start disabled
+  while invalid, Back; Enter = Start, Esc = Back; Start emits the typed names on the
+  default spec and main starts `Session.new_game(randi(), spec)`).
+- Changed: `game/main.gd` parses once into `LaunchOptions`, keeps today's quickstart
+  behaviour, otherwise shows the menu (and the name screen directly for
+  `--screen=name`); HUD and debug overlay stay hidden until `Session.game_loaded`.
+  Option docs at the top updated. Removed the old `_parse_args`.
+- Tests: `tests/game/test_launch_options.gd` (all criteria cases) and
+  `tests/game/test_name_screen.gd` (prefill starts, bad name disables + errors, empty
+  nickname fine). Note: the screen test calls `_ready()` directly and seeds
+  `Session.content` because the Session autoload isn't readied before tests run.
+- Verified: `tools/check.sh` → 92 passed, 0 failed.
+- Screenshots (all opened and inspected):
+  - `out/t0020_menu.png` (`--menu`): dark screen, LAST TRAM title, subtitle, New game
+    (focused) / greyed-out Continue / Quit. Matches.
+  - `out/t0020_name.png` (`--menu --screen=name`): "Your character" panel, First name
+    Alex / Last name Novak / empty Nickname, Random name, Start + Back. Matches.
+  - `out/t0020_game.png` (no options): straight into the flat with HUD, no menu.
+    Matches (screenshot implies `--screenshot`, which skips the menu, so tools are
+    unaffected).
+  - `out/t0020_debug.png` (`--debug`): overlay shows `player #1 Alex (27)` — the
+    quickstart default player is still Alex. Matches.
+- Manual check: I cannot click in this environment, so typing a name + Start + F3 is
+  NOT verified by me — screenshots prove the menu and name screen render and the
+  Start-enabling logic is unit-tested, but the reviewer must click through `tools/run.sh`.
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** Launch options, `skip_menu()`, the menu, Continue and
+the tools' quick start all work as specified. The reviewer drove the real game with
+simulated mouse and keyboard (xdotool on Xvfb): New game, typing a name, Start, F3 shows
+the typed name; F5, relaunch, Continue loads it; Random name fills valid names. No script
+errors, including gameplay keys pressed on the menu. Reviewer fixes, made before merging:
+- **The name fields start empty** (the owner's intent: the player names their character;
+  the ticket was clarified after this branch started, so this is not a builder mistake).
+  An untouched form shows a grey hint ("Type a first and last name, or press Random
+  name.") instead of red errors; typed invalid names still show red errors.
+- Start is disabled while the spec has *any* problem (the spec), not only name problems.
+- The hidden name screen reacted to Enter/Esc while the menu was showing (Enter could
+  start a game as the stand-in without ever seeing the name screen); it now ignores input
+  while hidden.
+- Keyboard flow: the cursor starts in First name (`NameScreen.focus_first_field()`); Esc
+  goes back even while a field is being edited (handled in `_input`); fields keep editing
+  after Enter on an unfinished form (`keep_editing_on_text_submit`); back on the menu,
+  New game is selected again (`MainMenu.focus_new_game()`).
+- Tests: `test_name_screen.gd` rewritten for the empty start, typed names starting with the
+  default look, a hidden screen ignoring Enter, and Esc; mutation checks confirmed they
+  fail without the fixes.
