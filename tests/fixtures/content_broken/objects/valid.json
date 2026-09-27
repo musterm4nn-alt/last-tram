@@ -1,0 +1,32 @@
+{
+	"_doc": "Deliberately broken content for tests. Do not fix. One valid object plus broken ones.",
+	"objects": [
+		{
+			"id": "crate",
+			"name": "Crate",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 1000,
+			"debug_color": "#aaaaaa"
+		}
+	]
+}

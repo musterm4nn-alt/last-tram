@@ -1,0 +1,41 @@
+{
+	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Kitchen (NE, tiled): fridge. Bedroom (SE, tiled): double bed. Living room (SW, wood): sofa and TV. Door cells and their neighbours are kept free; the NW entrance room stays empty so the spawn (50,26) is clear.",
+	"objects": [
+		{
+			"def": "fridge",
+			"cell": [
+				59,
+				24,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				58,
+				32,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				48,
+				32,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				52,
+				30,
+				0
+			],
+			"rotation": 0
+		}
+	]
+}

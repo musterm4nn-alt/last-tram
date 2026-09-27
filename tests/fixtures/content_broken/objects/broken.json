@@ -1,0 +1,156 @@
+{
+	"_doc": "Deliberately broken objects. Do not fix.",
+	"objects": [
+		{
+			"id": "crate",
+			"name": "Duplicate crate",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 1000,
+			"debug_color": "#bbbbbb"
+		},
+		{
+			"id": "noslots",
+			"name": "No slots",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [],
+			"price": 1000,
+			"debug_color": "#cccccc"
+		},
+		{
+			"id": "badfacing",
+			"name": "Bad facing",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						1,
+						1
+					]
+				}
+			],
+			"price": 1000,
+			"debug_color": "#dddddd"
+		},
+		{
+			"id": "badsize",
+			"name": "Bad size",
+			"size": [
+				0,
+				0
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 1000,
+			"debug_color": "#eeeeee"
+		},
+		{
+			"id": "badcolor",
+			"name": "Bad colour",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 1000,
+			"debug_color": "not-a-colour"
+		},
+		{
+			"id": "badprice",
+			"name": "Bad price",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"crate"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": -5,
+			"debug_color": "#ffffff"
+		}
+	]
+}

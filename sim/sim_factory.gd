@@ -26,6 +26,7 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 		for level: int in district.levels:
 			grid.stamp_rows(level, district.origin, district.levels[level])
 	var sim := _make_sim(content, grid, seed_value)
+	_place_district_objects(sim)
 	var start: DistrictDef = content.districts[content.start_district]
 	_spawn_player(sim, start.player_spawn, spec if spec != null else CharacterSpec.default_player(content))
 	return sim
@@ -54,6 +55,20 @@ static func _make_sim(content: ContentDB, grid: WorldGrid, seed_value: int) -> S
 	var clock := SimClock.new()
 	clock.tick = START_TICK
 	return Sim.new(content, World.new(content, grid), clock, SimRng.new(seed_value))
+
+
+## Places every district's authored objects after terrain is stamped.
+static func _place_district_objects(sim: Sim) -> void:
+	for district_id: String in sim.content.district_order:
+		var district: DistrictDef = sim.content.districts[district_id]
+		for placement: ObjectPlacement in district.objects:
+			var obj := WorldObject.new()
+			obj.id = sim.world.new_id()
+			obj.def_id = placement.def_id
+			obj.origin = placement.cell
+			obj.rotation = placement.rotation
+			if sim.world.add_object(obj):
+				sim.emit_event(&"object_added", {"object_id": obj.id})
 
 
 static func _spawn_player(sim: Sim, cell: Vector3i, spec: CharacterSpec) -> Person:

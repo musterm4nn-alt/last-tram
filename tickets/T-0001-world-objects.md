@@ -1,13 +1,13 @@
 ---
 id: T-0001
 title: World objects in the sim (data, placement, blocking, saving)
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0022]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark
+review_rounds: 1
 ---
 
 ## Goal
@@ -192,6 +192,69 @@ in the living room. Keep door cells and their neighbours free.
 
 ## Implementation notes
 
+Implemented world objects end-to-end in the sim (no drawing, no use, no pathfinding).
+
+New files:
+- `sim/content/use_slot_def.gd` (UseSlotDef), `sim/content/object_def.gd`
+  (ObjectDef with exact rotation math + `footprint()`), `sim/content/object_placement.gd`
+  (authored placement, world coords), `sim/world/world_object.gd` (runtime entity,
+  `cells()`/`slot_cell()`/`slot_facing()`/`to_dict()`/`from_dict()`),
+  `sim/content/object_loader.gd` (loads every sorted `.json` in `data/objects/`).
+- `data/objects/furniture.json`: fridge (1x1, slot below), bed_double (2x2, slots
+  left/right of upper cell), sofa (2x1, slots below both cells), tv (1x1, slot two
+  below, facing up). All `blocks_movement=true`, prices in cents.
+- `data/world/districts/altstadt/objects.json`: 4 placements in Haus 12 —
+  fridge (59,24) in NE kitchen, bed_double (58,32) in SE bedroom,
+  sofa (48,32) + tv (52,30) in SW living room. NW entrance/spawn room left empty;
+  door cells and orthogonal neighbours kept free.
+- `tests/sim/test_objects.gd` (9 tests), broken fixtures
+  `tests/fixtures/content_broken/objects/` (valid crate + duplicate/no-slots/
+  bad-facing/bad-size/bad-colour/bad-price) and
+  `tests/fixtures/content_broken/world/districts/bad/objects.json`
+  (overlap, unknown def, wall, bad rotation, no usable slot).
+
+Changed:
+- `sim/content/content_db.gd`: `objects` dict, `object_def()`, `ObjectLoader.load()`
+  before `WorldLoader.load()`.
+- `sim/content/district_def.gd`: `objects: Array[ObjectPlacement]`.
+- `sim/content/world_loader.gd`: optional per-district `objects.json` with full
+  validation (known def, rotation 0..3, footprint inside + walkable, no overlap,
+  at least one walkable uncovered slot). Messages name file/object/problem.
+- `sim/world/world_grid.gd`: per-level blocker counts, `add/remove_object_blocker()`,
+  `is_walkable()` = terrain walkable and no blocker.
+- `sim/world/world.gd`: `objects` dict + derived cell index, `can_place()` with
+  reasons, `add/remove/get/objects_at()`, save/load via `"objects"` with
+  `d.get("objects", [])` (no version bump) and silent skip of unknown defs.
+- `sim/sim_factory.gd`: `new_game()` places district objects (ids from
+  `world.new_id()`) and emits `&"object_added"` per object.
+- `tests/sim/test_content.gd`: `test_broken_objects_are_reported_not_crashed`
+  and `test_game_objects_are_valid`.
+
+Verification:
+- `tools/check.sh` → `== 118 passed, 0 failed ==`, `LAST_TRAM_TESTS: PASSED`.
+- Covers all acceptance criteria: rotation table, blocking + removal, can_place
+  reasons, new-game count (4), save/load round-trip + mid-run equality with objects,
+  v1 fixture still loads (existing `test_all_fixture_saves_still_load`), unknown-def
+  skip with no errors logged.
+- Uncertain/left out: nothing in scope left out. Slot usability checks only the
+  placing district's terrain (districts never overlap, per world.json doc).
+
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with two reviewer fixes.** Built from the latest `main`. The
+rotation maths, blockers, `can_place` reasons, save/load (including unknown defs) and the
+Haus 12 layout are right, and the tests are strong. The reviewer printed the flat with its
+objects and use slots: fridge in the kitchen, bed in the bedroom (its east slot is a wall,
+allowed), sofa and TV in the living room, spawn room and doors clear, zero content errors.
+Fixed before merging:
+- **Use-slot check was order-dependent.** `WorldLoader.load_objects` checked "at least one
+  usable slot" only against objects listed *earlier*, so a later object could cover an
+  earlier object's only slot unreported. The check now runs in a second pass over the final
+  layout (`_has_usable_slot()`); new fixture `tests/fixtures/objects_covered_slot/` and test
+  `test_a_later_object_covering_the_only_use_slot_is_reported` (failed before the fix).
+- **Two broken-content assertions could not fail:** "not walkable" also matched the fixture's
+  unrelated player-spawn error, and "rotation" was too loose. They now match the exact
+  object messages; a mutation check confirmed the wall assertion fails without the check.
+- Note for later tickets: new games place objects first, so the player's id is no longer 1.

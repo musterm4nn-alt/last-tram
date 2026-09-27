@@ -15,6 +15,8 @@ var districts: Dictionary[String, DistrictDef] = {}
 ## District ids in the order they are stamped into the world.
 var district_order: Array[String] = []
 var start_district: String = ""
+## World-object definitions by id, loaded from every file in data/objects/.
+var objects: Dictionary[String, ObjectDef] = {}
 var errors: PackedStringArray = []
 
 ## Every choice the character creator offers (genders, colours, hair, names...).
@@ -50,6 +52,7 @@ func load_from(root: String) -> void:
 	NamesLoader.load(self, reader, root.path_join("names").path_join("names.json"))
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
+	ObjectLoader.load(self, reader, root.path_join("objects"))
 	WorldLoader.load(self, reader, root.path_join("world"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
@@ -108,3 +111,8 @@ func place_at(cell: Vector3i) -> PlaceDef:
 ## The clothing item with this id, or null.
 func clothing_def(id: String) -> ClothingDef:
 	return clothing.get(id)
+
+
+## The object definition with this id, or null.
+func object_def(id: String) -> ObjectDef:
+	return objects.get(id)

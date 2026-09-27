@@ -16,6 +16,8 @@ var _void_index: int = 0
 var _levels: Dictionary[int, PackedInt32Array] = {}
 ## Derived from terrain, never saved: 1 = walkable.
 var _walkable: Dictionary[int, PackedByteArray] = {}
+## Object blocker counts per cell (derived, never saved): >0 means blocked.
+var _blockers: Dictionary[int, PackedByteArray] = {}
 
 
 func _init(p_content: ContentDB, p_width: int, p_height: int) -> void:
@@ -49,6 +51,10 @@ func ensure_level(level: int) -> void:
 	walk.resize(width * height)
 	walk.fill(1 if _content.terrain(_void_index).walkable else 0)
 	_walkable[level] = walk
+	var blockers := PackedByteArray()
+	blockers.resize(width * height)
+	blockers.fill(0)
+	_blockers[level] = blockers
 	revision += 1
 
 
@@ -79,7 +85,34 @@ func set_terrain(c: Vector3i, terrain_index: int) -> void:
 func is_walkable(c: Vector3i) -> bool:
 	if not in_bounds(c):
 		return false
-	return _walkable[c.z][c.y * width + c.x] == 1
+	var i := c.y * width + c.x
+	if _walkable[c.z][i] != 1:
+		return false
+	if _blockers.has(c.z) and _blockers[c.z][i] > 0:
+		return false
+	return true
+
+
+## Adds one object blocker to a cell (from a blocking object's footprint).
+func add_object_blocker(c: Vector3i) -> void:
+	if not in_bounds(c):
+		return
+	var i := c.y * width + c.x
+	var arr := _blockers[c.z]
+	arr[i] = mini(arr[i] + 1, 255)
+	_blockers[c.z] = arr
+	revision += 1
+
+
+## Removes one object blocker from a cell.
+func remove_object_blocker(c: Vector3i) -> void:
+	if not in_bounds(c):
+		return
+	var i := c.y * width + c.x
+	var arr := _blockers[c.z]
+	arr[i] = maxi(arr[i] - 1, 0)
+	_blockers[c.z] = arr
+	revision += 1
 
 
 ## Writes ASCII rows (glyphs from data/terrain.json) with their top-left at `origin`.
