@@ -1,13 +1,13 @@
 ---
 id: T-0007
 title: Walk to a free use slot before performing; direct input cancels
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0004, T-0006]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark 1.3 Free
+review_rounds: 1
 ---
 
 ## Goal
@@ -101,6 +101,55 @@ needs filled from `content().needs` (each `need_def.start`), then `sim.world.add
 
 ## Implementation notes
 
+- `sim/actions/interactions.gd`: added `Interactions.slot_taken(sim, object_id,
+  slot_index, except_person_id)` — true when another person's front action targets
+  the same object/slot and is ROUTING or PERFORMING. No saved state; the saved
+  ROUTING action + path keep the reservation across save/load.
+- `sim/systems/action_system.gd` (`step()` only; `on_minute()` unchanged, 230 lines,
+  so no `SlotRouter` split was needed): QUEUED starts at once on a free slot
+  (snapping `pos` to the slot centre) or chooses a route; ROUTING cancels on
+  non-zero `move_intent` (`"moved"`), starts on arrival, re-routes when the path is
+  empty but not arrived; PERFORMING cancels on non-zero `move_intent`. Route choice
+  picks the reachable free slot with the smallest `find_path` size (ties: lowest
+  index; standing on a free slot counts as length 0), failing `"no_free_slot"` /
+  `"no_path"`, emitting `action_routing`. Own fail/cancel of ROUTING clears
+  `person.path`. The `not_at_slot` failure is gone.
+- `tests/sim/test_actions.gd`: replaced `test_not_on_slot_fails_and_queue_moves_on`
+  with `test_unreachable_slot_fails_and_queue_moves_on` (walled room: unreachable
+  fridge fails `no_path`, next queued action starts on its slot afterwards).
+- `tests/sim/test_action_routing.gd`: 9 tests covering every acceptance criterion
+  (walk-and-finish event order + end pose, two sleepers on different slots + third
+  `no_free_slot` on the taken TV slot, wall `no_path`, moved-cancel in routing and
+  performing with empty path, mid-walk `path_blocked` re-routes and finishes,
+  three-action ordered queue, mid-route save/load byte-identical to uninterrupted,
+  3-people/2-hours seeded property test checking every minute).
+- Verified: `tools/check.sh` → 169 passed, 0 failed (includes lint + all T-0006 tests
+  unchanged). No screenshot: no visual change (sim-only).
+- Left out (out of scope, no acceptance test needs it): `CancelActionCommand` does
+  not clear `person.path` when the player cancels a ROUTING action via the queue UI
+  (only the system fail/cancel paths clear it); `QueueInteractionCommand`'s doc
+  comment still says actions start once the person stands on a slot.
+
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with reviewer additions.** Built from the latest `main` in a
+fresh OpenCode session started by the architect (Muse Spark 1.3 free, xhigh). Correct,
+readable routing that follows the spec closely (including the distance-0 rule and the check
+order), a good property test, and honest notes that flagged a real gap. Reviewer changes:
+- Fixed the flagged gap: `CancelActionCommand` now clears the path when it cancels a
+  `ROUTING` front action (the queue panel in T-0010 would otherwise leave the person
+  walking to the object with nothing to do), with
+  `test_cancelling_a_routing_action_stops_the_walk`. Fixed the stale doc comment on
+  `QueueInteractionCommand`.
+- A mutation check found four rules no test caught; each now has a test:
+  nearest free slot (`test_routes_to_the_nearest_free_slot`), a free slot underfoot when
+  re-routing (`test_rerouting_while_standing_on_another_free_slot_uses_it`), a failed route
+  stops the walk (`test_removed_target_fails_and_stops_the_walk`), and snapping to the slot
+  centre on start (`test_starting_on_a_slot_snaps_to_its_centre`).
+- Nine mutations in all (reservations off, routing not reserving, WASD ignored while routing
+  or performing, first slot instead of nearest, fail keeping the path, the distance-0 rule,
+  no snap, cancel keeping the path): each fails a test.
+- Real-flat check (scratch script): from the spawn, snack → TV → sofa queued at once walk to
+  each object and finish in order with no help.
