@@ -1,12 +1,12 @@
 ---
 id: T-0019
 title: Draw people from their appearance and outfit (placeholders)
-status: todo
+status: review
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0018]
-builder:
+builder: OpenCode / Muse Spark 1.3 Free
 review_rounds: 0
 ---
 
@@ -69,6 +69,36 @@ Create `game/view2d/person_drawer_2d.gd`. Change `game/view2d/person_view_2d.gd`
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Implemented on branch `t/0019-draw-appearance`, stacked on unmerged `t/0018-character-model`
+(T-0019 needs the T-0018 model classes; rebase onto main once T-0018 merges).
+- New: `game/view2d/person_drawer_2d.gd` (`PersonDrawer2D`, RefCounted, static `draw`
+  exactly per the spec signature; feet at (0, 0); layers shadow → shoes → legs → torso →
+  outer (2 px top stripe when facing down) → head → hair → facial hair → glasses →
+  head item → yellow player marker; magenta `UNKNOWN_ID_COLOR` fallback for bad ids).
+- Changed: `ViewConfig` (+ `BUILD_WIDTH`/`DEFAULT_BUILD_WIDTH`, `HAIR_SHAPE`,
+  `PLAYER_MARKER_COLOR`, `UNKNOWN_ID_COLOR`; removed the now-unused `PLAYER_COLOR`,
+  `NPC_COLOR`, `SKIN_COLOR`); `PersonView2D._draw()` is one `PersonDrawer2D.draw` call;
+  `game/main.gd` documents and handles `--random-character`
+  (`CharacterSpec.random(Session.content, rng)` seeded from `--seed`).
+- New headless test `tests/game/test_person_draw_tables.gd`: every catalog build has a
+  sane width, every hair style maps to a known shape (drawing itself is verified by
+  screenshots, which can't run headless).
+- Verified: `tools/check.sh` → 83 passed, 0 failed.
+- Screenshots (all opened and inspected):
+  - `out/t0019_default.png`: default Alex — dark-brown short-hair cap, skin face, grey
+    hoodie with a thin black top stripe down the middle, denim legs, white trainers,
+    yellow triangle marker above the head. Matches.
+  - `out/t0019_seed{1,2,3}.png`: three clearly different people (seed1: darker skin,
+    navy/red clothes and dark shoes; seed2: lighter skin, green-tinted hair, grey top,
+    black bottom, red shoes; seed3: slim build, red cap of hair, navy top, black
+    bottom). Matches.
+  - `out/t0019_back.png` (`--walk=0,-1 --frames=40`): player walked north, facing away;
+    the head circle is fully covered in dark-brown hair, no face. Matches.
+- Bug found while looking at the first screenshots: the open-jacket stripe was drawn
+  2 cells wide instead of 2 px, hiding the outer layer. Fixed (`2.0 / px` cells) and
+  re-took all screenshots.
+- Left for the reviewer: `docs/art.md` still describes the old placeholder ("The player
+  is yellow, NPCs blue"); not touched since docs edits are outside this ticket's scope.
 
 ## Questions
 
