@@ -62,7 +62,7 @@ Keys are physical positions, so they work on QWERTZ.
 
 ## Settings (Esc → Settings)
 
-Free will on/off · simulation detail (the fidelity dial: tiered / full) · ageing
+Free will on/off (M1: a button in the Esc menu) · simulation detail (the fidelity dial: tiered / full) · ageing
 (off / slow / normal) · content toggles (weapons; **adult content packs**: off by default, with an 18+ confirmation, M6) · UI scale · (later) key rebinding, audio.
 
 ## UI implementation rules

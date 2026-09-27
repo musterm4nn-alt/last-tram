@@ -25,7 +25,7 @@ interactions.
 | Energy | 4.5 | sleeping, napping, coffee (small) |
 | Hygiene | 4 | shower, washing hands, sink |
 | Fun | 6 | TV, games, bar, park, gossip, drugs (M4) |
-| Social | 4 | talking, drinking together, calls |
+| Social | 4 | talking, drinking together, calls (M1: video calls on the laptop at home) |
 | Comfort | 8 while standing, recovers when seated | sofa, bed, chairs, benches |
 
 At 0, bad things happen: pass out (energy), faint or health loss (hunger), and social

@@ -47,14 +47,15 @@ objects to fill them, and time passes.
   eyes, facial hair, features, and a starter outfit, with a live preview and randomise buttons
   ([design/character-and-appearance.md](design/character-and-appearance.md)). A name screen
   comes first, then the full creator.
-- World objects from data (bed, fridge, stove, shower, sink, sofa, TV, table, chairs)
+- World objects from data (bed, fridge, stove, shower, sink, sofa, TV, kitchen table, and a
+  desk with a laptop for video calls, the only way to fill Social until the phone in M3)
   with placeholder visuals.
 - Grid pathfinding; click to walk.
 - Needs (hunger, energy, hygiene, fun, social, comfort) and mood; needs panel.
 - Interactions and the action queue: walk to the object, use it, finish, cancel.
 - Control modes: direct (WASD + `E` to interact) and command (`Tab`: click objects for a menu,
   click the ground to walk). The player gets the same menu both ways.
-- Free will: when idle, the player looks after their own needs (can be turned off).
+- Free will: when idle, the player looks after their own needs (on/off in the Esc menu).
 - Sleep fast-forward; autosave and save slots; Esc menu.
 - **Bug report key (F9)** that captures a save, the command log and a screenshot, plus a
   headless replay tool, so any bug the owner hits can be reproduced by an agent.

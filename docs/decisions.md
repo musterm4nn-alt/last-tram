@@ -113,3 +113,15 @@ start, or (T-0007) set the path to its slot, before anyone moves in the same ste
 before needs so that one minute of an action nets its rate minus the normal decay. A running
 action changes needs through its per-hour `need_rates` on top of decay, plus one-off
 `finish_needs`; the queue (`Person.action_queue`, at most 6) is saved.
+
+**D24 · M1 autonomy and home content.** Until lots and personalities exist (M2), autonomy
+scores every interaction on objects within 12 cells (same level):
+Σ urgency(need) × min(advertised gain, room left in the need) − 0.1 per cell of walking, adds
+0..1 noise, ignores options under 3, and picks among the best three weighted by score
+(T-0012). Capping the gain by the room left keeps a rested person from wanting a full night's
+sleep. The idle player acts after 10 game minutes without input; free will is on by default
+and switched in the Esc menu (T-0025). The flat gets a small bathroom and a desk with a
+laptop whose video calls fill Social, the only social source until the phone (M3) and
+neighbours (M2). An architect prototype of these rules kept every need above 40 for three
+game days.
+
