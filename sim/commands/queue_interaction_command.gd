@@ -2,8 +2,8 @@ class_name QueueInteractionCommand
 extends Command
 ## Queues an interaction on an object for a person (the front of the queue is
 ## current). Ignored unless the person and the object exist, the object offers
-## the interaction, and the queue has room. ActionSystem starts it once the
-## person stands on one of the object's use slots.
+## the interaction, and the queue has room. ActionSystem then walks the person
+## to a free use slot of the object and starts it there.
 
 var person_id: int = 0
 var interaction_id: String = ""

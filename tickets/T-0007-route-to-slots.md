@@ -1,13 +1,13 @@
 ---
 id: T-0007
 title: Walk to a free use slot before performing; direct input cancels
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0004, T-0006]
 builder: OpenCode / Muse Spark 1.3 Free
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -133,3 +133,23 @@ needs filled from `content().needs` (each `need_def.start`), then `sim.world.add
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with reviewer additions.** Built from the latest `main` in a
+fresh OpenCode session started by the architect (Muse Spark 1.3 free, xhigh). Correct,
+readable routing that follows the spec closely (including the distance-0 rule and the check
+order), a good property test, and honest notes that flagged a real gap. Reviewer changes:
+- Fixed the flagged gap: `CancelActionCommand` now clears the path when it cancels a
+  `ROUTING` front action (the queue panel in T-0010 would otherwise leave the person
+  walking to the object with nothing to do), with
+  `test_cancelling_a_routing_action_stops_the_walk`. Fixed the stale doc comment on
+  `QueueInteractionCommand`.
+- A mutation check found four rules no test caught; each now has a test:
+  nearest free slot (`test_routes_to_the_nearest_free_slot`), a free slot underfoot when
+  re-routing (`test_rerouting_while_standing_on_another_free_slot_uses_it`), a failed route
+  stops the walk (`test_removed_target_fails_and_stops_the_walk`), and snapping to the slot
+  centre on start (`test_starting_on_a_slot_snaps_to_its_centre`).
+- Nine mutations in all (reservations off, routing not reserving, WASD ignored while routing
+  or performing, first slot instead of nearest, fail keeping the path, the distance-0 rule,
+  no snap, cancel keeping the path): each fails a test.
+- Real-flat check (scratch script): from the spawn, snack → TV → sofa queued at once walk to
+  each object and finish in order with no help.

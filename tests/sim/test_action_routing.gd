@@ -305,3 +305,79 @@ func test_random_queues_never_share_a_slot() -> void:
 				sim.submit(QueueInteractionCommand.new(person.id, String(pick[0]), int(pick[1])))
 		sim.run_minutes(1)
 		_assert_no_shared_slots(sim)
+
+
+func test_routes_to_the_nearest_free_slot() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var bed := _place(sim, "bed_double", Vector3i(4, 2, 0))
+	var player := sim.world.player()
+	# Slot 0 is west of the bed (3,2), slot 1 east (6,2): stand nearer slot 1.
+	player.pos = Vector2(8.5, 2.5)
+	_queue(sim, player.id, "sleep", bed.id)
+	sim.step()
+	assert_eq(player.action_queue[0].state, Action.ROUTING)
+	assert_eq(player.action_queue[0].slot_index, 1, "the east slot is nearer")
+
+
+func test_rerouting_while_standing_on_another_free_slot_uses_it() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var bed := _place(sim, "bed_double", Vector3i(4, 2, 0))
+	var player := sim.world.player()
+	# Routing to slot 0 with an emptied path, while standing on slot 1 (6,2).
+	var action := Action.new("sleep", bed.id)
+	action.state = Action.ROUTING
+	action.slot_index = 0
+	player.action_queue.append(action)
+	player.pos = Vector2(6.5, 2.5)
+	var start := player.pos
+	sim.run_steps(2)
+	assert_eq(action.state, Action.PERFORMING)
+	assert_eq(action.slot_index, 1, "a free slot underfoot counts as distance 0")
+	assert_vec_near(player.pos, start)
+
+
+func test_removed_target_fails_and_stops_the_walk() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var fridge := _place(sim, "fridge", Vector3i(6, 1, 0))
+	var player := sim.world.player()
+	_queue(sim, player.id, "grab_snack", fridge.id)
+	sim.step()
+	assert_false(player.path.is_empty())
+	sim.world.remove_object(fridge.id)
+	var _drained: Array[Dictionary] = sim.events.drain()
+	sim.step()
+	var events := _action_events(sim)
+	assert_eq(events.size(), 1)
+	if events.size() == 1:
+		assert_eq(events[0]["type"], &"action_failed")
+	assert_true(player.action_queue.is_empty())
+	assert_true(player.path.is_empty(), "a failed route must stop the walk")
+
+
+func test_starting_on_a_slot_snaps_to_its_centre() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var fridge := _place(sim, "fridge", Vector3i(6, 1, 0))
+	var player := sim.world.player()
+	var cell := fridge.slot_cell(sim.content, 0)
+	player.pos = Vector2(cell.x + 0.8, cell.y + 0.3)
+	_queue(sim, player.id, "grab_snack", fridge.id)
+	sim.step()
+	assert_eq(player.action_queue[0].state, Action.PERFORMING)
+	assert_vec_near(player.pos, Vector2(cell.x + 0.5, cell.y + 0.5), 0.0001)
+
+
+func test_cancelling_a_routing_action_stops_the_walk() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var fridge := _place(sim, "fridge", Vector3i(6, 1, 0))
+	var player := sim.world.player()
+	_queue(sim, player.id, "grab_snack", fridge.id)
+	sim.step()
+	assert_false(player.path.is_empty())
+	sim.submit(CancelActionCommand.new(player.id, 0))
+	sim.step()
+	assert_true(player.action_queue.is_empty())
+	assert_true(player.path.is_empty(), "cancelling the walk to an object must stop the walk")
+	var stopped := player.pos
+	sim.run_steps(10)
+	assert_vec_near(player.pos, stopped)
+
