@@ -106,3 +106,10 @@ crashing), and `ContentDB.load_from()` calls the loaders in dependency order. Lo
 touch `ContentDB`'s private fields; they use helpers like `add_terrain()`. A lint test fails
 any file in `sim/`, `game/` or `tools/` over 350 lines, so big files are split before they get
 hard for builders to work in (T-0022).
+
+**D23 · Actions run before movement and needs.** Each step runs `ActionSystem`, then
+`MovementSystem`, then `NeedsSystem` (T-0006). Actions go first so that a queued action can
+start, or (T-0007) set the path to its slot, before anyone moves in the same step; they run
+before needs so that one minute of an action nets its rate minus the normal decay. A running
+action changes needs through its per-hour `need_rates` on top of decay, plus one-off
+`finish_needs`; the queue (`Person.action_queue`, at most 6) is saved.

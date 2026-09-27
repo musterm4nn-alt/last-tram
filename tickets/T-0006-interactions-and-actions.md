@@ -1,13 +1,13 @@
 ---
 id: T-0006
 title: Interactions and the action lifecycle (queue, perform, finish, cancel)
-status: todo
+status: done
 milestone: M1
 size: L
 owner: builder
 depends_on: [T-0001, T-0005]
-builder:
-review_rounds: 0
+builder: OpenCode / Muse Spark
+review_rounds: 1
 ---
 
 ## Goal
@@ -151,6 +151,66 @@ Build worlds with `from_rows` and `world.add_object()`; place the person on a sl
 
 ## Implementation notes
 
+Implemented the interaction/action lifecycle exactly per spec. Key files:
+
+- `data/interactions/basics.json` — sleep (until energy, 60–720 min), grab_snack,
+  watch_tv, sit, with the exact ids/rates from the ticket. `sofa` already had the
+  `"seat"` tag in `furniture.json`, so no change was needed there.
+- `sim/content/interaction_def.gd` (`InteractionDef`) + `sim/content/interaction_loader.gd`
+  (`InteractionLoader` with `load(db, reader, dir)` / `load_file(db, reader, path)`,
+  wired into `ContentDB.load_from()` after objects). Validates: exactly one of
+  `duration_minutes` / `until_need` (+ sane min/max), every need id exists
+  (`need_rates`, `finish_needs`, `advertise`, `until_need`), every `object_tags`
+  entry is used by at least one object.
+- `sim/actions/action.gd` (`Action`, saved inside `Person.action_queue`) +
+  `sim/actions/interactions.gd` (static `offered_by` in content order,
+  `slot_at_person` comparing full cells incl. level).
+- `sim/commands/queue_interaction_command.gd` (`queue_interaction`) and
+  `sim/commands/cancel_action_command.gd` (`cancel_action`), both registered in
+  `CommandRegistry`. Invalid commands are ignored silently (no events).
+- `sim/systems/action_system.gd` (`ActionSystem`): `step()` starts a QUEUED front
+  action when the person stands on a use slot (sets facing, emits
+  `action_started`), else pops it with `action_failed`/`not_at_slot`; `on_minute()`
+  applies `need_rates/60`, counts minutes, ends fixed actions at
+  `duration_minutes` and until_need actions at need 100 (after min) or max, then
+  applies `finish_needs` and emits `action_finished` with `minutes`.
+- `Person.action_queue` + `MAX_QUEUE = 6`, saved/loaded (defaults to `[]`, so old
+  saves load without a version bump). `Sim.default_systems()` is now
+  `[ActionSystem, MovementSystem, NeedsSystem]` with an order comment.
+- `game/ui/debug_overlay.gd` shows the player's action queue (`id [state]`).
+- `tests/sim/test_actions.gd` (10 tests) + broken fixture
+  `tests/fixtures/content_broken/interactions/broken.json` (unknown need,
+  both/neither duration, unused tag), loaded via `load_file` into a fresh
+  `ContentDB.load_default()` + new `ContentReader`.
+
+Verification: `tools/check.sh` → 158 passed, 0 failed (10 new action tests
+included). Sleep from energy 20 finishes at minute 418 with energy 99.925
+(>= 99.9); grab_snack finishes at exactly 5 min with hunger 74.5
+(50 − 0.5 + 25); watch_tv over 60 min nets fun +19 and comfort −10. No
+screenshot: no visible game change (sim-only; the debug-overlay line is F3-only).
+Out of scope as specified: routing/walking to slots (T-0007 does that), menus,
+autonomy. One deliberate extra: unknown interaction/target defs fail with
+`unknown_interaction` instead of hanging (unreachable with valid content).
+
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with test additions by the reviewer.** Built from the latest
+`main` in a fresh OpenCode session started by the architect (Muse Spark 1.3 free, xhigh).
+Clean, well-documented code that follows the spec closely; thorough content validation; the
+`unknown_interaction` guard is a sensible extra; honest notes. A mutation check found gaps in
+the tests, now closed:
+- Added `test_sleep_runs_at_least_min_minutes_even_when_already_rested` and
+  `test_sleep_stops_at_max_minutes_even_when_not_rested`: ignoring `min_minutes` or
+  `max_minutes` passed every test before (sleep from energy 20 never reaches either limit).
+- `test_broken_interactions_are_reported` only checked that the joined errors contained a
+  few words, so dropping the "both" or the "neither" check, or the need-id check for
+  `advertise` / `until_need`, still passed. It now checks one error per broken entry (by its
+  id), and the fixture has one more entry with unknown needs in `until_need`,
+  `finish_needs` and `advertise`.
+- Ten mutations in all (min/max minutes, both/neither, advertise and until_need ids, facing,
+  `minutes_done` not saved, `offered_by` ignoring tags...): each now fails a test.
+- F3 screenshot (reviewer): the overlay shows "actions: (empty)" under the needs.
+- Docs (architect): architecture folder map gains `actions/`, the system order is now
+  actions → movement → needs (D23).

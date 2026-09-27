@@ -51,6 +51,13 @@ func _process(_delta: float) -> void:
 			need_parts.append("%s %.0f" % [need_def.id, float(player.needs.get(need_def.id, need_def.start))])
 		var mood_value: float = Mood.compute(player, sim.content)
 		lines.append("  needs %s   mood %.0f (%s)" % [" ".join(need_parts), mood_value, Mood.label(mood_value)])
+		if player.action_queue.is_empty():
+			lines.append("  actions: (empty)")
+		else:
+			var queue_parts: PackedStringArray = []
+			for action: Action in player.action_queue:
+				queue_parts.append("%s [%s]" % [action.interaction_id, action.state])
+			lines.append("  actions: %s" % [" <- ".join(queue_parts)])
 	lines.append("recent events:")
 	var recent := sim.events.recent
 	for i: int in range(maxi(0, recent.size() - 6), recent.size()):

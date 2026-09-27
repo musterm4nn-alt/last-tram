@@ -17,6 +17,8 @@ var district_order: Array[String] = []
 var start_district: String = ""
 ## World-object definitions by id, loaded from every file in data/objects/.
 var objects: Dictionary[String, ObjectDef] = {}
+## Interactions by id, loaded from every file in data/interactions/.
+var interactions: Dictionary[String, InteractionDef] = {}
 var errors: PackedStringArray = []
 
 ## Every choice the character creator offers (genders, colours, hair, names...).
@@ -53,6 +55,7 @@ func load_from(root: String) -> void:
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
 	ObjectLoader.load(self, reader, root.path_join("objects"))
+	InteractionLoader.load(self, reader, root.path_join("interactions"))
 	WorldLoader.load(self, reader, root.path_join("world"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
@@ -116,3 +119,8 @@ func clothing_def(id: String) -> ClothingDef:
 ## The object definition with this id, or null.
 func object_def(id: String) -> ObjectDef:
 	return objects.get(id)
+
+
+## The interaction with this id, or null.
+func interaction(id: String) -> InteractionDef:
+	return interactions.get(id)
