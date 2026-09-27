@@ -159,12 +159,19 @@ func test_watch_tv_rates_stack_with_decay() -> void:
 	assert_near(float(player.needs["comfort"]), 50.0 - 2.0 - 8.0, 0.01)
 
 
-func test_not_on_slot_fails_and_queue_moves_on() -> void:
-	var sim := SimFactory.from_rows(content(), ROOM)
-	var fridge := _place(sim, "fridge", Vector3i(6, 1, 0))
+func test_unreachable_slot_fails_and_queue_moves_on() -> void:
+	var sim := SimFactory.from_rows(content(), [
+		"#######",
+		"#@.#..#",
+		"#..#..#",
+		"#..#..#",
+		"#######",
+	])
+	var bad := _place(sim, "fridge", Vector3i(5, 1, 0))
+	var good := _place(sim, "fridge", Vector3i(1, 2, 0))
 	var player := sim.world.player()
-	_queue(sim, player.id, "grab_snack", fridge.id)
-	_queue(sim, player.id, "grab_snack", fridge.id)
+	_queue(sim, player.id, "grab_snack", bad.id)
+	_queue(sim, player.id, "grab_snack", good.id)
 	sim.step()
 	var failed := _action_events(sim)
 	assert_eq(failed.size(), 3)
@@ -172,10 +179,10 @@ func test_not_on_slot_fails_and_queue_moves_on() -> void:
 		assert_eq(failed[0]["type"], &"action_queued")
 		assert_eq(failed[1]["type"], &"action_queued")
 		assert_eq(failed[2]["type"], &"action_failed")
-		assert_eq(String((failed[2]["data"] as Dictionary)["reason"]), "not_at_slot")
+		assert_eq(String((failed[2]["data"] as Dictionary)["reason"]), "no_path")
 	assert_eq(player.action_queue.size(), 1)
 	assert_eq(player.action_queue[0].state, Action.QUEUED)
-	_stand_on_slot(sim, player, fridge, 0)
+	_stand_on_slot(sim, player, good, 0)
 	sim.step()
 	assert_eq(player.action_queue[0].state, Action.PERFORMING)
 	var started := _action_events(sim)

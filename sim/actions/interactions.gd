@@ -32,3 +32,20 @@ static func slot_at_person(sim: Sim, person: Person, object_id: int) -> int:
 		if obj.slot_cell(sim.content, index) == here:
 			return index
 	return -1
+
+
+## True if another person's front action is routing to or performing on this slot.
+## Slots are reserved implicitly: there is no extra saved state, so a save in
+## mid-route keeps its reservation through the saved ROUTING action and path.
+static func slot_taken(sim: Sim, object_id: int, slot_index: int, except_person_id: int) -> bool:
+	for person: Person in sim.world.people.values():
+		if person.id == except_person_id:
+			continue
+		if person.action_queue.is_empty():
+			continue
+		var front: Action = person.action_queue[0]
+		if front.target_id != object_id or front.slot_index != slot_index:
+			continue
+		if front.state == Action.ROUTING or front.state == Action.PERFORMING:
+			return true
+	return false

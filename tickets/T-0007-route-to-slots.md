@@ -1,12 +1,12 @@
 ---
 id: T-0007
 title: Walk to a free use slot before performing; direct input cancels
-status: todo
+status: review
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0004, T-0006]
-builder:
+builder: OpenCode / Muse Spark 1.3 Free
 review_rounds: 0
 ---
 
@@ -100,6 +100,35 @@ needs filled from `content().needs` (each `need_def.start`), then `sim.world.add
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+
+- `sim/actions/interactions.gd`: added `Interactions.slot_taken(sim, object_id,
+  slot_index, except_person_id)` — true when another person's front action targets
+  the same object/slot and is ROUTING or PERFORMING. No saved state; the saved
+  ROUTING action + path keep the reservation across save/load.
+- `sim/systems/action_system.gd` (`step()` only; `on_minute()` unchanged, 230 lines,
+  so no `SlotRouter` split was needed): QUEUED starts at once on a free slot
+  (snapping `pos` to the slot centre) or chooses a route; ROUTING cancels on
+  non-zero `move_intent` (`"moved"`), starts on arrival, re-routes when the path is
+  empty but not arrived; PERFORMING cancels on non-zero `move_intent`. Route choice
+  picks the reachable free slot with the smallest `find_path` size (ties: lowest
+  index; standing on a free slot counts as length 0), failing `"no_free_slot"` /
+  `"no_path"`, emitting `action_routing`. Own fail/cancel of ROUTING clears
+  `person.path`. The `not_at_slot` failure is gone.
+- `tests/sim/test_actions.gd`: replaced `test_not_on_slot_fails_and_queue_moves_on`
+  with `test_unreachable_slot_fails_and_queue_moves_on` (walled room: unreachable
+  fridge fails `no_path`, next queued action starts on its slot afterwards).
+- `tests/sim/test_action_routing.gd`: 9 tests covering every acceptance criterion
+  (walk-and-finish event order + end pose, two sleepers on different slots + third
+  `no_free_slot` on the taken TV slot, wall `no_path`, moved-cancel in routing and
+  performing with empty path, mid-walk `path_blocked` re-routes and finishes,
+  three-action ordered queue, mid-route save/load byte-identical to uninterrupted,
+  3-people/2-hours seeded property test checking every minute).
+- Verified: `tools/check.sh` → 169 passed, 0 failed (includes lint + all T-0006 tests
+  unchanged). No screenshot: no visual change (sim-only).
+- Left out (out of scope, no acceptance test needs it): `CancelActionCommand` does
+  not clear `person.path` when the player cancels a ROUTING action via the queue UI
+  (only the system fail/cancel paths clear it); `QueueInteractionCommand`'s doc
+  comment still says actions start once the person stands on a slot.
 
 ## Questions
 
