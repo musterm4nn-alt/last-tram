@@ -39,6 +39,23 @@
 			"advertise": {}
 		},
 		{
+			"id": "bad_need_elsewhere",
+			"name": "Bad need elsewhere",
+			"object_tags": [
+				"bed"
+			],
+			"until_need": "no_such_need",
+			"min_minutes": 10,
+			"max_minutes": 20,
+			"need_rates": {},
+			"finish_needs": {
+				"ghost_need": 1
+			},
+			"advertise": {
+				"phantom_need": 1
+			}
+		},
+		{
 			"id": "ghost_tag",
 			"name": "Ghost tag",
 			"object_tags": [

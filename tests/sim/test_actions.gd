@@ -83,6 +83,41 @@ func test_sleep_runs_until_energy_full() -> void:
 	assert_true(float(player.needs["energy"]) >= 99.9, "energy just after sleep: %s" % player.needs["energy"])
 
 
+func test_sleep_runs_at_least_min_minutes_even_when_already_rested() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var bed := _place(sim, "bed_double", Vector3i(2, 1, 0))
+	var player := sim.world.player()
+	_stand_on_slot(sim, player, bed, 0)
+	player.needs["energy"] = 99.0
+	_queue(sim, player.id, "sleep", bed.id)
+	# Energy is full after about 5 minutes, but sleep lasts min_minutes (60).
+	sim.run_minutes(59)
+	assert_eq(player.action_queue.size(), 1, "sleep ended before min_minutes")
+	var _drained: Array[Dictionary] = sim.events.drain()
+	sim.run_minutes(1)
+	assert_true(player.action_queue.is_empty(), "sleep should end at min_minutes once energy is full")
+	var finished := _action_events(sim)
+	assert_eq(finished.size(), 1)
+	if finished.size() == 1:
+		assert_eq(int((finished[0]["data"] as Dictionary)["minutes"]), 60)
+
+
+func test_sleep_stops_at_max_minutes_even_when_not_rested() -> void:
+	var db := ContentDB.load_default()
+	db.interaction("sleep").max_minutes = 90
+	var sim := SimFactory.from_rows(db, ROOM)
+	var bed := _place(sim, "bed_double", Vector3i(2, 1, 0))
+	var player := sim.world.player()
+	_stand_on_slot(sim, player, bed, 0)
+	player.needs["energy"] = 20.0
+	_queue(sim, player.id, "sleep", bed.id)
+	sim.run_minutes(89)
+	assert_eq(player.action_queue.size(), 1, "sleep ended before max_minutes")
+	sim.run_minutes(1)
+	assert_true(player.action_queue.is_empty(), "sleep should end at max_minutes")
+	assert_true(float(player.needs["energy"]) < 100.0, "energy cannot be full after 90 minutes from 20")
+
+
 func test_grab_snack_takes_five_minutes_and_adds_hunger() -> void:
 	var sim := SimFactory.from_rows(content(), ROOM)
 	var fridge := _place(sim, "fridge", Vector3i(6, 1, 0))
@@ -262,7 +297,20 @@ func test_broken_interactions_are_reported() -> void:
 	var reader := ContentReader.new()
 	InteractionLoader.load_file(db, reader, BROKEN_FILE)
 	var all := "\n".join(reader.errors)
-	assert_true(all.contains("unknown need"), all)
-	assert_true(all.contains("duration_minutes") and all.contains("until_need"), all)
-	assert_true(all.contains("no object"), all)
+	# One check per broken entry, so each rule is proven on its own.
+	assert_true(_has_error(reader.errors, "bad_need", "unknown need 'no_such_need' in 'need_rates'"), all)
+	assert_true(_has_error(reader.errors, "both_times", "exactly one of"), all)
+	assert_true(_has_error(reader.errors, "neither_time", "exactly one of"), all)
+	assert_true(_has_error(reader.errors, "bad_need_elsewhere", "unknown need 'no_such_need' in 'until_need'"), all)
+	assert_true(_has_error(reader.errors, "bad_need_elsewhere", "unknown need 'ghost_need' in 'finish_needs'"), all)
+	assert_true(_has_error(reader.errors, "bad_need_elsewhere", "unknown need 'phantom_need' in 'advertise'"), all)
+	assert_true(_has_error(reader.errors, "ghost_tag", "tag 'no_such_tag' is used by no object"), all)
 	assert_true(db.interaction("sleep") != null, "the broken file must not clobber real content")
+
+
+## True if one error names interaction `id` and contains `text`.
+func _has_error(errors: Array[String], id: String, text: String) -> bool:
+	for error: String in errors:
+		if error.contains("interaction '%s'" % id) and error.contains(text):
+			return true
+	return false

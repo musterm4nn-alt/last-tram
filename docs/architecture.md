@@ -52,8 +52,11 @@ sim/                      pure simulation (no Nodes)
                           classes (the only sim code allowed to read files)
   world/                  World (all entities), WorldGrid (cells, levels, terrain),
                           WorldObject, Pathfinder (walking routes, `sim.nav`)
-  people/                 Person (later: needs, personality, skills, memory...)
-  systems/                SimSystem subclasses (MovementSystem, later NeedsSystem...)
+  people/                 Person, Appearance, Outfit, CharacterSpec, Mood (later: personality,
+                          skills, memory...)
+  actions/                Action (one queued or running interaction, saved in the person's
+                          queue), Interactions (queries: what an object offers, slots)
+  systems/                SimSystem subclasses (ActionSystem, MovementSystem, NeedsSystem)
   save/                   SaveCodec, SaveMigrations
 game/                     Godot side
   session.gd              autoload "Session": owns the Sim, runs it, loads and saves
@@ -96,7 +99,7 @@ art/                      art sources and exports (after the art gate)
 
 - A `SimSystem` has `step(sim)` and `on_minute(sim)` and **no state of its own**. The order is
   defined in one place: `Sim.default_systems()`.
-- Planned order (grows milestone by milestone): commands → movement → actions → needs →
+- Planned order (grows milestone by milestone): commands → actions → movement → needs →
   autonomy → schedules → social → economy → crime/police → tiers.
 
 ### Input: Commands

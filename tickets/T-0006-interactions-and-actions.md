@@ -1,13 +1,13 @@
 ---
 id: T-0006
 title: Interactions and the action lifecycle (queue, perform, finish, cancel)
-status: review
+status: done
 milestone: M1
 size: L
 owner: builder
 depends_on: [T-0001, T-0005]
 builder: OpenCode / Muse Spark
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -195,3 +195,22 @@ autonomy. One deliberate extra: unknown interaction/target defs fail with
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with test additions by the reviewer.** Built from the latest
+`main` in a fresh OpenCode session started by the architect (Muse Spark 1.3 free, xhigh).
+Clean, well-documented code that follows the spec closely; thorough content validation; the
+`unknown_interaction` guard is a sensible extra; honest notes. A mutation check found gaps in
+the tests, now closed:
+- Added `test_sleep_runs_at_least_min_minutes_even_when_already_rested` and
+  `test_sleep_stops_at_max_minutes_even_when_not_rested`: ignoring `min_minutes` or
+  `max_minutes` passed every test before (sleep from energy 20 never reaches either limit).
+- `test_broken_interactions_are_reported` only checked that the joined errors contained a
+  few words, so dropping the "both" or the "neither" check, or the need-id check for
+  `advertise` / `until_need`, still passed. It now checks one error per broken entry (by its
+  id), and the fixture has one more entry with unknown needs in `until_need`,
+  `finish_needs` and `advertise`.
+- Ten mutations in all (min/max minutes, both/neither, advertise and until_need ids, facing,
+  `minutes_done` not saved, `offered_by` ignoring tags...): each now fails a test.
+- F3 screenshot (reviewer): the overlay shows "actions: (empty)" under the needs.
+- Docs (architect): architecture folder map gains `actions/`, the system order is now
+  actions → movement → needs (D23).
