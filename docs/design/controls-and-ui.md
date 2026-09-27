@@ -1,5 +1,12 @@
 # Controls, camera and UI
 
+## Main menu and character creator (M1)
+
+Starting the game shows the **main menu**: New game, Continue (the latest save), Load (T-0014),
+Quit. **New game** opens the character creator
+([character-and-appearance.md](character-and-appearance.md)), then drops you into your flat.
+Tools and tests skip the menu with command-line options (`--quickstart`, `--screenshot`, ...).
+
 ## Keys
 
 | Key | Action | Since |

@@ -45,8 +45,12 @@ Späti, characters).
 - **Tile size:** 16 px (`ViewConfig.TILE_PX`). If the gate picks 32 px, change that one
   constant; the sim is unaffected.
 - **Characters:** 16×32 px frames, 4 directions (down, up, left, right), idle + walk (4
-  frames), later sit, sleep, use, fight. Layered (body, hair, clothes) so residents can be
-  generated.
+  frames), later sit, sleep, use, fight. Layered to match the appearance and outfit data
+  (body and skin tone, hair style and colour, facial hair, features, one layer per clothing
+  slot), tinted with the colours in `data/appearance/` and `data/clothing/`, so every
+  combination the character creator allows can be drawn, and residents can be generated.
+- **Portraits:** a larger front-facing "paper doll" (about 64×128 px) for the character
+  creator, the wardrobe and the person inspector, layered the same way.
 - **Objects:** sized in whole cells matching their `size` in data; 4 rotations where
   rotatable (or 2 plus flip).
 - **Filtering:** nearest (already the project default). No mipmaps. Integer zoom levels.

@@ -27,7 +27,7 @@ WASD move · Space pause · 1/2/3 speed · mouse wheel zoom · F5 save · F8 loa
 | [docs/vision.md](docs/vision.md) | What the game is: pillars, tone, rules |
 | [docs/roadmap.md](docs/roadmap.md) | Milestones M0–M7 and what you can do after each |
 | [docs/workflow.md](docs/workflow.md) | **How to drive the agents** (start here) |
-| [docs/design/](docs/design/) | How each system works (time, world, people, actions, tiers, jobs, social, crime, building, transport, UI) |
+| [docs/design/](docs/design/) | How each system works (time, world, people, character and looks, actions, tiers, jobs, social, crime, building, transport, UI) |
 | [docs/architecture.md](docs/architecture.md) | How the code is organised and why |
 | [docs/art.md](docs/art.md) | Art direction and the art pipeline |
 | [tickets/](tickets/) | The work queue (`tools/tickets.sh`) |

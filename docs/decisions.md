@@ -67,10 +67,20 @@ character later is trivial.
 **D16 · Ageless sandbox.** No forced ending; ageing is a setting (off by default). Player
 death means hospital and a bill. NPC death is permanent, and newcomers move into empty homes.
 
-**D17 · Hard content rules.** Children are never targets of violence, crime interactions,
-romance or sexual content; no sexual-violence mechanics; romance is adults-only and
-fade-to-black. Enforced by data validation and tests once those systems exist.
+**D17 · Hard content rules** (revised 2026-09-27 by the owner). There are **no children or
+teenagers** in the game: every person is 18 or older. **No pregnancy or childbirth** (and no
+adoption). No sexual-violence mechanics. Romance is in, and intimacy fades to black. Enforced by
+data validation (the age minimum can't go below 18) and tests over every person the game
+creates.
 
 **D18 · Tickets live in the repo; one agent at a time.** Markdown tickets with front matter,
 a branch per ticket, Opus reviews and merges to `main`. GitHub (private) is the backup and
 history.
+
+**D19 · Detailed character creation; appearance is sim state.** The player designs their
+character: name, gender and pronouns, age, body, face, hair and outfit, and later
+personality, background and attraction. The depth is inspired by Degrees of Lewdity's creator
+and wardrobe, with none of its sexual content. Identity, appearance and outfit are saved sim
+state on every Person (NPCs are generated from the same data) and validated by
+`CharacterSpec`. Placeholders draw from appearance data now; the layered sprites chosen at the
+art gate will use the same data.

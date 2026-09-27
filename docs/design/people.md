@@ -6,12 +6,13 @@ be tuned by playtesting.
 
 ## Identity
 
-- First and last name (generated from name lists in `data/names/` with a Central-European mix:
+- First name, last name and optional nickname. The player chooses them in the character
+  creator; residents get them from name lists in `data/names/` (a Central-European mix:
   German, Turkish, Polish, Czech, Dutch, Italian, Syrian and other names).
-- Age in years and **life stage**: child (6–12), teen (13–17), young adult (18–29), adult
-  (30–64), elder (65+). Babies and toddlers are handled abstractly by households (M6).
-- Gender and pronouns: free fields used by text generation.
-- Appearance seed (for generated sprites later).
+- Age in years (**always 18 or older**) and **life stage**: young adult (18–29), adult
+  (30–64), elder (65+). There are no children or teenagers in the game.
+- Gender and pronouns, chosen independently (pronouns drive generated text).
+- Appearance and outfit: see [character-and-appearance.md](character-and-appearance.md).
 
 ## Needs (M1)
 
@@ -74,11 +75,12 @@ A **directed** edge from A to B (A's view of B), created on first contact:
 |---|---|---|
 | familiarity | 0..100 | stranger → knows by sight → knows well |
 | friendship | −100..100 | enemy ↔ best friend |
-| romance | 0..100 | attraction and romantic bond (adults only) |
+| romance | 0..100 | attraction and romantic bond |
 | trust | −100..100 | would lend money / would snitch on |
 | fear | 0..100 | intimidation |
 
-Tags carry roles: family (parent, child, sibling, partner, spouse, ex), work (coworker, boss),
+Tags carry roles: family (parent, offspring, sibling, cousin, partner, spouse, ex; all
+adults), work (coworker, boss),
 and others (landlord, tenant, dealer, client, "cop who arrested me"). Values drift slowly
 towards neutral without contact.
 
@@ -100,11 +102,14 @@ separately (M4).
 
 ## Households (M2)
 
-A household has members, a home lot and, from M3, shared money. The player controls one
-member; switching to another comes in M6.
+A household has members (one person, a couple, or flatmates sharing a WG), a home lot and,
+from M3, shared money. The player controls one member; switching to another comes in M6.
+There are no births: the population renews through newcomers moving to town.
 
 ## Content rules
 
-Children and teens can't be targets of violence, crime interactions, romance or sexual
-content. Interaction requirements must enforce this with a life-stage check, and a content
-test checks every interaction definition (M2+).
+- There are no children or teenagers: every person is 18 or older. Validation rejects
+  younger ages, and a test checks every person the game creates.
+- No pregnancy or childbirth (and no adoption).
+- Romance is between adults (everyone is) and intimacy fades to black. No sexual-violence
+  mechanics.

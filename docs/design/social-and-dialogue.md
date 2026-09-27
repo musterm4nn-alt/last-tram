@@ -7,7 +7,7 @@ Person-targeted interactions (same data format as all interactions):
 | Kind | Examples |
 |---|---|
 | Friendly | chat, joke, compliment, hug, share a drink, ask how they are |
-| Romantic (adults only) | flirt, kiss, ask on a date (the full ladder is in M6) |
+| Romantic | flirt, kiss, ask on a date (the full ladder is in M6; intimacy fades to black) |
 | Mean | insult, mock, argue, threaten, shove (fights: M4) |
 | Practical | introduce yourself, exchange numbers, ask about someone (gossip), ask for a loan, apologise |
 | Transactional (M3/M4) | buy from, hire, bribe, buy drugs |
@@ -23,7 +23,8 @@ minutes. NPCs chain actions while both still have social need or interest. Group
 acceptance = sigmoid( base(interaction)
                     + relationship(target → actor)
                     + mood(target) + personality compatibility
-                    + charisma(actor) + context (place, time, intoxication)
+                    + charisma(actor) + presentation(actor)
+                    + context (place, time, intoxication)
                     − target's urgent needs )
 ```
 

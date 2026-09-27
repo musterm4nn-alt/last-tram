@@ -26,7 +26,7 @@ starvation. It's also very European.
   the delivery van).
 - M3 venues in Altstadt: Späti Kaya (snacks, drinks, beer, cigarettes, phone credit), Imbiss
   Anadolu (Döner, fries), Café Wolke (coffee, cake), Kneipe Zum Anker (beer, schnapps, gossip),
-  Waschsalon Blitz (laundry, later).
+  Waschsalon Blitz (laundry for dirty clothes).
 
 ## Items and inventory
 
@@ -53,7 +53,7 @@ personal inventory, and household storage (the fridge). Items are used through i
     implementation, with the rabbit hole as fallback.
 - Performance goes up or down daily (mood, skills, lateness, absence) → promotion, warning,
   demotion, firing. Applying for jobs goes through the phone's jobs app; the "interview" is a
-  charisma and record check.
+  charisma, presentation and record check.
 - NPCs hold jobs: businesses have positions filled at town generation, and vacancies are
   refilled from the unemployed and from newcomers.
 

@@ -97,7 +97,9 @@ tried twice and the tests still fail.) Set `status: blocked`, write your questio
 
 ## Content rules (game design, non-negotiable)
 
-- Children and teens can never be targets of violence, crime interactions, romance or sexual
-  content.
-- No sexual-violence mechanics of any kind.
-- Romance and intimacy are adults-only and fade to black.
+- There are **no children or teenagers** in the game. Every person is 18 or older; never
+  generate, author or allow a younger age.
+- **No pregnancy or childbirth** (and no adoption).
+- No sexual-violence mechanics of any kind. No nudity or sexual content in character
+  customisation.
+- Romance is between adults, and intimacy fades to black.

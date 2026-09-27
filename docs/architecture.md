@@ -180,6 +180,7 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 | Walking and transit | Bikes, scooters, cars | Movement modes, surfaces (sidewalk, road, rail) in terrain data, and a generic Vehicle entity. |
 | One district | Many districts | Districts are data with an origin; the world is their union. |
 | Placeholder art | Real sprites or tiles | Art is looked up by content id with a fallback to the placeholder. `TILE_PX` is one constant. |
+| Placeholder figures | Layered character sprites and portraits | Appearance and outfit are sim data (ids); the view maps ids to simple shapes now and to sprite layers later. |
 
 ## Performance budget
 
@@ -198,6 +199,8 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 | M1 | Needs, mood | `sim/people/needs.gd`, `sim/systems/needs_system.gd` |
 | M1 | Interactions and actions | `sim/content/interaction_def.gd`, `sim/actions/`, `sim/systems/action_system.gd` |
 | M1 | Autonomy (utility AI) | `sim/ai/`, `sim/systems/autonomy_system.gd` |
+| M1 | Identity, appearance, outfits, character specs | `sim/people/appearance.gd`, `outfit.gd`, `worn_item.gd`, `character_spec.gd`; `sim/content/appearance_catalog.gd`, `clothing_def.gd` |
+| M1 | Main menu, character creator, portrait | `game/launch_options.gd`, `game/ui/main_menu.gd`, `name_screen.gd`, `character_creator.gd`, `character_portrait.gd` |
 | M2 | Lots, households, residents | `sim/world/lot.gd`, `sim/people/household.gd`, `sim/people/generator.gd` |
 | M2 | Relationships, memories | `sim/social/` |
 | M2 | Simulation tiers | `sim/systems/tier_system.gd` |

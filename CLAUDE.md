@@ -26,8 +26,9 @@ true to their intent.
 - Acceptance criteria must be **testable headlessly** where possible, and each names the
   test or check that proves it. Visual criteria name the screenshot to take.
 - List files and areas in scope, and what is explicitly out of scope.
-- Keep `depends_on` accurate and turn `draft` tickets into `todo` only when their
-  dependencies' real interfaces exist (re-read the merged code first).
+- Keep `depends_on` accurate. A `todo` ticket may build on the *specified* interfaces of
+  unmerged tickets; after each merge, re-check the tickets that depend on it against the real
+  code. Turn a `draft` into `todo` only once you can specify it exactly.
 - Size: S (under an hour of agent work, mechanical), M (one system change), L (new system,
   tricky logic). Prefer splitting L.
 

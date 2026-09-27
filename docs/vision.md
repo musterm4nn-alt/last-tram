@@ -13,8 +13,11 @@ OpenCode), directed and playtested by its owner, who does not read code.
 ## The player fantasy
 
 - **Live any life.** Hold down a job at the café, climb a career, rent a flat and make it
-  yours, fall in love, start a family. Or sell pills behind the Späti, burgle the neighbours
-  and run from the Polizei. Or both on the same day.
+  yours, fall in love and move in together. Or sell pills behind the Späti, burgle the
+  neighbours and run from the Polizei. Or both on the same day.
+- **Be who you want.** Create your character in detail: name, age, body, face, hair,
+  clothes. Your look keeps changing as you live: a haircut, new clothes, a scar from a bad
+  night. See [design/character-and-appearance.md](design/character-and-appearance.md).
 - **A town that lives without you.** Every resident has needs, a home, a job, a routine,
   friends and grudges. Stand still for a day and the town keeps going.
 - **Everything is remembered.** People remember what you did to them and what they saw you
@@ -31,7 +34,7 @@ simulation foundation.
 | Pillar | What it means |
 |---|---|
 | **Making a living** | Jobs and careers, wages, rent and bills, shops, unemployment benefit, buying property. Money is pressure, and pressure drives choices (including crime). |
-| **People** | Friends, rivals, dating, partners, family and kids, gossip. Relationships and memories are simulated for everyone, not only the player. |
+| **People** | Friends, rivals, flatmates, dating, partners, marriage, adult relatives, gossip. Relationships and memories are simulated for everyone, not only the player. |
 | **The other side** | Crime and police: theft, burglary, fights, drugs, fare dodging, witnesses, a wanted level, arrest, jail, a criminal record, the underworld. NPCs commit crimes too. |
 | **Home** | Rent or buy a place, then furnish, decorate and rebuild it. Build mode with walls, doors, flooring, furniture and extra storeys. |
 
@@ -67,10 +70,11 @@ memory + circumstances, not from scripts.
 - **Tone:** gritty and mature, with a wry sense of humour. Violence, drugs, gangs, poverty,
   eviction, addiction and adult themes are all in scope.
 - **Hard content rules** (non-negotiable, for every agent):
-  - Children can never be the target of violence, crime interactions, romance or any sexual
-    content.
+  - **There are no children or teenagers in the game.** Every person is an adult (18+).
+  - **No pregnancy or childbirth**, and so no adoption and no family with kids.
   - No sexual-violence mechanics of any kind.
-  - Romance and intimacy are for adults only and happen off-screen (fade to black).
+  - Romance is in (dating, partners, moving in, marriage); intimacy happens off-screen
+    (fade to black).
 
 ## Time and space
 
@@ -78,7 +82,8 @@ memory + circumstances, not from scripts.
   2x, 3x, plus fast-forward while sleeping or working. Weeks matter (weekends, Sunday closing).
 - **Lifespan:** an **ageless sandbox**. There is no forced ending, and ageing is a setting
   (off by default). If you die, you wake up in hospital with a bill; NPC deaths are permanent,
-  and newcomers move into empty homes.
+  and newcomers move into empty homes. With no births, newcomers moving to town are how the
+  population renews.
 - **Space:** a hand-made town on a grid (1 cell = about 1 m) with multiple floors per
   building. Interiors are seamless: no loading screens, and roofs hide when you are inside.
 

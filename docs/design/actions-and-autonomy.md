@@ -78,8 +78,8 @@ When a person is idle (queue empty), and at most every few minutes:
 
 ## Routines and obligations (M2)
 
-- Obligations are time windows that must be kept: work shifts, school, appointments. The
-  person leaves early enough (travel time) and autonomy yields to them.
+- Obligations are time windows that must be kept: work shifts, university lectures,
+  appointments. The person leaves early enough (travel time) and autonomy yields to them.
 - Routine templates set the rhythm of a life: early-shift worker, office worker, night worker,
   student, unemployed, retiree, night-life/criminal. Each has sleep windows and preferred
   leisure places.

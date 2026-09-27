@@ -19,9 +19,8 @@ Crime is systemic: it's an interaction with a `crime` tag. It only matters if so
 | Assault | 4 | a fight; injuries |
 | Serious violence / killing | 8 | weapons (behind a content setting); NPC death is permanent |
 
-**Hard rules:** children and teens can never be targets of crime interactions or violence;
-there are no sexual-violence mechanics. Interaction requirements enforce this and a content
-test checks it.
+**Hard rules:** there are no children or teenagers in the game (every person is an adult),
+and there are no sexual-violence mechanics.
 
 ## Being noticed
 
@@ -32,6 +31,9 @@ test checks it.
   according to personality, relationship and bravery: flee, shout, intervene or fight, film it
   on their phone, **call the police**, confront later, ignore, or (later) blackmail.
 - Victims always know they were robbed; they know *who* only if they saw.
+- **Identification** depends on distance, light and your clothes' **concealment** (hood, cap,
+  sunglasses, mask). A partial description ("hoodie, dark jeans, tall") can be shaken off by
+  changing clothes ([character-and-appearance.md](character-and-appearance.md)).
 
 ## Police
 

@@ -9,13 +9,13 @@ Legend: ✅ done · ▶ current · ◻ planned
 | # | Milestone | You can… | Status |
 |---|---|---|---|
 | M0 | Foundation | walk around the Altstadt; save and load | ✅ |
-| M1 | A Day at Home | live a full day in your flat: sleep, eat, shower, relax | ▶ |
+| M1 | A Day at Home | create your character, then live a full day in your flat: sleep, eat, shower, relax | ▶ |
 | M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ◻ |
 | M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ◻ |
 | ◆ | Art direction gate | pick the art style from real side-by-side tests | ◻ |
 | M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ◻ |
 | M5 | Home Sweet Home | redecorate, rebuild, buy property | ◻ |
-| M6 | Love & Family | date, move in, marry, have kids, play as another family member | ◻ |
+| M6 | Love & Relationships | date, move in, marry, share a flat, play as your partner | ◻ |
 | M7 | Getting Around | ride trams and buses to a second district | ◻ |
 
 The order puts the social systems (M2) before crime, because crime needs witnesses and gossip,
@@ -40,9 +40,13 @@ The walking skeleton, which proves the architecture end to end.
 
 ## M1 · A Day at Home ▶
 
-**Goal:** the core Sims loop in one flat. Needs go down, you use objects to fill them, and time
-passes.
+**Goal:** make your character, then the core Sims loop in one flat. Needs go down, you use
+objects to fill them, and time passes.
 
+- **Main menu and character creator**: name, gender and pronouns, age (18+), body, skin, hair,
+  eyes, facial hair, features, and a starter outfit, with a live preview and randomise buttons
+  ([design/character-and-appearance.md](design/character-and-appearance.md)). A name screen
+  comes first, then the full creator.
 - World objects from data (bed, fridge, stove, toilet, shower, sink, sofa, TV, table, chairs)
   with placeholder visuals.
 - Grid pathfinding; click to walk.
@@ -56,7 +60,8 @@ passes.
   headless replay tool, so any bug the owner hits can be reproduced by an agent.
 
 **Done when:** a 3-day headless run with free will on keeps every need out of the red; the
-owner plays through a full day in the flat; save/load mid-action continues identically.
+owner creates a character and plays through a full day in the flat; save/load mid-action
+continues identically.
 
 ## M2 · The Neighbours
 
@@ -64,7 +69,10 @@ owner plays through a full day in the flat; save/load mid-action continues ident
 
 - Multi-storey buildings: levels, stairs, floor switching, roof cut-away.
 - Places become lots (world state: owner, access rules, opening hours).
-- Resident generation: names, personalities, households, homes (~30 residents in Altstadt).
+- Resident generation: names, personalities, looks and outfits (the same model as the
+  player's), households including couples and flatmates, homes (~30 residents in Altstadt,
+  all adults).
+- Personality in the character creator: choose your character's traits.
 - NPC autonomy with the same interactions the player uses; daily routines.
 - **Simulation tiers:** full detail near the player, cheap background simulation elsewhere,
   with a fidelity dial that can be set to "full lives for everyone"
@@ -91,6 +99,9 @@ town for an evening and it looks alive.
 - NPCs hold jobs (shopkeepers, bar staff, office workers, police officers).
 - Rent, bills and eviction; unemployment benefit (keeps the economy from collapsing).
 - Smartphone UI v1: contacts, jobs, bank, map.
+- Clothes and looks: clothes shops, a wardrobe at home with saved outfits, clothes that get
+  dirty (the Waschsalon), a barber. **Backgrounds** in the character creator (Newcomer, Local,
+  Student, Ex-con, Burnout) set your starting money, skills and contacts.
 
 **Done when:** a 30-day headless run keeps the economy stable (no mass bankruptcy or
 evictions), and the player can get hired, get paid, pay rent and get fired.
@@ -122,6 +133,8 @@ Claude Code. See [art.md](art.md).
 - Reputation spreads by gossip; underworld contacts; illegal jobs (dealer, fence).
 - NPCs commit crimes on their own when needs, personality and opportunity line up.
 - Intoxication and addiction v1.
+- Clothes matter for crime: hoods, caps and masks make you harder to identify, changing clothes
+  helps you lose the police's description, and fights damage clothes and can leave scars.
 
 **Done when:** crime → witness → report → police → consequences works end to end and persists
 through save/load; NPC crime happens at believable rates in long headless runs.
@@ -138,16 +151,19 @@ through save/load; NPC crime happens at believable rates in long headless runs.
 - **Town editor:** build mode without limits that saves back to the district files, so the
   owner can hand-craft the town in-game.
 
-## M6 · Love & Family
+## M6 · Love & Relationships
 
 **Goal:** relationships that go the distance.
 
 - Romance ladder: flirt, date, partner, move in, marry; jealousy, cheating, breakups, divorce.
-- Households: merge, move out, shared money.
-- Children: pregnancy or adoption, kids and teens with their own needs, school as a rabbit
-  hole. The content rules in [vision.md](vision.md) are enforced by tests.
-- Switch control to another household member.
-- Family tree, inheritance. Ageing setting (off / slow / normal) with life stages.
+  Intimacy is off-screen (fade to black).
+- Attraction settings in the character creator (who your character is attracted to).
+- Households: couples and flatmates, merging, moving out, shared money.
+- Switch control to another household member (your partner or a flatmate).
+- Adult relatives (parents, siblings, cousins), a family tree, inheritance. Ageing setting
+  (off / slow / normal) moves adults through young adult, adult and elder.
+- **No children and no pregnancy**, per the content rules in [vision.md](vision.md), enforced by
+  tests.
 
 ## M7 · Getting Around
 
@@ -172,4 +188,5 @@ through save/load; NPC crime happens at believable rates in long headless runs.
 - Music, ambience, sound effects.
 - Metro (level −1), more districts.
 - Phone: messaging, social media, dating app.
-- Character creator, clothing, disguises.
+- More looks: tattoos, piercings, makeup, hair that grows, tan, a body that changes with
+  fitness and food. Large layered character portraits (the "paper doll").
