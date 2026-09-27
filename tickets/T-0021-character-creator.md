@@ -18,6 +18,14 @@ everything, and a live preview: the top-down figure in all four directions plus 
 front-facing portrait ("paper doll").
 
 ## Notes for the architect (to detail before this becomes todo)
+- T-0020 as merged: `NameScreen` (signals `start_pressed(spec)` and `back_pressed`,
+  `focus_first_field()`; fields start empty with a grey hint; Start is disabled while the
+  spec has any problem); `main.gd` shows it via `_show_name_screen()` and starts with
+  `Session.new_game(randi(), spec)`. The creator replaces it in that flow.
+- Keyboard lessons from the T-0020 review (require them): ignore input while hidden;
+  handle Esc in `_input` (a focused text field takes the first Esc otherwise); set
+  `keep_editing_on_text_submit` on text fields; return focus to a sensible control when a
+  screen is shown. Verify by driving the real game (xdotool on Xvfb works here).
 - Lesson from T-0019 (long hair covered faces, unseen in its three random screenshots):
   require a screenshot that shows **every** option (each hair style, build, facial hair,
   feature and clothing slot), e.g. a debug gallery screen, not only random seeds.

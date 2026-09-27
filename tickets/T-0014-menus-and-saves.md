@@ -14,6 +14,9 @@ review_rounds: 0
 Esc opens a menu (resume, save, load, quit); three save slots plus rotating autosaves every game day at 03:00.
 
 ## Notes for the architect (to detail before this becomes todo)
+- T-0020 as merged: `game/ui/main_menu.gd` (`MainMenu`: signal `new_game_requested`,
+  `focus_new_game()`, Continue loads `Session.QUICKSAVE_PATH`, disabled when missing);
+  `game/main.gd` wires the menu and name screen and frees both on `Session.game_loaded`.
 - game/ui/pause_menu.gd; Session gains slot paths and autosave logic (a game-time check in Session, not sim).
 - Loading shows the save's in-game date and real timestamp.
 - The main menu from T-0020 gets a **Load** button listing the same slots, and Continue loads the newest save of any kind.
