@@ -1,0 +1,31 @@
+{
+	"_doc": "Starter wardrobe: items the character creator offers from the beginning. 'slot' is where it is worn (see ClothingDef.SLOTS); top, bottom and feet always have a starter item. 'colours' are ids from data/clothing/colours.json. 'price' is euro cents; formality -2..3; concealment and warmth 0..3. More item files can be added next to this one.",
+	"items": [
+		{ "id": "beanie", "name": "Beanie", "slot": "head", "styles": ["casual", "street"], "colours": ["black", "grey", "navy", "burgundy", "forest"], "price": 1200, "formality": -1, "concealment": 1, "warmth": 2, "starter": true },
+		{ "id": "cap", "name": "Cap", "slot": "head", "styles": ["casual", "sporty", "street"], "colours": ["black", "white", "navy", "red", "olive"], "price": 1500, "formality": -1, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "sunglasses", "name": "Sunglasses", "slot": "face", "styles": ["casual", "street"], "colours": ["black", "brown"], "price": 2500, "formality": 0, "concealment": 1, "warmth": 0, "starter": true },
+		{ "id": "scarf", "name": "Scarf", "slot": "neck", "styles": ["casual", "formal"], "colours": ["black", "grey", "navy", "burgundy", "beige", "red"], "price": 1800, "formality": 0, "concealment": 1, "warmth": 2, "starter": true },
+		{ "id": "chain", "name": "Chain", "slot": "neck", "styles": ["street"], "colours": ["white", "mustard"], "price": 2200, "formality": -1, "concealment": 0, "warmth": 0, "starter": true },
+		{ "id": "t_shirt", "name": "T-Shirt", "slot": "top", "styles": ["casual", "sporty"], "colours": ["black", "white", "grey", "navy", "red", "olive"], "price": 1400, "formality": -1, "concealment": 1, "warmth": 0, "starter": true },
+		{ "id": "shirt", "name": "Shirt", "slot": "top", "styles": ["casual", "formal", "workwear"], "colours": ["white", "black", "navy", "denim", "olive"], "price": 3200, "formality": 1, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "blouse", "name": "Blouse", "slot": "top", "styles": ["casual", "formal"], "colours": ["white", "black", "burgundy", "beige", "pink"], "price": 3600, "formality": 1, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "sweater", "name": "Sweater", "slot": "top", "styles": ["casual", "workwear"], "colours": ["black", "grey", "navy", "burgundy", "forest", "mustard"], "price": 4200, "formality": 0, "concealment": 2, "warmth": 2, "starter": true },
+		{ "id": "tank_top", "name": "Tank Top", "slot": "top", "styles": ["casual", "sporty"], "colours": ["black", "white", "grey", "red"], "price": 1100, "formality": -1, "concealment": 1, "warmth": 0, "starter": true },
+		{ "id": "hoodie", "name": "Hoodie", "slot": "outer", "styles": ["casual", "street"], "colours": ["black", "grey", "navy", "olive", "burgundy"], "price": 3500, "formality": -1, "concealment": 1, "warmth": 2, "starter": true },
+		{ "id": "denim_jacket", "name": "Denim Jacket", "slot": "outer", "styles": ["casual", "street", "workwear"], "colours": ["denim", "black", "olive"], "price": 5500, "formality": 0, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "leather_jacket", "name": "Leather Jacket", "slot": "outer", "styles": ["casual", "street"], "colours": ["black", "brown", "burgundy"], "price": 12000, "formality": 0, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "parka", "name": "Parka", "slot": "outer", "styles": ["casual", "workwear"], "colours": ["olive", "forest", "navy", "black", "charcoal"], "price": 9000, "formality": 0, "concealment": 3, "warmth": 3, "starter": true },
+		{ "id": "blazer", "name": "Blazer", "slot": "outer", "styles": ["formal", "workwear"], "colours": ["black", "navy", "grey", "charcoal", "burgundy"], "price": 11000, "formality": 2, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "jeans", "name": "Jeans", "slot": "bottom", "styles": ["casual", "street", "workwear"], "colours": ["denim", "black", "grey", "navy"], "price": 4500, "formality": 0, "concealment": 2, "warmth": 1, "starter": true },
+		{ "id": "chinos", "name": "Chinos", "slot": "bottom", "styles": ["casual", "formal", "workwear"], "colours": ["beige", "black", "navy", "olive", "brown"], "price": 3800, "formality": 1, "concealment": 2, "warmth": 1, "starter": true },
+		{ "id": "skirt", "name": "Skirt", "slot": "bottom", "styles": ["casual", "formal"], "colours": ["black", "grey", "burgundy", "navy", "pink"], "price": 3200, "formality": 1, "concealment": 1, "warmth": 0, "starter": true },
+		{ "id": "shorts", "name": "Shorts", "slot": "bottom", "styles": ["casual", "sporty"], "colours": ["black", "beige", "olive", "navy", "denim"], "price": 2200, "formality": -1, "concealment": 1, "warmth": 0, "starter": true },
+		{ "id": "track_pants", "name": "Track Pants", "slot": "bottom", "styles": ["sporty", "street"], "colours": ["black", "navy", "grey", "red"], "price": 2900, "formality": -1, "concealment": 2, "warmth": 1, "starter": true },
+		{ "id": "trainers", "name": "Trainers", "slot": "feet", "styles": ["casual", "sporty", "street"], "colours": ["white", "black", "grey", "navy", "red"], "price": 6500, "formality": -1, "concealment": 1, "warmth": 0, "starter": true },
+		{ "id": "boots", "name": "Boots", "slot": "feet", "styles": ["casual", "street", "workwear"], "colours": ["black", "brown", "burgundy"], "price": 8500, "formality": 0, "concealment": 2, "warmth": 2, "starter": true },
+		{ "id": "dress_shoes", "name": "Dress Shoes", "slot": "feet", "styles": ["formal"], "colours": ["black", "brown"], "price": 9500, "formality": 2, "concealment": 1, "warmth": 1, "starter": true },
+		{ "id": "gloves", "name": "Gloves", "slot": "hands", "styles": ["casual", "workwear", "formal"], "colours": ["black", "brown", "grey", "beige"], "price": 1500, "formality": 0, "concealment": 1, "warmth": 2, "starter": true },
+		{ "id": "backpack", "name": "Backpack", "slot": "bag", "styles": ["casual", "sporty", "street", "workwear"], "colours": ["black", "navy", "olive", "red", "charcoal"], "price": 4000, "formality": 0, "concealment": 0, "warmth": 0, "starter": true },
+		{ "id": "tote_bag", "name": "Tote Bag", "slot": "bag", "styles": ["casual", "formal"], "colours": ["beige", "black", "denim", "forest", "burgundy"], "price": 2500, "formality": 0, "concealment": 0, "warmth": 0, "starter": true }
+	]
+}

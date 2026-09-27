@@ -1,0 +1,9 @@
+{
+	"_doc": "Minimal name lists for the broken-content fixture: the appearance fixture refers to them. Do not fix.",
+	"first_names": {
+		"feminine": ["Anna"],
+		"masculine": ["Jan"],
+		"neutral": ["Sam"]
+	},
+	"last_names": ["Müller"]
+}

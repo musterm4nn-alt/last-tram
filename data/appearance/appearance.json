@@ -1,0 +1,87 @@
+{
+	"_doc": "Every choice the character creator offers: genders and pronouns, skin tones, hair colours (natural and dyed), eye colours, hair styles, builds, facial hair and features. Order in this file is the order the creator shows. Saves store ids, so ids must never be renamed.",
+	"age_years": { "min": 18, "max": 80 },
+	"height_cm": { "min": 150, "max": 205 },
+	"genders": [
+		{ "id": "woman", "name": "Woman", "default_pronouns": "she", "name_lists": ["feminine"] },
+		{ "id": "man", "name": "Man", "default_pronouns": "he", "name_lists": ["masculine"] },
+		{ "id": "nonbinary", "name": "Non-binary", "default_pronouns": "they", "name_lists": ["neutral", "feminine", "masculine"] }
+	],
+	"pronouns": [
+		{ "id": "she", "name": "she/her", "subject": "she", "object": "her", "possessive": "her", "reflexive": "herself" },
+		{ "id": "he", "name": "he/him", "subject": "he", "object": "him", "possessive": "his", "reflexive": "himself" },
+		{ "id": "they", "name": "they/them", "subject": "they", "object": "them", "possessive": "their", "reflexive": "themself" }
+	],
+	"skin_tones": [
+		{ "id": "skin_01", "name": "Porcelain", "color": "#f7e3d6" },
+		{ "id": "skin_02", "name": "Fair", "color": "#f1cfb8" },
+		{ "id": "skin_03", "name": "Light", "color": "#e3b494" },
+		{ "id": "skin_04", "name": "Olive", "color": "#c9945f" },
+		{ "id": "skin_05", "name": "Tan", "color": "#ab7347" },
+		{ "id": "skin_06", "name": "Brown", "color": "#8b5734" },
+		{ "id": "skin_07", "name": "Deep", "color": "#653c24" },
+		{ "id": "skin_08", "name": "Dark", "color": "#452818" }
+	],
+	"hair_colours": [
+		{ "id": "black", "name": "Black", "color": "#1d1a18", "natural": true },
+		{ "id": "dark_brown", "name": "Dark Brown", "color": "#3b2b20", "natural": true },
+		{ "id": "brown", "name": "Brown", "color": "#6b4a2f", "natural": true },
+		{ "id": "auburn", "name": "Auburn", "color": "#8c4a2b", "natural": true },
+		{ "id": "ginger", "name": "Ginger", "color": "#b8591f", "natural": true },
+		{ "id": "dark_blonde", "name": "Dark Blonde", "color": "#a0824e", "natural": true },
+		{ "id": "blonde", "name": "Blonde", "color": "#d8b878", "natural": true },
+		{ "id": "grey", "name": "Grey", "color": "#9a9a98", "natural": true },
+		{ "id": "white", "name": "White", "color": "#e9e7e3", "natural": true },
+		{ "id": "platinum", "name": "Platinum", "color": "#f2efe6", "natural": false },
+		{ "id": "pink", "name": "Pink", "color": "#e06fa8", "natural": false },
+		{ "id": "blue", "name": "Blue", "color": "#3a6fd8", "natural": false },
+		{ "id": "green", "name": "Green", "color": "#3f9b5a", "natural": false },
+		{ "id": "purple", "name": "Purple", "color": "#7d4fc0", "natural": false },
+		{ "id": "red", "name": "Red", "color": "#c22d2d", "natural": false }
+	],
+	"eye_colours": [
+		{ "id": "dark_brown", "name": "Dark Brown", "color": "#2e1c12" },
+		{ "id": "brown", "name": "Brown", "color": "#5a3a22" },
+		{ "id": "hazel", "name": "Hazel", "color": "#8a6b3a" },
+		{ "id": "green", "name": "Green", "color": "#3f6f4a" },
+		{ "id": "blue", "name": "Blue", "color": "#4a78b0" },
+		{ "id": "grey", "name": "Grey", "color": "#7a8a96" }
+	],
+	"hair_styles": [
+		{ "id": "bald", "name": "Bald" },
+		{ "id": "buzz", "name": "Buzz Cut" },
+		{ "id": "short", "name": "Short" },
+		{ "id": "side_part", "name": "Side Part" },
+		{ "id": "undercut", "name": "Undercut" },
+		{ "id": "curly_short", "name": "Short Curly" },
+		{ "id": "bob", "name": "Bob" },
+		{ "id": "shoulder", "name": "Shoulder Length" },
+		{ "id": "long", "name": "Long" },
+		{ "id": "ponytail", "name": "Ponytail" },
+		{ "id": "bun", "name": "Bun" },
+		{ "id": "braids", "name": "Braids" },
+		{ "id": "afro", "name": "Afro" },
+		{ "id": "dreadlocks", "name": "Dreadlocks" },
+		{ "id": "mohawk", "name": "Mohawk" }
+	],
+	"builds": [
+		{ "id": "slim", "name": "Slim" },
+		{ "id": "average", "name": "Average" },
+		{ "id": "athletic", "name": "Athletic" },
+		{ "id": "stocky", "name": "Stocky" },
+		{ "id": "heavy", "name": "Heavy" }
+	],
+	"facial_hair": [
+		{ "id": "none", "name": "None" },
+		{ "id": "stubble", "name": "Stubble" },
+		{ "id": "moustache", "name": "Moustache" },
+		{ "id": "goatee", "name": "Goatee" },
+		{ "id": "short_beard", "name": "Short Beard" },
+		{ "id": "full_beard", "name": "Full Beard" }
+	],
+	"features": [
+		{ "id": "freckles", "name": "Freckles" },
+		{ "id": "glasses", "name": "Glasses" },
+		{ "id": "beauty_mark", "name": "Beauty Mark" }
+	]
+}

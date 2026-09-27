@@ -1,13 +1,13 @@
 ---
 id: T-0017
 title: Appearance, clothing and name catalogs (content + validation)
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: []
-builder:
-review_rounds: 0
+builder: OpenCode / DeepSeek V4.1 Flash
+review_rounds: 1
 ---
 
 ## Goal
@@ -160,17 +160,74 @@ Syrian, Balkan, Vietnamese.
   non-empty.
 
 ## Acceptance criteria
-- [ ] Real content loads with zero errors → existing `test_content.gd::test_game_content_is_valid`
-- [ ] `test_appearance_content.gd`: minimum counts from this ticket hold; every required slot
+- [x] Real content loads with zero errors → existing `test_content.gd::test_game_content_is_valid`
+- [x] `test_appearance_content.gd`: minimum counts from this ticket hold; every required slot
   has a starter item; every gender's name lists exist; all item colours exist
-- [ ] `Names.is_valid`: accepts "Jürgen", "Łukasz", "Anne-Marie", "O'Neill", "Nguyễn"; rejects
+- [x] `Names.is_valid`: accepts "Jürgen", "Łukasz", "Anne-Marie", "O'Neill", "Nguyễn"; rejects
   "", " Anna", "R2D2", "Anna!", and a 25-letter name (max 24) → tests
-- [ ] Broken fixtures are reported: age min 17 (message contains "18"), unknown clothing
+- [x] Broken fixtures are reported: age min 17 (message contains "18"), unknown clothing
   colour, invalid slot, duplicate id, a required slot with no starter item → tests
-- [ ] `tools/check.sh` passes
+- [x] `tools/check.sh` passes
 
 ## Implementation notes
+
+**What was built (all data-driven, nothing uses it yet — T-0018 puts it on people):**
+
+- New def classes in `sim/content/`: `NamedOption`, `ColorOption`, `GenderOption`,
+  `PronounSet`, `AppearanceCatalog`, `ClothingDef` (with `SLOTS`, `REQUIRED_SLOTS`).
+- `sim/people/names.gd` (`class_name Names`): `is_valid(text, max_length = 24)` using the
+  ticket's RegEx plus a length check; `MAX_LENGTH` constant.
+- `sim/content/content_db.gd` now loads, in order: terrain → names → appearance → clothing →
+  world. New state: `appearance`, `clothing`, `clothing_colours`, `first_names`,
+  `last_names`, and `clothing_def(id) -> ClothingDef` (null if unknown). New readers
+  `_obj`/`_str_array`; new private loaders for names, appearance and clothing. All errors go
+  into `errors` and name the file, the entry and the problem (never log, never crash).
+  Clothing loads every `.json` in `data/clothing/items/` sorted by file name, so more item
+  files can be added without touching code.
+- Data: `data/appearance/appearance.json` (3 genders, 3 pronoun sets, 8 skin tones, 15 hair
+  colours — 9 natural + 6 dyed, 6 eye colours, 15 hair styles, 5 builds, 6 facial hair
+  options, 3 features; ages 18–80, heights 150–205); `data/clothing/colours.json` (16
+  colours); `data/clothing/items/starter.json` (26 starter items across all slots, including
+  T-0018's default outfit: t_shirt/black, jeans/denim, trainers/white, hoodie/grey);
+  `data/names/names.json` (36 feminine / 34 masculine / 12 neutral first names, 56 last
+  names — German, Turkish, Polish, Czech, Dutch, Italian, Syrian, Balkan, Vietnamese mix).
+- Tests: `tests/sim/test_appearance_content.gd` (13 tests) covering counts, required slots,
+  gender → pronouns/name lists, item slots/colours/ranges, the default outfit, `clothing_def`
+  lookup, `Names.is_valid` accept/reject/max-length, and the broken fixture.
+- Broken fixture added under `tests/fixtures/content_broken/` (`appearance/`, `names/`,
+  `clothing/`): age min 17, unknown colour `neon_green`, slot `hat`, duplicate `broken_dup`,
+  no starter item in required slot `bottom`. The existing broken-content test still passes
+  unchanged.
+
+**How it was verified:**
+- `tools/check.sh` → `== 56 passed, 0 failed ==`, `LAST_TRAM_TESTS: PASSED` (import +
+  compile lint + sim purity + all tests).
+- `tools/test.sh --filter=appearance` → `== 13 passed, 0 failed ==`.
+- No screenshot: this ticket changes no visible behaviour (content + validation only).
+
+**Uncertain / left out:**
+- `sim/content/content_db.gd` grew to ~570 lines, over the ~300-line guideline in
+  `docs/conventions.md`. Splitting the per-domain loaders into a helper file would be a
+  follow-up refactor ticket; I stayed inside the file the ticket names.
+- `styles` values are read but not checked against the five style tags (the ticket's
+  validation list does not require it).
+- The catalog is not referenced by `Person`, saving or the creator yet (out of scope).
 
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** Every criterion is met and tested; the data meets every
+minimum and the content rules (ages 18-80, nothing sexualised, no underwear slot). The
+`content_db.gd` size (over the ~300-line guideline) comes from this ticket's own scope, and
+the notes flag it honestly; splitting the loaders is follow-up work for the architect.
+Reviewer fixes, made before merging:
+- Entries with an empty `"id": ""` were skipped silently; the five loaders now report
+  "an entry has an empty 'id'" / "an item has an empty 'id'".
+- Clothing `styles` are validated against the new `ClothingDef.STYLES` (the five tags from
+  the design doc).
+- Tests: count starter items (not all items) for the 22 minimum, check the 16 clothing
+  colours minimum and every item style, and cover the three new errors with broken
+  fixtures (a mutation check confirmed they fail without the fixes).
+- Merge: resolved the overlap with T-0005 in `ContentDB.load_from()` (needs load right
+  after terrain, then names, appearance, clothing, world).

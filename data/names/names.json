@@ -1,0 +1,29 @@
+{
+	"_doc": "Name lists for generated people: a Central-European city mix (German, Turkish, Polish, Czech, Dutch, Italian, Syrian, Balkan, Vietnamese). A name is 1..24 characters: letters, spaces, hyphens and apostrophes, starting with a letter (see sim/people/names.gd). Saves store the names themselves.",
+	"first_names": {
+		"feminine": [
+			"Anna", "Marie", "Sophie", "Lena", "Hannah", "Laura", "Julia", "Lea", "Emma", "Mia",
+			"Emilia", "Clara", "Johanna", "Greta", "Nele", "Anouk", "Femke", "Sanne", "Zeynep", "Elif",
+			"Aylin", "Meryem", "Kasia", "Zofia", "Agnieszka", "Magdalena", "Petra", "Tereza", "Lucie", "Giulia",
+			"Chiara", "Sofia", "Valentina", "Amina", "Rania", "Linh"
+		],
+		"masculine": [
+			"Jan", "Lukas", "Felix", "Jonas", "Leon", "Paul", "Maximilian", "Tobias", "Stefan", "Matthias",
+			"Mehmet", "Emre", "Burak", "Ahmet", "Kacper", "Piotr", "Jakub", "Tomasz", "Tomáš", "Vojtěch",
+			"Daan", "Sven", "Bram", "Luca", "Marco", "Giovanni", "Yusuf", "Khalil", "Dario", "Marko",
+			"Nikola", "Luka", "Minh", "Emir"
+		],
+		"neutral": [
+			"Alex", "Sam", "Robin", "Kim", "Noa", "Mika", "Jo", "Luca", "Nika", "Toni",
+			"Sasha", "Alix"
+		]
+	},
+	"last_names": [
+		"Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Hoffmann", "Schäfer",
+		"Yilmaz", "Demir", "Kaya", "Öztürk", "Çelik", "Yildiz", "Nowak", "Kowalski", "Wójcik", "Kamiński",
+		"Lewandowski", "Zieliński", "Novák", "Svoboda", "Dvořák", "Černý", "Procházka", "Kuipers", "van Dijk", "de Vries",
+		"Bakker", "Visser", "Rossi", "Russo", "Ferrari", "Esposito", "Bianchi", "Romano", "Haddad", "Nasser",
+		"Al-Hassan", "Khoury", "Petrović", "Jovanović", "Marković", "Nikolić", "Popović", "Đurić", "Horvat", "Kovačević",
+		"Nguyễn", "Trần", "Lê", "Pham", "Võ", "Hoang"
+	]
+}
