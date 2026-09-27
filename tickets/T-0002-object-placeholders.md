@@ -28,7 +28,10 @@ Create `game/view2d/objects_view_2d.gd` (`ObjectsView2D`) and `game/view2d/objec
 ## Specification
 - `ObjectsView2D` (Node2D) keeps `Dictionary[int, ObjectView2D]`, rebuilds on
   `Session.game_loaded`, and reacts to sim events `object_added` / `object_removed`
-  (`data.object_id`).
+  (`data.object_id`). T-0001 as merged: objects are in `Session.sim.world.objects`
+  (`Dictionary[int, WorldObject]`); `SimFactory.new_game` emits `object_added` for each
+  district object; nothing emits `object_removed` yet (handle it anyway, for build mode);
+  defs via `Session.content.object_def(obj.def_id)`.
 - `ObjectView2D` (Node2D) has `object_id`; in `_draw()`:
   - a rectangle covering all footprint cells (`WorldObject.cells()`), in the def's
     `debug_color`, with a 1 px darker outline;

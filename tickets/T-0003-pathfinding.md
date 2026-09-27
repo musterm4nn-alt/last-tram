@@ -23,8 +23,10 @@ pavements to roads. This is the basis for click-to-walk (T-0004) and for walking
 
 ## Scope
 Create `sim/world/pathfinder.gd` (`Pathfinder`) and `tests/sim/test_pathfinding.gd`.
-Change: `data/terrain.json` + `sim/content/terrain_def.gd` + `ContentDB` (new `path_cost`
-field); `sim/sim.gd` (add `nav`).
+Change: `data/terrain.json` + `sim/content/terrain_def.gd` + `sim/content/terrain_loader.gd`
+(read and validate the new `path_cost` field, next to the other terrain fields);
+`sim/sim.gd` (add `nav`). T-0001 as merged: `grid.is_walkable()` is false on cells covered
+by a blocking object, and adding or removing an object bumps `grid.revision`.
 **Out of scope:** following paths (T-0004), multiple levels and stairs (M2), private lots.
 
 ## Specification
