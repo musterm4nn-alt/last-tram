@@ -30,6 +30,10 @@ New game → main menu → character creator → the town.
   ("paper doll") that updates with every choice. The same portrait is reused in the wardrobe
   and the person inspector.
 - The first version (T-0020) is only a name screen; the full creator follows (T-0021).
+- There is **no preset main character**: the player always names their own. A built-in
+  stand-in ("Alex Novak", `data/appearance/default_player.json`) is used only when the
+  menu is skipped (tools, tests, quick starts) and, until T-0021, for everything the name
+  screen doesn't ask yet (age, gender, looks, clothes).
 
 ## Identity and appearance (sim state)
 

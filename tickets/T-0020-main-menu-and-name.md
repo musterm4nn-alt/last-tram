@@ -60,7 +60,8 @@ menu, anything in `sim/`.
   and buttons **New game** (opens `NameScreen`), **Continue** (loads `Session.QUICKSAVE_PATH`;
   disabled when that file doesn't exist) and **Quit**. It closes itself when a game loads.
 - `NameScreen` (CanvasLayer, built in code): fields First name, Last name, Nickname
-  (optional); a **Random name** button (fills the names from `CharacterSpec.random` with a
+  (optional). The fields start **empty**: the player names their character (the default
+  player's name is only for tools, tests and quick starts, never pre-filled here). a **Random name** button (fills the names from `CharacterSpec.random` with a
   fresh RNG); an error label showing the name-related messages from
   `CharacterSpec.validate()`; **Start** is disabled while the spec is invalid; **Back**
   returns to the menu. Start = `CharacterSpec.default_player(content)` with the typed names
@@ -73,7 +74,8 @@ menu, anything in `sim/`.
   arguments, true with `--screenshot=x`, false with `--menu --screenshot=x`, true with
   `--seed=3`; `--screen=name` is kept.
 - [ ] `tools/screenshot.sh out/t0020_menu.png --menu` shows the main menu.
-- [ ] `tools/screenshot.sh out/t0020_name.png --menu --screen=name` shows the name screen.
+- [ ] `tools/screenshot.sh out/t0020_name.png --menu --screen=name` shows the name screen
+  with empty fields and Start disabled.
 - [ ] `tools/screenshot.sh out/t0020_game.png` still starts straight in the flat (tools
   unaffected), and the default player is named "Alex".
 - [ ] Manual check, described in your notes: `tools/run.sh` shows the menu; type a name,
