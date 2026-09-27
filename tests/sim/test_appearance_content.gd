@@ -75,10 +75,17 @@ func test_every_required_slot_has_a_starter_item() -> void:
 
 func test_items_have_valid_slots_colours_and_ranges() -> void:
 	var db := content()
-	assert_true(db.clothing.size() >= 22, "at least 22 starter clothing items")
+	var starters := 0
+	for item: ClothingDef in db.clothing.values():
+		if item.starter:
+			starters += 1
+	assert_true(starters >= 22, "at least 22 starter clothing items")
+	assert_true(db.clothing_colours.size() >= 16, "at least 16 clothing colours")
 	for item: ClothingDef in db.clothing.values():
 		assert_true(ClothingDef.SLOTS.has(item.slot), "item '%s' has invalid slot '%s'" % [item.id, item.slot])
 		assert_true(item.colours.size() > 0, "item '%s' has no colours" % item.id)
+		for style: String in item.styles:
+			assert_true(ClothingDef.STYLES.has(style), "item '%s' has unknown style '%s'" % [item.id, style])
 		for colour_id: String in item.colours:
 			assert_true(db.clothing_colours.has(colour_id), "item '%s' uses unknown colour '%s'" % [item.id, colour_id])
 		assert_true(item.price >= 0, "item '%s' has a negative price" % item.id)
@@ -130,3 +137,6 @@ func test_broken_appearance_content_is_reported() -> void:
 	assert_true(all.contains("slot 'hat'"), "invalid clothing slot must be reported: " + all)
 	assert_true(all.contains("duplicate clothing id"), "duplicate clothing id must be reported: " + all)
 	assert_true(all.contains("no starter item in required slot 'bottom'"), "missing starter item must be reported: " + all)
+	assert_true(all.contains("item 'broken_style': style 'fancy' is not one of"), "unknown clothing style must be reported: " + all)
+	assert_true(all.contains("broken.json: an item has an empty 'id'"), "empty clothing id must be reported: " + all)
+	assert_true(all.contains("features: an entry has an empty 'id'"), "empty appearance id must be reported: " + all)

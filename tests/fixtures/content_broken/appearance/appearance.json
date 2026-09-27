@@ -1,5 +1,5 @@
 {
-	"_doc": "Deliberately broken content for tests/sim/test_appearance_content.gd: age_years.min is 17, below the adult minimum of 18. Do not fix.",
+	"_doc": "Deliberately broken content for tests/sim/test_appearance_content.gd: age_years.min is 17, below the adult minimum of 18, and a feature has an empty id. Do not fix.",
 	"age_years": { "min": 17, "max": 80 },
 	"height_cm": { "min": 150, "max": 205 },
 	"genders": [
@@ -27,6 +27,7 @@
 		{ "id": "none", "name": "None" }
 	],
 	"features": [
-		{ "id": "freckles", "name": "Freckles" }
+		{ "id": "freckles", "name": "Freckles" },
+		{ "id": "", "name": "Nameless" }
 	]
 }

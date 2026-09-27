@@ -1,13 +1,13 @@
 ---
 id: T-0017
 title: Appearance, clothing and name catalogs (content + validation)
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: []
 builder: OpenCode / DeepSeek V4.1 Flash
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -216,3 +216,18 @@ Syrian, Balkan, Vietnamese.
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed.** Every criterion is met and tested; the data meets every
+minimum and the content rules (ages 18-80, nothing sexualised, no underwear slot). The
+`content_db.gd` size (over the ~300-line guideline) comes from this ticket's own scope, and
+the notes flag it honestly; splitting the loaders is follow-up work for the architect.
+Reviewer fixes, made before merging:
+- Entries with an empty `"id": ""` were skipped silently; the five loaders now report
+  "an entry has an empty 'id'" / "an item has an empty 'id'".
+- Clothing `styles` are validated against the new `ClothingDef.STYLES` (the five tags from
+  the design doc).
+- Tests: count starter items (not all items) for the 22 minimum, check the 16 clothing
+  colours minimum and every item style, and cover the three new errors with broken
+  fixtures (a mutation check confirmed they fail without the fixes).
+- Merge: resolved the overlap with T-0005 in `ContentDB.load_from()` (needs load right
+  after terrain, then names, appearance, clothing, world).

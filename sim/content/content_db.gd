@@ -222,6 +222,7 @@ func _load_genders(entries: Variant, ctx: String) -> Dictionary[String, GenderOp
 		gender.default_pronouns = _str(d, "default_pronouns", entry_ctx)
 		gender.name_lists = _str_array(d, "name_lists", entry_ctx)
 		if gender.id.is_empty():
+			errors.append("%s: an entry has an empty 'id'" % ctx)
 			continue
 		if out.has(gender.id):
 			errors.append("%s: duplicate id" % entry_ctx)
@@ -251,6 +252,7 @@ func _load_pronouns(entries: Variant, ctx: String) -> Dictionary[String, Pronoun
 		pronouns.possessive = _str(d, "possessive", entry_ctx)
 		pronouns.reflexive = _str(d, "reflexive", entry_ctx)
 		if pronouns.id.is_empty():
+			errors.append("%s: an entry has an empty 'id'" % ctx)
 			continue
 		if out.has(pronouns.id):
 			errors.append("%s: duplicate id" % entry_ctx)
@@ -276,6 +278,7 @@ func _load_named_options(entries: Variant, ctx: String) -> Dictionary[String, Na
 		var entry_ctx := "%s '%s'" % [ctx, option.id]
 		option.name = _str(d, "name", entry_ctx)
 		if option.id.is_empty():
+			errors.append("%s: an entry has an empty 'id'" % ctx)
 			continue
 		if out.has(option.id):
 			errors.append("%s: duplicate id" % entry_ctx)
@@ -308,6 +311,7 @@ func _load_color_options(entries: Variant, ctx: String) -> Dictionary[String, Co
 		if d.has("natural"):
 			option.natural = _bool(d, "natural", entry_ctx)
 		if option.id.is_empty():
+			errors.append("%s: an entry has an empty 'id'" % ctx)
 			continue
 		if out.has(option.id):
 			errors.append("%s: duplicate id" % entry_ctx)
@@ -372,12 +376,16 @@ func _load_clothing_items(path: String) -> void:
 		item.warmth = int(_num(d, "warmth", ctx))
 		item.starter = _bool(d, "starter", ctx)
 		if item.id.is_empty():
+			errors.append("%s: an item has an empty 'id'" % path)
 			continue
 		if clothing.has(item.id):
 			errors.append("%s: duplicate clothing id" % ctx)
 			continue
 		if not ClothingDef.SLOTS.has(item.slot):
 			errors.append("%s: slot '%s' is not one of: %s" % [ctx, item.slot, ", ".join(ClothingDef.SLOTS)])
+		for style: String in item.styles:
+			if not ClothingDef.STYLES.has(style):
+				errors.append("%s: style '%s' is not one of: %s" % [ctx, style, ", ".join(ClothingDef.STYLES)])
 		if item.colours.is_empty():
 			errors.append("%s: colours must not be empty" % ctx)
 		for colour_id: String in item.colours:

@@ -6,12 +6,14 @@ extends RefCounted
 const SLOTS: PackedStringArray = ["head", "face", "neck", "top", "outer", "bottom", "feet", "hands", "bag"]
 ## Slots a person always wears something in (the game has no nudity).
 const REQUIRED_SLOTS: PackedStringArray = ["top", "bottom", "feet"]
+## Style tags an item can have (docs/design/character-and-appearance.md).
+const STYLES: PackedStringArray = ["casual", "formal", "sporty", "street", "workwear"]
 
 var id: String = ""
 var name: String = ""
 ## One of SLOTS.
 var slot: String = ""
-## Style tags: "casual", "formal", "sporty", "street", "workwear".
+## Some of STYLES.
 var styles: PackedStringArray = PackedStringArray()
 ## Colour ids from data/clothing/colours.json.
 var colours: PackedStringArray = PackedStringArray()
