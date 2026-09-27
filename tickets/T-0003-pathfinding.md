@@ -1,7 +1,7 @@
 ---
 id: T-0003
 title: Grid pathfinding (single level, surface costs)
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
@@ -94,3 +94,19 @@ by a blocking object, and adding or removing an object bumps `grid.revision`.
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed with no changes to behaviour.** Built from the latest `main`;
+the code follows the spec closely and the notes are honest and precise.
+- Tests are real: a mutation check broke five things one at a time (corner cutting allowed,
+  no surface weights, never rebuilding, keeping the start cell, no minimum cost) and each one
+  made at least one test fail.
+- Reviewer's own measurement agrees with the notes: spawn (50,26) to the Späti door (5,23)
+  is 50 cells, all on floor and pavement (no road), cold ~3.0 ms including the 72x44 graph
+  build, warm ~17 µs.
+- `is_reachable(from, from)` returning true on walkable ground is the right call (a person
+  already standing somewhere has reached it). Later tickets may rely on it.
+- Reviewer tidy-up: two redundant casts removed in `_grid_for` (the dictionaries are typed).
+  Docs updated for `path_cost` and `sim.nav` (cookbook terrain recipe, world-and-map,
+  architecture folder map).
+- For later (not this ticket): every grid change rebuilds the whole level's graph on the next
+  query. Fine at 72x44 (~3 ms); a much bigger map or build mode may want per-cell updates.

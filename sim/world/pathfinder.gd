@@ -52,8 +52,8 @@ func is_reachable(from: Vector3i, to: Vector3i) -> bool:
 func _grid_for(level: int) -> AStarGrid2D:
 	if not _world.grid.has_level(level):
 		return null
-	if _grids.has(level) and int(_built_at[level]) == _world.grid.revision:
-		return _grids[level] as AStarGrid2D
+	if _grids.has(level) and _built_at[level] == _world.grid.revision:
+		return _grids[level]
 	var astar := AStarGrid2D.new()
 	astar.region = Rect2i(0, 0, _world.grid.width, _world.grid.height)
 	astar.cell_size = Vector2(1, 1)
