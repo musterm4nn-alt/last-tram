@@ -1,13 +1,13 @@
 ---
 id: T-0002
 title: Draw world objects as placeholders
-status: review
+status: done
 milestone: M1
 size: S
 owner: builder
 depends_on: [T-0001]
 builder: OpenCode / Muse Spark 1.3 Free
-review_rounds: 0
+review_rounds: 1
 ---
 
 ## Goal
@@ -92,3 +92,19 @@ Create `game/view2d/objects_view_2d.gd` (`ObjectsView2D`) and `game/view2d/objec
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed, with two small reviewer fixes.** Built from the latest
+`main`; clean views that mirror `PeopleView2D`, a sensible static flag for the slot dots,
+and honest notes. The reviewer's screenshots at the default zoom (`--zoom=2`, 3x) show all
+four objects as labelled blocks under the player, with slot dots only under F3.
+- **The zoom in the criteria was the ticket's mistake:** `--zoom=3` is the fourth zoom step
+  (4x), which crops the bed and sofa. The builder spotted it and added a wide shot.
+- Fixed: the TV's display name is now "TV" (`data/objects/furniture.json`); the label read
+  "Tel", like a telephone.
+- Fixed: `test_rebuild_creates_one_view_per_object_and_clears` only counted `_views`, which
+  stays at 2 even if old view nodes are never freed (they would keep drawing). It now checks
+  that the old views are queued for deletion and replaced; a mutation check confirmed it
+  fails without the `queue_free()`.
+- Notes nit: the wide shot shows the player in the entrance room, not the bedroom.
+- For later: the bed's east slot dot sits on a wall (allowed; one usable slot is enough).
+  A future debug view could mark unusable slots in another colour.

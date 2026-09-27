@@ -15,6 +15,9 @@ Clicking an object in command mode, or pressing E next to one in direct mode, op
 
 ## Notes for the architect (to detail before this becomes todo)
 - Use `Interactions.offered_by()`; unavailable options greyed out with a reason (later).
+- T-0002 as merged: `ObjectsView2D` holds one `ObjectView2D` per object; to find the
+  object under the mouse, turn the click into a cell and use
+  `Session.sim.world.objects_at(cell)`. `ObjectView2D.show_slots` draws use-slot dots.
 - E picks the nearest object within 1.5 cells, preferring the facing direction.
 - The menu is a PopupMenu or custom panel built in code; it must not leak input to movement while open.
 - Queue panel: bottom-centre, max 6, cancel → CancelActionCommand.

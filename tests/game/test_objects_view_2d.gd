@@ -55,8 +55,12 @@ func test_footprint_rect_covers_cells() -> void:
 func test_rebuild_creates_one_view_per_object_and_clears() -> void:
 	var views := _views_with_two_objects()
 	assert_eq(views._views.size(), 2)
+	var old_views: Array[ObjectView2D] = views._views.values()
 	views.rebuild()
 	assert_eq(views._views.size(), 2, "rebuild must clear first, not duplicate")
+	for old: ObjectView2D in old_views:
+		assert_true(old.is_queued_for_deletion(), "old views must be freed, or they keep drawing")
+		assert_false(views._views.values().has(old), "rebuild must make new views")
 	views.free()
 
 
