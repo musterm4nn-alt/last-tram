@@ -1,0 +1,133 @@
+{
+	"_doc": "Furniture definitions. size is [width,height] at rotation 0; footprint is offsets (0..w-1,0..h-1) from the origin. use_slots[].offset is relative to the origin at rotation 0 and may lie outside the footprint; facing is the direction the person looks (a unit cardinal vector). price is in euro cents. Every M1 object blocks movement.",
+	"objects": [
+		{
+			"id": "fridge",
+			"name": "Fridge",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"fridge"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 45000,
+			"debug_color": "#dfe6e9"
+		},
+		{
+			"id": "bed_double",
+			"name": "Double bed",
+			"size": [
+				2,
+				2
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"bed"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						-1,
+						0
+					],
+					"facing": [
+						1,
+						0
+					]
+				},
+				{
+					"offset": [
+						2,
+						0
+					],
+					"facing": [
+						-1,
+						0
+					]
+				}
+			],
+			"price": 120000,
+			"debug_color": "#74b9ff"
+		},
+		{
+			"id": "sofa",
+			"name": "Sofa",
+			"size": [
+				2,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"seat"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 80000,
+			"debug_color": "#e17055"
+		},
+		{
+			"id": "tv",
+			"name": "Television",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"tv"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						2
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 60000,
+			"debug_color": "#2d3436"
+		}
+	]
+}

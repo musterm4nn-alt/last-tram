@@ -16,3 +16,5 @@ var levels: Dictionary[int, PackedStringArray] = {}
 ## Where a new player starts, in WORLD cells.
 var player_spawn: Vector3i = Vector3i.ZERO
 var places: Array[PlaceDef] = []
+## Authored object placements (from the district's optional objects.json).
+var objects: Array[ObjectPlacement] = []

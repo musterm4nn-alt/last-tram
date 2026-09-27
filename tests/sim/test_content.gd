@@ -41,3 +41,28 @@ func test_broken_content_is_reported_not_crashed() -> void:
 	assert_true(all.contains("unknown glyph"), all)
 	assert_true(all.contains("expected"), "unequal row lengths must be reported: " + all)
 	assert_true(all.contains("not walkable"), "spawn in a wall must be reported: " + all)
+
+
+func test_broken_objects_are_reported_not_crashed() -> void:
+	var db := ContentDB.new()
+	db.load_from(BROKEN_CONTENT)
+	var all := "\n".join(db.errors)
+	assert_false(db.is_valid())
+	assert_true(all.contains("duplicate object id"), all)
+	assert_true(all.contains("at least one use slot"), "object with no slots must be reported: " + all)
+	assert_true(all.contains("unit cardinal"), "bad facing must be reported: " + all)
+	assert_true(all.contains("unknown object"), "placement with an unknown def must be reported: " + all)
+	assert_true(all.contains("overlaps another object"), "overlapping placement must be reported: " + all)
+	assert_true(all.contains("not walkable"), "placement in a wall must be reported: " + all)
+	assert_true(all.contains("rotation"), "bad rotation must be reported: " + all)
+	assert_true(all.contains("no usable use slot"), "placement with no usable slot must be reported: " + all)
+
+
+func test_game_objects_are_valid() -> void:
+	var db := content()
+	assert_true(db.object_def("fridge") != null)
+	assert_true(db.object_def("bed_double") != null)
+	assert_true(db.object_def("sofa") != null)
+	assert_true(db.object_def("tv") != null)
+	assert_true(db.object_def("ghost") == null)
+	assert_false(db.districts["altstadt"].objects.is_empty())

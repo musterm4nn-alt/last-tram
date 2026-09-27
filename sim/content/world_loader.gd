@@ -73,6 +73,7 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 		else:
 			reader.error("%s: rect must be [x, y, width, height] (local)" % ctx)
 		district.places.append(place)
+	load_objects(db, reader, district, dir)
 	return district
 
 
@@ -112,3 +113,125 @@ static func validate_spawn(db: ContentDB, reader: ContentReader, district: Distr
 	var index := db.terrain_index_for_glyph(rows[local.y][local.x])
 	if index >= 0 and not db.terrains[index].walkable:
 		reader.error("%s: player_spawn %s is on '%s', which is not walkable" % [ctx, local, db.terrains[index].id])
+
+
+## Authored object placements from the district's optional objects.json (local
+## coordinates). Invalid placements are reported and skipped. Error messages name
+## the file, the object and the problem.
+static func load_objects(db: ContentDB, reader: ContentReader, district: DistrictDef, dir: String) -> void:
+	var path := dir.path_join("objects.json")
+	if not FileAccess.file_exists(path):
+		return
+	var root: Variant = reader.read_json(path)
+	if not root is Dictionary:
+		return
+	var occupied: Dictionary = {}
+	for entry: Variant in reader.read_arr(root, "objects", path):
+		if not entry is Dictionary:
+			reader.error("%s: every object must be an object" % path)
+			continue
+		var od: Dictionary = entry
+		var def_id := reader.read_str(od, "def", path)
+		var ctx := "%s: object '%s'" % [path, def_id]
+		var cell_arr := reader.read_arr(od, "cell", ctx)
+		var rotation := int(reader.read_num(od, "rotation", ctx))
+		if cell_arr.size() != 3 or not _is_num(cell_arr[0]) or not _is_num(cell_arr[1]) or not _is_num(cell_arr[2]):
+			reader.error("%s: cell must be [x, y, level] (local to the district)" % ctx)
+			continue
+		var local := Vector3i(int(cell_arr[0]), int(cell_arr[1]), int(cell_arr[2]))
+		if rotation < 0 or rotation > 3:
+			reader.error("%s: rotation %d must be 0..3" % [ctx, rotation])
+			continue
+		var def := db.object_def(def_id)
+		if def == null:
+			reader.error("%s: unknown object '%s'" % [path, def_id])
+			continue
+		var world_cell := local + Vector3i(district.origin.x, district.origin.y, 0)
+		var footprint: Array[Vector3i] = []
+		for offset: Vector2i in def.footprint(rotation):
+			footprint.append(world_cell + Vector3i(offset.x, offset.y, 0))
+		var bad := false
+		for foot: Vector3i in footprint:
+			var foot_local := foot - Vector3i(district.origin.x, district.origin.y, 0)
+			if not _local_in_bounds(district, foot_local):
+				reader.error("%s: object '%s' at %s is outside the district" % [path, def_id, local])
+				bad = true
+				break
+			if not _local_walkable(db, district, foot_local):
+				reader.error("%s: object '%s' at %s is on '%s', which is not walkable" % [path, def_id, local, _terrain_id_at(db, district, foot_local)])
+				bad = true
+				break
+		if bad:
+			continue
+		for foot: Vector3i in footprint:
+			if occupied.has(foot):
+				reader.error("%s: object '%s' at %s overlaps another object" % [path, def_id, local])
+				bad = true
+				break
+		if bad:
+			continue
+		var footprint_set: Dictionary = {}
+		for foot: Vector3i in footprint:
+			footprint_set[foot] = true
+		var usable := false
+		for slot: UseSlotDef in def.use_slots:
+			var rotated := ObjectDef.rotate_offset(slot.offset, def.size, rotation)
+			var slot_world := world_cell + Vector3i(rotated.x, rotated.y, 0)
+			var slot_local := slot_world - Vector3i(district.origin.x, district.origin.y, 0)
+			if not _local_in_bounds(district, slot_local):
+				continue
+			if not _local_walkable(db, district, slot_local):
+				continue
+			if occupied.has(slot_world) or footprint_set.has(slot_world):
+				continue
+			usable = true
+			break
+		if not usable:
+			reader.error("%s: object '%s' at %s has no usable use slot (every slot is blocked or not walkable)" % [path, def_id, local])
+			continue
+		var placement := ObjectPlacement.new()
+		placement.def_id = def_id
+		placement.cell = world_cell
+		placement.rotation = rotation
+		district.objects.append(placement)
+		for foot: Vector3i in footprint:
+			occupied[foot] = true
+
+
+static func _is_num(v: Variant) -> bool:
+	return v is float or v is int
+
+
+static func _local_in_bounds(district: DistrictDef, local: Vector3i) -> bool:
+	if not district.levels.has(local.z):
+		return false
+	var rows: PackedStringArray = district.levels[local.z]
+	if local.y < 0 or local.y >= rows.size():
+		return false
+	if local.x < 0 or local.x >= rows[local.y].length():
+		return false
+	if local.x >= district.size.x or local.y >= district.size.y:
+		return false
+	return true
+
+
+static func _local_walkable(db: ContentDB, district: DistrictDef, local: Vector3i) -> bool:
+	if not _local_in_bounds(district, local):
+		return false
+	var rows: PackedStringArray = district.levels[local.z]
+	var index := db.terrain_index_for_glyph(rows[local.y][local.x])
+	if index < 0:
+		return false
+	return db.terrains[index].walkable
+
+
+static func _terrain_id_at(db: ContentDB, district: DistrictDef, local: Vector3i) -> String:
+	if not district.levels.has(local.z):
+		return "void"
+	var rows: PackedStringArray = district.levels[local.z]
+	if local.y < 0 or local.y >= rows.size() or local.x < 0 or local.x >= rows[local.y].length():
+		return "void"
+	var index := db.terrain_index_for_glyph(rows[local.y][local.x])
+	if index < 0:
+		return "unknown"
+	return db.terrains[index].id

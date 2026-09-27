@@ -1,0 +1,59 @@
+{
+	"_doc": "Deliberately broken placements. Do not fix.",
+	"objects": [
+		{
+			"def": "crate",
+			"cell": [
+				1,
+				1,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "crate",
+			"cell": [
+				1,
+				1,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "ghost",
+			"cell": [
+				1,
+				2,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "crate",
+			"cell": [
+				0,
+				0,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "crate",
+			"cell": [
+				1,
+				2,
+				0
+			],
+			"rotation": 5
+		},
+		{
+			"def": "crate",
+			"cell": [
+				3,
+				1,
+				0
+			],
+			"rotation": 0
+		}
+	]
+}
