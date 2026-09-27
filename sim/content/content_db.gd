@@ -30,6 +30,9 @@ var clothing_colours: Dictionary[String, ColorOption] = {}
 ## First names per name list (see FIRST_NAME_LISTS).
 var first_names: Dictionary[String, PackedStringArray] = {}
 var last_names: PackedStringArray = PackedStringArray()
+## The default player identity (data/appearance/default_player.json) in CharacterSpec
+## to_dict() shape, used for new games when no character was created.
+var default_player: Dictionary = {}
 
 var _terrain_by_id: Dictionary[String, int] = {}
 var _terrain_by_glyph: Dictionary[String, int] = {}
@@ -49,6 +52,7 @@ func load_from(root: String) -> void:
 	_load_appearance(root.path_join("appearance").path_join("appearance.json"))
 	_load_clothing(root.path_join("clothing"))
 	_load_world(root.path_join("world"))
+	_load_default_player(root.path_join("appearance").path_join("default_player.json"))
 
 
 func is_valid() -> bool:
@@ -445,6 +449,17 @@ func _load_clothing_items(path: String) -> void:
 		if item.warmth < 0 or item.warmth > 3:
 			errors.append("%s: warmth %d must be 0..3" % [ctx, item.warmth])
 		clothing[item.id] = item
+
+
+# --- Default player --------------------------------------------------------------------
+
+func _load_default_player(path: String) -> void:
+	var root: Variant = _read_json(path)
+	if not root is Dictionary:
+		return
+	default_player = root
+	for problem: String in CharacterSpec.from_dict(root).validate(self):
+		errors.append("%s: %s" % [path, problem])
 
 
 # --- World & districts -----------------------------------------------------------------

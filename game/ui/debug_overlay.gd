@@ -42,7 +42,7 @@ func _process(_delta: float) -> void:
 	var player := sim.world.player()
 	if player != null:
 		var cell := player.cell()
-		lines.append("player #%d %s" % [player.id, player.full_name()])
+		lines.append("player #%d %s (%d)" % [player.id, player.display_name(), player.age_years])
 		lines.append("  pos (%.2f, %.2f)  cell (%d, %d, %d)" % [player.pos.x, player.pos.y, cell.x, cell.y, cell.z])
 		lines.append("  terrain %s   intent (%.2f, %.2f)" % [
 			sim.world.grid.terrain_def_at(cell).id, player.move_intent.x, player.move_intent.y])
