@@ -1,7 +1,7 @@
 ---
 id: T-0008
 title: Needs panel in the HUD
-status: review
+status: done
 milestone: M1
 size: S
 owner: builder
@@ -139,3 +139,9 @@ add_child(needs_panel)
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed with no changes.** Built from the latest `main` (the new
+"pull first" step worked). Code matches the spec, the four tests check real values and
+colours, and the reviewer's own three screenshots match every visual criterion (six green
+bars and "Mood: Fine"; the 4-hour mix and "Mood: Okay"; comfort red and "Mood: Uneasy"),
+with no overlap with the key hints.
