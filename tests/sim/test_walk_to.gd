@@ -190,6 +190,24 @@ func test_blocked_waypoint_stops_person_with_path_blocked_once() -> void:
 	assert_eq(_events_of(sim, &"path_blocked").size(), 0)
 
 
+func test_walk_to_takes_over_from_direct_input() -> void:
+	var sim := SimFactory.from_rows(content(), OPEN_ROOM)
+	var player := sim.world.player()
+	sim.submit(SetMoveIntentCommand.new(player.id, Vector2.DOWN))
+	sim.run_steps(2)
+	_walk_to(sim, Vector3i(5, 1, 0))
+	sim.run_steps(1)
+	assert_eq(player.move_intent, Vector2.ZERO, "a walk replaces direct input")
+	assert_false(player.path.is_empty())
+	# Walking to your own cell while walking by intent stops you.
+	sim.submit(SetMoveIntentCommand.new(player.id, Vector2.DOWN))
+	sim.run_steps(1)
+	_walk_to(sim, player.cell())
+	sim.run_steps(1)
+	assert_eq(player.move_intent, Vector2.ZERO, "walking to your own cell stops you")
+	assert_true(player.path.is_empty())
+
+
 func test_facing_points_along_the_walk() -> void:
 	var sim := SimFactory.from_rows(content(), CORRIDOR)
 	_walk_to(sim, Vector3i(6, 1, 0))
@@ -203,12 +221,14 @@ func test_save_and_continue_walk_equals_uninterrupted_run() -> void:
 	straight.run_steps(100)
 	var split := SimFactory.from_rows(content(), OPEN_ROOM, 5)
 	_walk_to(split, Vector3i(5, 3, 0))
-	split.run_steps(30)
+	split.run_steps(10)
+	# The walk takes about 22 steps, so this save really is mid-walk.
+	assert_true(split.world.player().path.size() >= 2, "save is not mid-walk: %s" % [split.world.player().path])
 	var resumed := SaveCodec.from_json(SaveCodec.to_json(split), content())
 	assert_true(resumed != null, "mid-walk save did not load")
 	if resumed == null:
 		return
-	resumed.run_steps(70)
+	resumed.run_steps(90)
 	assert_eq(SaveCodec.to_json(resumed), SaveCodec.to_json(straight))
 
 

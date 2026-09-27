@@ -1,6 +1,7 @@
 class_name MovementSystem
 extends SimSystem
-## Moves people along their move_intent (direct control), sliding along walls.
+## Moves people by their move_intent (direct control), or else along their path (set by
+## WalkToCommand), sliding along walls.
 ## Collision: a person is a box of half-size Person.RADIUS that may only overlap walkable
 ## cells. X and Y are resolved separately, so walking diagonally into a wall slides along it.
 
