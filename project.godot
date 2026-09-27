@@ -1,0 +1,33 @@
+; Engine configuration file.
+; Hand-edited on purpose: input actions are registered in code (game/input/input_actions.gd),
+; so this file stays small and readable. Only the architect changes it.
+
+config_version=5
+
+[application]
+
+config/name="Last Tram"
+config/description="Open-world life sim sandbox set in a gritty modern European town."
+run/main_scene="res://game/main.tscn"
+config/features=PackedStringArray("4.7")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Session="*res://game/session.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/integer_division=0
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

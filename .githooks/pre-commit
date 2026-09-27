@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Runs tools/check.sh before every commit and blocks the commit if it fails.
+# Never bypass this (no `git commit --no-verify`).
+cd "$(git rev-parse --show-toplevel)" || exit 1
+mkdir -p out
+echo "pre-commit: running tools/check.sh ..."
+if ! tools/check.sh > out/precommit.log 2>&1; then
+	grep -E "FAIL|error|Error|FAILED" out/precommit.log | head -40
+	echo "pre-commit: checks FAILED, commit blocked (full output: out/precommit.log)"
+	exit 1
+fi
+echo "pre-commit: all checks passed"

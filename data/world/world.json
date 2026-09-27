@@ -1,0 +1,5 @@
+{
+	"_doc": "The town is the union of these districts (folders in data/world/districts/). New districts are added here with an origin that does not overlap existing ones.",
+	"start_district": "altstadt",
+	"districts": ["altstadt"]
+}

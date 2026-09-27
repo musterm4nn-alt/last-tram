@@ -1,0 +1,23 @@
+{
+	"_doc": "Ground cell types. 'glyph' is the character used in district ASCII maps (data/world/districts/*/level_*.txt). Saves store ids, so order here does not matter. debug_color is only for placeholder graphics.",
+	"terrains": [
+		{ "id": "void", "name": "Nothing", "glyph": " ", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "none", "debug_color": "#0e0f12" },
+		{ "id": "wall", "name": "Wall", "glyph": "#", "walkable": false, "blocks_sight": true, "indoor": false, "surface": "wall", "debug_color": "#6b564d" },
+		{ "id": "window", "name": "Window", "glyph": "W", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "wall", "debug_color": "#8fb3c4" },
+		{ "id": "door", "name": "Door", "glyph": "D", "walkable": true, "blocks_sight": true, "indoor": true, "surface": "floor", "debug_color": "#a8662e" },
+		{ "id": "floor_wood", "name": "Wooden floor", "glyph": ".", "walkable": true, "blocks_sight": false, "indoor": true, "surface": "floor", "debug_color": "#b89468" },
+		{ "id": "floor_tile", "name": "Tiled floor", "glyph": "_", "walkable": true, "blocks_sight": false, "indoor": true, "surface": "floor", "debug_color": "#cfcac0" },
+		{ "id": "floor_stone", "name": "Stone floor", "glyph": "s", "walkable": true, "blocks_sight": false, "indoor": true, "surface": "floor", "debug_color": "#9d968a" },
+		{ "id": "sidewalk", "name": "Pavement", "glyph": ",", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "sidewalk", "debug_color": "#8e8f91" },
+		{ "id": "cobblestone", "name": "Cobblestones", "glyph": ":", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "sidewalk", "debug_color": "#7a7166" },
+		{ "id": "road", "name": "Road", "glyph": "=", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "road", "debug_color": "#3d4046" },
+		{ "id": "tram_track", "name": "Tram tracks", "glyph": "+", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "rail", "debug_color": "#5a534c" },
+		{ "id": "crossing", "name": "Zebra crossing", "glyph": "z", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "road", "debug_color": "#b9b9b4" },
+		{ "id": "grass", "name": "Grass", "glyph": "\"", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "grass", "debug_color": "#557f3c" },
+		{ "id": "hedge", "name": "Hedge", "glyph": "h", "walkable": false, "blocks_sight": true, "indoor": false, "surface": "grass", "debug_color": "#2f5a2b" },
+		{ "id": "tree", "name": "Tree", "glyph": "T", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "grass", "debug_color": "#27451f" },
+		{ "id": "water", "name": "Canal water", "glyph": "~", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "water", "debug_color": "#2d5b78" },
+		{ "id": "bridge", "name": "Bridge", "glyph": "b", "walkable": true, "blocks_sight": false, "indoor": false, "surface": "sidewalk", "debug_color": "#6f655c" },
+		{ "id": "fountain", "name": "Fountain", "glyph": "f", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "water", "debug_color": "#4f8fb0" }
+	]
+}

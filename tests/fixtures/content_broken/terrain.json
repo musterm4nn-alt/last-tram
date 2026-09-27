@@ -1,0 +1,9 @@
+{
+	"_doc": "Deliberately broken content for tests/sim/test_content.gd. Do not fix.",
+	"terrains": [
+		{ "id": "void", "name": "Nothing", "glyph": " ", "walkable": false, "blocks_sight": false, "indoor": false, "surface": "none", "debug_color": "#000000" },
+		{ "id": "wall", "name": "Wall", "glyph": "#", "walkable": false, "blocks_sight": true, "indoor": false, "surface": "wall", "debug_color": "#555555" },
+		{ "id": "floor", "name": "Floor", "glyph": ".", "walkable": true, "blocks_sight": false, "indoor": true, "surface": "floor", "debug_color": "#aa8855" },
+		{ "id": "floor", "name": "Floor again", "glyph": "_", "walkable": true, "blocks_sight": false, "indoor": true, "surface": "floor", "debug_color": "#aa8855" }
+	]
+}

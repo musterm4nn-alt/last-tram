@@ -1,0 +1,10 @@
+# Godot cache (rebuilt by `godot --import`; tools/check.sh does this)
+.godot/
+
+# Local output: screenshots, sim reports, exports
+/out/
+/export/
+
+# OS / editor junk
+.DS_Store
+*.tmp

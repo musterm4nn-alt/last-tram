@@ -1,0 +1,9 @@
+{
+	"_doc": "Deliberately broken: spawn is inside a wall, the map has an unknown glyph and a short row.",
+	"id": "bad",
+	"name": "Bad district",
+	"origin": [0, 0],
+	"levels": { "0": "level_0.txt" },
+	"player_spawn": [0, 0, 0],
+	"places": []
+}

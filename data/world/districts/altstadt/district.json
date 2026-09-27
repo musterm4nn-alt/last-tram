@@ -1,0 +1,26 @@
+{
+	"_doc": "Altstadt, the first district: canal, Hauptstrasse with the tram, Altmarkt square, the player's flat in Haus 12. Coordinates in this file are LOCAL to the district (0,0 = top-left of level_0.txt). Places are checked in list order, so put small places before big ones that overlap them.",
+	"id": "altstadt",
+	"name": "Altstadt",
+	"origin": [0, 0],
+	"levels": { "0": "level_0.txt" },
+	"player_spawn": [50, 26, 0],
+	"places": [
+		{ "id": "tram_stop_altmarkt", "name": "Tram stop Altmarkt", "kind": "transit", "level": 0, "rect": [26, 22, 8, 1] },
+		{ "id": "church_st_nikolai", "name": "St. Nikolai", "kind": "church", "level": 0, "rect": [1, 6, 16, 10] },
+		{ "id": "cafe_wolke", "name": "Café Wolke", "kind": "cafe", "level": 0, "rect": [20, 6, 11, 10] },
+		{ "id": "waschsalon_blitz", "name": "Waschsalon Blitz", "kind": "shop", "level": 0, "rect": [31, 6, 11, 10] },
+		{ "id": "kneipe_anker", "name": "Kneipe Zum Anker", "kind": "bar", "level": 0, "rect": [45, 6, 12, 10] },
+		{ "id": "haus_3", "name": "Haus 3", "kind": "home", "level": 0, "rect": [57, 6, 14, 10] },
+		{ "id": "spaeti_kaya", "name": "Späti Kaya", "kind": "shop", "level": 0, "rect": [1, 23, 9, 8] },
+		{ "id": "imbiss_anadolu", "name": "Imbiss Anadolu", "kind": "restaurant", "level": 0, "rect": [10, 23, 8, 8] },
+		{ "id": "hinterhof", "name": "Hinterhof", "kind": "public", "level": 0, "rect": [1, 31, 17, 4] },
+		{ "id": "altmarkt", "name": "Altmarkt", "kind": "public", "level": 0, "rect": [18, 23, 28, 12] },
+		{ "id": "home_player", "name": "Haus 12, ground floor", "kind": "home", "level": 0, "rect": [47, 23, 14, 12] },
+		{ "id": "polizeiposten", "name": "Polizeiposten Altstadt", "kind": "police", "level": 0, "rect": [62, 23, 9, 8] },
+		{ "id": "uferweg", "name": "Uferweg (canal)", "kind": "public", "level": 0, "rect": [0, 0, 72, 6] },
+		{ "id": "hauptstrasse", "name": "Hauptstraße", "kind": "street", "level": 0, "rect": [0, 16, 72, 7] },
+		{ "id": "kirchgasse", "name": "Kirchgasse", "kind": "street", "level": 0, "rect": [0, 35, 72, 4] },
+		{ "id": "stadtpark", "name": "Stadtpark", "kind": "park", "level": 0, "rect": [0, 39, 72, 5] }
+	]
+}
