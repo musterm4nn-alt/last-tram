@@ -1,12 +1,12 @@
 ---
 id: T-0021
 title: Character creator model: every choice, limits and randomise (no UI yet)
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0020]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -122,7 +122,22 @@ Tip: for `randomise(section)`, build `CharacterSpec.random(content, rng)` (or
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/creator_model.gd` (`CreatorModel`) exactly as specified: option lists in catalog
+  order with wrapping `next()`/`previous()` (an unknown value steps to the first or last
+  option), age and height limits, features in catalog order, starter clothes per slot
+  ("" = nothing for optional slots; a new item starts in its first colour), colours, and
+  per-section randomising built on `CharacterSpec.random` / `Appearance.random` /
+  `Outfit.random` (names from the current gender's name lists).
+- Tests: `tests/game/test_creator_model.gd` (10). A mutation (face randomising also
+  changing the build) fails the section test. Clamping random ages and heights is only a
+  guard today: `data/appearance/appearance.json` already limits them to 18–80 and
+  150–205, so removing that clamp changes nothing yet. The direct limits are tested.
+  `tools/check.sh`: 267 passed, 0 failed.
+- No visible change (the screens are T-0026, T-0029, T-0027).
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).
