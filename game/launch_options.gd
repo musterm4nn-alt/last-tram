@@ -19,7 +19,8 @@ var screenshot_frames: int = 20
 var random_character: bool = false
 var quickstart: bool = false
 var menu: bool = false
-## "" or "name": open the name screen directly.
+## "" or a screen to open directly: "name" or "load" (main menu screens), "pause" (the
+## Esc menu, after the quick start).
 var screen: String = ""
 ## Start in command mode (--command).
 var command_mode: bool = false
@@ -86,7 +87,7 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 
 ## True when the game should start immediately, without the menu.
 func skip_menu() -> bool:
-	if menu:
+	if menu or screen == "name" or screen == "load":
 		return false
 	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 \
 			or walk != Vector2.ZERO or random_character or seed_given or command_mode or walk_to != NO_CELL \

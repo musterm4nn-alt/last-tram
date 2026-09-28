@@ -18,6 +18,8 @@ var forced_direction: Vector2 = Vector2.ZERO
 var camera: CameraRig2D
 ## The interaction menu (set by main.gd). No walking while it is open.
 var menu: InteractionMenu
+## The Esc menu (set by main.gd). No input at all while it is open.
+var pause_menu: PauseMenu
 
 var _last_sent: Vector2 = Vector2.ZERO
 
@@ -29,7 +31,8 @@ func _process(_delta: float) -> void:
 	if player == null:
 		return
 	var direction := Vector2.ZERO
-	if not Session.command_mode and not (menu != null and menu.visible):
+	var menu_open := (menu != null and menu.visible) or (pause_menu != null and pause_menu.is_open)
+	if not Session.command_mode and not menu_open:
 		direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if forced_direction != Vector2.ZERO:
 			direction = forced_direction
@@ -39,7 +42,7 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if Session.sim == null or camera == null:
+	if Session.sim == null or camera == null or (pause_menu != null and pause_menu.is_open):
 		return
 	var player := Session.sim.world.player()
 	if player == null:

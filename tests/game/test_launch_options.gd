@@ -83,3 +83,11 @@ func test_queue_parses_pairs_and_skips_the_menu() -> void:
 		assert_eq(options.queue[1], PackedStringArray(["tv", "watch_tv"]))
 	assert_true(options.skip_menu())
 
+
+func test_screen_pause_and_load() -> void:
+	var pause := LaunchOptions.parse(PackedStringArray(["--screen=pause"]))
+	assert_eq(pause.screen, "pause")
+	var load_list := LaunchOptions.parse(PackedStringArray(["--screen=load", "--screenshot=x.png"]))
+	assert_eq(load_list.screen, "load")
+	assert_false(load_list.skip_menu(), "the Load list lives in the main menu")
+

@@ -14,6 +14,8 @@ extends Node2D
 ##   --quickstart        skip the menu and start straight into a new game
 ##   --menu              force the menu even with quickstart options
 ##   --screen=name       open the name screen directly (with the menu)
+##   --screen=load       open the main menu's Load list (with the menu)
+##   --screen=pause      open the Esc menu after the quick start
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind
@@ -24,6 +26,7 @@ var _interaction_menu: InteractionMenu
 var _camera: CameraRig2D
 var _hud: Hud
 var _debug_overlay: DebugOverlay
+var _pause_menu: PauseMenu
 var _menu: MainMenu
 var _name_screen: NameScreen
 var _options: LaunchOptions
@@ -48,6 +51,8 @@ func _ready() -> void:
 	add_child(_hud)
 	_debug_overlay = DebugOverlay.new()
 	add_child(_debug_overlay)
+	_pause_menu = PauseMenu.new()
+	add_child(_pause_menu)
 	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
 	# would inherit the camera's zoom).
 	_interaction_menu = InteractionMenu.new()
@@ -55,6 +60,7 @@ func _ready() -> void:
 	_controller = PlayerController.new()
 	_controller.camera = _camera
 	_controller.menu = _interaction_menu
+	_controller.pause_menu = _pause_menu
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
 	Session.game_loaded.connect(_on_game_loaded)
@@ -78,6 +84,8 @@ func _ready() -> void:
 		_name_screen.start_pressed.connect(_start_named_game)
 		if _options.screen == "name":
 			_show_name_screen()
+		elif _options.screen == "load":
+			_menu.show_load_list()
 
 
 func _process(_delta: float) -> void:
@@ -100,6 +108,15 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("menu") and _can_toggle_pause_menu():
+		get_viewport().set_input_as_handled()
+		if _pause_menu.is_open:
+			_pause_menu.close()
+		else:
+			_pause_menu.open()
+		return
+	if _pause_menu.is_open:
+		return
 	if event.is_action_pressed("pause"):
 		Session.toggle_pause()
 	elif event.is_action_pressed("speed_1"):
@@ -142,6 +159,18 @@ func _start_quick() -> void:
 	if _options.command_mode:
 		Session.set_command_mode(true)
 	_interact_on = _options.interact
+	if _options.screen == "pause":
+		_pause_menu.open()
+
+
+## Esc opens or closes the Esc menu only during a game, with no menu screen up and the
+## interaction menu closed (its own Esc closes it first).
+func _can_toggle_pause_menu() -> bool:
+	if Session.sim == null or is_instance_valid(_menu):
+		return false
+	if is_instance_valid(_name_screen) and _name_screen.visible:
+		return false
+	return not _interaction_menu.visible
 
 
 ## Opens the interaction menu on the first object with this def id, at its screen position.

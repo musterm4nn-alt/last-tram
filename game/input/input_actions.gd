@@ -20,6 +20,7 @@ const KEYS: Dictionary = {
 	"quickload": [KEY_F8],
 	"toggle_command_mode": [KEY_TAB],
 	"interact": [KEY_E],
+	"menu": [KEY_ESCAPE],
 }
 
 const MOUSE_BUTTONS: Dictionary = {
