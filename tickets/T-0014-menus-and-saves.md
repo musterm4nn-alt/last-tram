@@ -1,12 +1,12 @@
 ---
 id: T-0014
 title: Save slots, daily autosave, and Continue loads the newest save
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0020]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -117,7 +117,26 @@ Swap `Session.saves` / `Session.sim` / `Session.content` and restore them afterw
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/save_slots.gd` (`SaveSlots`): paths, `newest_save()`, `next_autosave_path()`,
+  `describe_game_time()` (reads only the clock), `describe_real_time()`, `autosave_due()`,
+  `last_autosave_day_at()`.
+- `Session`: `saves`, `autosave()` (notice "Autosaved"), the daily check after each frame's
+  steps, `_last_autosave_day` set on load; quicksave/quickload now go through `saves` too
+  (same files as before).
+- Main menu: Continue loads the newest save of any kind; a grey line under it shows
+  "Day 1  Mon 09:30 · saved 2026-09-28 03:14". `focus_new_game()` no longer grabs focus
+  outside the tree (it logged an error when a test built the menu).
+- Tests: `tests/game/test_save_slots.gd` (7), all in `user://test_saves_t0014`, never the
+  real saves. Two tests wait 1.1 s each because file times have one-second resolution.
+  `tools/check.sh`: 217 passed, 0 failed.
+- Screenshot `out/t0014_menu.png` (`--menu`): the owner has no saves yet, so Continue is
+  greyed out and the info line hidden, as intended. The info text is covered by
+  `test_main_menu_continue_needs_a_save`; no save was written into the owner's real save
+  folder just for a screenshot.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

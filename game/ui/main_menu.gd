@@ -1,12 +1,15 @@
 class_name MainMenu
 extends CanvasLayer
-## Main menu: New game (opens the name screen), Continue (the quicksave) and Quit.
-## Shown when no quickstart option is given. Closes itself when a game loads.
+## Main menu: New game (opens the name screen), Continue (the newest save of any kind:
+## quicksave, slots or autosaves) and Quit. Shown when no quickstart option is given.
+## Closes itself when a game loads.
 
 signal new_game_requested
 
 var _new_button: Button
 var _continue_button: Button
+## Under Continue: when the newest save is from, in game and in real time.
+var _continue_info: Label
 
 
 func _ready() -> void:
@@ -38,18 +41,33 @@ func _ready() -> void:
 	_new_button = _button(box, "New game")
 	_new_button.pressed.connect(func() -> void: new_game_requested.emit())
 	_continue_button = _button(box, "Continue")
-	_continue_button.disabled = not FileAccess.file_exists(Session.QUICKSAVE_PATH)
 	_continue_button.pressed.connect(_on_continue)
+	_continue_info = Label.new()
+	_continue_info.add_theme_font_size_override("font_size", 13)
+	_continue_info.modulate = Color(1, 1, 1, 0.55)
+	_continue_info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(_continue_info)
+	refresh_continue()
 	var quit_button := _button(box, "Quit")
 	quit_button.pressed.connect(func() -> void: get_tree().quit())
 	focus_new_game()
 	Session.game_loaded.connect(_on_game_loaded)
 
 
+## Enables Continue when there is a save, and shows when the newest one is from.
+func refresh_continue() -> void:
+	var newest := Session.saves.newest_save()
+	_continue_button.disabled = newest.is_empty()
+	_continue_info.visible = not newest.is_empty()
+	if not newest.is_empty():
+		_continue_info.text = "%s · saved %s" % [SaveSlots.describe_game_time(newest), SaveSlots.describe_real_time(newest)]
+
+
 ## Selects New game, so Enter works right away (also after coming back from the name
 ## screen, where the keyboard focus was in a text field).
 func focus_new_game() -> void:
-	_new_button.grab_focus()
+	if _new_button.is_inside_tree():
+		_new_button.grab_focus()
 
 
 func _button(parent: Control, text: String) -> Button:
@@ -62,7 +80,9 @@ func _button(parent: Control, text: String) -> Button:
 
 
 func _on_continue() -> void:
-	Session.load_from(Session.QUICKSAVE_PATH)
+	var newest := Session.saves.newest_save()
+	if not newest.is_empty():
+		Session.load_from(newest)
 
 
 func _on_game_loaded() -> void:
