@@ -21,6 +21,8 @@ func _object(sim: Sim, def_id: String) -> WorldObject:
 ## the interaction and runs `minutes` game minutes. Returns the player.
 func _run(sim: Sim, def_id: String, interaction_id: String, needs: Dictionary, minutes: int) -> Person:
 	var player := sim.world.player()
+	# These tests check one action; free will would start another when it ends.
+	player.free_will = false
 	var obj := _object(sim, def_id)
 	var cell := obj.slot_cell(sim.content, 0)
 	player.pos = Vector2(cell.x + 0.5, cell.y + 0.5)

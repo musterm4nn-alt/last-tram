@@ -24,6 +24,7 @@ func apply(sim: Sim) -> void:
 	var person := sim.world.get_person(person_id)
 	if person == null:
 		return
+	person.last_input_tick = sim.clock.tick
 	if sim.world.get_object(target_id) == null:
 		return
 	if sim.content.interaction(interaction_id) == null:

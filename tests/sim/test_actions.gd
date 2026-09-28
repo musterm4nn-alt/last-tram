@@ -108,6 +108,8 @@ func test_sleep_stops_at_max_minutes_even_when_not_rested() -> void:
 	var sim := SimFactory.from_rows(db, ROOM)
 	var bed := _place(sim, "bed_double", Vector3i(2, 1, 0))
 	var player := sim.world.player()
+	# Free will would go back to bed when this sleep ends; this test checks the sleep alone.
+	player.free_will = false
 	_stand_on_slot(sim, player, bed, 0)
 	player.needs["energy"] = 20.0
 	_queue(sim, player.id, "sleep", bed.id)

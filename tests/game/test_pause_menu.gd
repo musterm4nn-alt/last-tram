@@ -137,3 +137,24 @@ func test_loading_a_save_replaces_the_game_and_closes_the_menu() -> void:
 	assert_eq(Session.sim.clock.tick, saved.clock.tick)
 	assert_eq(Session.speed, 1)
 	menu.free()
+
+
+func test_the_free_will_button_shows_and_switches_the_setting() -> void:
+	var sim := _sim_at(0, 8, 0)
+	Session.sim = sim
+	var menu := PauseMenu.new()
+	menu.open()
+	assert_eq(menu._free_will_button.text, "Free will: On", "a new player has free will")
+	menu._free_will_button.pressed.emit()
+	assert_eq(menu._free_will_button.text, "Free will: Off")
+	var pending := sim.pending_commands()
+	assert_eq(pending.size(), 1)
+	if pending.size() == 1:
+		var command := pending[0] as SetFreeWillCommand
+		assert_true(command != null, "expected a SetFreeWillCommand")
+		if command != null:
+			assert_eq(command.person_id, sim.world.player_id)
+			assert_false(command.enabled)
+	menu.close()
+	menu.free()
+

@@ -78,6 +78,8 @@ static func _spawn_player(sim: Sim, cell: Vector3i, spec: CharacterSpec) -> Pers
 	person.level = cell.z
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
 	person.prev_pos = person.pos
+	# A new game counts as fresh input, so free will waits its idle minutes before acting.
+	person.last_input_tick = sim.clock.tick
 	for need_def: NeedDef in sim.content.needs:
 		person.needs[need_def.id] = need_def.start
 	sim.world.add_person(person)

@@ -14,6 +14,8 @@ static func create(type_id: String) -> Command:
 			return QueueInteractionCommand.new()
 		"cancel_action":
 			return CancelActionCommand.new()
+		"set_free_will":
+			return SetFreeWillCommand.new()
 	return null
 
 

@@ -51,6 +51,11 @@ func _process(_delta: float) -> void:
 			need_parts.append("%s %.0f" % [need_def.id, float(player.needs.get(need_def.id, need_def.start))])
 		var mood_value: float = Mood.compute(player, sim.content)
 		lines.append("  needs %s   mood %.0f (%s)" % [" ".join(need_parts), mood_value, Mood.label(mood_value)])
+		if player.free_will:
+			var idle_minutes := (sim.clock.tick - player.last_input_tick) / SimClock.STEPS_PER_GAME_MINUTE
+			lines.append("  free will on (idle %d min)" % idle_minutes)
+		else:
+			lines.append("  free will off")
 		if player.action_queue.is_empty():
 			lines.append("  actions: (empty)")
 		else:
