@@ -159,6 +159,73 @@ func test_a_seeded_start_keeps_its_names() -> void:
 	_drop(screen)
 
 
+# --- Clothes and randomising (T-0029) ------------------------------------------------------
+
+## The ▶ button of a clothes row (the row holds: slot, ◀, item name, ▶, swatches).
+func _clothes_forward(screen: CharacterCreator, slot: String) -> Button:
+	return screen._clothes._items[slot].get_parent().get_child(3)
+
+
+func test_the_clothes_tab_has_a_row_per_slot() -> void:
+	var screen := _make_screen()
+	assert_eq(screen._clothes._items.size(), ClothingDef.SLOTS.size(), "every slot has starter items")
+	var before := screen.model.clothing("bottom")
+	_clothes_forward(screen, "bottom").pressed.emit()
+	assert_ne(screen.model.clothing("bottom"), before)
+	assert_eq(screen._clothes._items["bottom"].text, content().clothing_def(screen.model.clothing("bottom")).name)
+	for i: int in 10:
+		if screen.model.clothing("head") == "":
+			break
+		_clothes_forward(screen, "head").pressed.emit()
+	assert_eq(screen._clothes._items["head"].text, "None", "an optional slot can be empty")
+	_drop(screen)
+
+
+func test_a_swatch_picks_the_colour_and_moves_the_highlight() -> void:
+	var screen := _make_screen()
+	var colours := screen.model.colour_options("bottom")
+	assert_true(colours.size() >= 2)
+	var row := screen._clothes._swatches["bottom"]
+	(row.get_child(1) as Button).pressed.emit()
+	assert_eq(screen.model.spec.outfit.get_item("bottom").colour, colours[1])
+	for index: int in row.get_child_count():
+		var style := (row.get_child(index) as Button).get_theme_stylebox("normal") as StyleBoxFlat
+		assert_eq(style.border_width_top, 2 if index == 1 else 1, "swatch %d" % index)
+		assert_eq(style.border_color, CreatorClothesTab.CHOSEN_BORDER if index == 1 else CreatorClothesTab.SWATCH_BORDER)
+	_drop(screen)
+
+
+func test_each_tabs_randomise_changes_only_its_section() -> void:
+	for index: int in range(1, CharacterCreator.TABS.size()):
+		var section: String = CharacterCreator.TABS[index]
+		var screen := _make_screen()
+		screen.use_seed(5)
+		_type(screen, "Mira", "Jovanović", "")
+		var before := screen.model.spec.to_dict()
+		var page := screen._tabs.get_child(index)
+		(page.get_child(page.get_child_count() - 1) as Button).pressed.emit()
+		var after := screen.model.spec.to_dict()
+		assert_eq(after["first_name"], "Mira", "randomising %s kept the name" % section)
+		if section != "clothes":
+			assert_eq(after["outfit"], before["outfit"], "randomising %s kept the clothes" % section)
+		if section != "identity":
+			assert_eq(after["gender"], before["gender"], "randomising %s kept the gender" % section)
+		assert_ne(Ser.to_json(after), Ser.to_json(before), "randomising %s changed something" % section)
+		_drop(screen)
+
+
+func test_randomise_everything_makes_a_valid_character_and_shows_it() -> void:
+	var screen := _make_screen()
+	screen.use_seed(9)
+	var row := screen._start.get_parent()
+	(row.get_child(1) as Button).pressed.emit()
+	assert_eq(screen.model.errors(), PackedStringArray())
+	assert_eq(screen._first.text, screen.model.spec.first_name)
+	assert_false(screen._start.disabled)
+	assert_eq(screen._pickers["hair_style"].text, screen.model.option_name("hair_style", screen.model.value("hair_style")))
+	_drop(screen)
+
+
 func _type(screen: CharacterCreator, first: String, last: String, nick: String) -> void:
 	screen._first.text = first
 	screen._last.text = last

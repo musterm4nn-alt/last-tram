@@ -1,8 +1,9 @@
 class_name CharacterCreator
 extends CanvasLayer
-## The character creator (New game): tabs for Name, Identity, Body and Face & hair, a live
-## preview from all four sides, and Start / Back. Every choice goes through a CreatorModel.
-## Enter = Start (when valid), Esc = Back, even while typing a name.
+## The character creator (New game): tabs for Name, Identity, Body, Face & hair and Clothes,
+## each with a Randomise button, a live preview from all four sides, and Start / Randomise
+## everything / Back. Every choice goes through a CreatorModel. Enter = Start (when valid),
+## Esc = Back, even while typing a name.
 
 ## Start was pressed with a valid character.
 signal start_pressed(spec: CharacterSpec)
@@ -12,8 +13,8 @@ const HINT: String = "Type a first and last name, or press Random name."
 const HINT_COLOR: Color = Color(1, 1, 1, 0.6)
 const ERROR_COLOR: Color = Color("#e06c6c")
 ## Tab ids in order, and their titles.
-const TABS: PackedStringArray = ["name", "identity", "body", "face"]
-const TAB_TITLES: PackedStringArray = ["Name", "Identity", "Body", "Face & hair"]
+const TABS: PackedStringArray = ["name", "identity", "body", "face", "clothes"]
+const TAB_TITLES: PackedStringArray = ["Name", "Identity", "Body", "Face & hair", "Clothes"]
 const LABEL_WIDTH: float = 110.0
 
 var model: CreatorModel
@@ -31,12 +32,18 @@ var _age: SpinBox
 var _height: SpinBox
 ## Feature id -> its checkbox.
 var _feature_boxes: Dictionary[String, CheckBox] = {}
+var _clothes: CreatorClothesTab
+## Randomise buttons draw from this (seeded by --creator-seed, else random).
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _rng_seeded: bool = false
 
 
 func _ready() -> void:
 	layer = 21
 	if model == null:
 		model = CreatorModel.new(Session.content)
+	if not _rng_seeded:
+		_rng.randomize()
 	var dim := ColorRect.new()
 	dim.color = Color(0.03, 0.03, 0.05, 0.92)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -68,6 +75,14 @@ func _ready() -> void:
 	_build_identity_tab(_tab("Identity"))
 	_build_body_tab(_tab("Body"))
 	_build_face_tab(_tab("Face & hair"))
+	_clothes = CreatorClothesTab.new()
+	_clothes.name = "Clothes"
+	_tabs.add_child(_clothes)
+	_clothes.build(model)
+	_clothes.changed.connect(_sync_from_model)
+	# The Name tab's "Random name" button is its Randomise.
+	for index: int in range(1, TABS.size()):
+		_randomise_button(_tabs.get_child(index) as VBoxContainer, TABS[index])
 	_preview = FigurePreview.new()
 	columns.add_child(_preview)
 	_error = Label.new()
@@ -83,6 +98,13 @@ func _ready() -> void:
 	_start.custom_minimum_size = Vector2(140, 40)
 	_start.pressed.connect(_try_start)
 	row.add_child(_start)
+	var everything := Button.new()
+	everything.text = "Randomise everything"
+	everything.custom_minimum_size = Vector2(200, 40)
+	everything.pressed.connect(func() -> void:
+		model.randomise_all(_rng)
+		_sync_from_model())
+	row.add_child(everything)
 	var back := Button.new()
 	back.text = "Back"
 	back.custom_minimum_size = Vector2(140, 40)
@@ -101,7 +123,14 @@ func start_from(spec: CharacterSpec) -> void:
 		_sync_from_model()
 
 
-## Shows the tab with this id ("name", "identity", "body", "face"); unknown ids are ignored.
+## Randomise buttons draw from a generator with this seed (for repeatable screenshots).
+func use_seed(seed_value: int) -> void:
+	_rng.seed = seed_value
+	_rng_seeded = true
+
+
+## Shows the tab with this id ("name", "identity", "body", "face", "clothes"); unknown ids
+## are ignored.
 func show_tab(id: String) -> void:
 	var index := TABS.find(id)
 	if index >= 0:
@@ -253,23 +282,33 @@ func _field(parent: Control, label_text: String, max_length: int) -> LineEdit:
 
 ## Shows the model's current values in every control, the preview and the Start button.
 func _sync_from_model() -> void:
+	_first.text = model.spec.first_name
+	_last.text = model.spec.last_name
+	_nick.text = model.spec.nickname
 	for field: String in _pickers:
 		_pickers[field].text = model.option_name(field, model.value(field))
 	_age.set_value_no_signal(model.spec.age_years)
 	_height.set_value_no_signal(model.spec.appearance.height_cm)
 	for id: String in _feature_boxes:
 		_feature_boxes[id].set_pressed_no_signal(model.spec.appearance.features.has(id))
+	_clothes.sync(model)
 	_refresh()
+
+
+## A "Randomise" button at the end of a tab: new choices for that section only.
+func _randomise_button(page: VBoxContainer, section: String) -> void:
+	var button := Button.new()
+	button.text = "Randomise"
+	button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	button.pressed.connect(func() -> void:
+		model.randomise(section, _rng)
+		_sync_from_model())
+	page.add_child(button)
 
 
 func _on_random_name() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
-	model.randomise("name", rng)
-	_first.text = model.spec.first_name
-	_last.text = model.spec.last_name
-	_nick.text = model.spec.nickname
-	_refresh()
+	model.randomise("name", _rng)
+	_sync_from_model()
 
 
 func _try_start() -> void:
