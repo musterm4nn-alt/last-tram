@@ -1,12 +1,12 @@
 ---
 id: T-0029
 title: Character creator: Clothes tab and Randomise buttons
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0026]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -60,7 +60,27 @@ Change `game/ui/character_creator.gd` (if it would pass 350 lines, move the Clot
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/creator_clothes_tab.gd` (`CreatorClothesTab`, its own file so the creator stays
+  under 350 lines): a row per slot with starter items (all nine have some): ◀ item or
+  "None" ▶, and colour swatches with the colour's name as tooltip. Every swatch has a thin
+  grey outline (the first screenshot showed black swatches vanishing on the dark panel),
+  and the chosen one a 2 px light border.
+- `CharacterCreator`: the Clothes tab, a Randomise button at the end of every tab (the Name
+  tab's "Random name" does that job there), "Randomise everything" next to Start, all
+  drawing from `_rng` (random, or `use_seed()` from `--creator-seed` so screenshots
+  repeat). `_sync_from_model()` now also refreshes the name fields and the clothes tab.
+- Tests: four more in `tests/game/test_character_creator.gd` (rows and items, swatch
+  choice and highlight, each tab's Randomise leaves the name, the clothes and the gender to
+  their own tabs, Randomise everything is valid and shown). `tools/check.sh`: 277 passed,
+  0 failed.
+- Screenshots `out/t0029_clothes_{7,8,9}.png`: the Clothes tab with nine rows and swatches,
+  and the preview wearing the outfit (seed 8: T-shirt, olive denim jacket, beige chinos,
+  black dress shoes, gloves, backpack). The top-down placeholder doesn't draw gloves or
+  bags; the portrait (T-0027) is the place for that.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

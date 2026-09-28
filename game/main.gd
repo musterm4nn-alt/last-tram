@@ -84,6 +84,7 @@ func _ready() -> void:
 			var creator_rng := RandomNumberGenerator.new()
 			creator_rng.seed = _options.creator_seed
 			_creator.start_from(CharacterSpec.random(Session.content, creator_rng))
+			_creator.use_seed(_options.creator_seed)
 		_creator.visible = false
 		add_child(_creator)
 		_creator.back_pressed.connect(_show_menu)
