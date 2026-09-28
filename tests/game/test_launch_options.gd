@@ -58,3 +58,13 @@ func test_screen_name_is_kept() -> void:
 	var options := LaunchOptions.parse(PackedStringArray(["--menu", "--screen=name"]))
 	assert_eq(options.screen, "name")
 	assert_false(options.skip_menu())
+
+
+func test_command_mode_and_walk_to_parse_and_skip_the_menu() -> void:
+	var options := LaunchOptions.parse(PackedStringArray(["--command", "--walk-to=40,22"]))
+	assert_true(options.command_mode)
+	assert_eq(options.walk_to, Vector2i(40, 22))
+	assert_true(LaunchOptions.parse(PackedStringArray(["--command"])).skip_menu())
+	assert_true(LaunchOptions.parse(PackedStringArray(["--walk-to=40,22"])).skip_menu())
+	assert_eq(LaunchOptions.parse(PackedStringArray([])).walk_to, LaunchOptions.NO_CELL)
+

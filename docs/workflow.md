@@ -78,7 +78,8 @@ If a builder fails the same ticket twice, Opus takes it over or splits it.
 - Or open **Godot** → Import → choose `~/last-tram/project.godot` → press **F5**.
 
 Keys so far: WASD to move, Space to pause, 1/2/3 for speed, mouse wheel to zoom, F5 to save,
-F8 to load, F3 for the debug overlay.
+F8 to load, F3 for the debug overlay, Tab for command mode (click the ground to walk there;
+WASD or dragging with the right mouse button looks around).
 
 ## Reporting problems and wishes
 

@@ -18,11 +18,14 @@ const KEYS: Dictionary = {
 	"toggle_debug": [KEY_F3],
 	"quicksave": [KEY_F5],
 	"quickload": [KEY_F8],
+	"toggle_command_mode": [KEY_TAB],
 }
 
 const MOUSE_BUTTONS: Dictionary = {
 	"zoom_in": [MOUSE_BUTTON_WHEEL_UP],
 	"zoom_out": [MOUSE_BUTTON_WHEEL_DOWN],
+	"walk_click": [MOUSE_BUTTON_LEFT],
+	"pan_drag": [MOUSE_BUTTON_RIGHT],
 }
 
 

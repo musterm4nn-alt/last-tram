@@ -12,6 +12,8 @@ signal game_loaded
 signal speed_changed(speed: int)
 ## Short notice for the HUD ("Game saved").
 signal notice(text: String)
+## Tab switched between direct mode and command mode.
+signal command_mode_changed(on: bool)
 
 ## 0 = paused. At 1x, one game minute passes per real second.
 const MAX_SPEED: int = 3
@@ -27,6 +29,9 @@ var speed: int = 1
 var alpha: float = 0.0
 ## Which floor level the 2D view shows (view state, not sim state).
 var viewed_level: int = 0
+## True in command mode: the camera pans freely and a click on the ground walks there
+## (view state, not sim state; every new or loaded game starts in direct mode).
+var command_mode: bool = false
 ## Commands applied since the last load: [{"tick", "command"}] (for bug reports/replays).
 var command_log: Array[Dictionary] = []
 var steps_last_frame: int = 0
@@ -60,6 +65,14 @@ func set_speed(new_speed: int) -> void:
 		_speed_before_pause = speed
 	speed = new_speed
 	speed_changed.emit(speed)
+
+
+## Switches between direct and command mode; emits command_mode_changed only on a change.
+func set_command_mode(on: bool) -> void:
+	if on == command_mode:
+		return
+	command_mode = on
+	command_mode_changed.emit(on)
 
 
 func toggle_pause() -> void:
@@ -144,4 +157,5 @@ func _after_load() -> void:
 	sim.events.drain()  # views rebuild from state on game_loaded, so skip creation events
 	var player := sim.world.player()
 	viewed_level = player.level if player != null else 0
+	set_command_mode(false)
 	game_loaded.emit()

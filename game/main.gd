@@ -14,6 +14,8 @@ extends Node2D
 ##   --quickstart        skip the menu and start straight into a new game
 ##   --menu              force the menu even with quickstart options
 ##   --screen=name       open the name screen directly (with the menu)
+##   --command           start in command mode (Tab)
+##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 
 var _controller: PlayerController
 var _camera: CameraRig2D
@@ -31,6 +33,7 @@ func _ready() -> void:
 	InputActions.register()
 	add_child(WorldView2D.new())
 	add_child(ObjectsView2D.new())
+	add_child(PathMarker2D.new())
 	add_child(PeopleView2D.new())
 	_camera = CameraRig2D.new()
 	add_child(_camera)
@@ -40,6 +43,7 @@ func _ready() -> void:
 	_debug_overlay = DebugOverlay.new()
 	add_child(_debug_overlay)
 	_controller = PlayerController.new()
+	_controller.camera = _camera
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
 	Session.game_loaded.connect(_on_game_loaded)
@@ -92,6 +96,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		Session.quicksave()
 	elif event.is_action_pressed("quickload"):
 		Session.quickload()
+	elif event.is_action_pressed("toggle_command_mode") and Session.sim != null:
+		Session.set_command_mode(not Session.command_mode)
 
 
 ## "--seed=5 --debug" -> quickstart without the menu; nothing -> main menu.
@@ -105,10 +111,16 @@ func _start_quick() -> void:
 			character_rng.seed = _options.seed_value
 			spec = CharacterSpec.random(Session.content, character_rng)
 		Session.new_game(_options.seed_value, spec)
+	# Commands for screenshots go in before --advance, so the advance plays them out.
+	var player := Session.sim.world.player()
+	if _options.walk_to != LaunchOptions.NO_CELL and player != null:
+		Session.submit(WalkToCommand.new(player.id, Vector3i(_options.walk_to.x, _options.walk_to.y, player.level)))
 	if _options.advance_minutes > 0:
 		Session.advance_minutes(_options.advance_minutes)
 	if _options.walk != Vector2.ZERO:
 		_controller.forced_direction = _options.walk
+	if _options.command_mode:
+		Session.set_command_mode(true)
 
 
 func _show_name_screen() -> void:

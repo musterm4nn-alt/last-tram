@@ -1,7 +1,8 @@
 class_name CameraRig2D
 extends Camera2D
-## Follows the player. Mouse wheel or +/- zooms between ViewConfig.ZOOM_LEVELS.
-## Camera limits keep the view inside the town.
+## Direct mode: follows the player. Command mode (Session.command_mode): stays put and pans
+## with WASD/arrows or by dragging with the right mouse button. Mouse wheel or +/- zooms
+## between ViewConfig.ZOOM_LEVELS. Camera limits keep the view inside the town.
 
 var _zoom_index: int = ViewConfig.DEFAULT_ZOOM_INDEX
 
@@ -9,6 +10,7 @@ var _zoom_index: int = ViewConfig.DEFAULT_ZOOM_INDEX
 func _ready() -> void:
 	_apply_zoom()
 	Session.game_loaded.connect(_on_game_loaded)
+	Session.command_mode_changed.connect(_on_command_mode_changed)
 
 
 func _on_game_loaded() -> void:
@@ -21,8 +23,15 @@ func _on_game_loaded() -> void:
 	reset_smoothing()
 
 
-func _process(_delta: float) -> void:
-	_follow()
+func _process(delta: float) -> void:
+	if not Session.command_mode:
+		_follow()
+		return
+	if Session.sim == null:
+		return
+	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if direction != Vector2.ZERO:
+		position = clamp_to_town(pan_step(position, direction, delta, zoom.x), Session.sim.world.grid)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -32,12 +41,36 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("zoom_out"):
 		_zoom_index = maxi(_zoom_index - 1, 0)
 		_apply_zoom()
+	elif Session.command_mode and Session.sim != null and event is InputEventMouseMotion \
+			and Input.is_action_pressed("pan_drag"):
+		# Drag the town under the mouse.
+		var motion := event as InputEventMouseMotion
+		position = clamp_to_town(position - motion.relative / zoom.x, Session.sim.world.grid)
 
 
 ## Index into ViewConfig.ZOOM_LEVELS (clamped).
 func set_zoom_index(index: int) -> void:
 	_zoom_index = clampi(index, 0, ViewConfig.ZOOM_LEVELS.size() - 1)
 	_apply_zoom()
+
+
+## `pos` clamped to the town in pixels: x in 0..grid.width*TILE_PX, y in 0..grid.height*TILE_PX.
+static func clamp_to_town(pos: Vector2, grid: WorldGrid) -> Vector2:
+	return Vector2(
+		clampf(pos.x, 0.0, float(grid.width * ViewConfig.TILE_PX)),
+		clampf(pos.y, 0.0, float(grid.height * ViewConfig.TILE_PX)))
+
+
+## One frame of keyboard panning (pure, for tests): PAN_SPEED_PX screen pixels per second,
+## so the same speed on screen at every zoom.
+static func pan_step(pos: Vector2, direction: Vector2, delta: float, zoom_factor: float) -> Vector2:
+	return pos + direction * ViewConfig.PAN_SPEED_PX * delta / zoom_factor
+
+
+func _on_command_mode_changed(on: bool) -> void:
+	if not on:
+		_follow()
+		reset_smoothing()
 
 
 func _follow() -> void:
