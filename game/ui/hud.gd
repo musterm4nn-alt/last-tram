@@ -1,13 +1,33 @@
 class_name Hud
 extends CanvasLayer
-## Always-visible info: clock and speed, where the player is, key hints, short notices.
+## Always-visible info: clock and speed, where the player is, the control mode, key hints,
+## short notices.
 
 const NOTICE_SECONDS: float = 2.5
 
 var _clock_label: Label
 var _place_label: Label
+var _mode_label: Label
+var _hint_label: Label
 var _notice_label: Label
 var _notice_time_left: float = 0.0
+
+
+## The key hints for the bottom line, by control mode.
+static func hint_text(command_mode: bool) -> String:
+	if command_mode:
+		return "Click walk there   WASD / right-drag pan   Tab direct mode   Space pause   1-3 speed   Wheel zoom"
+	return "WASD move   Tab command mode   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   F3 debug"
+
+
+## The notice a sim event deserves for the player ("" for none).
+static func notice_for_event(event: Dictionary, player_id: int) -> String:
+	var data: Dictionary = event.get("data", {})
+	if int(data.get("person_id", -1)) != player_id:
+		return ""
+	if event.get("type") == &"path_failed":
+		return "Can't get there"
+	return ""
 
 
 func _ready() -> void:
@@ -16,6 +36,10 @@ func _ready() -> void:
 	top.add_child(box)
 	_clock_label = _label(box, 20)
 	_place_label = _label(box, 14)
+	_mode_label = _label(box, 14)
+	_mode_label.text = "Command mode"
+	_mode_label.modulate = ViewConfig.PLAYER_MARKER_COLOR
+	_mode_label.visible = Session.command_mode
 
 	var hints := _panel(Vector2(12, 0))
 	hints.anchor_top = 1.0
@@ -23,9 +47,9 @@ func _ready() -> void:
 	hints.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	hints.offset_top = -12
 	hints.offset_bottom = -12
-	var hint_label := _label(hints, 13)
-	hint_label.text = "WASD move   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   F3 debug"
-	hint_label.modulate = Color(1, 1, 1, 0.75)
+	_hint_label = _label(hints, 13)
+	_hint_label.text = hint_text(Session.command_mode)
+	_hint_label.modulate = Color(1, 1, 1, 0.75)
 
 	var needs_panel := NeedsPanel.new()
 	needs_panel.anchor_top = 1.0
@@ -45,6 +69,8 @@ func _ready() -> void:
 	add_child(_notice_label)
 
 	Session.notice.connect(_show_notice)
+	Session.command_mode_changed.connect(_on_command_mode_changed)
+	Session.sim_event.connect(_on_sim_event)
 
 
 func _process(delta: float) -> void:
@@ -58,6 +84,19 @@ func _process(delta: float) -> void:
 	if _notice_time_left > 0.0:
 		_notice_time_left -= delta
 		_notice_label.modulate.a = clampf(_notice_time_left, 0.0, 1.0)
+
+
+func _on_command_mode_changed(on: bool) -> void:
+	_mode_label.visible = on
+	_hint_label.text = hint_text(on)
+
+
+func _on_sim_event(event: Dictionary) -> void:
+	if Session.sim == null or Session.sim.world.player() == null:
+		return
+	var text := notice_for_event(event, Session.sim.world.player_id)
+	if not text.is_empty():
+		_show_notice(text)
 
 
 func _show_notice(text: String) -> void:

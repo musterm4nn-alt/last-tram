@@ -4,6 +4,8 @@ extends RefCounted
 ## understands). Tools start straight into the game; the menu shows only when no
 ## quickstart option is given (see skip_menu()).
 
+## walk_to when --walk-to was not given.
+const NO_CELL: Vector2i = Vector2i(-1, -1)
 
 var seed_value: int = 1
 var seed_given: bool = false
@@ -19,6 +21,10 @@ var quickstart: bool = false
 var menu: bool = false
 ## "" or "name": open the name screen directly.
 var screen: String = ""
+## Start in command mode (--command).
+var command_mode: bool = false
+## Walk the player to this cell at the start (--walk-to=X,Y); NO_CELL = none.
+var walk_to: Vector2i = NO_CELL
 
 
 ## Parses "--seed=5 --debug" style arguments (unknown ones are ignored).
@@ -59,6 +65,11 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.menu = true
 			"screen":
 				out.screen = value
+			"command":
+				out.command_mode = true
+			"walk-to":
+				var cell := _parse_walk(value)
+				out.walk_to = Vector2i(int(cell.x), int(cell.y))
 	return out
 
 
@@ -66,7 +77,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 func skip_menu() -> bool:
 	if menu:
 		return false
-	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 or walk != Vector2.ZERO or random_character or seed_given
+	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 \
+			or walk != Vector2.ZERO or random_character or seed_given or command_mode or walk_to != NO_CELL
 
 
 static func _parse_walk(value: String) -> Vector2:

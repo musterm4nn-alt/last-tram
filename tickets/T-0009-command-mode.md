@@ -1,12 +1,12 @@
 ---
 id: T-0009
 title: Command mode: Tab toggle, free camera, click the ground to walk
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0004]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -150,7 +150,31 @@ static func cell_at(world_px: Vector2) -> Vector2i
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `Session`: `command_mode`, `command_mode_changed`, `set_command_mode()` (emits only on a
+  change); `_after_load()` resets to direct mode.
+- Input: Tab, left click (`walk_click`), right button (`pan_drag`). `main.gd` toggles on Tab
+  (only with a game running), adds `PathMarker2D` before the people, and gives the controller
+  the camera.
+- `PlayerController`: no WASD movement in command mode (one zero intent stops a WASD walk; a
+  path keeps going); a left click walks via `walk_command()`.
+- `CameraRig2D`: follows in direct mode; in command mode pans with WASD (`pan_step`, screen
+  speed) and right-drag, clamped with `clamp_to_town`; snaps back to the player when leaving
+  command mode. (The pure helper's last parameter is `zoom_factor`, not `zoom`, to avoid
+  shadowing Camera2D's own `zoom`.)
+- `PathMarker2D`: a ring on the path's last cell (`marker_centre`).
+- `Hud`: `hint_text(mode)`, a yellow "Command mode" line, and "Can't get there" for the
+  player's `path_failed` (`notice_for_event`).
+- Launch options `--command` and `--walk-to=X,Y` (submitted before `--advance`).
+- Tests: `tests/game/test_command_mode.gd` (10) and one more in `test_launch_options.gd`.
+  `tools/check.sh`: 194 passed, 0 failed.
+- Screenshot `out/t0009.png` (`--command --walk-to=40,22 --frames=40`): the "Command mode"
+  line, the command hint line, the ring on the pavement at (40,22), and the player leaving
+  the flat by the front door.
+- Docs: the keys line in `docs/workflow.md`.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

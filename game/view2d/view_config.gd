@@ -6,6 +6,8 @@ extends RefCounted
 const TILE_PX: int = 16
 const ZOOM_LEVELS: Array[float] = [1.0, 2.0, 3.0, 4.0, 6.0]
 const DEFAULT_ZOOM_INDEX: int = 2
+## Screen pixels per second the camera pans in command mode (divided by the zoom).
+const PAN_SPEED_PX: float = 600.0
 const OUTLINE_COLOR: Color = Color("#141414")
 ## Small yellow triangle above the player's head (the player no longer has a yellow body).
 const PLAYER_MARKER_COLOR: Color = Color("#f2c14e")
@@ -38,3 +40,8 @@ const HAIR_SHAPE: Dictionary = {
 	"afro": "afro",
 	"mohawk": "mohawk",
 }
+
+
+## The cell under a world-space pixel position (floor, so it works left of / above 0 too).
+static func cell_at(world_px: Vector2) -> Vector2i:
+	return Vector2i(floori(world_px.x / TILE_PX), floori(world_px.y / TILE_PX))
