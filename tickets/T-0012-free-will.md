@@ -1,12 +1,12 @@
 ---
 id: T-0012
 title: Autonomy scoring: what would this person like to do now?
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0007, T-0011]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -94,7 +94,20 @@ static func choose(options: Array[Dictionary], rng: RandomNumberGenerator) -> Di
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request, from the prototype
+that checked D24's rules (three game days, every need above 40).
+- `sim/ai/utility.gd` (`Utility`): `urgency()` and `need_score()` (gain capped by the room
+  left in the need; missing needs count as full).
+- `sim/ai/autonomy.gd` (`Autonomy`): `candidates()` (objects within 12 cells on the same
+  level, nearest free walkable slot by path length, 0 when standing on one) and `choose()`
+  (noise per option in list order, minimum 3, best three by score with ties to the earlier
+  option, then a score-weighted pick). Pure sim code: only the given rng.
+- Tests: `tests/sim/test_autonomy_scoring.gd` (9). Four mutations (no cap, taken slots
+  ignored, no radius, no top three) each fail a test. `tools/check.sh`: 233 passed, 0 failed.
+- No visible change (T-0025 puts it to work).
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).
