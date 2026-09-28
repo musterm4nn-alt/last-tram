@@ -17,6 +17,7 @@ extends Node2D
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind
+##   --queue=DEF:ACTION,...  queue actions at the start, e.g. --queue=fridge:grab_snack,tv:watch_tv
 
 var _controller: PlayerController
 var _interaction_menu: InteractionMenu
@@ -130,6 +131,10 @@ func _start_quick() -> void:
 	var player := Session.sim.world.player()
 	if _options.walk_to != LaunchOptions.NO_CELL and player != null:
 		Session.submit(WalkToCommand.new(player.id, Vector3i(_options.walk_to.x, _options.walk_to.y, player.level)))
+	for pair: PackedStringArray in _options.queue:
+		var object_id := _first_object(pair[0])
+		if object_id > 0 and player != null:
+			Session.submit(QueueInteractionCommand.new(player.id, pair[1], object_id))
 	if _options.advance_minutes > 0:
 		Session.advance_minutes(_options.advance_minutes)
 	if _options.walk != Vector2.ZERO:
@@ -141,14 +146,22 @@ func _start_quick() -> void:
 
 ## Opens the interaction menu on the first object with this def id, at its screen position.
 func _open_menu_on(def_id: String) -> void:
+	var id := _first_object(def_id)
+	if id <= 0:
+		return
+	var obj := Session.sim.world.get_object(id)
+	var centre := Vector2(obj.origin.x + 0.5, obj.origin.y + 0.5) * ViewConfig.TILE_PX
+	_interaction_menu.open_for(id, get_viewport().get_canvas_transform() * centre)
+
+
+## The lowest id of an object with this def id, or 0.
+func _first_object(def_id: String) -> int:
 	var ids: Array = Session.sim.world.objects.keys()
 	ids.sort()
 	for id: int in ids:
-		var obj: WorldObject = Session.sim.world.objects[id]
-		if obj.def_id == def_id:
-			var centre := Vector2(obj.origin.x + 0.5, obj.origin.y + 0.5) * ViewConfig.TILE_PX
-			_interaction_menu.open_for(id, get_viewport().get_canvas_transform() * centre)
-			return
+		if Session.sim.world.objects[id].def_id == def_id:
+			return id
+	return 0
 
 
 func _show_name_screen() -> void:

@@ -57,3 +57,32 @@ func _make_panel() -> NeedsPanel:
 	var panel := NeedsPanel.new()
 	panel.build(content())
 	return panel
+
+
+func _performing(person: Person, interaction_id: String) -> void:
+	var action := Action.new(interaction_id, 1)
+	action.state = Action.PERFORMING
+	person.action_queue = [action]
+
+
+func test_is_rising_only_for_needs_the_action_fills_faster_than_they_decay() -> void:
+	var person := Person.new()
+	assert_false(NeedsPanel.is_rising(person, "fun", content()), "nothing to do, nothing rising")
+	_performing(person, "watch_tv")
+	assert_true(NeedsPanel.is_rising(person, "fun", content()), "TV: fun +25 per hour beats decay 6")
+	assert_false(NeedsPanel.is_rising(person, "comfort", content()), "TV lowers comfort")
+	person.action_queue[0].state = Action.ROUTING
+	assert_false(NeedsPanel.is_rising(person, "fun", content()), "still walking to the TV")
+
+
+func test_arrow_shows_next_to_a_rising_need() -> void:
+	var panel := _make_panel()
+	var person := Person.new()
+	for need_def: NeedDef in content().needs:
+		person.needs[need_def.id] = 50.0
+	_performing(person, "watch_tv")
+	panel.show_person(person, content())
+	assert_eq(panel._arrows["fun"].text, "▲")
+	assert_eq(panel._arrows["hunger"].text, "")
+	panel.free()
+
