@@ -34,11 +34,15 @@ var viewed_level: int = 0
 var command_mode: bool = false
 ## Commands applied since the last load: [{"tick", "command"}] (for bug reports/replays).
 var command_log: Array[Dictionary] = []
+## The save files: quicksave, slots and autosaves (tests swap in their own folder).
+var saves: SaveSlots = SaveSlots.new(SAVE_DIR)
 var steps_last_frame: int = 0
 var sim_usec_last_frame: int = 0
 
 var _accumulator: float = 0.0
 var _speed_before_pause: int = 1
+## The game day the last autosave was for (see SaveSlots.last_autosave_day_at).
+var _last_autosave_day: int = -1
 
 
 func _ready() -> void:
@@ -105,22 +109,35 @@ func _process(delta: float) -> void:
 	command_log.append_array(sim.take_applied_commands())
 	for event: Dictionary in sim.events.drain():
 		sim_event.emit(event)
+	if steps_last_frame > 0 and SaveSlots.autosave_due(sim.clock.tick, _last_autosave_day):
+		autosave()
 
 
 # --- Saving and loading ----------------------------------------------------------------
 
 func quicksave() -> void:
-	if save_to(QUICKSAVE_PATH) == OK:
+	if save_to(saves.quicksave_path()) == OK:
 		notice.emit("Game saved")
 	else:
 		notice.emit("Saving failed")
 
 
 func quickload() -> void:
-	if load_from(QUICKSAVE_PATH):
+	if load_from(saves.quicksave_path()):
 		notice.emit("Game loaded")
 	else:
 		notice.emit("No quicksave to load")
+
+
+## Writes the daily autosave into the older of the two autosave files.
+func autosave() -> void:
+	if sim == null:
+		return
+	if save_to(saves.next_autosave_path()) == OK:
+		notice.emit("Autosaved")
+	else:
+		notice.emit("Autosave failed")
+	_last_autosave_day = sim.clock.day()
 
 
 func save_to(path: String) -> Error:
@@ -158,4 +175,5 @@ func _after_load() -> void:
 	var player := sim.world.player()
 	viewed_level = player.level if player != null else 0
 	set_command_mode(false)
+	_last_autosave_day = SaveSlots.last_autosave_day_at(sim.clock.tick)
 	game_loaded.emit()
