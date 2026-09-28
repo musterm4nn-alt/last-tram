@@ -11,7 +11,8 @@
 			"min_minutes": 60,
 			"max_minutes": 720,
 			"need_rates": {
-				"energy": 16.0
+				"energy": 16.0,
+				"comfort": 10.0
 			},
 			"finish_needs": {},
 			"advertise": {

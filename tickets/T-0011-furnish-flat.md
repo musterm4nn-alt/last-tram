@@ -1,12 +1,12 @@
 ---
 id: T-0011
 title: Furnish the player's flat (a bathroom, objects and home interactions)
-status: todo
+status: done
 milestone: M1
 size: S
 owner: builder
 depends_on: [T-0006]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -97,16 +97,36 @@ all fixed-length (`duration_minutes`), `finish_needs` `{}` unless given:
   player on a slot and runs it (e.g. `cook_meal` from hunger 20: 30 minutes, then hunger
   20 − 3 + 60; `video_call` 45 minutes: social + 45 − 3). Build the sim with
   `SimFactory.new_game(content(), 1)` and set `player.pos` to the slot cell centre.
-- [ ] `test_objects.gd`: `test_new_game_has_all_altstadt_objects` expects the number of
-  placements in `altstadt/objects.json` (read it from `content().districts["altstadt"].objects.size()`,
-  which is 9), not a hard-coded 4.
+- [ ] `test_objects.gd`: `test_new_game_has_all_altstadt_objects` no longer hard-codes 4: it
+  checks that every placement in `altstadt/objects.json` (parsed directly) was loaded.
 - [ ] Screenshot: `tools/screenshot.sh out/t0011.png --debug --zoom=1` shows the whole flat
   with nine labelled objects and their slot dots, and the new bathroom walls. Open it and
   look at it.
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request ("write the code
+yourself"). A DeepSeek session started earlier could not be stopped in time and pushed its own
+T-0011 branch; per the owner's instruction it was not used (its commit is kept locally only,
+as `refs/archive/t0011-deepseek`, fddd1b2).
+- Data exactly as specified: the six map characters (a 2×2 tiled bathroom with a door to the
+  hall), five objects (stove, shower, sink, kitchen table, desk with laptop), the sofa's
+  `couch` tag, five placements, sleep's comfort rate, and `data/interactions/home.json` with
+  cook_meal, take_shower, wash_hands, nap, browse_web and video_call. The layout was checked
+  before the ticket was written (no content errors; every object reachable).
+- `tests/sim/test_home_content.gd` (9 tests): content valid; the bathroom on the map; every
+  object has a slot reachable from the spawn; every interaction is offered in the flat; and
+  each new interaction's exact effect (cook 20 → 77 after 30 min, shower, hand washing, nap,
+  browsing, video call, and sleep's comfort).
+- `test_objects.gd`: the object-count guard compares with the placements in the JSON file
+  instead of a hard-coded number (a tautology like `size() == size()` would prove nothing).
+- Checks: `tools/check.sh` 183 passed, 0 failed. Three data mutations (cooking gives 50,
+  no bathroom door, no desk) each fail at least one test. Screenshots `out/t0011.png`
+  (F3, slot dots) and `out/t0011_nodebug.png` show all nine labelled objects, the bathroom
+  and its door.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).
