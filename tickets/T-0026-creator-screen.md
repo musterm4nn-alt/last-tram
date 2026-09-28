@@ -1,12 +1,12 @@
 ---
 id: T-0026
 title: Character creator screen: name, identity, body, face and hair, with a live preview
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0021]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -86,7 +86,38 @@ their tests to `test_character_creator.gd` (same checks, on the creator's Name t
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/character_creator.gd` (`CharacterCreator`): tabs Name, Identity, Body,
+  Face & hair; one `_picker()` helper for every list field; age and height `SpinBox`es;
+  feature checkboxes; `_sync_from_model()` refreshes every control (without re-firing
+  their signals), the preview and Start. Keeps every NameScreen rule (hint vs errors,
+  Esc in `_input`, Enter only while visible, `keep_editing_on_text_submit`).
+  `start_from(spec)` for seeded screenshots (the name fields start from the model, so a
+  seeded character keeps its names).
+- `game/ui/figure_preview.gd` (`FigurePreview`): the figure four times (Front, Left, Back,
+  Right, labelled) on a mid-grey floor, so black and white clothes both show (the first
+  screenshots were on near-black and dark trousers vanished).
+- `CreatorModel.option_name(field, id)` gives pickers the catalog's display names.
+- `main.gd`: New game opens the creator; `--screen=creator` (and `--screen=name`),
+  `--creator-tab`, `--creator-seed`.
+- `game/ui/name_screen.gd` and its test are gone. All six tests were ported to
+  `tests/game/test_character_creator.gd` under the same names:
+  test_starts_empty_with_start_disabled_and_a_hint, test_typed_names_start_with_the_default_look,
+  test_bad_name_disables_start_and_shows_error, test_empty_nickname_is_fine,
+  test_hidden_screen_ignores_enter, test_esc_goes_back_even_while_typing. Five new tests
+  cover pickers, the spin boxes, feature checkboxes, Start with a chosen look and a seeded
+  start.
+- Godot trap found (added to `docs/conventions.md`): outside the tree, `Range` controls
+  don't emit `value_changed` when `value` is set, so the tests emit it the way a player's
+  change does.
+- `tools/check.sh`: 273 passed, 0 failed.
+- Screenshots `out/t0026_{name,identity,body,face}.png` (`--creator-seed=7`): each tab
+  with the same character (Sven de Vries, non-binary, they/them, 66, 185 cm, slim, bald
+  with stubble, dressed in red) in the labelled four-way preview.
+- For later: the placeholder figure draws facial hair centred in the side views too.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

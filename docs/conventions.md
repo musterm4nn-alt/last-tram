@@ -44,6 +44,7 @@ for i: int in 10:                         # range loops over ints are typed auto
 | Int division is intended; its warning is off | `a / b` with ints floors; use `float(a) / b` when you need a fraction |
 | A popup (`PopupMenu`, any `Window`) under a world `Node2D` inherits the camera's zoom | Add popups under a `CanvasLayer` (e.g. the HUD) |
 | Popups close when the window's focus changes, which happens a few frames after startup | Launch options that open a popup wait ~12 frames |
+| Outside the tree, `Range` controls (`SpinBox`, sliders) don't emit `value_changed` when `value` is set | In tests, `value_changed.emit(x)` (buttons and checkboxes do emit) |
 
 ## sim/ rules (the most important section)
 

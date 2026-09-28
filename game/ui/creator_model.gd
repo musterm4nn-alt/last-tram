@@ -60,6 +60,33 @@ func options(field: String) -> PackedStringArray:
 	return PackedStringArray(source.keys())
 
 
+## The name to show for an option of a list field ("Short", "Dark brown"...), or the id
+## itself when the catalog has no such option.
+func option_name(field: String, id: String) -> String:
+	var catalog: AppearanceCatalog = _content.appearance
+	var option: Variant = null
+	match field:
+		"gender":
+			option = catalog.genders.get(id)
+		"pronouns":
+			option = catalog.pronouns.get(id)
+		"skin_tone":
+			option = catalog.skin_tones.get(id)
+		"build":
+			option = catalog.builds.get(id)
+		"hair_style":
+			option = catalog.hair_styles.get(id)
+		"hair_colour":
+			option = catalog.hair_colours.get(id)
+		"eye_colour":
+			option = catalog.eye_colours.get(id)
+		"facial_hair":
+			option = catalog.facial_hair.get(id)
+	if option == null:
+		return id
+	return String(option.get("name"))
+
+
 ## The current id of a list field.
 func value(field: String) -> String:
 	match field:
