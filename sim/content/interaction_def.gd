@@ -23,3 +23,5 @@ var need_rates: Dictionary[String, float] = {}
 var finish_needs: Dictionary[String, float] = {}
 ## The need gains autonomy scoring expects (may differ from reality).
 var advertise: Dictionary[String, float] = {}
+## While the player performs this, the game runs at Session.SKIP_SPEED (sleeping).
+var time_skip: bool = false

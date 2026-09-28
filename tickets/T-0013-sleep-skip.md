@@ -1,12 +1,12 @@
 ---
 id: T-0013
 title: Fast-forward while the player sleeps
-status: todo
+status: done
 milestone: M1
 size: S
 owner: builder
 depends_on: [T-0006, T-0028]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -88,7 +88,21 @@ The clock label shows `"▶▶ skipping"` instead of `"1x"` / `"2x"` / `"3x"` wh
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- Data: `InteractionDef.time_skip` (optional bool in the loader); sleep has it.
+- `Session`: `SKIP_SPEED` 120, `skipping`, `should_skip(sim, speed, stopped_tick)` (static;
+  parameters named `p_sim`/`p_speed` so they don't shadow Session's own fields). The step
+  rate uses 120x while skipping (the 200-steps-per-frame cap stays). The player's
+  `need_critical` while skipping stops it for that sleep and shows "Woke up: Hunger is low".
+- HUD: the clock shows "▶▶ skipping".
+- Tests: `tests/game/test_sleep_skip.gd` (3) and two checks in `test_actions.gd` (which
+  interactions skip; a broken `"time_skip": "yes"` is reported). `tools/check.sh`: 247
+  passed, 0 failed.
+- Screenshot `out/t0013.png` (`--queue=bed_double:sleep --advance=5`): "Mon 08:34 ▶▶
+  skipping", the player at the bed, Sleep in the queue panel, ▲ on Energy and Comfort.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

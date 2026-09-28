@@ -19,6 +19,8 @@ signal command_mode_changed(on: bool)
 const MAX_SPEED: int = 3
 ## Safety valve: if the machine can't keep up, drop time instead of freezing.
 const MAX_STEPS_PER_FRAME: int = 200
+## Game speed while the player does a time_skip action (like sleeping): a night in seconds.
+const SKIP_SPEED: int = 120
 const SAVE_DIR: String = "user://saves"
 const QUICKSAVE_PATH: String = "user://saves/quicksave.json"
 
@@ -43,6 +45,11 @@ var _accumulator: float = 0.0
 var _speed_before_pause: int = 1
 ## The game day the last autosave was for (see SaveSlots.last_autosave_day_at).
 var _last_autosave_day: int = -1
+## True while time runs at SKIP_SPEED (read by the HUD).
+var skipping: bool = false
+## started_tick of the action whose skipping a critical need stopped (-1 = none), so the
+## same sleep does not start skipping again.
+var _skip_stopped_tick: int = -1
 
 
 func _ready() -> void:
@@ -95,9 +102,10 @@ func _process(delta: float) -> void:
 	if sim == null:
 		return
 	steps_last_frame = 0
+	skipping = should_skip(sim, speed, _skip_stopped_tick)
 	if speed > 0:
 		var started := Time.get_ticks_usec()
-		_accumulator += delta * SimClock.STEPS_PER_GAME_MINUTE * speed
+		_accumulator += delta * SimClock.STEPS_PER_GAME_MINUTE * (SKIP_SPEED if skipping else speed)
 		while _accumulator >= 1.0 and steps_last_frame < MAX_STEPS_PER_FRAME:
 			sim.step()
 			_accumulator -= 1.0
@@ -109,6 +117,8 @@ func _process(delta: float) -> void:
 	command_log.append_array(sim.take_applied_commands())
 	for event: Dictionary in sim.events.drain():
 		sim_event.emit(event)
+		if skipping and event["type"] == &"need_critical" and int(event["data"].get("person_id", -1)) == sim.world.player_id:
+			_stop_skipping(String(event["data"].get("need", "")))
 	if steps_last_frame > 0 and SaveSlots.autosave_due(sim.clock.tick, _last_autosave_day):
 		autosave()
 
@@ -127,6 +137,31 @@ func quickload() -> void:
 		notice.emit("Game loaded")
 	else:
 		notice.emit("No quicksave to load")
+
+
+## True when the player's front action is PERFORMING an interaction with time_skip, the
+## game is not paused, and skipping was not stopped for this action (stopped_tick).
+static func should_skip(p_sim: Sim, p_speed: int, stopped_tick: int) -> bool:
+	if p_sim == null or p_speed <= 0:
+		return false
+	var player := p_sim.world.player()
+	if player == null or player.action_queue.is_empty():
+		return false
+	var action: Action = player.action_queue[0]
+	if action.state != Action.PERFORMING or action.started_tick == stopped_tick:
+		return false
+	var def := p_sim.content.interaction(action.interaction_id)
+	return def != null and def.time_skip
+
+
+## A critical need wakes the player: stop skipping for this sleep and say why.
+func _stop_skipping(need_id: String) -> void:
+	var player := sim.world.player()
+	if player != null and not player.action_queue.is_empty():
+		_skip_stopped_tick = player.action_queue[0].started_tick
+	skipping = false
+	var need_def := content.need(need_id)
+	notice.emit("Woke up: %s is low" % (need_def.name if need_def != null else need_id))
 
 
 ## Writes the daily autosave into the older of the two autosave files.

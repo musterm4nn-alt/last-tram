@@ -314,6 +314,7 @@ func test_broken_interactions_are_reported() -> void:
 	assert_true(_has_error(reader.errors, "bad_need_elsewhere", "unknown need 'ghost_need' in 'finish_needs'"), all)
 	assert_true(_has_error(reader.errors, "bad_need_elsewhere", "unknown need 'phantom_need' in 'advertise'"), all)
 	assert_true(_has_error(reader.errors, "ghost_tag", "tag 'no_such_tag' is used by no object"), all)
+	assert_true(_has_error(reader.errors, "bad_skip", "'time_skip' must be true or false"), all)
 	assert_true(db.interaction("sleep") != null, "the broken file must not clobber real content")
 
 
@@ -323,3 +324,10 @@ func _has_error(errors: Array[String], id: String, text: String) -> bool:
 		if error.contains("interaction '%s'" % id) and error.contains(text):
 			return true
 	return false
+
+
+func test_only_sleep_skips_time() -> void:
+	assert_true(content().interaction("sleep").time_skip)
+	assert_false(content().interaction("watch_tv").time_skip)
+	assert_false(content().interaction("nap").time_skip, "a nap is short: no skipping")
+
