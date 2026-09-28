@@ -79,7 +79,8 @@ If a builder fails the same ticket twice, Opus takes it over or splits it.
 
 Keys so far: WASD to move, Space to pause, 1/2/3 for speed, mouse wheel to zoom, F5 to save,
 F8 to load, F3 for the debug overlay, Tab for command mode (click the ground to walk there;
-WASD or dragging with the right mouse button looks around).
+WASD or dragging with the right mouse button looks around), E or a click on an object to
+use it, and Esc for the menu (save to one of three slots, load any save, quit).
 
 ## Reporting problems and wishes
 

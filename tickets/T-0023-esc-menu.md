@@ -1,12 +1,12 @@
 ---
 id: T-0023
 title: Esc menu (resume, save to a slot, load, quit) and a Load list in the main menu
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0014, T-0010]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -109,7 +109,27 @@ test) as `Session.saves`, and restore every `Session` field they change.
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/save_list.gd` (`SaveList`): `rows()` (pure) and `show_rows()`; "No saves yet"
+  when there is nothing to load.
+- `game/ui/pause_menu.gd` (`PauseMenu`, layer 15): `open()` pauses and remembers the speed,
+  `close()` restores it; Resume, Save game (three slots, notice "Saved to slot 2"),
+  Load game (closes, then loads; "Could not load that save" on failure), Quit game.
+- `main.gd`: Esc toggles it only during a game with no menu screen up and the interaction
+  menu closed; while it is open the other keys are ignored, and `PlayerController` sends no
+  movement and ignores clicks and E.
+- Main menu: a Load game button shows the same list (Back returns).
+- Hints gain "Esc menu"; `--screen=pause` and `--screen=load` (the latter, like
+  `--screen=name`, now always shows the menu).
+- Tests: `tests/game/test_pause_menu.gd` (6, in `user://test_saves_t0023`) and one in
+  `test_launch_options.gd`. `tools/check.sh`: 224 passed, 0 failed.
+- Screenshots: `out/t0023_pause.png` (the menu over the dimmed town, clock "PAUSED") and
+  `out/t0023_load.png` (the main menu's Load list: "No saves yet" and Back, since the
+  owner has no saves).
+- Docs: the keys line in `docs/workflow.md`.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).
