@@ -75,7 +75,8 @@
 			"blocks_movement": true,
 			"blocks_sight": false,
 			"tags": [
-				"seat"
+				"seat",
+				"couch"
 			],
 			"use_slots": [
 				{
@@ -128,6 +129,152 @@
 			],
 			"price": 60000,
 			"debug_color": "#2d3436"
+		},
+		{
+			"id": "stove",
+			"name": "Stove",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"stove"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 40000,
+			"debug_color": "#636e72"
+		},
+		{
+			"id": "shower",
+			"name": "Shower",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"shower"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						1,
+						0
+					],
+					"facing": [
+						-1,
+						0
+					]
+				}
+			],
+			"price": 60000,
+			"debug_color": "#81ecec"
+		},
+		{
+			"id": "sink",
+			"name": "Sink",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"sink"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						1,
+						0
+					],
+					"facing": [
+						-1,
+						0
+					]
+				}
+			],
+			"price": 15000,
+			"debug_color": "#c7ecee"
+		},
+		{
+			"id": "kitchen_table",
+			"name": "Kitchen table",
+			"size": [
+				2,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"seat",
+				"table"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 20000,
+			"debug_color": "#a0785a"
+		},
+		{
+			"id": "desk",
+			"name": "Desk with laptop",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"computer"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 90000,
+			"debug_color": "#4a4e69"
 		}
 	]
 }

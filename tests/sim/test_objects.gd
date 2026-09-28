@@ -110,7 +110,11 @@ func test_new_game_has_all_altstadt_objects() -> void:
 	var db := content()
 	var sim := SimFactory.new_game(db, 1)
 	var expected: Array[ObjectPlacement] = db.districts["altstadt"].objects
-	assert_true(expected.size() == 4, "altstadt should place 4 objects, has %d" % expected.size())
+	# Every entry in the data file was loaded (none dropped), and there are some.
+	var file: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/districts/altstadt/objects.json"))
+	var in_file: Array = file["objects"]
+	assert_false(in_file.is_empty())
+	assert_eq(expected.size(), in_file.size(), "altstadt/objects.json has %d placements, %d loaded" % [in_file.size(), expected.size()])
 	assert_eq(sim.world.objects.size(), expected.size())
 	var added := 0
 	for event: Dictionary in sim.events.drain():

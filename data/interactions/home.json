@@ -1,0 +1,98 @@
+{
+	"_doc": "Home interactions for the M1 flat (T-0011). Same rules as basics.json.",
+	"interactions": [
+		{
+			"id": "cook_meal",
+			"name": "Cook a meal",
+			"object_tags": [
+				"stove"
+			],
+			"duration_minutes": 30,
+			"need_rates": {},
+			"finish_needs": {
+				"hunger": 60
+			},
+			"advertise": {
+				"hunger": 60
+			}
+		},
+		{
+			"id": "take_shower",
+			"name": "Take a shower",
+			"object_tags": [
+				"shower"
+			],
+			"duration_minutes": 15,
+			"need_rates": {},
+			"finish_needs": {
+				"hygiene": 70
+			},
+			"advertise": {
+				"hygiene": 70
+			}
+		},
+		{
+			"id": "wash_hands",
+			"name": "Wash your hands",
+			"object_tags": [
+				"sink"
+			],
+			"duration_minutes": 2,
+			"need_rates": {},
+			"finish_needs": {
+				"hygiene": 10
+			},
+			"advertise": {
+				"hygiene": 10
+			}
+		},
+		{
+			"id": "nap",
+			"name": "Nap",
+			"object_tags": [
+				"couch",
+				"bed"
+			],
+			"duration_minutes": 45,
+			"need_rates": {
+				"energy": 12.0,
+				"comfort": 20.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"energy": 10,
+				"comfort": 15
+			}
+		},
+		{
+			"id": "browse_web",
+			"name": "Browse the web",
+			"object_tags": [
+				"computer"
+			],
+			"duration_minutes": 30,
+			"need_rates": {
+				"fun": 20.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"fun": 10
+			}
+		},
+		{
+			"id": "video_call",
+			"name": "Video call a friend",
+			"object_tags": [
+				"computer"
+			],
+			"duration_minutes": 45,
+			"need_rates": {
+				"social": 60.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 45
+			}
+		}
+	]
+}
