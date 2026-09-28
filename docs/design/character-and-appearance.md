@@ -29,7 +29,9 @@ New game → main menu → character creator → the town.
 - A live **preview** shows the top-down figure and a larger front-facing **portrait**
   ("paper doll") that updates with every choice. The same portrait is reused in the wardrobe
   and the person inspector.
-- The first version (T-0020) is only a name screen; the full creator follows (T-0021).
+- The first version (T-0020) was only a name screen. The full creator replaced it: the model
+  (T-0021), the screen with tabs and a four-way preview (T-0026), the clothes tab and
+  randomise buttons (T-0029), and the portrait (T-0027).
 - There is **no preset main character**: the player always names their own. A built-in
   stand-in ("Alex Novak", `data/appearance/default_player.json`) is used only when the
   menu is skipped (tools, tests, quick starts) and, until T-0021, for everything the name

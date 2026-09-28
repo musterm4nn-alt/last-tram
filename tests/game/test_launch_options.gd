@@ -91,3 +91,12 @@ func test_screen_pause_and_load() -> void:
 	assert_eq(load_list.screen, "load")
 	assert_false(load_list.skip_menu(), "the Load list lives in the main menu")
 
+
+func test_creator_options_parse_and_show_the_menu() -> void:
+	var options := LaunchOptions.parse(PackedStringArray(["--screen=creator", "--creator-tab=body", "--creator-seed=7", "--screenshot=x.png"]))
+	assert_eq(options.screen, "creator")
+	assert_eq(options.creator_tab, "body")
+	assert_eq(options.creator_seed, 7)
+	assert_false(options.skip_menu(), "the creator lives behind the main menu")
+	assert_eq(LaunchOptions.parse(PackedStringArray([])).creator_seed, -1)
+

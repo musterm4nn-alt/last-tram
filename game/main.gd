@@ -13,7 +13,9 @@ extends Node2D
 ##   --frames=N          frames to wait before the screenshot (default 20)
 ##   --quickstart        skip the menu and start straight into a new game
 ##   --menu              force the menu even with quickstart options
-##   --screen=name       open the name screen directly (with the menu)
+##   --screen=creator    open the character creator directly (with the menu); "name" is the same
+##   --creator-tab=TAB   the creator's tab: name, identity, body, face
+##   --creator-seed=N    start the creator from a random character (for repeatable screenshots)
 ##   --screen=load       open the main menu's Load list (with the menu)
 ##   --screen=pause      open the Esc menu after the quick start
 ##   --command           start in command mode (Tab)
@@ -28,7 +30,7 @@ var _hud: Hud
 var _debug_overlay: DebugOverlay
 var _pause_menu: PauseMenu
 var _menu: MainMenu
-var _name_screen: NameScreen
+var _creator: CharacterCreator
 var _options: LaunchOptions
 var _screenshot_path: String = ""
 var _screenshot_frames: int = 20
@@ -76,14 +78,19 @@ func _ready() -> void:
 	else:
 		_menu = MainMenu.new()
 		add_child(_menu)
-		_menu.new_game_requested.connect(_show_name_screen)
-		_name_screen = NameScreen.new()
-		_name_screen.visible = false
-		add_child(_name_screen)
-		_name_screen.back_pressed.connect(_show_menu)
-		_name_screen.start_pressed.connect(_start_named_game)
-		if _options.screen == "name":
-			_show_name_screen()
+		_menu.new_game_requested.connect(_show_creator)
+		_creator = CharacterCreator.new()
+		if _options.creator_seed >= 0:
+			var creator_rng := RandomNumberGenerator.new()
+			creator_rng.seed = _options.creator_seed
+			_creator.start_from(CharacterSpec.random(Session.content, creator_rng))
+		_creator.visible = false
+		add_child(_creator)
+		_creator.back_pressed.connect(_show_menu)
+		_creator.start_pressed.connect(_start_named_game)
+		if _options.screen == "name" or _options.screen == "creator":
+			_show_creator()
+			_creator.show_tab(_options.creator_tab)
 		elif _options.screen == "load":
 			_menu.show_load_list()
 
@@ -182,7 +189,7 @@ func _write_bug_report() -> void:
 func _can_toggle_pause_menu() -> bool:
 	if Session.sim == null or is_instance_valid(_menu):
 		return false
-	if is_instance_valid(_name_screen) and _name_screen.visible:
+	if is_instance_valid(_creator) and _creator.visible:
 		return false
 	return not _interaction_menu.visible
 
@@ -207,14 +214,14 @@ func _first_object(def_id: String) -> int:
 	return 0
 
 
-func _show_name_screen() -> void:
+func _show_creator() -> void:
 	_menu.visible = false
-	_name_screen.visible = true
-	_name_screen.focus_first_field()
+	_creator.visible = true
+	_creator.focus_first_field()
 
 
 func _show_menu() -> void:
-	_name_screen.visible = false
+	_creator.visible = false
 	_menu.visible = true
 	_menu.focus_new_game()
 
@@ -230,6 +237,6 @@ func _on_game_loaded() -> void:
 	if is_instance_valid(_menu):
 		_menu.queue_free()
 		_menu = null
-	if is_instance_valid(_name_screen):
-		_name_screen.queue_free()
-		_name_screen = null
+	if is_instance_valid(_creator):
+		_creator.queue_free()
+		_creator = null
