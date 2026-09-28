@@ -21,6 +21,7 @@ const KEYS: Dictionary = {
 	"toggle_command_mode": [KEY_TAB],
 	"interact": [KEY_E],
 	"menu": [KEY_ESCAPE],
+	"bug_report": [KEY_F9],
 }
 
 const MOUSE_BUTTONS: Dictionary = {

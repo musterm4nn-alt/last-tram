@@ -1,12 +1,12 @@
 ---
 id: T-0024
 title: F9 writes a bug report that replays exactly
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0014, T-0015]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -79,7 +79,26 @@ into `user://test_bug_reports_t0024` and delete it after each test.
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `Session`: `_replay_start` (set in `_after_load()` right after the log is cleared, and
+  again by `autosave()`, which also clears `command_log`; `_process()` already appends the
+  applied commands before its autosave check), `write_bug_report(screenshot, base_dir)`
+  (folder named by the real date and time, `_2`, `_3`... on a clash; start.json,
+  commands.json, end.json, screenshot.png, info.txt; returns the absolute path).
+- F9 (`bug_report`) in `main.gd` grabs the screen, writes the report, prints the path and
+  shows "Bug report saved: <folder name>". Works with the Esc menu open too. Hints gain
+  "F9 report a bug".
+- Tests: `tests/game/test_bug_report.gd` (4): a report replays exactly (also through
+  `ReplayFiles.check_folder`), an autosave moves the start and empties the log (two
+  mutations, not moving the start or not clearing the log, each fail it), same-second
+  reports get their own folders, info.txt has the game time and the player's name.
+  `tools/check.sh`: 257 passed, 0 failed.
+- Docs: `docs/workflow.md` says where reports go
+  (`~/Library/Application Support/Godot/app_userdata/Last Tram/bug_reports/`) and adds F9 to
+  the keys.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

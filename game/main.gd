@@ -115,6 +115,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			_pause_menu.open()
 		return
+	if event.is_action_pressed("bug_report") and Session.sim != null:
+		_write_bug_report()
+		return
 	if _pause_menu.is_open:
 		return
 	if event.is_action_pressed("pause"):
@@ -161,6 +164,17 @@ func _start_quick() -> void:
 	_interact_on = _options.interact
 	if _options.screen == "pause":
 		_pause_menu.open()
+
+
+## F9: saves a bug report folder (see Session.write_bug_report) and says where it went.
+func _write_bug_report() -> void:
+	var image := get_viewport().get_texture().get_image()
+	var folder := Session.write_bug_report(image)
+	if folder.is_empty():
+		Session.notice.emit("Bug report failed")
+		return
+	print("Bug report saved: %s" % folder)
+	Session.notice.emit("Bug report saved: %s" % folder.get_file())
 
 
 ## Esc opens or closes the Esc menu only during a game, with no menu screen up and the

@@ -22,6 +22,10 @@ const MAX_STEPS_PER_FRAME: int = 200
 ## Game speed while the player does a time_skip action (like sleeping): a night in seconds.
 const SKIP_SPEED: int = 120
 const SAVE_DIR: String = "user://saves"
+## Where F9 bug reports go (tests pass their own folder).
+const BUG_REPORT_DIR: String = "user://bug_reports"
+## How many recent events a bug report's info.txt lists.
+const REPORT_EVENTS: int = 20
 const QUICKSAVE_PATH: String = "user://saves/quicksave.json"
 
 var content: ContentDB
@@ -45,6 +49,9 @@ var _accumulator: float = 0.0
 var _speed_before_pause: int = 1
 ## The game day the last autosave was for (see SaveSlots.last_autosave_day_at).
 var _last_autosave_day: int = -1
+## The save the current stretch of play started from (at the last load or autosave), as
+## JSON: a bug report replays command_log from here.
+var _replay_start: String = ""
 ## True while time runs at SKIP_SPEED (read by the HUD).
 var skipping: bool = false
 ## started_tick of the action whose skipping a critical need stopped (-1 = none), so the
@@ -173,6 +180,9 @@ func autosave() -> void:
 	else:
 		notice.emit("Autosave failed")
 	_last_autosave_day = sim.clock.day()
+	# The next bug report starts from here (command_log already holds every applied command).
+	_replay_start = SaveCodec.to_json(sim)
+	command_log.clear()
 
 
 func save_to(path: String) -> Error:
@@ -207,8 +217,63 @@ func _after_load() -> void:
 	command_log.clear()
 	sim.take_applied_commands()
 	sim.events.drain()  # views rebuild from state on game_loaded, so skip creation events
+	_replay_start = SaveCodec.to_json(sim)
 	var player := sim.world.player()
 	viewed_level = player.level if player != null else 0
 	set_command_mode(false)
 	_last_autosave_day = SaveSlots.last_autosave_day_at(sim.clock.tick)
 	game_loaded.emit()
+
+
+# --- Bug reports (F9) -------------------------------------------------------------------
+
+## Writes <base_dir>/<YYYY-MM-DD_HH-MM-SS>/ with start.json (where this stretch of play
+## started), commands.json (every command applied since), end.json (the game now),
+## screenshot.png (unless `screenshot` is null) and info.txt. Returns the folder's absolute
+## path, or "" if writing failed. `tools/replay.sh <folder>` replays it.
+func write_bug_report(screenshot: Image, base_dir: String = BUG_REPORT_DIR) -> String:
+	if sim == null:
+		return ""
+	var stamp := Time.get_datetime_string_from_system(false, true).replace(" ", "_").replace(":", "-")
+	var folder := base_dir.path_join(stamp)
+	var suffix := 2
+	while DirAccess.dir_exists_absolute(folder):
+		folder = base_dir.path_join("%s_%d" % [stamp, suffix])
+		suffix += 1
+	if DirAccess.make_dir_recursive_absolute(folder) != OK:
+		return ""
+	var ok := _write_text(folder.path_join("start.json"), _replay_start)
+	ok = _write_text(folder.path_join("commands.json"), Ser.to_json(command_log)) and ok
+	ok = _write_text(folder.path_join("end.json"), SaveCodec.to_json(sim)) and ok
+	ok = _write_text(folder.path_join("info.txt"), _report_info()) and ok
+	if screenshot != null:
+		ok = screenshot.save_png(folder.path_join("screenshot.png")) == OK and ok
+	return ProjectSettings.globalize_path(folder) if ok else ""
+
+
+## Plain words for info.txt: when, where, who, and what happened last.
+func _report_info() -> String:
+	var lines := PackedStringArray()
+	lines.append("Last Tram bug report")
+	lines.append("Real time: %s" % Time.get_datetime_string_from_system(false, true))
+	lines.append("Game time: Day %d  %s" % [sim.clock.day() + 1, sim.clock.format()])
+	var player := sim.world.player()
+	if player != null:
+		lines.append("Player: %s at %s" % [player.full_name(), player.cell()])
+	lines.append("Speed: %s" % ("paused" if speed == 0 else "%dx" % speed))
+	lines.append("Commands since the start save: %d" % command_log.size())
+	lines.append("Recent events:")
+	var recent := sim.events.recent
+	for i: int in range(maxi(0, recent.size() - REPORT_EVENTS), recent.size()):
+		lines.append("  %d %s %s" % [recent[i]["tick"], recent[i]["type"], recent[i]["data"]])
+	return "\n".join(lines) + "\n"
+
+
+static func _write_text(path: String, text: String) -> bool:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(text)
+	file.close()
+	return true
+

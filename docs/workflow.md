@@ -80,16 +80,20 @@ If a builder fails the same ticket twice, Opus takes it over or splits it.
 Keys so far: WASD to move, Space to pause, 1/2/3 for speed, mouse wheel to zoom, F5 to save,
 F8 to load, F3 for the debug overlay, Tab for command mode (click the ground to walk there;
 WASD or dragging with the right mouse button looks around), E or a click on an object to
-use it, and Esc for the menu (save to one of three slots, load any save, quit).
+use it, Esc for the menu (save to one of three slots, load any save, free will, quit), and
+F9 to report a bug.
 
 ## Reporting problems and wishes
 
 - Just describe it to Claude Code in your own words: "The character walks through the
   fridge", "Nights feel too short", "I want to be able to smoke on the balcony". Opus turns
   it into a ticket, or fixes it directly if it's tiny.
-- From M1 on: press **F9** in the game when something goes wrong. It saves a bug report
-  (save file, recent inputs, screenshot) that an agent can replay exactly. Tell Claude Code
-  "I pressed F9 because …".
+- Press **F9** in the game when something goes wrong. It saves a bug report (where this
+  stretch of play started, every input since, the game right now, a screenshot and a short
+  info file) that an agent can replay exactly with `tools/replay.sh`. The notice shows the
+  folder's name (the date and time); the folders are in
+  `~/Library/Application Support/Godot/app_userdata/Last Tram/bug_reports/`. Tell Claude
+  Code "I pressed F9 at 21:14 because …".
 - Design changes ("let's make NPCs gossip more") go to Opus too. It will update the docs
   and the plan.
 
