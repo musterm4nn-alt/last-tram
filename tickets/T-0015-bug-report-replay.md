@@ -1,12 +1,12 @@
 ---
 id: T-0015
 title: Replay a session headless from a start save and a command log
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: []
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -105,7 +105,26 @@ SaveCodec.to_dict(sim)`, then submit commands (a `SetMoveIntentCommand` and a
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `sim/save/replay.gd` (`Replay`): `run()` (start without pending commands, logged commands
+  submitted at their ticks, input checked: shape, range, order, known type), `first_difference()`,
+  `check()`, plus two small helpers the file reader shares: `compare(sim, end)` and
+  `end_tick_of(save)`.
+- `tools/replay_files.gd` (`ReplayFiles.check_folder`), `tools/replay.gd`, `tools/replay.sh`
+  (exit 0 only for OK).
+- Tests: `tests/sim/test_replay.gd` (6). A mutation check caught a weak spot in my own first
+  version: the pending-command test's recording also pressed a key that cancelled both
+  snacks, which hid a double application. It now records a clean run, and keeping the
+  pending commands fails it. Submitting commands one tick late fails four tests.
+  `tools/check.sh`: 253 passed, 0 failed.
+- Manual check (a scratch script wrote a 4-hour recording with free will and one WalkTo to
+  `out/replay_demo/`): `tools/replay.sh out/replay_demo` → `REPLAY OK: 1 command over 4800
+  steps reproduce the end save.` (exit 0); after setting fun to 12.5 in end.json →
+  `REPLAY MISMATCH: world.people[0].needs.fun: expected 12.5, got 56.0000000000008` (exit 1);
+  without commands.json → `REPLAY ERROR: commands.json is missing.` (exit 1).
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).
