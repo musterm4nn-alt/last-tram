@@ -1,12 +1,12 @@
 ---
 id: T-0010
 title: Interaction menu: click an object (command mode) or press E (direct mode)
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0007, T-0009]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -110,7 +110,27 @@ Build sims with `SimFactory.from_rows` and `world.add_object()`, set `Session.si
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/interaction_menu.gd` (`InteractionMenu extends PopupMenu`): `prepare()`,
+  `open_for()`, `entries()`; choosing an item submits a `QueueInteractionCommand`.
+- `PlayerController`: command-mode clicks open the menu for an object under the mouse (else
+  walk), E in direct mode uses `nearest_object()` (1.5 cells, 0.5 bonus in front) or shows
+  "Nothing to use here"; no WASD walking while the menu is open.
+- `Hud`: "E use" and "Click an object to use it, the ground to walk" in the hints;
+  `notice_for_event(event, player_id, content)` also turns the player's `action_failed`
+  (`no_free_slot`, `no_path`) into "Grab a snack: can't get there" style notices.
+- `--interact=<def_id>` opens the menu on that object for screenshots.
+- Two Godot traps found (now in `docs/conventions.md`): a popup under the world `Node2D`
+  inherited the camera's 3× zoom (the menu is now a child of the HUD `CanvasLayer`), and
+  popups opened in the first frames closed themselves when the window's focus settled
+  (`--interact` waits 12 frames).
+- Tests: `tests/game/test_interaction_menu.gd` (7) and one in `test_launch_options.gd`.
+  `tools/check.sh`: 202 passed, 0 failed.
+- Screenshot `out/t0010_menu.png` (`--interact=fridge`): a small menu at the fridge with the
+  header "Fridge" and the item "Grab a snack".
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

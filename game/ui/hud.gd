@@ -16,17 +16,30 @@ var _notice_time_left: float = 0.0
 ## The key hints for the bottom line, by control mode.
 static func hint_text(command_mode: bool) -> String:
 	if command_mode:
-		return "Click walk there   WASD / right-drag pan   Tab direct mode   Space pause   1-3 speed   Wheel zoom"
-	return "WASD move   Tab command mode   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   F3 debug"
+		return "Click an object to use it, the ground to walk   WASD / right-drag pan   Tab direct mode   Space pause   1-3 speed   Wheel zoom"
+	return "WASD move   E use   Tab command mode   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   F3 debug"
 
 
-## The notice a sim event deserves for the player ("" for none).
-static func notice_for_event(event: Dictionary, player_id: int) -> String:
+## Words for why the player's action failed (action_failed reasons); others show nothing.
+const FAIL_REASONS: Dictionary = {
+	"no_free_slot": "someone is using it",
+	"no_path": "can't get there",
+}
+
+
+## The notice a sim event deserves for the player ("" for none). `content` names the
+## interaction of a failed action (its id is used without it).
+static func notice_for_event(event: Dictionary, player_id: int, content: ContentDB = null) -> String:
 	var data: Dictionary = event.get("data", {})
 	if int(data.get("person_id", -1)) != player_id:
 		return ""
 	if event.get("type") == &"path_failed":
 		return "Can't get there"
+	if event.get("type") == &"action_failed" and FAIL_REASONS.has(String(data.get("reason", ""))):
+		var interaction_id := String(data.get("interaction_id", ""))
+		var def: InteractionDef = content.interaction(interaction_id) if content != null else null
+		var name := def.name if def != null else interaction_id
+		return "%s: %s" % [name, FAIL_REASONS[String(data["reason"])]]
 	return ""
 
 
@@ -94,7 +107,7 @@ func _on_command_mode_changed(on: bool) -> void:
 func _on_sim_event(event: Dictionary) -> void:
 	if Session.sim == null or Session.sim.world.player() == null:
 		return
-	var text := notice_for_event(event, Session.sim.world.player_id)
+	var text := notice_for_event(event, Session.sim.world.player_id, Session.content)
 	if not text.is_empty():
 		_show_notice(text)
 

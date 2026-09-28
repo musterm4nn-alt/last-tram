@@ -25,6 +25,8 @@ var screen: String = ""
 var command_mode: bool = false
 ## Walk the player to this cell at the start (--walk-to=X,Y); NO_CELL = none.
 var walk_to: Vector2i = NO_CELL
+## Open the interaction menu on the first object with this def id (--interact=fridge).
+var interact: String = ""
 
 
 ## Parses "--seed=5 --debug" style arguments (unknown ones are ignored).
@@ -70,6 +72,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 			"walk-to":
 				var cell := _parse_walk(value)
 				out.walk_to = Vector2i(int(cell.x), int(cell.y))
+			"interact":
+				out.interact = value
 	return out
 
 
@@ -78,7 +82,8 @@ func skip_menu() -> bool:
 	if menu:
 		return false
 	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 \
-			or walk != Vector2.ZERO or random_character or seed_given or command_mode or walk_to != NO_CELL
+			or walk != Vector2.ZERO or random_character or seed_given or command_mode or walk_to != NO_CELL \
+			or not interact.is_empty()
 
 
 static func _parse_walk(value: String) -> Vector2:

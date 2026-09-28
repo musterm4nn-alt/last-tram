@@ -42,6 +42,8 @@ for i: int in 10:                         # range loops over ints are typed auto
 | A new `class_name` isn't known until Godot re-imports | Run `tools/check.sh` (it imports) after adding files |
 | Godot exits with code 0 even if a script fails to parse | Trust the `LAST_TRAM_TESTS:` line, which the tools check for you |
 | Int division is intended; its warning is off | `a / b` with ints floors; use `float(a) / b` when you need a fraction |
+| A popup (`PopupMenu`, any `Window`) under a world `Node2D` inherits the camera's zoom | Add popups under a `CanvasLayer` (e.g. the HUD) |
+| Popups close when the window's focus changes, which happens a few frames after startup | Launch options that open a popup wait ~12 frames |
 
 ## sim/ rules (the most important section)
 

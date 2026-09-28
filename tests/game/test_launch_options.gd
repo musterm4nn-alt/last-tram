@@ -68,3 +68,9 @@ func test_command_mode_and_walk_to_parse_and_skip_the_menu() -> void:
 	assert_true(LaunchOptions.parse(PackedStringArray(["--walk-to=40,22"])).skip_menu())
 	assert_eq(LaunchOptions.parse(PackedStringArray([])).walk_to, LaunchOptions.NO_CELL)
 
+
+func test_interact_parses_and_skips_the_menu() -> void:
+	var options := LaunchOptions.parse(PackedStringArray(["--interact=fridge"]))
+	assert_eq(options.interact, "fridge")
+	assert_true(options.skip_menu())
+

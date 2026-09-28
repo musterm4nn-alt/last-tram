@@ -16,8 +16,10 @@ extends Node2D
 ##   --screen=name       open the name screen directly (with the menu)
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
+##   --interact=DEF_ID   open the interaction menu on the first object of that kind
 
 var _controller: PlayerController
+var _interaction_menu: InteractionMenu
 var _camera: CameraRig2D
 var _hud: Hud
 var _debug_overlay: DebugOverlay
@@ -27,6 +29,9 @@ var _options: LaunchOptions
 var _screenshot_path: String = ""
 var _screenshot_frames: int = 20
 var _frame: int = 0
+## --interact: the def id whose menu opens once the window has settled (then "").
+var _interact_on: String = ""
+var _frames_seen: int = 0
 
 
 func _ready() -> void:
@@ -42,8 +47,13 @@ func _ready() -> void:
 	add_child(_hud)
 	_debug_overlay = DebugOverlay.new()
 	add_child(_debug_overlay)
+	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
+	# would inherit the camera's zoom).
+	_interaction_menu = InteractionMenu.new()
+	_hud.add_child(_interaction_menu)
 	_controller = PlayerController.new()
 	_controller.camera = _camera
+	_controller.menu = _interaction_menu
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
 	Session.game_loaded.connect(_on_game_loaded)
@@ -72,6 +82,11 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if is_instance_valid(_debug_overlay):
 		ObjectView2D.show_slots = _debug_overlay.visible
+	_frames_seen += 1
+	# Popups close when the window's focus changes, which happens a few frames after startup.
+	if not _interact_on.is_empty() and _frames_seen >= 12:
+		_open_menu_on(_interact_on)
+		_interact_on = ""
 	if _screenshot_path.is_empty():
 		return
 	_frame += 1
@@ -121,6 +136,19 @@ func _start_quick() -> void:
 		_controller.forced_direction = _options.walk
 	if _options.command_mode:
 		Session.set_command_mode(true)
+	_interact_on = _options.interact
+
+
+## Opens the interaction menu on the first object with this def id, at its screen position.
+func _open_menu_on(def_id: String) -> void:
+	var ids: Array = Session.sim.world.objects.keys()
+	ids.sort()
+	for id: int in ids:
+		var obj: WorldObject = Session.sim.world.objects[id]
+		if obj.def_id == def_id:
+			var centre := Vector2(obj.origin.x + 0.5, obj.origin.y + 0.5) * ViewConfig.TILE_PX
+			_interaction_menu.open_for(id, get_viewport().get_canvas_transform() * centre)
+			return
 
 
 func _show_name_screen() -> void:
