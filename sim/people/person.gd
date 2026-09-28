@@ -45,6 +45,11 @@ var path: Array[Vector3i] = []
 var needs: Dictionary[String, float] = {}
 ## Queued interactions; the front action (index 0) is the current one.
 var action_queue: Array[Action] = []
+## Free will: when idle for a while, the person looks after their own needs (T-0025).
+var free_will: bool = true
+## Tick of the last direct input (a player command) for this person; autonomy waits
+## AutonomySystem.IDLE_MINUTES after it.
+var last_input_tick: int = 0
 
 ## NOT saved: position before the latest step, only used to draw smooth movement.
 var prev_pos: Vector2 = Vector2.ZERO
@@ -91,6 +96,8 @@ func to_dict() -> Dictionary:
 		"path": path_out,
 		"needs": needs_out,
 		"action_queue": queue_out,
+		"free_will": free_will,
+		"last_input_tick": last_input_tick,
 	}
 
 
@@ -126,6 +133,8 @@ static func from_dict(d: Dictionary) -> Person:
 		for entry: Variant in (queue_data as Array):
 			if entry is Dictionary:
 				p.action_queue.append(Action.from_dict(entry))
+	p.free_will = bool(d.get("free_will", true))
+	p.last_input_tick = int(d.get("last_input_tick", 0))
 	p.needs = {}
 	var stored: Variant = d.get("needs", {})
 	if stored is Dictionary:

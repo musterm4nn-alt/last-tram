@@ -1,13 +1,15 @@
 class_name PauseMenu
 extends CanvasLayer
 ## The Esc menu during a game: pauses, and offers Resume, Save game (one of three slots),
-## Load game (any save) and Quit game. Closing it restores the speed it had before.
+## Load game (any save), Free will on/off and Quit game. Closing it restores the speed it
+## had before.
 
 ## True while the menu is shown (the rest of the game ignores input then).
 var is_open: bool = false
 
 var _speed_before: int = 1
 var _page: VBoxContainer
+var _free_will_button: Button
 var _list: SaveList
 ## "save" or "load" while the list is shown.
 var _list_mode: String = ""
@@ -43,6 +45,7 @@ func _init() -> void:
 	_page_button("Resume", close)
 	_page_button("Save game", _show_list.bind("save"))
 	_page_button("Load game", _show_list.bind("load"))
+	_free_will_button = _page_button("Free will: On", _toggle_free_will)
 	_page_button("Quit game", func() -> void: get_tree().quit())
 	_list = SaveList.new()
 	_list.add_theme_constant_override("separation", 8)
@@ -77,6 +80,9 @@ func _show_page() -> void:
 	_list.visible = false
 	_list_mode = ""
 	_page.visible = true
+	var player := Session.sim.world.player() if Session.sim != null else null
+	if player != null:
+		_show_free_will(player.free_will)
 	if _page.is_inside_tree():
 		(_page.get_child(0) as Button).grab_focus()
 
@@ -102,15 +108,31 @@ func _on_chosen(path: String) -> void:
 			Session.notice.emit("Could not load that save")
 
 
+## Flips the player's free will. The command applies on the next step, but the button shows
+## the chosen state at once.
+func _toggle_free_will() -> void:
+	var player := Session.sim.world.player() if Session.sim != null else null
+	if player == null:
+		return
+	var enabled := _free_will_button.text.ends_with("Off")
+	Session.submit(SetFreeWillCommand.new(player.id, enabled))
+	_show_free_will(enabled)
+
+
+func _show_free_will(enabled: bool) -> void:
+	_free_will_button.text = "Free will: On" if enabled else "Free will: Off"
+
+
 ## "slot 2" for <dir>/slot_2.json.
 static func _slot_name(path: String) -> String:
 	return path.get_file().get_basename().replace("_", " ")
 
 
-func _page_button(text: String, action: Callable) -> void:
+func _page_button(text: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.custom_minimum_size = Vector2(260, 40)
 	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	button.pressed.connect(action)
 	_page.add_child(button)
+	return button

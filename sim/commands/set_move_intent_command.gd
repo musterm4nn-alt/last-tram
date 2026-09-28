@@ -20,6 +20,7 @@ func apply(sim: Sim) -> void:
 	var person := sim.world.get_person(person_id)
 	if person == null:
 		return
+	person.last_input_tick = sim.clock.tick
 	person.move_intent = direction.limit_length(1.0)
 	if direction != Vector2.ZERO:
 		person.path.clear()

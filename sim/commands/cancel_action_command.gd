@@ -22,6 +22,7 @@ func apply(sim: Sim) -> void:
 	var person := sim.world.get_person(person_id)
 	if person == null:
 		return
+	person.last_input_tick = sim.clock.tick
 	if index < 0 or index >= person.action_queue.size():
 		return
 	var removed: Action = person.action_queue[index]

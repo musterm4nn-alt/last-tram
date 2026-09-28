@@ -1,12 +1,12 @@
 ---
 id: T-0025
 title: Free will: the idle player looks after their own needs (on/off in the Esc menu)
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0012, T-0023]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -106,7 +106,33 @@ Use `SimFactory.new_game(content(), 1)` (the furnished flat) unless said otherwi
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `Person.free_will` (default on) and `last_input_tick`, saved with defaults for old saves.
+  The four player commands record the input tick as soon as the person is found;
+  `SetFreeWillCommand` (`set_free_will`) does not.
+- `AutonomySystem` (last in `Sim.default_systems()`): once a minute, an idle person with free
+  will (empty queue, no path, no WASD, 10 game minutes since input) queues
+  `Autonomy.choose(Autonomy.candidates(...))` with the `"autonomy"` rng stream and emits
+  `autonomy_chose`.
+- One addition to the spec: a newly spawned player counts as fresh input
+  (`last_input_tick` = the start tick, in `SimFactory`), so free will waits 10 game minutes
+  (10 s at 1x) after a new game before acting, and the debug line's idle time starts at the
+  game's start instead of tick 0.
+- Game: "Free will: On/Off" in the Esc menu, and "free will on (idle N min)" in F3.
+- Existing tests that check a single action now switch free will off for that player
+  (`test_home_content.gd`'s helper and one sleep test): free will would otherwise queue
+  something new the minute the tested action ends.
+- Tests: `tests/sim/test_free_will.gd` (9) and one in `test_pause_menu.gd`.
+  `tools/check.sh`: 243 passed, 0 failed. One day alone: lowest needs hunger 63, energy 67,
+  hygiene 53, fun 42, social 59, comfort 58. `tools/simrun.sh --days=1`: 0.003 ms per step.
+- Screenshots: `out/t0025_pause.png` (Esc menu with "Free will: On"),
+  `out/t0025_live.png` (`--advance=240 --debug`: after cooking on its own, the character
+  chose to sleep; the needs panel shows ▲ on Energy and Comfort).
+- Known M1 limit (for the owner): with no daily routine yet (M2), the character sleeps
+  whenever energy dips (e.g. at midday), not at night.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

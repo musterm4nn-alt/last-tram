@@ -20,6 +20,7 @@ func apply(sim: Sim) -> void:
 	var person := sim.world.get_person(person_id)
 	if person == null:
 		return
+	person.last_input_tick = sim.clock.tick
 	if target == person.cell():
 		person.path.clear()
 		person.move_intent = Vector2.ZERO
