@@ -74,3 +74,12 @@ func test_interact_parses_and_skips_the_menu() -> void:
 	assert_eq(options.interact, "fridge")
 	assert_true(options.skip_menu())
 
+
+func test_queue_parses_pairs_and_skips_the_menu() -> void:
+	var options := LaunchOptions.parse(PackedStringArray(["--queue=fridge:grab_snack,tv:watch_tv"]))
+	assert_eq(options.queue.size(), 2)
+	if options.queue.size() == 2:
+		assert_eq(options.queue[0], PackedStringArray(["fridge", "grab_snack"]))
+		assert_eq(options.queue[1], PackedStringArray(["tv", "watch_tv"]))
+	assert_true(options.skip_menu())
+

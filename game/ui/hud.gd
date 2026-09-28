@@ -72,6 +72,7 @@ func _ready() -> void:
 	needs_panel.offset_top = -56
 	needs_panel.offset_bottom = -56
 	add_child(needs_panel)
+	add_child(ActionQueuePanel.new())
 
 	_notice_label = Label.new()
 	_notice_label.set_anchors_preset(Control.PRESET_CENTER_TOP)

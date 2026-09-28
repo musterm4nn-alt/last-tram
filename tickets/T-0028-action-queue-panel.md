@@ -1,12 +1,12 @@
 ---
 id: T-0028
 title: Action queue panel (progress and cancel) and rising-need arrows
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0010]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -86,7 +86,23 @@ right after the new game starts and **before** `--advance` runs, submit a
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/action_queue_panel.gd` (`ActionQueuePanel`): bottom centre, level with the needs
+  panel and above the key hints (not at 12 px, which would overlap the hint line); rows
+  rebuild only when `signature()` changes, the front row's bar follows `progress()` every
+  frame, and each row's × submits `CancelActionCommand`. Labels fill the row so the × buttons
+  line up. Built in `_init()` so tests can use it outside the tree.
+- `NeedsPanel`: `is_rising()` and a green ▲ after each bar while the current action fills that
+  need faster than it decays.
+- `--queue=DEF:ACTION,...` queues actions at the start, before `--advance`.
+- Tests: `tests/game/test_action_queue_panel.gd` (5), two in `test_needs_panel.gd`, one in
+  `test_launch_options.gd`. `tools/check.sh`: 210 passed, 0 failed.
+- Screenshots: `out/t0028.png` (`--queue=fridge:grab_snack,tv:watch_tv --advance=4`) shows
+  "Grab a snack" with a partly filled bar and "Then: Watch TV", each with ×;
+  `out/t0028_tv.png` (`--queue=tv:watch_tv --advance=6`) shows the ▲ next to Fun.
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

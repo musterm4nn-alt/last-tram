@@ -27,6 +27,8 @@ var command_mode: bool = false
 var walk_to: Vector2i = NO_CELL
 ## Open the interaction menu on the first object with this def id (--interact=fridge).
 var interact: String = ""
+## Actions to queue at the start (--queue=fridge:grab_snack,tv:watch_tv): [def_id, interaction_id].
+var queue: Array[PackedStringArray] = []
 
 
 ## Parses "--seed=5 --debug" style arguments (unknown ones are ignored).
@@ -74,6 +76,11 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.walk_to = Vector2i(int(cell.x), int(cell.y))
 			"interact":
 				out.interact = value
+			"queue":
+				for pair: String in value.split(",", false):
+					var parts := pair.split(":")
+					if parts.size() == 2:
+						out.queue.append(parts)
 	return out
 
 
@@ -83,7 +90,7 @@ func skip_menu() -> bool:
 		return false
 	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 \
 			or walk != Vector2.ZERO or random_character or seed_given or command_mode or walk_to != NO_CELL \
-			or not interact.is_empty()
+			or not interact.is_empty() or not queue.is_empty()
 
 
 static func _parse_walk(value: String) -> Vector2:
