@@ -91,6 +91,8 @@ func _process(delta: float) -> void:
 	if Session.sim == null:
 		return
 	var speed_text := "PAUSED" if Session.speed == 0 else "%dx" % Session.speed
+	if Session.skipping:
+		speed_text = "▶▶ skipping"
 	_clock_label.text = "Day %d   %s   %s" % [Session.sim.clock.day() + 1, Session.sim.clock.format(), speed_text]
 	var player := Session.sim.world.player()
 	var place: PlaceDef = Session.content.place_at(player.cell()) if player != null else null

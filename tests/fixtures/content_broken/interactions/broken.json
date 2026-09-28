@@ -56,6 +56,18 @@
 			}
 		},
 		{
+			"id": "bad_skip",
+			"name": "Bad skip",
+			"object_tags": [
+				"bed"
+			],
+			"duration_minutes": 10,
+			"time_skip": "yes",
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
+		},
+		{
 			"id": "ghost_tag",
 			"name": "Ghost tag",
 			"object_tags": [
