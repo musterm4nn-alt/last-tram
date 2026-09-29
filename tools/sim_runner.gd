@@ -3,8 +3,11 @@ extends SceneTree
 ## over hours or days without graphics, and how fast the sim runs.
 ##   tools/simrun.sh --days=1 --seed=1
 ##   tools/simrun.sh --minutes=90 --walk=1,0 --report-every=10
+##   tools/simrun.sh --days=1 --no-free-will
 ## Options: --seed=N, --days=N, --minutes=N, --report-every=MINUTES (default 60),
-##          --walk=X,Y (player holds a walking direction).
+##          --walk=X,Y (player holds a walking direction),
+##          --no-free-will (turns the player's free will off at the start, so needs are
+##          not looked after; useful to contrast with the default run for M1's acceptance).
 ## As systems are added, extend _report() with their key numbers (needs, money, crimes...).
 
 
@@ -17,6 +20,8 @@ func _initialize() -> void:
 		quit(1)
 		return
 	var sim := SimFactory.new_game(content, int(args.get("seed", "1")))
+	if args.has("no-free-will"):
+		sim.submit(SetFreeWillCommand.new(sim.world.player_id, false))
 	var minutes := int(args.get("minutes", "0")) + int(args.get("days", "0")) * SimClock.MINUTES_PER_DAY
 	if minutes <= 0:
 		minutes = 60
@@ -27,15 +32,21 @@ func _initialize() -> void:
 
 	print("Simulating %d game minutes (seed %s)" % [minutes, args.get("seed", "1")])
 	_report(sim)
+	var need_stats := _new_need_stats(sim)
+	var action_counts: Dictionary = {}
 	var started := Time.get_ticks_usec()
 	for m: int in minutes:
 		sim.run_minutes(1)
+		_sample_needs(sim, need_stats)
+		_count_finished_actions(sim, action_counts)
 		if (m + 1) % report_every == 0:
 			_report(sim)
 	var seconds := (Time.get_ticks_usec() - started) / 1_000_000.0
 	var steps := minutes * SimClock.STEPS_PER_GAME_MINUTE
 	print("Done: %d steps in %.2f s (%.4f ms per step)" % [
 		steps, seconds, seconds * 1000.0 / steps])
+	_report_need_stats(sim, need_stats, minutes)
+	_report_action_counts(action_counts)
 	print("LAST_TRAM_SIMRUN: OK")
 	quit(0)
 
@@ -50,6 +61,62 @@ func _report(sim: Sim) -> void:
 		sim.clock.format(), sim.world.people.size(), player.pos.x, player.pos.y,
 		place.name if place != null else "-", " ".join(need_parts),
 		Mood.compute(player, sim.content), Mood.label(Mood.compute(player, sim.content))])
+
+
+## One {"min": float, "sum": float, "count": int, "below_30": int} entry per need id.
+func _new_need_stats(sim: Sim) -> Dictionary:
+	var out: Dictionary = {}
+	for need_def: NeedDef in sim.content.needs:
+		var start: float = float(sim.world.player().needs.get(need_def.id, need_def.start))
+		out[need_def.id] = {"min": start, "sum": 0.0, "count": 0, "below_30": 0}
+	return out
+
+
+## Samples the player's needs into `stats`, called once per game minute.
+func _sample_needs(sim: Sim, stats: Dictionary) -> void:
+	var player := sim.world.player()
+	for need_id: String in stats:
+		var value: float = float(player.needs.get(need_id, 0.0))
+		var entry: Dictionary = stats[need_id]
+		entry["min"] = minf(float(entry["min"]), value)
+		entry["sum"] = float(entry["sum"]) + value
+		entry["count"] = int(entry["count"]) + 1
+		if value < 30.0:
+			entry["below_30"] = int(entry["below_30"]) + 1
+
+
+## Drains this minute's events and tallies the player's finished interactions.
+func _count_finished_actions(sim: Sim, counts: Dictionary) -> void:
+	for event: Dictionary in sim.events.drain():
+		if event["type"] != &"action_finished":
+			continue
+		var data: Dictionary = event["data"]
+		if int(data.get("person_id", -1)) != sim.world.player_id:
+			continue
+		var interaction_id := String(data["interaction_id"])
+		counts[interaction_id] = int(counts.get(interaction_id, 0)) + 1
+
+
+func _report_need_stats(sim: Sim, stats: Dictionary, minutes: int) -> void:
+	for need_def: NeedDef in sim.content.needs:
+		var entry: Dictionary = stats[need_def.id]
+		var count: int = int(entry["count"])
+		var avg: float = float(entry["sum"]) / count if count > 0 else 0.0
+		var below_pct: float = 100.0 * float(entry["below_30"]) / count if count > 0 else 0.0
+		print("%-8s min %.1f  avg %.1f  below 30: %.1f%% of minutes" % [
+			need_def.id, float(entry["min"]), avg, below_pct])
+
+
+func _report_action_counts(counts: Dictionary) -> void:
+	var ids: Array = counts.keys()
+	ids.sort_custom(func(a: String, b: String) -> bool:
+		if int(counts[a]) != int(counts[b]):
+			return int(counts[a]) > int(counts[b])
+		return a < b)
+	var parts: PackedStringArray = []
+	for id: String in ids:
+		parts.append("%s %d" % [id, int(counts[id])])
+	print("actions: %s" % (", ".join(parts) if not parts.is_empty() else "none"))
 
 
 func _parse_args() -> Dictionary:

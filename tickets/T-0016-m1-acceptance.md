@@ -1,12 +1,12 @@
 ---
 id: T-0016
 title: M1 acceptance: a day at home, proven headless, plus the owner's playtest checklist
-status: todo
+status: review
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0009, T-0010, T-0011, T-0012, T-0013, T-0014, T-0015, T-0021, T-0023, T-0024, T-0025, T-0026, T-0027, T-0028, T-0029]
-builder:
+builder: Claude Code subagent / Sonnet 5 (claude-sonnet-5)
 review_rounds: 0
 ---
 
@@ -65,15 +65,134 @@ off in the Esc menu; save to a slot, load it, and see that the action continues;
 and note the folder name it shows.
 
 ## Acceptance criteria
-- [ ] `tests/sim/test_m1_day_at_home.gd` passes with the thresholds above for all three
+- [x] `tests/sim/test_m1_day_at_home.gd` passes with the thresholds above for all three
   seeds (paste the printed min/avg lines in the notes).
-- [ ] `tools/simrun.sh --days=3` prints the needs summary and the action counts (paste them
+- [x] `tools/simrun.sh --days=3` prints the needs summary and the action counts (paste them
   in the notes); `tools/simrun.sh --days=1 --no-free-will` shows needs falling instead.
-- [ ] If any data was tuned, the notes list every change with before → after and why.
-- [ ] The playtest checklist is in the notes.
-- [ ] `tools/check.sh` passes.
+- [x] If any data was tuned, the notes list every change with before → after and why.
+- [x] The playtest checklist is in the notes.
+- [x] `tools/check.sh` passes.
 
 ## Implementation notes
+
+Added the seed/day/save/free-will proof for M1's "done when" without touching any code
+outside the ticket's scope. No data tuning was needed: every threshold passed on the first
+run at the current `data/interactions/*.json` and `data/needs.json` numbers.
+
+**Files changed:**
+- `tools/sim_runner.gd`: added `--no-free-will` (submits `SetFreeWillCommand(player, false)`
+  before the run starts) and, at the end of the run, a needs summary (min/avg/percent-below-30
+  per need, sampled every game minute) and an `actions: id count, ...` line tallying the
+  player's `action_finished` events (drained every minute), sorted by count descending.
+- `tools/simrun.sh`: comment-only, documents the new flag and the two acceptance invocations.
+- `tests/sim/test_m1_day_at_home.gd` (new): three tests.
+  1. `test_three_days_three_seeds_keep_every_need_out_of_the_red` — for seeds 1, 2, 3: a
+     fresh game, no input, 3 × 1440 minutes, sampled every minute. Asserts every need's
+     minimum stays ≥ 15 (never critical), each need is below 30 for at most 5% of sampled
+     minutes, and at least 6 distinct interactions finish. Prints each seed's per-need
+     min/avg/below-30% lines.
+  2. `test_save_mid_sleep_and_continue_equals_an_uninterrupted_run` — runs a new game (seed 1)
+     until the player's front action is `sleep` in state `PERFORMING` (fails if that never
+     happens within 2 game days), saves, loads, runs 600 more minutes, and compares
+     `SaveCodec.to_json` against an uninterrupted run of the same total length.
+  3. `test_free_will_off_leaves_the_player_idle_and_a_need_falls` — with free will off via
+     `SetFreeWillCommand`, runs one day and asserts the player's action queue is empty every
+     minute (never acts) and that at least one need fell below 30.
+
+**Commands run and output:**
+
+`tools/test.sh --filter=m1_day` (the three new tests; ~1.4s total, well under the 10s budget):
+
+```
+    seed 1: hunger   min 52.4  avg 80.3  below 30: 0.0% of minutes
+    seed 1: energy   min 59.4  avg 81.4  below 30: 0.0% of minutes
+    seed 1: hygiene  min 53.3  avg 81.2  below 30: 0.0% of minutes
+    seed 1: fun      min 39.8  avg 66.4  below 30: 0.0% of minutes
+    seed 1: social   min 53.8  avg 80.6  below 30: 0.0% of minutes
+    seed 1: comfort  min 46.3  avg 73.1  below 30: 0.0% of minutes
+    seed 2: hunger   min 49.8  avg 79.1  below 30: 0.0% of minutes
+    seed 2: energy   min 64.4  avg 83.4  below 30: 0.0% of minutes
+    seed 2: hygiene  min 49.3  avg 77.8  below 30: 0.0% of minutes
+    seed 2: fun      min 46.6  avg 71.4  below 30: 0.0% of minutes
+    seed 2: social   min 51.7  avg 78.9  below 30: 0.0% of minutes
+    seed 2: comfort  min 54.7  avg 73.7  below 30: 0.0% of minutes
+    seed 3: hunger   min 40.0  avg 79.3  below 30: 0.0% of minutes
+    seed 3: energy   min 58.3  avg 81.7  below 30: 0.0% of minutes
+    seed 3: hygiene  min 55.1  avg 81.0  below 30: 0.0% of minutes
+    seed 3: fun      min 42.4  avg 70.0  below 30: 0.0% of minutes
+    seed 3: social   min 59.1  avg 83.2  below 30: 0.0% of minutes
+    seed 3: comfort  min 53.3  avg 72.9  below 30: 0.0% of minutes
+  ok    sim/test_m1_day_at_home.gd :: test_three_days_three_seeds_keep_every_need_out_of_the_red
+  ok    sim/test_m1_day_at_home.gd :: test_save_mid_sleep_and_continue_equals_an_uninterrupted_run
+  ok    sim/test_m1_day_at_home.gd :: test_free_will_off_leaves_the_player_idle_and_a_need_falls
+== 3 passed, 0 failed ==
+LAST_TRAM_TESTS: PASSED
+```
+
+`tools/simrun.sh --days=3` (needs summary + action counts, default seed 1, free will on):
+
+```
+hunger   min 52.4  avg 80.3  below 30: 0.0% of minutes
+energy   min 59.4  avg 81.4  below 30: 0.0% of minutes
+hygiene  min 53.3  avg 81.2  below 30: 0.0% of minutes
+fun      min 39.8  avg 66.4  below 30: 0.0% of minutes
+social   min 53.8  avg 80.6  below 30: 0.0% of minutes
+comfort  min 46.3  avg 73.1  below 30: 0.0% of minutes
+actions: sit 25, watch_tv 16, cook_meal 10, take_shower 8, video_call 7, sleep 6, nap 3, browse_web 2, grab_snack 2
+LAST_TRAM_SIMRUN: OK
+```
+
+`tools/simrun.sh --days=1 --no-free-will` (the contrast case — needs fall instead of being
+looked after):
+
+```
+hunger   min 0.0  avg 22.2  below 30: 65.3% of minutes
+energy   min 0.0  avg 29.6  below 30: 53.8% of minutes
+hygiene  min 0.0  avg 33.3  below 30: 48.0% of minutes
+fun      min 0.0  avg 22.2  below 30: 65.3% of minutes
+social   min 0.0  avg 33.3  below 30: 48.0% of minutes
+comfort  min 0.0  avg 16.6  below 30: 74.0% of minutes
+actions: none
+LAST_TRAM_SIMRUN: OK
+```
+
+`tools/check.sh` (full suite, import + tests + lint):
+
+```
+== 285 passed, 0 failed ==
+LAST_TRAM_TESTS: PASSED
+```
+
+**Data tuning:** none. Every threshold (never below 15, below-30 for at most 5% of minutes,
+at least 6 distinct finished interactions) passed at the current `data/interactions/*.json`
+and `data/needs.json` numbers for all three seeds, so nothing in `data/` was changed.
+
+**The owner's playtest checklist (M1 sign-off):**
+
+1. From the main menu, start a new game.
+2. In the character creator, go through every tab (Body, Face, Hair, Clothes, ...);
+   on the Clothes tab, use Randomise and confirm the outfit changes; check the live
+   portrait updates as you change things; open the look gallery and pick a saved look.
+3. Confirm the character and enter the flat.
+4. Walk around with W/A/S/D.
+5. Press Tab to enter command mode; pan the camera; click a spot on the ground and watch
+   your character walk there.
+6. Click an object (e.g. the fridge) to open its menu; also stand near an object and press
+   E to open the same menu directly.
+7. Queue three different actions from the menu (they should appear in the action queue
+   panel), then cancel one of the still-queued ones.
+8. Let the character use objects and watch the needs panel: needs should rise and show the
+   ▲ arrow while an action is filling them.
+9. Queue Sleep on the bed and watch time fast-forward (skip) until morning.
+10. Leave the character alone (no input) with free will on for one in-game hour and watch
+    them pick something to do on their own once they've been idle for a bit.
+11. Open the Esc menu and turn free will off; confirm the character now just stands still
+    even if a need is low.
+12. Save to a slot from the Esc menu, then load that slot; confirm the character's current
+    action continues from where it was (e.g. still sleeping, or still walking to the same
+    spot) rather than restarting.
+13. Press F9 and note the folder name it prints (the bug-report folder), so anyone can find
+    the report and replay it later.
 
 ## Questions
 

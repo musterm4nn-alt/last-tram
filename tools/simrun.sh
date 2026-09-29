@@ -2,6 +2,8 @@
 # Runs the simulation headless (no graphics) and prints a report. Examples:
 #   tools/simrun.sh --days=1 --seed=1
 #   tools/simrun.sh --minutes=90 --walk=1,0 --report-every=10
+#   tools/simrun.sh --days=3                 # needs summary + action counts, free will on
+#   tools/simrun.sh --days=1 --no-free-will  # contrast: needs fall with free will off
 set -uo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p out
