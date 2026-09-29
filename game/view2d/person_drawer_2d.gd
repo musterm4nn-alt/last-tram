@@ -132,6 +132,26 @@ static func _draw_head_item(canvas: CanvasItem, content: ContentDB, outfit: Outf
 	canvas.draw_rect(Rect2(Vector2(head.x - r, head.y - r * 0.75 - band_h / 2.0), Vector2(r * 2.0, band_h)), _clothing_color(content, worn.colour))
 
 
+## Public colour lookups (the creator's portrait uses the same colours). Unknown ids give
+## ViewConfig.UNKNOWN_ID_COLOR so mistakes show up.
+static func skin_color(content: ContentDB, id: String) -> Color:
+	return _skin_color(content, id)
+
+
+static func hair_color(content: ContentDB, id: String) -> Color:
+	return _hair_color(content, id)
+
+
+static func eye_color(content: ContentDB, id: String) -> Color:
+	if content.appearance.eye_colours.has(id):
+		return (content.appearance.eye_colours[id] as ColorOption).color
+	return ViewConfig.UNKNOWN_ID_COLOR
+
+
+static func worn_color(content: ContentDB, outfit: Outfit, slot: String) -> Color:
+	return _worn_color(content, outfit, slot)
+
+
 static func _worn_color(content: ContentDB, outfit: Outfit, slot: String) -> Color:
 	var worn := outfit.get_item(slot)
 	if worn == null:

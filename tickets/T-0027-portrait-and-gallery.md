@@ -1,12 +1,12 @@
 ---
 id: T-0027
 title: Front-facing portrait in the creator, and a look gallery for checking every option
-status: todo
+status: done
 milestone: M1
 size: M
 owner: builder
 depends_on: [T-0029]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -86,7 +86,30 @@ and several rows), or be split into pages with `--gallery-page=N`.
 - [ ] `tools/check.sh` passes.
 
 ## Implementation notes
+Built by the architect (Claude Code / Opus 5.5) at the owner's request.
+- `game/ui/character_portrait.gd` (`CharacterPortrait`, `show_look()`): head and shoulders
+  sized from the control: hair behind (long, tail, afro), neck, top with an open outer
+  layer, scarf/chain band, head, eyes in their colour, mouth, facial hair (stubble is an
+  unoutlined chin tint; with an outline it looked like a blob), freckles, glasses, beauty
+  mark, front hair, then cap/beanie and sunglasses. Geometry comes from the pure
+  `head_rect()`, `face_rect()`, `hair_front_rects()`.
+- `PersonDrawer2D` gains public `skin_color`, `hair_color`, `eye_color`, `worn_color`
+  (its own drawing is unchanged).
+- The creator shows the portrait above the four-way preview (the file is at the 350-line
+  limit now; the next creator change should move a tab out like the Clothes tab).
+- `game/ui/look_gallery.gd` (`LookGallery`, `--screen=gallery`, `--gallery-page=2`): page 1
+  shows every hair style, build, facial hair, each feature and all together, and every skin
+  tone; page 2 shows one outfit per starter item.
+- Tests: `tests/game/test_character_portrait.gd` (4: front hair never meets the face for
+  every hair style at three sizes, colour lookups, the gallery covers every option with
+  valid characters) and one in `test_launch_options.gd`. `tools/check.sh`: 282 passed.
+- Screenshots: `out/t0027_gallery1.png` and `out/t0027_gallery2.png` (every option,
+  checked by eye: long hair stays behind the face, beards and glasses read clearly,
+  sunglasses and caps sit right), `out/t0027_creator.png` (portrait above the preview).
+- Known limit: gloves and bags are not drawn (neither portrait nor top-down figure).
 
 ## Questions
 
 ## Review feedback
+
+Architect-built; self-reviewed with the checks above (no separate review round).

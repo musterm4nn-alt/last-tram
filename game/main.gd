@@ -16,6 +16,7 @@ extends Node2D
 ##   --screen=creator    open the character creator directly (with the menu); "name" is the same
 ##   --creator-tab=TAB   the creator's tab: name, identity, body, face
 ##   --creator-seed=N    start the creator from a random character (for repeatable screenshots)
+##   --screen=gallery    show every look option (portraits and figures); --gallery-page=2 for clothes
 ##   --screen=load       open the main menu's Load list (with the menu)
 ##   --screen=pause      open the Esc menu after the quick start
 ##   --command           start in command mode (Tab)
@@ -73,6 +74,9 @@ func _ready() -> void:
 	if not _options.screenshot_path.is_empty():
 		_screenshot_path = _options.screenshot_path
 		_screenshot_frames = _options.screenshot_frames
+	if _options.screen == "gallery":
+		add_child(LookGallery.new(_options.gallery_page))
+		return
 	if _options.skip_menu():
 		_start_quick()
 	else:

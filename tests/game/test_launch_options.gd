@@ -100,3 +100,9 @@ func test_creator_options_parse_and_show_the_menu() -> void:
 	assert_false(options.skip_menu(), "the creator lives behind the main menu")
 	assert_eq(LaunchOptions.parse(PackedStringArray([])).creator_seed, -1)
 
+
+func test_gallery_options_parse() -> void:
+	var options := LaunchOptions.parse(PackedStringArray(["--screen=gallery", "--gallery-page=2"]))
+	assert_eq(options.screen, "gallery")
+	assert_eq(options.gallery_page, 2)
+

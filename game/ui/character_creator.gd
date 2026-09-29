@@ -21,6 +21,7 @@ var model: CreatorModel
 
 var _tabs: TabContainer
 var _preview: FigurePreview
+var _portrait: CharacterPortrait
 var _first: LineEdit
 var _last: LineEdit
 var _nick: LineEdit
@@ -83,8 +84,14 @@ func _ready() -> void:
 	# The Name tab's "Random name" button is its Randomise.
 	for index: int in range(1, TABS.size()):
 		_randomise_button(_tabs.get_child(index) as VBoxContainer, TABS[index])
+	var looks := VBoxContainer.new()
+	columns.add_child(looks)
+	_portrait = CharacterPortrait.new()
+	_portrait.custom_minimum_size = Vector2(160, 190)
+	_portrait.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	looks.add_child(_portrait)
 	_preview = FigurePreview.new()
-	columns.add_child(_preview)
+	looks.add_child(_preview)
 	_error = Label.new()
 	_error.add_theme_font_size_override("font_size", 14)
 	_error.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -340,3 +347,4 @@ func _refresh() -> void:
 		_error.modulate = ERROR_COLOR
 	_start.disabled = not problems.is_empty()
 	_preview.show_spec(model.spec)
+	_portrait.show_look(model.spec.appearance, model.spec.outfit)
