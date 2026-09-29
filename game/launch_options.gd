@@ -20,12 +20,14 @@ var random_character: bool = false
 var quickstart: bool = false
 var menu: bool = false
 ## "" or a screen to open directly: "creator" (or "name") and "load" (main menu screens),
-## "pause" (the Esc menu, after the quick start).
+## "pause" (the Esc menu, after the quick start), "gallery" (the look gallery, no game).
 var screen: String = ""
 ## The creator's tab to show (--creator-tab=body); "" = the first.
 var creator_tab: String = ""
 ## Start the creator from CharacterSpec.random with this seed (--creator-seed=7); -1 = no.
 var creator_seed: int = -1
+## Look gallery page for --screen=gallery (--gallery-page=2).
+var gallery_page: int = 1
 ## Start in command mode (--command).
 var command_mode: bool = false
 ## Walk the player to this cell at the start (--walk-to=X,Y); NO_CELL = none.
@@ -78,6 +80,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.creator_tab = value
 			"creator-seed":
 				out.creator_seed = value.to_int()
+			"gallery-page":
+				out.gallery_page = value.to_int()
 			"command":
 				out.command_mode = true
 			"walk-to":
