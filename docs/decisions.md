@@ -125,3 +125,13 @@ laptop whose video calls fill Social, the only social source until the phone (M3
 neighbours (M2). An architect prototype of these rules kept every need above 40 for three
 game days.
 
+**D25 · M2 order: houses, people, social life, then scale.** M2 is planned as T-0030 to
+T-0045: stairs and upper floors first (the ~30 residents need flats), then lots with access
+rules and personality, generated residents and households, their free will and daily
+routines, then relationships, memories, social interactions, bubbles and the inspector,
+then simulation tiers (built once there is a real town to measure), scenes, personality in
+the creator, and the 7-day acceptance run. Only the first three tickets are fully specified;
+the rest are drafts detailed as their foundations land. Access rules are checked by free will
+and routing, not baked into the pathfinding graph (one shared graph stays cheap); trespassing
+is M4.
+
