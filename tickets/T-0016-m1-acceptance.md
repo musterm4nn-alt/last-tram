@@ -1,7 +1,7 @@
 ---
 id: T-0016
 title: M1 acceptance: a day at home, proven headless, plus the owner's playtest checklist
-status: review
+status: done
 milestone: M1
 size: M
 owner: builder
@@ -170,9 +170,10 @@ and `data/needs.json` numbers for all three seeds, so nothing in `data/` was cha
 **The owner's playtest checklist (M1 sign-off):**
 
 1. From the main menu, start a new game.
-2. In the character creator, go through every tab (Body, Face, Hair, Clothes, ...);
-   on the Clothes tab, use Randomise and confirm the outfit changes; check the live
-   portrait updates as you change things; open the look gallery and pick a saved look.
+2. In the character creator, type a name and go through every tab (Name, Identity, Body,
+   Face & hair, Clothes); step through the options with ◀ ▶, pick clothes colours from the
+   swatches, try each tab's Randomise and "Randomise everything", and check that the
+   portrait and the four small figures change with every choice.
 3. Confirm the character and enter the flat.
 4. Walk around with W/A/S/D.
 5. Press Tab to enter command mode; pan the camera; click a spot on the ground and watch
@@ -197,3 +198,13 @@ and `data/needs.json` numbers for all three seeds, so nothing in `data/` was cha
 ## Questions
 
 ## Review feedback
+
+**Round 1 (architect): passed; one fix by the reviewer.** Built by a Claude Code subagent
+(Sonnet 5) on its own branch, then reviewed like any builder's ticket. Clean, in-scope work;
+the tests prove the roadmap's "done when" over three seeds (lowest need 39.8, nothing
+below 30), the mid-sleep save round trip, and the free-will-off contrast; no data tuning
+was needed. `tools/check.sh` rerun by the reviewer: 285 passed, 0 failed.
+- Fixed: checklist step 2 asked the owner to "open the look gallery and pick a saved look",
+  which the game doesn't have (the gallery is a checking screen); it now walks through the
+  creator's real tabs, swatches and Randomise buttons.
+
