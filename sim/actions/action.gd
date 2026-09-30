@@ -9,6 +9,8 @@ const QUEUED: String = "queued"
 const ROUTING: String = "routing"
 const PERFORMING: String = "performing"
 
+## Stable instance id from World.new_id(), so delayed cancellations survive queue edits.
+var id: int = 0
 var interaction_id: String = ""
 var target_id: int = 0
 ## Use slot the person performs on, or -1 before it starts.
@@ -27,6 +29,7 @@ func _init(p_interaction_id: String = "", p_target_id: int = 0) -> void:
 
 func to_dict() -> Dictionary:
 	return {
+		"id": id,
 		"interaction_id": interaction_id,
 		"target_id": target_id,
 		"slot_index": slot_index,
@@ -38,6 +41,7 @@ func to_dict() -> Dictionary:
 
 static func from_dict(d: Dictionary) -> Action:
 	var action := Action.new()
+	action.id = int(d.get("id", 0))
 	action.interaction_id = String(d.get("interaction_id", ""))
 	action.target_id = int(d.get("target_id", 0))
 	action.slot_index = int(d.get("slot_index", -1))

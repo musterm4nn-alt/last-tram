@@ -11,7 +11,10 @@ extends RefCounted
 
 ## Returns the migrated dictionary, or {} (and fills `errors`) if it cannot be migrated.
 static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
-	var version := int(data.get("save_version", 0))
+	var initial := errors.size()
+	var version := SaveSchema.new(errors).integer(data.get("save_version"), "save_version", 1)
+	if errors.size() != initial:
+		return {}
 	if version < 1:
 		errors.append("Not a Last Tram save (no save_version).")
 		return {}
@@ -23,11 +26,36 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 		match version:
 			1:
 				d = _v1_to_v2(d)
+			2:
+				d = _v2_to_v3(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v3 actions have stable instance ids. Preserve earned minutes and their elapsed phase.
+static func _v2_to_v3(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	var world: Dictionary = d["world"]
+	if not world.get("people") is Array:
+		return d
+	var next_id_value: Variant = world.get("next_id")
+	if not (next_id_value is int or next_id_value is float):
+		return d
+	var next_id := int(next_id_value)
+	for entry: Variant in world["people"]:
+		if not entry is Dictionary or not entry.get("action_queue", []) is Array:
+			continue
+		for action: Variant in entry.get("action_queue", []):
+			if not action is Dictionary:
+				continue
+			action["id"] = next_id
+			next_id += 1
+	world["next_id"] = next_id
 	return d
 
 

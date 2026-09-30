@@ -27,6 +27,8 @@ const BUG_REPORT_DIR: String = "user://bug_reports"
 ## How many recent events a bug report's info.txt lists.
 const REPORT_EVENTS: int = 20
 const QUICKSAVE_PATH: String = "user://saves/quicksave.json"
+## Retry a failed autosave after this many real seconds, without flooding notices.
+const AUTOSAVE_RETRY_SECONDS: float = 10.0
 
 var content: ContentDB
 var sim: Sim
@@ -49,6 +51,7 @@ var _accumulator: float = 0.0
 var _speed_before_pause: int = 1
 ## The game day the last autosave was for (see SaveSlots.last_autosave_day_at).
 var _last_autosave_day: int = -1
+var _autosave_retry_left: float = 0.0
 ## The save the current stretch of play started from (at the last load or autosave), as
 ## JSON: a bug report replays command_log from here.
 var _replay_start: String = ""
@@ -108,26 +111,39 @@ func advance_minutes(minutes: int) -> void:
 func _process(delta: float) -> void:
 	if sim == null:
 		return
+	_autosave_retry_left = maxf(0.0, _autosave_retry_left - delta)
 	steps_last_frame = 0
 	skipping = should_skip(sim, speed, _skip_stopped_tick)
 	if speed > 0:
 		var started := Time.get_ticks_usec()
 		_accumulator += delta * SimClock.STEPS_PER_GAME_MINUTE * (SKIP_SPEED if skipping else speed)
+		var accelerated := skipping
+		var skipped_action: Action = sim.world.player().action_queue[0] if skipping else null
 		while _accumulator >= 1.0 and steps_last_frame < MAX_STEPS_PER_FRAME:
 			sim.step()
 			_accumulator -= 1.0
 			steps_last_frame += 1
+			command_log.append_array(sim.take_applied_commands())
+			_forward_events()
+			if accelerated and (not skipping or not should_skip(sim, speed, _skip_stopped_tick) or sim.world.player().action_queue[0] != skipped_action):
+				skipping = false
+				_accumulator = 0.0
+				break
 		if steps_last_frame == MAX_STEPS_PER_FRAME:
 			_accumulator = 0.0
 		alpha = clampf(_accumulator, 0.0, 1.0)
 		sim_usec_last_frame = Time.get_ticks_usec() - started
 	command_log.append_array(sim.take_applied_commands())
+	_forward_events()
+	if steps_last_frame > 0 and _autosave_retry_left <= 0.0 and SaveSlots.autosave_due(sim.clock.tick, _last_autosave_day):
+		autosave()
+
+
+func _forward_events() -> void:
 	for event: Dictionary in sim.events.drain():
 		sim_event.emit(event)
 		if skipping and event["type"] == &"need_critical" and int(event["data"].get("person_id", -1)) == sim.world.player_id:
 			_stop_skipping(String(event["data"].get("need", "")))
-	if steps_last_frame > 0 and SaveSlots.autosave_due(sim.clock.tick, _last_autosave_day):
-		autosave()
 
 
 # --- Saving and loading ----------------------------------------------------------------
@@ -179,6 +195,9 @@ func autosave() -> void:
 		notice.emit("Autosaved")
 	else:
 		notice.emit("Autosave failed")
+		_autosave_retry_left = AUTOSAVE_RETRY_SECONDS
+		return
+	_autosave_retry_left = 0.0
 	_last_autosave_day = sim.clock.day()
 	# The next bug report starts from here (command_log already holds every applied command).
 	_replay_start = SaveCodec.to_json(sim)
@@ -188,13 +207,7 @@ func autosave() -> void:
 func save_to(path: String) -> Error:
 	if sim == null:
 		return ERR_UNCONFIGURED
-	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
-		return FileAccess.get_open_error()
-	file.store_string(SaveCodec.to_json(sim))
-	file.close()
-	return OK
+	return SaveFile.new().write(path, SaveCodec.to_json(sim))
 
 
 func load_from(path: String) -> bool:
@@ -203,8 +216,7 @@ func load_from(path: String) -> bool:
 	var errors: Array[String] = []
 	var loaded := SaveCodec.from_json(FileAccess.get_file_as_string(path), content, errors)
 	if loaded == null:
-		for error: String in errors:
-			push_error("Load failed: " + error)
+		notice.emit("Load failed: " + "; ".join(errors))
 		return false
 	sim = loaded
 	_after_load()
@@ -213,6 +225,9 @@ func load_from(path: String) -> bool:
 
 func _after_load() -> void:
 	_accumulator = 0.0
+	_autosave_retry_left = 0.0
+	_skip_stopped_tick = -1
+	skipping = false
 	alpha = 0.0
 	command_log.clear()
 	sim.take_applied_commands()
@@ -276,4 +291,3 @@ static func _write_text(path: String, text: String) -> bool:
 	file.store_string(text)
 	file.close()
 	return true
-

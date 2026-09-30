@@ -101,15 +101,59 @@ func test_sleeping_runs_many_steps_per_frame_until_the_sleep_ends() -> void:
 
 func test_a_critical_need_wakes_the_player() -> void:
 	var sim := _sleeper("sleep", {"hunger": 15.05})
+	var first_boundary := (sim.clock.tick / SimClock.STEPS_PER_GAME_MINUTE + 1) * SimClock.STEPS_PER_GAME_MINUTE
 	var notices: Array[String] = []
 	var listener := func(text: String) -> void: notices.append(text)
 	Session.notice.connect(listener)
 	Session._process(0.05)
 	Session.notice.disconnect(listener)
 	assert_false(Session.skipping, "hunger went critical: stop skipping")
+	assert_eq(sim.clock.tick, first_boundary, "stop at the event, without spending the remaining skip budget")
+	assert_near(sim.world.player().needs["hunger"], 14.95)
 	assert_has(notices, "Woke up: Hunger is low")
 	Session._accumulator = 0.0
 	Session._process(0.05)
 	assert_false(Session.skipping, "not again for the same sleep")
 	assert_eq(Session.steps_last_frame, 1)
 	assert_false(sim.world.player().action_queue.is_empty(), "the player keeps sleeping at normal speed")
+
+
+func test_cancelling_sleep_discards_the_frame_skip_budget() -> void:
+	var sim := _sleeper("sleep", {})
+	var before := sim.clock.tick
+	Session.submit(CancelActionCommand.new(sim.world.player_id, 0))
+	Session._process(0.05)
+	assert_eq(sim.clock.tick, before + 1)
+	assert_eq(Session.steps_last_frame, 1)
+	assert_false(Session.skipping)
+	assert_true(sim.world.player().action_queue.is_empty())
+	Session._process(0.05)
+	assert_eq(Session.steps_last_frame, 1, "accelerated remainder cannot leak into the next frame")
+
+
+func test_finishing_sleep_discards_the_frame_skip_budget() -> void:
+	var sim := _sleeper("sleep", {"energy": 99.0})
+	sim.run_steps(SimClock.STEPS_PER_GAME_MINUTE * 60 - 2)
+	assert_false(sim.world.player().action_queue.is_empty())
+	var before := sim.clock.tick
+	Session._process(0.05)
+	assert_eq(sim.clock.tick, before + 1)
+	assert_false(Session.skipping)
+	assert_true(sim.world.player().action_queue.is_empty())
+	Session._process(0.05)
+	assert_eq(Session.steps_last_frame, 1)
+
+
+func test_replacing_sleep_with_another_sleep_discards_the_old_budget() -> void:
+	var sim := _sleeper("sleep", {})
+	var previous := sim.world.player().action_queue[0]
+	Session.submit(QueueInteractionCommand.new(sim.world.player_id, "sleep", previous.target_id))
+	Session.submit(CancelActionCommand.new(sim.world.player_id, 0, previous.id))
+	var before := sim.clock.tick
+	Session._process(0.05)
+	assert_eq(sim.clock.tick, before + 1)
+	assert_ne(sim.world.player().action_queue[0].id, previous.id)
+	assert_false(Session.skipping)
+	Session._process(0.05)
+	assert_true(Session.skipping, "the new sleep can skip on its own next frame")
+	assert_eq(Session.steps_last_frame, 120)

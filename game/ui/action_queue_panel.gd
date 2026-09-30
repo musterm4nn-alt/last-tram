@@ -79,12 +79,12 @@ static func progress(action: Action, person: Person, content: ContentDB) -> floa
 	return clampf(float(action.minutes_done) / float(def.duration_minutes), 0.0, 1.0)
 
 
-## Changes whenever rows must be rebuilt: "<id>:<state>" for each action, joined by "|".
+## Includes person and action identities so replacement rows bind fresh cancel targets.
 static func signature(person: Person) -> String:
 	var parts := PackedStringArray()
 	for action: Action in person.action_queue:
-		parts.append("%s:%s" % [action.interaction_id, action.state])
-	return "|".join(parts)
+		parts.append("%d:%s:%s" % [action.id, action.interaction_id, action.state])
+	return "%d|%s" % [person.id, "|".join(parts)]
 
 
 func _rebuild(person: Person, content: ContentDB) -> void:
@@ -116,9 +116,9 @@ func _rebuild(person: Person, content: ContentDB) -> void:
 		cancel.tooltip_text = "Cancel"
 		cancel.flat = true
 		cancel.focus_mode = Control.FOCUS_NONE
-		cancel.pressed.connect(_on_cancel.bind(person.id, index))
+		cancel.pressed.connect(_on_cancel.bind(person.id, index, action.id))
 		row.add_child(cancel)
 
 
-func _on_cancel(person_id: int, index: int) -> void:
-	Session.submit(CancelActionCommand.new(person_id, index))
+func _on_cancel(person_id: int, index: int, action_id: int) -> void:
+	Session.submit(CancelActionCommand.new(person_id, index, action_id))

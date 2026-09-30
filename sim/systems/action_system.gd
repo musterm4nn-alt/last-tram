@@ -3,8 +3,8 @@ extends SimSystem
 ## Runs queued interactions: QUEUED front actions start at once on a free slot or
 ## pick a walking route there (QUEUED -> ROUTING), ROUTING ones start on arrival
 ## (ROUTING -> PERFORMING) and re-route when their path is blocked, then
-## PERFORMING ones apply need rates every game minute until their end condition
-## holds (on_minute). Non-zero direct (WASD) input cancels routing or performing.
+## PERFORMING ones apply rates for each complete minute since they started.
+## Direct input or an immediate walk cancels the current action.
 
 
 ## Steps every front action once: QUEUED ones start or route, ROUTING ones
@@ -19,13 +19,17 @@ func step(sim: Sim) -> void:
 		elif action.state == Action.ROUTING:
 			_step_routing(sim, person, action)
 		elif action.state == Action.PERFORMING:
-			if person.move_intent != Vector2.ZERO:
-				_cancel(sim, person, action, "moved")
+			_step_performing(sim, person, action)
+		if not person.action_queue.is_empty() and person.action_queue[0] == action and action.state == Action.PERFORMING:
+			_progress(sim, person, action)
 
 
 ## A QUEUED front action starts at once when its person already stands on a free
 ## slot of the target, and otherwise picks a route to walk there.
 static func _step_queued(sim: Sim, person: Person, action: Action) -> void:
+	# Later queued actions wait until the player's immediate walk or direct input ends.
+	if person.move_intent != Vector2.ZERO or not person.path.is_empty():
+		return
 	if sim.content.interaction(action.interaction_id) == null:
 		_fail(sim, person, action, "unknown_interaction")
 		return
@@ -107,6 +111,8 @@ static func _start_performing(sim: Sim, person: Person, action: Action, slot: in
 		return
 	var cell := obj.slot_cell(sim.content, slot)
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
+	person.path.clear()
+	person.move_intent = Vector2.ZERO
 	action.state = Action.PERFORMING
 	action.slot_index = slot
 	action.started_tick = sim.clock.tick
@@ -131,29 +137,42 @@ static func _cancel(sim: Sim, person: Person, action: Action, reason: String) ->
 	sim.emit_event(&"action_cancelled", {"person_id": person.id, "interaction_id": action.interaction_id, "reason": reason})
 
 
-## Applies need rates of performing front actions and finishes ended ones.
-func on_minute(sim: Sim) -> void:
-	for person: Person in sim.world.people.values():
-		if person.action_queue.is_empty():
-			continue
-		var action: Action = person.action_queue[0]
-		if action.state != Action.PERFORMING:
-			continue
-		var def := sim.content.interaction(action.interaction_id)
-		if def == null:
-			person.action_queue.remove_at(0)
-			sim.emit_event(&"action_failed", {"person_id": person.id, "interaction_id": action.interaction_id, "reason": "unknown_interaction"})
-			continue
-		for need_id: String in def.need_rates:
+## An immediate walk takes over the front action; later queued actions stay queued.
+static func cancel_front(sim: Sim, person: Person, reason: String) -> void:
+	if not person.action_queue.is_empty():
+		_cancel(sim, person, person.action_queue[0], reason)
+
+
+static func _step_performing(sim: Sim, person: Person, action: Action) -> void:
+	if person.move_intent != Vector2.ZERO or not person.path.is_empty():
+		_cancel(sim, person, action, "moved")
+		return
+	var obj := sim.world.get_object(action.target_id)
+	if obj == null or action.slot_index < 0 or action.slot_index >= obj.slot_count(sim.content):
+		_fail(sim, person, action, "target_unavailable")
+	elif person.cell() != obj.slot_cell(sim.content, action.slot_index):
+		_cancel(sim, person, action, "moved")
+
+
+## Counts complete personal minutes, independent of the global clock's minute phase.
+static func _progress(sim: Sim, person: Person, action: Action) -> void:
+	var def := sim.content.interaction(action.interaction_id)
+	if def == null:
+		_fail(sim, person, action, "unknown_interaction")
+		return
+	var elapsed := sim.clock.tick + 1 - action.started_tick
+	if elapsed < (action.minutes_done + 1) * SimClock.STEPS_PER_GAME_MINUTE:
+		return
+	for need_id: String in def.need_rates:
+		var before: float = float(person.needs.get(need_id, 0.0))
+		person.needs[need_id] = clampf(before + float(def.need_rates[need_id]) / 60.0, 0.0, 100.0)
+	action.minutes_done += 1
+	if _has_ended(person, def, action):
+		for need_id: String in def.finish_needs:
 			var before: float = float(person.needs.get(need_id, 0.0))
-			person.needs[need_id] = clampf(before + float(def.need_rates[need_id]) / 60.0, 0.0, 100.0)
-		action.minutes_done += 1
-		if _has_ended(person, def, action):
-			for need_id: String in def.finish_needs:
-				var before: float = float(person.needs.get(need_id, 0.0))
-				person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
-			person.action_queue.remove_at(0)
-			sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})
+			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
+		person.action_queue.remove_at(0)
+		sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})
 
 
 ## Fixed actions end after duration_minutes; until_need actions end once the

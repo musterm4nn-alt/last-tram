@@ -10,7 +10,8 @@ extends RefCounted
 ##   SAVE_VERSION, add a migration step in SaveMigrations, and add a fixture save to
 ##   tests/fixtures/saves/ made with the new version.
 
-const SAVE_VERSION: int = 2
+const SAVE_VERSION: int = 3
+const MAX_SAVE_BYTES: int = 67108864
 
 
 static func to_dict(sim: Sim) -> Dictionary:
@@ -28,12 +29,18 @@ static func to_dict(sim: Sim) -> Dictionary:
 
 ## Returns null (and fills `errors`) if the save cannot be loaded.
 static func from_dict(data: Dictionary, content: ContentDB, errors: Array[String] = []) -> Sim:
+	if not SaveValidator.validate(data, errors, content):
+		return null
 	var migrated := SaveMigrations.migrate(data, errors)
-	if migrated.is_empty():
+	if migrated.is_empty() or not SaveValidator.validate(migrated, errors, content):
+		return null
+	var world := World.from_dict(migrated["world"], content)
+	if world == null or world.grid == null or world.player() == null:
+		errors.append("Save could not restore the world and player.")
 		return null
 	var sim := Sim.new(
 		content,
-		World.from_dict(migrated["world"], content),
+		world,
 		SimClock.from_dict(migrated["clock"]),
 		SimRng.from_dict(migrated["rng"]),
 	)
@@ -50,6 +57,9 @@ static func to_json(sim: Sim) -> String:
 
 ## Returns null (and fills `errors`) if the text is not a loadable save.
 static func from_json(text: String, content: ContentDB, errors: Array[String] = []) -> Sim:
+	if text.to_utf8_buffer().size() > MAX_SAVE_BYTES:
+		errors.append("Save file exceeds the supported size.")
+		return null
 	var json := JSON.new()
 	if json.parse(text) != OK:
 		errors.append("Save file is not valid JSON (line %d: %s)." % [json.get_error_line(), json.get_error_message()])

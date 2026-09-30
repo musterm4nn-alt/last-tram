@@ -22,6 +22,7 @@ func apply(sim: Sim) -> void:
 		return
 	person.last_input_tick = sim.clock.tick
 	if target == person.cell():
+		ActionSystem.cancel_front(sim, person, "walked")
 		person.path.clear()
 		person.move_intent = Vector2.ZERO
 		return
@@ -29,6 +30,7 @@ func apply(sim: Sim) -> void:
 	if path.is_empty():
 		sim.emit_event(&"path_failed", {"person_id": person_id, "target": Ser.cell(target)})
 	else:
+		ActionSystem.cancel_front(sim, person, "walked")
 		person.path = path
 		person.move_intent = Vector2.ZERO
 

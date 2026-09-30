@@ -38,7 +38,9 @@ func apply(sim: Sim) -> void:
 			break
 	if not offered:
 		return
-	person.action_queue.append(Action.new(interaction_id, target_id))
+	var action := Action.new(interaction_id, target_id)
+	action.id = sim.world.new_id()
+	person.action_queue.append(action)
 	sim.emit_event(&"action_queued", {"person_id": person_id, "interaction_id": interaction_id, "target_id": target_id})
 
 

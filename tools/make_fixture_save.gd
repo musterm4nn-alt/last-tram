@@ -31,5 +31,15 @@ func _play(sim: Sim) -> void:
 	sim.run_minutes(2)
 	sim.submit(SetMoveIntentCommand.new(player_id, Vector2(-0.5, -1)))
 	sim.run_minutes(90)
-	# Leave one command pending so fixtures also cover pending commands.
+	# Include an action instance and a cancellation that must survive saving while pending.
+	sim.submit(SetMoveIntentCommand.new(player_id, Vector2.ZERO))
+	for obj: WorldObject in sim.world.objects.values():
+		if obj.def_id == "tv":
+			sim.submit(QueueInteractionCommand.new(player_id, "watch_tv", obj.id))
+			break
+	sim.run_steps(7)
+	var queue := sim.world.player().action_queue
+	if not queue.is_empty():
+		sim.submit(CancelActionCommand.new(player_id, 0, queue[0].id))
+	# Leave commands pending so fixtures also cover pending commands.
 	sim.submit(SetMoveIntentCommand.new(player_id, Vector2.ZERO))

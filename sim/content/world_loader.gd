@@ -9,10 +9,10 @@ static func load(db: ContentDB, reader: ContentReader, world_dir: String) -> voi
 	var path := world_dir.path_join("world.json")
 	var root: Variant = reader.read_json(path)
 	if not root is Dictionary:
+		reader.error("%s: world must be an object" % path)
 		return
 	db.start_district = reader.read_str(root, "start_district", path)
-	for entry: Variant in reader.read_arr(root, "districts", path):
-		var district_id := String(entry)
+	for district_id: String in reader.read_str_array(root, "districts", path):
 		var district := load_district(db, reader, world_dir.path_join("districts").path_join(district_id), district_id)
 		if district != null:
 			db.districts[district_id] = district
@@ -26,6 +26,7 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 	var path := dir.path_join("district.json")
 	var root: Variant = reader.read_json(path)
 	if not root is Dictionary:
+		reader.error("%s: district must be an object" % path)
 		return null
 	var d: Dictionary = root
 	var district := DistrictDef.new()
@@ -33,7 +34,7 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 	district.name = reader.read_str(d, "name", path)
 	if district.id != district_id:
 		reader.error("%s: id '%s' must match its folder name '%s'" % [path, district.id, district_id])
-	var origin := reader.read_arr(d, "origin", path)
+	var origin := reader.read_coordinates(d, "origin", path, 2)
 	if origin.size() == 2:
 		district.origin = Ser.to_vec2i(origin)
 	else:
@@ -44,14 +45,20 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 		reader.error("%s: levels must map level numbers to files, e.g. {\"0\": \"level_0.txt\"}" % path)
 		return null
 	for key: Variant in level_files:
-		var level := String(key).to_int()
-		var rows := read_rows(reader, dir.path_join(String(level_files[key])))
+		if not key is String or key.length() > 11 or not key.is_valid_int() or str(key.to_int()) != key or key.to_int() < -2147483648 or key.to_int() > 2147483647:
+			reader.error("%s: level keys must be integer strings" % path)
+			continue
+		var level: int = key.to_int()
+		var filename := reader.read_str(level_files, key, path)
+		if filename.is_empty():
+			continue
+		var rows := read_rows(reader, dir.path_join(filename))
 		validate_rows(db, reader, rows, "%s level %d" % [path, level])
 		district.levels[level] = rows
 		if district.size == Vector2i.ZERO and not rows.is_empty():
 			district.size = Vector2i(rows[0].length(), rows.size())
 
-	var spawn := reader.read_arr(d, "player_spawn", path)
+	var spawn := reader.read_coordinates(d, "player_spawn", path, 3)
 	if spawn.size() == 3:
 		var local := Ser.to_cell(spawn)
 		district.player_spawn = local + Vector3i(district.origin.x, district.origin.y, 0)
@@ -60,14 +67,17 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 		reader.error("%s: player_spawn must be [x, y, level] (local to the district)" % path)
 
 	for entry: Variant in reader.read_arr(d, "places", path):
+		if not entry is Dictionary:
+			reader.error("%s: every place must be an object" % path)
+			continue
 		var pd: Dictionary = entry
 		var place := PlaceDef.new()
 		place.id = reader.read_str(pd, "id", path)
 		var ctx := "%s: place '%s'" % [path, place.id]
 		place.name = reader.read_str(pd, "name", ctx)
 		place.kind = reader.read_str(pd, "kind", ctx)
-		place.level = int(reader.read_num(pd, "level", ctx))
-		var r := reader.read_arr(pd, "rect", ctx)
+		place.level = reader.read_int(pd, "level", ctx)
+		var r := reader.read_coordinates(pd, "rect", ctx, 4)
 		if r.size() == 4:
 			place.rect = Rect2i(int(r[0]) + district.origin.x, int(r[1]) + district.origin.y, int(r[2]), int(r[3]))
 		else:
@@ -124,6 +134,7 @@ static func load_objects(db: ContentDB, reader: ContentReader, district: Distric
 		return
 	var root: Variant = reader.read_json(path)
 	if not root is Dictionary:
+		reader.error("%s: object placements must be an object" % path)
 		return
 	var occupied: Dictionary = {}
 	var placed: Array[ObjectPlacement] = []
@@ -134,8 +145,8 @@ static func load_objects(db: ContentDB, reader: ContentReader, district: Distric
 		var od: Dictionary = entry
 		var def_id := reader.read_str(od, "def", path)
 		var ctx := "%s: object '%s'" % [path, def_id]
-		var cell_arr := reader.read_arr(od, "cell", ctx)
-		var rotation := int(reader.read_num(od, "rotation", ctx))
+		var cell_arr := reader.read_coordinates(od, "cell", ctx, 3)
+		var rotation := reader.read_int(od, "rotation", ctx)
 		if cell_arr.size() != 3 or not _is_num(cell_arr[0]) or not _is_num(cell_arr[1]) or not _is_num(cell_arr[2]):
 			reader.error("%s: cell must be [x, y, level] (local to the district)" % ctx)
 			continue

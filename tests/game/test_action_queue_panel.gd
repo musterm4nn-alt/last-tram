@@ -90,3 +90,79 @@ func test_the_panel_hides_with_an_empty_queue() -> void:
 	panel.show_person(Person.new(), content())
 	assert_false(panel.visible)
 	panel.free()
+
+
+func _button(panel: ActionQueuePanel, row_index: int) -> Button:
+	var row: HBoxContainer = panel._rows.get_child(row_index)
+	return row.get_child(row.get_child_count() - 1) as Button
+
+
+func _three_identical_actions() -> Sim:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	var tv := WorldObject.new()
+	tv.id = sim.world.new_id()
+	tv.def_id = "tv"
+	tv.origin = Vector3i(6, 1, 0)
+	assert_true(sim.world.add_object(tv))
+	sim.world.player().free_will = false
+	for i: int in 3:
+		sim.submit(QueueInteractionCommand.new(sim.world.player_id, "watch_tv", tv.id))
+	sim.step()
+	Session.content = content()
+	Session.sim = sim
+	return sim
+
+
+func test_multiple_paused_clicks_cancel_selected_instances_in_either_order() -> void:
+	for selection: Array in [[0, 1], [1, 0], [0, 0, 1]]:
+		var sim := _three_identical_actions()
+		var player := sim.world.player()
+		var survivor := player.action_queue[2].id
+		var panel := ActionQueuePanel.new()
+		panel.show_person(player, content())
+		for index: int in selection:
+			_button(panel, index).pressed.emit()
+		panel.free()
+		assert_eq(player.action_queue.size(), 3, "clicks stay pending while paused")
+		sim.step()
+		assert_eq(player.action_queue.size(), 1)
+		if player.action_queue.size() == 1:
+			assert_eq(player.action_queue[0].id, survivor)
+
+
+func test_pending_instance_cancellations_survive_save_and_load() -> void:
+	var sim := _three_identical_actions()
+	var survivor := sim.world.player().action_queue[2].id
+	var panel := ActionQueuePanel.new()
+	panel.show_person(sim.world.player(), content())
+	_button(panel, 0).pressed.emit()
+	_button(panel, 1).pressed.emit()
+	panel.free()
+	var loaded := SaveCodec.from_json(SaveCodec.to_json(sim), content())
+	assert_true(loaded != null)
+	if loaded == null:
+		return
+	loaded.step()
+	assert_eq(loaded.world.player().action_queue.size(), 1)
+	assert_eq(loaded.world.player().action_queue[0].id, survivor)
+
+
+func test_replacing_an_identical_row_rebinds_its_cancel_button() -> void:
+	var sim := _three_identical_actions()
+	var player := sim.world.player()
+	var panel := ActionQueuePanel.new()
+	panel.show_person(player, content())
+	var before := panel._signature
+	var old_id := player.action_queue[1].id
+	var replacement := Action.new("watch_tv", player.action_queue[1].target_id)
+	replacement.id = sim.world.new_id()
+	player.action_queue[1] = replacement
+	panel.show_person(player, content())
+	assert_ne(panel._signature, before)
+	_button(panel, 1).pressed.emit()
+	panel.free()
+	sim.step()
+	assert_eq(player.action_queue.size(), 2)
+	for action: Action in player.action_queue:
+		assert_ne(action.id, replacement.id)
+		assert_ne(action.id, old_id)

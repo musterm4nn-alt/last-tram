@@ -22,6 +22,7 @@ var menu: InteractionMenu
 var pause_menu: PauseMenu
 
 var _last_sent: Vector2 = Vector2.ZERO
+var _needs_sync: bool = true
 
 
 func _process(_delta: float) -> void:
@@ -36,7 +37,8 @@ func _process(_delta: float) -> void:
 		direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if forced_direction != Vector2.ZERO:
 			direction = forced_direction
-	if not direction.is_equal_approx(_last_sent):
+	if _needs_sync or not direction.is_equal_approx(_last_sent):
+		_needs_sync = false
 		_last_sent = direction
 		Session.submit(SetMoveIntentCommand.new(player.id, direction))
 
@@ -95,6 +97,8 @@ static func nearest_object(sim: Sim, person: Person) -> int:
 	return best_id
 
 
-## Call after loading a game so the next key press is always sent.
+## Call after loading so held or released keys replace the saved movement intent.
 func reset() -> void:
 	_last_sent = Vector2.ZERO
+	_needs_sync = true
+	_process(0.0)  # Submit before Session can advance the first frame of the loaded game.

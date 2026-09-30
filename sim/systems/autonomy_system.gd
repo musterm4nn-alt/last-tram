@@ -19,7 +19,9 @@ func on_minute(sim: Sim) -> void:
 		var choice := Autonomy.choose(Autonomy.candidates(sim, person), sim.rng.stream("autonomy"))
 		if choice.is_empty():
 			continue
-		person.action_queue.append(Action.new(String(choice["interaction_id"]), int(choice["object_id"])))
+		var action := Action.new(String(choice["interaction_id"]), int(choice["object_id"]))
+		action.id = sim.world.new_id()
+		person.action_queue.append(action)
 		sim.emit_event(&"autonomy_chose", {
 			"person_id": person.id,
 			"interaction_id": choice["interaction_id"],
