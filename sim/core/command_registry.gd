@@ -16,6 +16,8 @@ static func create(type_id: String) -> Command:
 			return CancelActionCommand.new()
 		"set_free_will":
 			return SetFreeWillCommand.new()
+		"set_running":
+			return SetRunningCommand.new()
 	return null
 
 

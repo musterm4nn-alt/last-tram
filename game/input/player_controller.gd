@@ -2,6 +2,7 @@ class_name PlayerController
 extends Node
 ## Player input. Direct mode: WASD/arrow keys become SetMoveIntentCommands (only sent when
 ## the direction actually changes), and E opens the interaction menu for the nearest object.
+## In both modes, holding Shift runs (SetRunningCommand, sent when the held state changes).
 ## Command mode (Session.command_mode): WASD pans the camera instead; a left click on an
 ## object opens its menu, and a click on the ground walks the player there (WalkToCommand).
 
@@ -22,6 +23,7 @@ var menu: InteractionMenu
 var pause_menu: PauseMenu
 
 var _last_sent: Vector2 = Vector2.ZERO
+var _last_running: bool = false
 var _needs_sync: bool = true
 
 
@@ -32,15 +34,21 @@ func _process(_delta: float) -> void:
 	if player == null:
 		return
 	var direction := Vector2.ZERO
+	var running := false
 	var menu_open := (menu != null and menu.visible) or (pause_menu != null and pause_menu.is_open)
+	if not menu_open:
+		running = Input.is_action_pressed("run")
 	if not Session.command_mode and not menu_open:
 		direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if forced_direction != Vector2.ZERO:
 			direction = forced_direction
+	if _needs_sync or running != _last_running:
+		_last_running = running
+		Session.submit(SetRunningCommand.new(player.id, running))
 	if _needs_sync or not direction.is_equal_approx(_last_sent):
-		_needs_sync = false
 		_last_sent = direction
 		Session.submit(SetMoveIntentCommand.new(player.id, direction))
+	_needs_sync = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -100,5 +108,6 @@ static func nearest_object(sim: Sim, person: Person) -> int:
 ## Call after loading so held or released keys replace the saved movement intent.
 func reset() -> void:
 	_last_sent = Vector2.ZERO
+	_last_running = false
 	_needs_sync = true
 	_process(0.0)  # Submit before Session can advance the first frame of the loaded game.

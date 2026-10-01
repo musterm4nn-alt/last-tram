@@ -9,6 +9,8 @@ const RADIUS: float = 0.3
 const MIN_AGE: int = 18
 ## How many actions the player may queue (visible in command mode, each cancellable).
 const MAX_QUEUE: int = 6
+## Running speed as a multiple of walk_speed (see move_speed()).
+const RUN_FACTOR: float = 2.0
 
 var id: int = 0
 var first_name: String = ""
@@ -38,6 +40,8 @@ var facing: Vector2 = Vector2.DOWN
 var move_intent: Vector2 = Vector2.ZERO
 ## Walking speed in cells per game minute. At 1x speed that is cells per real second.
 var walk_speed: float = 4.5
+## True while the person runs (the player holds Shift). Set by SetRunningCommand.
+var running: bool = false
 ## Remaining cells to walk through, set by WalkToCommand and followed by MovementSystem.
 ## Saved as a list of Ser.cell().
 var path: Array[Vector3i] = []
@@ -62,6 +66,11 @@ func full_name() -> String:
 ## Nickname when set, else the first name.
 func display_name() -> String:
 	return nickname if not nickname.is_empty() else first_name
+
+
+## Cells per game minute right now: walk_speed, times RUN_FACTOR while running.
+func move_speed() -> float:
+	return walk_speed * RUN_FACTOR if running else walk_speed
 
 
 func cell() -> Vector3i:
@@ -93,6 +102,7 @@ func to_dict() -> Dictionary:
 		"facing": Ser.vec2(facing),
 		"move_intent": Ser.vec2(move_intent),
 		"walk_speed": walk_speed,
+		"running": running,
 		"path": path_out,
 		"needs": needs_out,
 		"action_queue": queue_out,
@@ -121,6 +131,7 @@ static func from_dict(d: Dictionary) -> Person:
 	p.facing = Ser.to_vec2(d["facing"])
 	p.move_intent = Ser.to_vec2(d["move_intent"])
 	p.walk_speed = float(d["walk_speed"])
+	p.running = bool(d.get("running", false))
 	p.prev_pos = p.pos
 	p.path = []
 	var path_data: Variant = d.get("path", [])

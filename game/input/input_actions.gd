@@ -9,6 +9,7 @@ const KEYS: Dictionary = {
 	"move_down": [KEY_S, KEY_DOWN],
 	"move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT],
+	"run": [KEY_SHIFT],
 	"pause": [KEY_SPACE],
 	"speed_1": [KEY_1],
 	"speed_2": [KEY_2],

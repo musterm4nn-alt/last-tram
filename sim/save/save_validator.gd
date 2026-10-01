@@ -112,5 +112,7 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			s.integer(command.get("action_id", 0), path + ".action_id")
 		"set_free_will":
 			s.boolean(command.get("enabled"), path + ".enabled")
+		"set_running":
+			s.boolean(command.get("running"), path + ".running")
 		_:
 			s.reject(path + ".type", "unknown command type")

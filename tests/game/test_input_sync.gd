@@ -17,6 +17,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	Input.action_release("run")
 	Session.sim = _old_sim
 	Session.content = _old_content
 	Session.command_mode = _old_mode
@@ -33,7 +34,8 @@ func test_released_keys_stop_every_loaded_direction_before_movement() -> void:
 		var player := Session.sim.world.player()
 		var before := player.pos
 		controller._process(0.0)
-		assert_eq(Session.sim.pending_commands().size(), 1)
+		assert_eq(_count("set_move_intent"), 1)
+		assert_eq(_count("set_running"), 1)
 		assert_eq(player.move_intent, direction, "input changes sim only through a command")
 		Session.sim.run_steps(10)
 		assert_eq(player.move_intent, Vector2.ZERO)
@@ -80,8 +82,52 @@ func test_game_loaded_synchronizes_input_before_session_steps_its_first_frame() 
 	Session.game_loaded.connect(controller.reset)
 	var before := Session.sim.world.player().pos
 	Session.game_loaded.emit()
-	assert_eq(Session.sim.pending_commands().size(), 1)
+	assert_eq(_count("set_move_intent"), 1)
 	Session.sim.step()
 	assert_eq(Session.sim.world.player().pos, before)
 	Session.game_loaded.disconnect(controller.reset)
 	controller.free()
+
+
+func test_shift_sends_running_only_when_it_goes_down_or_up() -> void:
+	Session.sim = SimFactory.from_rows(content(), ROOM)
+	var controller := PlayerController.new()
+	controller._process(0.0)
+	Session.sim.step()
+	Input.action_press("run")
+	controller._process(0.0)
+	assert_eq(_count("set_running"), 1, "one command when Shift goes down")
+	Session.sim.step()
+	assert_true(Session.sim.world.player().running)
+	controller._process(0.0)
+	controller._process(0.0)
+	assert_eq(_count("set_running"), 0, "none while it is held")
+	Input.action_release("run")
+	controller._process(0.0)
+	assert_eq(_count("set_running"), 1, "one command when Shift comes up")
+	Session.sim.step()
+	assert_false(Session.sim.world.player().running)
+	controller.free()
+
+
+func test_held_shift_is_resent_after_a_load() -> void:
+	var original := SimFactory.from_rows(content(), ROOM)
+	Session.sim = SaveCodec.from_json(SaveCodec.to_json(original), content())
+	var controller := PlayerController.new()
+	Input.action_press("run")
+	controller._process(0.0)
+	Session.sim.step()
+	Session.sim = SaveCodec.from_json(SaveCodec.to_json(original), content())
+	controller.reset()
+	assert_eq(_count("set_running"), 1)
+	Session.sim.step()
+	assert_true(Session.sim.world.player().running)
+	controller.free()
+
+
+func _count(type_id: String) -> int:
+	var n := 0
+	for command: Command in Session.sim.pending_commands():
+		if command.type_id() == type_id:
+			n += 1
+	return n
