@@ -19,8 +19,9 @@ signal command_mode_changed(on: bool)
 const MAX_SPEED: int = 3
 ## Safety valve: if the machine can't keep up, drop time instead of freezing.
 const MAX_STEPS_PER_FRAME: int = 200
-## Game speed while the player does a time_skip action (like sleeping): a night in seconds.
-const SKIP_SPEED: int = 120
+## While the player does a time_skip action (sleeping), one frame runs the sim until it ends,
+## up to this many steps (one game day).
+const SKIP_MAX_STEPS: int = 24 * 60 * SimClock.STEPS_PER_GAME_MINUTE
 const SAVE_DIR: String = "user://saves"
 ## Where F9 bug reports go (tests pass their own folder).
 const BUG_REPORT_DIR: String = "user://bug_reports"
@@ -58,7 +59,7 @@ var _autosave_retry_left: float = 0.0
 var _replay_start: String = ""
 ## The player's level the view last followed (see _follow_player_level).
 var _followed_level: int = 0
-## True while time runs at SKIP_SPEED (read by the HUD).
+## True while a sleep is being skipped (see SKIP_MAX_STEPS).
 var skipping: bool = false
 ## started_tick of the action whose skipping a critical need stopped (-1 = none), so the
 ## same sleep does not start skipping again.
@@ -142,10 +143,14 @@ func _process(delta: float) -> void:
 	skipping = should_skip(sim, speed, _skip_stopped_tick)
 	if speed > 0:
 		var started := Time.get_ticks_usec()
-		_accumulator += delta * SimClock.STEPS_PER_GAME_MINUTE * (SKIP_SPEED if skipping else speed)
 		var accelerated := skipping
 		var skipped_action: Action = sim.world.player().action_queue[0] if skipping else null
-		while _accumulator >= 1.0 and steps_last_frame < MAX_STEPS_PER_FRAME:
+		var limit := SKIP_MAX_STEPS if accelerated else MAX_STEPS_PER_FRAME
+		if accelerated:
+			_accumulator = float(SKIP_MAX_STEPS)
+		else:
+			_accumulator += delta * SimClock.STEPS_PER_GAME_MINUTE * speed
+		while _accumulator >= 1.0 and steps_last_frame < limit:
 			sim.step()
 			_accumulator -= 1.0
 			steps_last_frame += 1
@@ -154,8 +159,10 @@ func _process(delta: float) -> void:
 			if accelerated and (not skipping or not should_skip(sim, speed, _skip_stopped_tick) or sim.world.player().action_queue[0] != skipped_action):
 				skipping = false
 				_accumulator = 0.0
+				if not _woken_by_need(skipped_action):
+					notice.emit("Woke up at %s" % sim.clock.format())
 				break
-		if steps_last_frame == MAX_STEPS_PER_FRAME:
+		if steps_last_frame == limit:
 			_accumulator = 0.0
 		_follow_player_level()
 		alpha = clampf(_accumulator, 0.0, 1.0)
@@ -164,6 +171,11 @@ func _process(delta: float) -> void:
 	_forward_events()
 	if steps_last_frame > 0 and _autosave_retry_left <= 0.0 and SaveSlots.autosave_due(sim.clock.tick, _last_autosave_day):
 		autosave()
+
+
+## True if a critical need ended the skip of `action` (that wake-up has its own notice).
+func _woken_by_need(action: Action) -> bool:
+	return action != null and _skip_stopped_tick == action.started_tick
 
 
 ## When the player's level changes (stairs), the view follows; a paged view stays put
