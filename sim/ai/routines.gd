@@ -15,7 +15,7 @@ const OUT_BONUS: float = 5.0
 ## Score factor for routine "out" interactions outside the out window.
 const OUT_OUTSIDE: float = 0.5
 ## Share of OUT_BONUS that friendly talk gets while out (social_out_bonus).
-const SOCIAL_OUT_SHARE: float = 0.6
+const SOCIAL_OUT_SHARE: float = 0.8
 
 
 ## The person's routine, or the content's default (also for unknown ids).

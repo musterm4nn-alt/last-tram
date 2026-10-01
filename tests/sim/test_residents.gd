@@ -76,7 +76,7 @@ func test_couples_are_close_in_age_and_flatmates_are_two_or_three() -> void:
 						ages.append(sim.world.get_person(id).age_years)
 					assert_true(absi(ages[0] - ages[1]) <= ResidentGenerator.COUPLE_AGE_GAP, "ages %s" % [ages])
 				Household.FLATMATES:
-					assert_true(household.member_ids.size() >= 2 and household.member_ids.size() <= 3)
+					assert_eq(household.member_ids.size(), 2, "one double bed per flat (T-0045)")
 	for kind: String in Household.KINDS:
 		assert_true(kinds.get(kind, 0) > 0, "some %s households over ten towns" % kind)
 

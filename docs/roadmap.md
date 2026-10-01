@@ -92,6 +92,11 @@ continues identically.
 home, socialises, and relationships form); sim cost is within budget; the owner can watch the
 town for an evening and it looks alive.
 
+**Status (October 2026):** every M2 ticket is built. The headless criteria pass
+(`tools/simrun.sh --days=7 --check-m2`, T-0045). Also built: going out to the Kneipe, café and
+benches (T-0052), talking to people (T-0053), and exact saves (T-0051). Waiting for the owner's
+evening checklist in T-0045.
+
 ## M3 · Making a Living
 
 **Goal:** money matters.
