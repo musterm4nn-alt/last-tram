@@ -57,13 +57,14 @@ func test_cell_at_floors_pixels_to_cells() -> void:
 	assert_eq(ViewConfig.cell_at(Vector2(-0.1, -0.1)), Vector2i(-1, -1))
 
 
-func test_walk_command_targets_the_clicked_cell_on_the_players_level() -> void:
+func test_walk_command_targets_the_clicked_cell_on_the_given_level() -> void:
 	var person := Person.new()
 	person.id = 7
 	person.level = 0
-	var command := PlayerController.walk_command(person, Vector2(37, 20))
+	var command := PlayerController.walk_command(person, Vector2(37, 20), 0)
 	assert_eq(command.person_id, 7)
 	assert_eq(command.target, Vector3i(2, 1, 0))
+	assert_eq(PlayerController.walk_command(person, Vector2(37, 20), 2).target, Vector3i(2, 1, 2))
 
 
 func test_clicking_the_ground_walks_the_player_there() -> void:
@@ -72,7 +73,7 @@ func test_clicking_the_ground_walks_the_player_there() -> void:
 	Session.sim = sim
 	var player := sim.world.player()
 	var click := Vector2(6.5, 3.5) * ViewConfig.TILE_PX
-	Session.submit(PlayerController.walk_command(player, click))
+	Session.submit(PlayerController.walk_command(player, click, player.level))
 	sim.step()
 	assert_false(player.path.is_empty(), "the click should start a walk")
 	for i: int in 400:

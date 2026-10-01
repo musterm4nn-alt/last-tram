@@ -6,6 +6,8 @@ extends RefCounted
 
 ## walk_to when --walk-to was not given.
 const NO_CELL: Vector2i = Vector2i(-1, -1)
+## No --level given.
+const NO_LEVEL: int = -1000
 
 var seed_value: int = 1
 var seed_given: bool = false
@@ -31,6 +33,8 @@ var creator_seed: int = -1
 var gallery_page: int = 1
 ## Start in command mode (--command).
 var command_mode: bool = false
+## Floor to show after the quick start (--level=1); NO_LEVEL = the player's.
+var level: int = NO_LEVEL
 ## Walk the player to this cell at the start (--walk-to=X,Y); NO_CELL = none.
 var walk_to: Vector2i = NO_CELL
 ## Open the interaction menu on the first object with this def id (--interact=fridge).
@@ -85,6 +89,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.gallery_page = value.to_int()
 			"command":
 				out.command_mode = true
+			"level":
+				out.level = value.to_int()
 			"walk-to":
 				var cell := _parse_walk(value)
 				out.walk_to = Vector2i(int(cell.x), int(cell.y))

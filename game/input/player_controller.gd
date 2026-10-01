@@ -3,6 +3,8 @@ extends Node
 ## Player input. Direct mode: WASD/arrow keys become SetMoveIntentCommands (only sent when
 ## the direction actually changes), and E opens the interaction menu for the nearest object.
 ## In both modes, holding Shift runs (SetRunningCommand, sent when the held state changes).
+## Page Up/Down climbs the stairs the player stands on (direct mode) or pages the viewed
+## floor (command mode); clicks in command mode act on the viewed floor.
 ## Command mode (Session.command_mode): WASD pans the camera instead; a left click on an
 ## object opens its menu, and a click on the ground walks the player there (WalkToCommand).
 
@@ -65,11 +67,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		var world_px := camera.get_global_mouse_position()
 		var cell := ViewConfig.cell_at(world_px)
-		var here := Session.sim.world.objects_at(Vector3i(cell.x, cell.y, player.level))
+		var here := Session.sim.world.objects_at(Vector3i(cell.x, cell.y, Session.viewed_level))
 		if not here.is_empty() and menu != null:
 			menu.open_for(here[0], get_viewport().get_mouse_position())
 		else:
-			Session.submit(walk_command(player, world_px))
+			Session.submit(walk_command(player, world_px, Session.viewed_level))
+	elif event.is_action_pressed("level_up") or event.is_action_pressed("level_down"):
+		get_viewport().set_input_as_handled()
+		press_level_key(1 if event.is_action_pressed("level_up") else -1)
 	elif not Session.command_mode and event.is_action_pressed("interact"):
 		get_viewport().set_input_as_handled()
 		var object_id := nearest_object(Session.sim, player)
@@ -79,10 +84,33 @@ func _unhandled_input(event: InputEvent) -> void:
 			Session.notice.emit("Nothing to use here")
 
 
-## The WalkToCommand for a click at `world_px`: the clicked cell on the player's level.
-static func walk_command(player: Person, world_px: Vector2) -> WalkToCommand:
+## Page Up (delta 1) / Page Down (-1): pages the viewed floor in command mode; in direct
+## mode climbs the stairs the player stands on, or says "No stairs here".
+func press_level_key(delta: int) -> void:
+	if Session.command_mode:
+		Session.page_level(delta)
+		return
+	var climb := stairs_command(Session.sim, Session.sim.world.player(), delta)
+	if climb != null:
+		Session.submit(climb)
+	else:
+		Session.notice.emit("No stairs here")
+
+
+## The WalkToCommand for a click at `world_px`: the clicked cell on floor `level`.
+static func walk_command(player: Person, world_px: Vector2, level: int) -> WalkToCommand:
 	var cell := ViewConfig.cell_at(world_px)
-	return WalkToCommand.new(player.id, Vector3i(cell.x, cell.y, player.level))
+	return WalkToCommand.new(player.id, Vector3i(cell.x, cell.y, level))
+
+
+## A WalkTo up (delta 1) or down (delta -1) the stairs the player stands on, or null when
+## their cell is not linked to the cell straight above or below.
+static func stairs_command(sim: Sim, player: Person, delta: int) -> WalkToCommand:
+	var here := player.cell()
+	var there := here + Vector3i(0, 0, delta)
+	if not sim.nav.is_stair_link(here, there):
+		return null
+	return WalkToCommand.new(player.id, there)
 
 
 ## The object E would use, or 0 if none is in reach. Ties: the lower object id.

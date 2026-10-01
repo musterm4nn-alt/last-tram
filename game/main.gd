@@ -20,6 +20,7 @@ extends Node2D
 ##   --screen=load       open the main menu's Load list (with the menu)
 ##   --screen=pause      open the Esc menu after the quick start
 ##   --screen=map        open the full map (M) after the quick start
+##   --level=N           show floor N after the quick start (if the world has it)
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind
@@ -190,6 +191,8 @@ func _start_quick() -> void:
 		_pause_menu.open()
 	elif _options.screen == "map":
 		_town_map.open()
+	if _options.level != LaunchOptions.NO_LEVEL:
+		Session.view_level(_options.level)
 
 
 ## F9: saves a bug report folder (see Session.write_bug_report) and says where it went.

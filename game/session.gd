@@ -35,7 +35,8 @@ var sim: Sim
 var speed: int = 1
 ## 0..1 progress towards the next step; views draw prev_pos.lerp(pos, alpha).
 var alpha: float = 0.0
-## Which floor level the 2D view shows (view state, not sim state).
+## Which floor level the 2D view shows (view state, not sim state). It follows the player
+## whenever their level changes; command mode can page it (page_level).
 var viewed_level: int = 0
 ## True in command mode: the camera pans freely and a click on the ground walks there
 ## (view state, not sim state; every new or loaded game starts in direct mode).
@@ -55,6 +56,8 @@ var _autosave_retry_left: float = 0.0
 ## The save the current stretch of play started from (at the last load or autosave), as
 ## JSON: a bug report replays command_log from here.
 var _replay_start: String = ""
+## The player's level the view last followed (see _follow_player_level).
+var _followed_level: int = 0
 ## True while time runs at SKIP_SPEED (read by the HUD).
 var skipping: bool = false
 ## started_tick of the action whose skipping a critical need stopped (-1 = none), so the
@@ -89,11 +92,34 @@ func set_speed(new_speed: int) -> void:
 
 
 ## Switches between direct and command mode; emits command_mode_changed only on a change.
+## Direct mode always shows the player's floor.
 func set_command_mode(on: bool) -> void:
 	if on == command_mode:
 		return
 	command_mode = on
+	if not on and sim != null and sim.world.player() != null:
+		viewed_level = sim.world.player().level
 	command_mode_changed.emit(on)
+
+
+## Shows floor `level`, if the world has it.
+func view_level(level: int) -> void:
+	if sim != null and sim.world.grid.has_level(level):
+		viewed_level = level
+
+
+## Shows the next existing floor above (delta > 0) or below (delta < 0); nothing at the top
+## or bottom.
+func page_level(delta: int) -> void:
+	if sim == null or delta == 0:
+		return
+	var best := viewed_level
+	for level: int in sim.world.grid.levels():
+		if delta > 0 and level > viewed_level and (best == viewed_level or level < best):
+			best = level
+		elif delta < 0 and level < viewed_level and (best == viewed_level or level > best):
+			best = level
+	viewed_level = best
 
 
 func toggle_pause() -> void:
@@ -131,16 +157,22 @@ func _process(delta: float) -> void:
 				break
 		if steps_last_frame == MAX_STEPS_PER_FRAME:
 			_accumulator = 0.0
-		# The view shows the player's floor (stairs change it).
-		var player := sim.world.player()
-		if player != null:
-			viewed_level = player.level
+		_follow_player_level()
 		alpha = clampf(_accumulator, 0.0, 1.0)
 		sim_usec_last_frame = Time.get_ticks_usec() - started
 	command_log.append_array(sim.take_applied_commands())
 	_forward_events()
 	if steps_last_frame > 0 and _autosave_retry_left <= 0.0 and SaveSlots.autosave_due(sim.clock.tick, _last_autosave_day):
 		autosave()
+
+
+## When the player's level changes (stairs), the view follows; a paged view stays put
+## while the player stays on one floor.
+func _follow_player_level() -> void:
+	var player := sim.world.player()
+	if player != null and player.level != _followed_level:
+		_followed_level = player.level
+		viewed_level = player.level
 
 
 func _forward_events() -> void:
@@ -239,6 +271,7 @@ func _after_load() -> void:
 	_replay_start = SaveCodec.to_json(sim)
 	var player := sim.world.player()
 	viewed_level = player.level if player != null else 0
+	_followed_level = viewed_level
 	set_command_mode(false)
 	_last_autosave_day = SaveSlots.last_autosave_day_at(sim.clock.tick)
 	game_loaded.emit()
