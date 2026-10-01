@@ -9,6 +9,8 @@ const DAY: int = SimClock.MINUTES_PER_DAY
 func _two() -> Array:
 	var sim := SimFactory.from_rows(content(), ROOM)
 	var other := SimFactory.spawn_person(sim, Vector3i(3, 1, 0), CharacterSpec.default_player(content()))
+	sim.world.player().free_will = false  # they would chat on their own (T-0039)
+	other.free_will = false
 	return [sim, sim.world.player(), other]
 
 

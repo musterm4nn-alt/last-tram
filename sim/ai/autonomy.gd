@@ -8,6 +8,8 @@ extends RefCounted
 const TRAVEL_COST_PER_CELL: float = 0.1
 ## Options scoring below this are ignored (the person is content and does nothing).
 const MIN_SCORE: float = 3.0
+## How many of the nearest available people free will considers talking to (T-0039).
+const PEOPLE_CONSIDERED: int = 3
 ## Random noise added to each score before picking, 0..NOISE.
 const NOISE: float = 1.0
 ## How many of the best options the final pick chooses among.
@@ -47,6 +49,49 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 				"interaction_id": def.id,
 				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
 					+ Routines.score_bonus(sim, person, def) - TRAVEL_COST_PER_CELL * cells,
+				"cells": cells,
+			})
+	out.append_array(_person_options(sim, person))
+	return out
+
+
+## Social options (T-0039): every person-targeted interaction with each of the
+## PEOPLE_CONSIDERED nearest available people within SEARCH_RADIUS on the same level whose
+## spot the person may enter. "object_id" holds the other person's id; "cells" is the walk to
+## them. Scored by need × routine factor + Social bias − travel.
+static func _person_options(sim: Sim, person: Person) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var here := person.cell()
+	var nearby: Array[Person] = []
+	for other: Person in sim.world.people.values():
+		if other.id == person.id or other.level != here.z:
+			continue
+		if maxi(absi(other.cell().x - here.x), absi(other.cell().y - here.y)) > SEARCH_RADIUS:
+			continue
+		if not Conversations.available(sim, other):
+			continue
+		var lot := Lots.lot_at(sim, other.cell())
+		if lot != null and not Lots.may_enter(sim, person, lot):
+			continue
+		nearby.append(other)
+	nearby.sort_custom(func(a: Person, b: Person) -> bool:
+		var da := a.pos.distance_squared_to(person.pos)
+		var db := b.pos.distance_squared_to(person.pos)
+		return da < db if da != db else a.id < b.id)
+	for other: Person in nearby.slice(0, PEOPLE_CONSIDERED):
+		var cells := 0
+		if not Conversations.adjacent(person, other):
+			var path := sim.nav.find_path(here, other.cell())
+			if path.is_empty():
+				continue
+			cells = path.size() - 1
+		for def: InteractionDef in Interactions.offered_by_person(sim, person.id, other.id):
+			out.append({
+				"object_id": other.id,
+				"interaction_id": def.id,
+				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
+					+ Utility.social_bias(person, other, def) + Routines.social_out_bonus(sim, person, def)
+					- TRAVEL_COST_PER_CELL * cells,
 				"cells": cells,
 			})
 	return out

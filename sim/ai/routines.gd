@@ -14,6 +14,8 @@ const SLEEP_BONUS: float = 6.0
 const OUT_BONUS: float = 5.0
 ## Score factor for routine "out" interactions outside the out window.
 const OUT_OUTSIDE: float = 0.5
+## Share of OUT_BONUS that friendly talk gets while out (social_out_bonus).
+const SOCIAL_OUT_SHARE: float = 0.6
 
 
 ## The person's routine, or the content's default (also for unknown ids).
@@ -64,6 +66,18 @@ static func score_bonus(sim: Sim, person: Person, def: InteractionDef) -> float:
 ## True while a "sleep" interaction should go on past a full need (inside the window).
 static func keeps_sleeping(sim: Sim, person: Person, def: InteractionDef) -> bool:
 	return def.routine == "sleep" and sleeping_time(sim, person)
+
+
+## The pull of friendly talk while out (T-0039): during the out window, on a lot that is not
+## private (the Kneipe, the café, the Altmarkt), friendly interactions get SOCIAL_OUT_SHARE of
+## the going-out bonus, so people meet new people there. 0 otherwise.
+static func social_out_bonus(sim: Sim, person: Person, def: InteractionDef) -> float:
+	if def.social == null or def.social.kind != "friendly" or not going_out_time(sim, person):
+		return 0.0
+	var lot := Lots.lot_at(sim, person.cell())
+	if lot == null or lot.access == Lot.PRIVATE:
+		return 0.0
+	return SOCIAL_OUT_SHARE * OUT_BONUS * (1.0 + 0.5 * person.personality.get_axis("sociability") / 100.0)
 
 
 ## True if the person stands on their home lot (or has none).
