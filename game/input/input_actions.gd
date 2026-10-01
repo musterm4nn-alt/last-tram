@@ -22,6 +22,7 @@ const KEYS: Dictionary = {
 	"toggle_command_mode": [KEY_TAB],
 	"interact": [KEY_E],
 	"menu": [KEY_ESCAPE],
+	"map": [KEY_M],
 	"bug_report": [KEY_F9],
 }
 

@@ -21,6 +21,8 @@ var camera: CameraRig2D
 var menu: InteractionMenu
 ## The Esc menu (set by main.gd). No input at all while it is open.
 var pause_menu: PauseMenu
+## The full map (set by main.gd). No input at all while it is open.
+var town_map: TownMap
 
 var _last_sent: Vector2 = Vector2.ZERO
 var _last_running: bool = false
@@ -35,7 +37,8 @@ func _process(_delta: float) -> void:
 		return
 	var direction := Vector2.ZERO
 	var running := false
-	var menu_open := (menu != null and menu.visible) or (pause_menu != null and pause_menu.is_open)
+	var menu_open := (menu != null and menu.visible) or (pause_menu != null and pause_menu.is_open) \
+		or (town_map != null and town_map.is_open)
 	if not menu_open:
 		running = Input.is_action_pressed("run")
 	if not Session.command_mode and not menu_open:
@@ -52,7 +55,8 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if Session.sim == null or camera == null or (pause_menu != null and pause_menu.is_open):
+	if Session.sim == null or camera == null or (pause_menu != null and pause_menu.is_open) \
+		or (town_map != null and town_map.is_open):
 		return
 	var player := Session.sim.world.player()
 	if player == null:

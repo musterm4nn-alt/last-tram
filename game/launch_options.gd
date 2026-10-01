@@ -20,7 +20,8 @@ var random_character: bool = false
 var quickstart: bool = false
 var menu: bool = false
 ## "" or a screen to open directly: "creator" (or "name") and "load" (main menu screens),
-## "pause" (the Esc menu, after the quick start), "gallery" (the look gallery, no game).
+## "pause" (the Esc menu, after the quick start), "map" (the full map, after the quick
+## start), "gallery" (the look gallery, no game).
 var screen: String = ""
 ## The creator's tab to show (--creator-tab=body); "" = the first.
 var creator_tab: String = ""
