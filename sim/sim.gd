@@ -32,13 +32,15 @@ func _init(p_content: ContentDB, p_world: World, p_clock: SimClock, p_rng: SimRn
 ## Every system, in the order it runs each step and each minute.
 ## ActionSystem runs before MovementSystem (queued actions start before anyone
 ## moves) and before NeedsSystem (its per-minute rates apply before the decay,
-## so one minute of sleep nets rate minus decay). AutonomySystem runs last, so free
+## so one minute of sleep nets rate minus decay). SocialSystem ends moodlets before free
+## will looks at mood. AutonomySystem runs last, so free
 ## will decides after the minute's needs have changed (D23, D24).
 static func default_systems() -> Array[SimSystem]:
 	return [
 		ActionSystem.new(),
 		MovementSystem.new(),
 		NeedsSystem.new(),
+		SocialSystem.new(),
 		AutonomySystem.new(),
 	]
 

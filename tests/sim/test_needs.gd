@@ -125,7 +125,10 @@ func test_mood_more_empty_needs_is_lower() -> void:
 
 func test_mood_labels() -> void:
 	assert_eq(Mood.label(20.0), "Fine")
-	assert_eq(Mood.label(100.0), "Fine")
+	assert_eq(Mood.label(34.9), "Fine")
+	assert_eq(Mood.label(35.0), "Happy", "moodlets lift mood above Fine (T-0037)")
+	assert_eq(Mood.label(50.0), "Great")
+	assert_eq(Mood.label(100.0), "Great")
 	assert_eq(Mood.label(19.9), "Okay")
 	assert_eq(Mood.label(0.0), "Okay")
 	assert_eq(Mood.label(-0.1), "Uneasy")

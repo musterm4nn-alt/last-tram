@@ -55,6 +55,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.advertise = _read_needs(reader, d, "advertise", ctx)
 		if d.has("time_skip"):
 			def.time_skip = reader.read_bool(d, "time_skip", ctx)
+		if d.has("finish_moodlet"):
+			def.finish_moodlet = reader.read_str(d, "finish_moodlet", ctx)
+			if db.moodlet(def.finish_moodlet) == null:
+				reader.error("%s: unknown moodlet '%s' in 'finish_moodlet'" % [ctx, def.finish_moodlet])
 		if d.has("routine"):
 			def.routine = reader.read_str(d, "routine", ctx)
 			if not def.routine in ["sleep", "out"]:

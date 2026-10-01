@@ -11,6 +11,11 @@ const FLATMATES_MAX: int = 3
 const COUPLE_AGE_GAP: int = 8
 ## How often partners share a last name.
 const SHARED_SURNAME_CHANCE: float = 0.5
+## How household members see each other at the start (T-0037).
+const BONDS: Dictionary = {
+	Household.COUPLE: {"familiarity": 90.0, "friendship": 60.0, "romance": 70.0, "trust": 60.0},
+	Household.FLATMATES: {"familiarity": 70.0, "friendship": 30.0, "trust": 25.0},
+}
 
 
 ## One household in each private home lot (in id order) except `skip_lot_ids`.
@@ -55,6 +60,11 @@ static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: Plac
 		if first == null:
 			first = spec
 	sim.world.households[household.id] = household
+	if BONDS.has(household.kind):
+		for a: int in household.member_ids:
+			for b: int in household.member_ids:
+				if a != b:
+					Social.set_values(sim.world.get_person(a), b, BONDS[household.kind], sim.clock.tick)
 
 
 static func _pick_kind(rng: RandomNumberGenerator) -> String:
