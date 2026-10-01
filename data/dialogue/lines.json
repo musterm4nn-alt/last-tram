@@ -1,0 +1,13 @@
+{
+	"_doc": "Systemic dialogue (T-0040): short lines shown in speech bubbles for social exchanges, by interaction and outcome, with {topic} replaced by one of the topics; and thought lines for urgent needs. View only: these never change the game. Keep them short (they sit over a head).",
+	"topics": ["the rent", "the tram", "the weather", "football", "the Späti", "work", "the noise upstairs", "Café Wolke", "the landlord", "last night", "the canal", "the Kneipe", "the neighbours", "prices", "the police post"],
+	"lines": {
+		"chat": { "success": ["...talks about {topic}", "...complains about {topic}", "...asks about {topic}", "...has news about {topic}"], "fail": ["...mumbles about {topic}", "...awkward silence"] },
+		"joke": { "success": ["...jokes about {topic}", "...does an impression", "...tells a joke about {topic}"], "fail": ["...a bad joke about {topic}", "...nobody laughs"] },
+		"compliment": { "success": ["...nice jacket!", "...you look great", "...compliments their taste"], "fail": ["...that sounded fake"] },
+		"insult": { "success": ["...calls them a loser", "...mocks their haircut", "...sneers about {topic}"], "fail": ["...tries an insult, it falls flat"] },
+		"argue": { "success": ["...argues about {topic}", "...won't let {topic} go"], "fail": ["...loses an argument about {topic}"] },
+		"flirt": { "success": ["...winks", "...gets a smile back", "...flirts a little"], "fail": ["...tries a line, no luck"] }
+	},
+	"needs": { "hunger": "Hungry...", "energy": "So tired...", "hygiene": "I need a shower", "fun": "Bored...", "social": "Lonely...", "comfort": "My feet hurt" }
+}
