@@ -30,6 +30,8 @@ var age_years: int = MIN_AGE:
 var appearance: Appearance = Appearance.new()
 ## What the person wears.
 var outfit: Outfit = Outfit.new()
+## Who the person is: seven axes, −100..+100 (old saves: all 0).
+var personality: Personality = Personality.new()
 ## Floor the person is on (the z of their cell).
 var level: int = 0
 ## Feet position in cell units: cell (3, 4) spans x 3..4, y 4..5, so its centre is (3.5, 4.5).
@@ -97,6 +99,7 @@ func to_dict() -> Dictionary:
 		"age_years": age_years,
 		"appearance": appearance.to_dict(),
 		"outfit": outfit.to_dict(),
+		"personality": personality.to_dict(),
 		"level": level,
 		"pos": Ser.vec2(pos),
 		"facing": Ser.vec2(facing),
@@ -126,6 +129,9 @@ static func from_dict(d: Dictionary) -> Person:
 	var outfit_data: Variant = d.get("outfit", {})
 	if outfit_data is Dictionary:
 		p.outfit = Outfit.from_dict(outfit_data)
+	var personality_data: Variant = d.get("personality", {})
+	if personality_data is Dictionary:
+		p.personality = Personality.from_dict(personality_data)
 	p.level = int(d["level"])
 	p.pos = Ser.to_vec2(d["pos"])
 	p.facing = Ser.to_vec2(d["facing"])
