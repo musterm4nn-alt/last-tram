@@ -63,7 +63,8 @@
 ## Navigation (M1+)
 
 - One `AStarGrid2D` per level, built from walkability (a derived cache, never saved), plus
-  stair links between levels (M2). Built in T-0003: `sim.nav` (`Pathfinder`) with
+  stair links between levels (T-0030): a stairs cell links to the stairs cell straight above
+  it, and routes between levels are a Dijkstra over stairs cells (hop cost 2). Built in T-0003: `sim.nav` (`Pathfinder`) with
   `find_path(from, to)` (the cells to walk through, excluding the start) and
   `is_reachable(from, to)`. Diagonal steps are allowed but never cut a blocked corner, and
   each level's graph is rebuilt lazily when `WorldGrid.revision` changes.

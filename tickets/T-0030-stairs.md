@@ -1,12 +1,12 @@
 ---
 id: T-0030
 title: Stairs between floors (terrain, routes across levels, walking up and down)
-status: todo
+status: done
 milestone: M2
 size: M
 owner: builder
 depends_on: []
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -50,19 +50,37 @@ level paging (T-0031).
 ## Acceptance criteria (`tests/sim/test_stairs.gd` unless named)
 Build two-level worlds with `SimFactory.from_rows` for level 0 and `grid.ensure_level(1)` +
 `grid.stamp_rows(1, ...)` for level 1.
-- [ ] A path from level 0 to a room on level 1 goes through the stairs: every step is a
+- [x] A path from level 0 to a room on level 1 goes through the stairs: every step is a
   neighbour on one level or a link hop, and it ends at the target.
-- [ ] Without matching stairs above, level 1 is unreachable (`[]`), and `is_reachable` is
+- [x] Without matching stairs above, level 1 is unreachable (`[]`), and `is_reachable` is
   false.
-- [ ] Of two stairs, the route uses the cheaper one.
-- [ ] Walking with `WalkToCommand` to level 1 ends there with `person.level == 1`, never
+- [x] Of two stairs, the route uses the cheaper one.
+- [x] Walking with `WalkToCommand` to level 1 ends there with `person.level == 1`, never
   overlapping a blocked cell on the level it is on.
-- [ ] Save mid-climb, load, continue = uninterrupted run.
-- [ ] `test_pathfinding.gd`'s different-level checks still pass (levels without stairs stay
+- [x] Save mid-climb, load, continue = uninterrupted run.
+- [x] `test_pathfinding.gd`'s different-level checks still pass (levels without stairs stay
   apart); content has no errors.
-- [ ] `tools/check.sh` passes.
+- [x] `tools/check.sh` passes.
 
 ## Implementation notes
+- `Pathfinder`: `find_path` tries the in-level A* first; when that fails or the levels
+  differ, `_route_across_levels` runs a Dijkstra over linked stairs cells plus `from`/`to`
+  (in-level edges cost the A* route, summing weight × step length; a link hop costs
+  `LINK_COST` 2). Linked stairs per level are found while building that level's graph.
+  Stairs-to-stairs segments are cached until `grid.revision` changes. Callers get copies,
+  since MovementSystem consumes `person.path`.
+- One deliberate extension: a same-level route that only exists through another floor
+  (two flats on level 1 joined via the ground floor, which T-0031 will need) is found too.
+  `test_a_level_split_in_two_is_joined_through_the_floor_below` covers it.
+- `MovementSystem.follow_path`: a waypoint on another level is a hop. The person changes
+  level, snaps to the centre and spends 1.0 of the budget.
+- `Session._process` sets `viewed_level` to the player's level after stepping.
+- Terrain `stairs` (`^`); placeholder tile = stairs colour with three darker bars. Not
+  screenshotted: no district has stairs until T-0031 (noted there).
+- Verified: `tools/check.sh` 347 passed, 0 failed (`test_stairs.gd` 8 tests,
+  `tests/game/test_stairs_view.gd`); existing different-level pathfinding checks unchanged.
+  Mutation check: disabling the hop in MovementSystem fails the walking test.
+  `tools/simrun.sh --days=3`: 0.0055 ms per step (unchanged), all needs out of the red.
 
 ## Questions
 
