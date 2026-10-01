@@ -236,6 +236,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		Presentations.on_finish(sim, person, action, def)
 		if not def.finish_moodlet.is_empty():
 			Social.add_moodlet(sim, person, def.finish_moodlet)
+		if def.cash_out > 0:
+			Money.withdraw(sim, person, def.cash_out)  # false (nothing happens) if the bank emptied
 		sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})
 
 

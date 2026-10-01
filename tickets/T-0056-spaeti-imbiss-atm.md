@@ -1,12 +1,12 @@
 ---
 id: T-0056
 title: The Späti and the Imbiss sell food, an ATM, and Sunday closing
-status: todo
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0055]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -89,25 +89,41 @@ at (12, 25, 0), `atm` at (18, 25, 0) (on the Altmarkt against the Imbiss wall; t
   refuse a closed place, so nothing else changes.
 
 ## Acceptance criteria
-- [ ] Content → `test_shops.gd::test_shop_content_loads_and_every_counter_can_be_reached`
+- [x] Content → `test_shops.gd::test_shop_content_loads_and_every_counter_can_be_reached`
   (the six interactions with their prices; a route exists from the Altmarkt (20, 27, 0) to a
   free slot of each counter and of the ATM). Broken fixture: `closed` on a public place and an
   unknown day name are reported (`test_content.gd`).
-- [ ] `test_a_doener_fills_you_up` (player at the Imbiss counter at Monday 12:00 with hunger
+- [x] `test_a_doener_fills_you_up` (player at the Imbiss counter at Monday 12:00 with hunger
   30: after `eat_doener`, hunger ≥ 85, €6 less, the `good_meal` moodlet).
-- [ ] `test_the_atm_turns_bank_money_into_cash` (+€20 cash, −€20 bank, the ledger unchanged)
+- [x] `test_the_atm_turns_bank_money_into_cash` (+€20 cash, −€20 bank, the ledger unchanged)
   and `test_the_atm_needs_money_in_the_bank` (bank €10 → refused, `cant_afford`).
-- [ ] Sunday → `test_cafe_and_waschsalon_close_on_sunday` (`Lots.is_open` is false on
+- [x] Sunday → `test_cafe_and_waschsalon_close_on_sunday` (`Lots.is_open` is false on
   Sunday 12:00 and true on Monday 12:00; the Späti, Imbiss and Kneipe are open on Sunday in
   their hours) and `test_no_coffee_on_sunday` (refused with `closed`).
-- [ ] Saving → `test_lots.gd`: closed days round-trip through a save, and the v3 fixture
+- [x] Saving → `test_lots.gd`: closed days round-trip through a save, and the v3 fixture
   loads with no closed days.
-- [ ] HUD → `test_hud_place.gd`: "Café Wolke (closed)" on Sunday at 12:00.
-- [ ] `tools/check.sh` passes; `tools/simrun.sh --days=7 --check-m2` still passes. Screenshot
+- [x] HUD → `test_hud_place.gd`: "Café Wolke (closed)" on Sunday at 12:00.
+- [x] `tools/check.sh` passes; `tools/simrun.sh --days=7 --check-m2` still passes. Screenshot
   `out/t0056.png` (`--interact=imbiss_counter`, with the player walked to the Imbiss) shows
   both counters, the ATM and the priced menu. Look at it.
 
 ## Implementation notes
+- As specified: `data/objects/shops.json`, `data/interactions/shops.json`, placements,
+  `InteractionDef.cash_out` (+ the requirement and the withdrawal on finish), closed days
+  (`PlaceDef`/`Lot.closed_days`, `WorldLoader`, `Lots.is_open`, the save validator), and
+  `"closed": ["sun"]` on Café Wolke and Waschsalon Blitz.
+- The ATM object is named "ATM", not "Cash machine": placeholder labels use the first letters
+  of the last word, and "Mac" read wrong on the map.
+- The closed-day error checks are in `test_world_validation.gd`, which already builds broken
+  districts, rather than in a fixture file. `test_lots.gd` covers both kinds of old save:
+  lots saved before T-0056 keep no closed days, and saves from before lots (the v3 fixture)
+  get theirs from content, Sunday closing included.
+- As expected, residents don't use the counters yet: they only consider objects within 12
+  cells (T-0057 sends them shopping across town).
+- Verified: `tools/check.sh` 499 passed, 0 failed (`test_shops.gd`, 6 tests, plus tests in
+  `test_world_validation.gd`, `test_lots.gd` and `test_hud_place.gd`).
+  `tools/simrun.sh --days=7 --check-m2` PASSED. Screenshot `out/t0056.png`: the Späti
+  and Imbiss counters, the ATM on the Altmarkt, and "Imbiss Anadolu (closed)" at 08:11.
 
 ## Questions
 

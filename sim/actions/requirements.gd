@@ -14,7 +14,7 @@ const TEXT: Dictionary = {
 
 
 ## Checked in order: the target object's lot is closed (opening hours) or someone else's home;
-## then the price. Objects on no lot (test rooms) pass the lot rules.
+## then the price, and the bank balance a withdrawal needs. Objects on no lot (test rooms) pass the lot rules.
 static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
 	if def.target == "object":
 		var obj := sim.world.get_object(target_id)
@@ -24,6 +24,8 @@ static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int)
 		if lot != null and lot.access == Lot.PRIVATE and person.home_lot_id != lot.id:
 			return "private"
 	if def.price > 0 and not Money.can_afford(person, def.price):
+		return "cant_afford"
+	if def.cash_out > 0 and person.wallet.bank < def.cash_out:
 		return "cant_afford"
 	return ""
 

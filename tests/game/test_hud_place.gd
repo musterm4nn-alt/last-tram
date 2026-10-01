@@ -19,3 +19,13 @@ func test_money_text() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	assert_eq(Hud.money_text(sim.world.player()), "Cash €40.00 · Bank €300.00")
 	assert_eq(Hud.money_text(null), "")
+
+
+func test_place_line_says_closed_on_sunday() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	player.pos = Vector2(25.5, 13.5)
+	sim.clock.tick = SimClock.ticks_for(6, 12)
+	assert_eq(Hud.place_text(sim, player), "Café Wolke (closed)")
+	sim.clock.tick = SimClock.ticks_for(7, 12)
+	assert_eq(Hud.place_text(sim, player), "Café Wolke")

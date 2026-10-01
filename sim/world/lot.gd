@@ -17,6 +17,8 @@ var access: String = PUBLIC
 ## Whole hours 0..24 (only for HOURS). close_hour < open_hour means open past midnight.
 var open_hour: int = 0
 var close_hour: int = 24
+## Weekdays an "hours" lot stays shut all day (0 = Monday … 6 = Sunday; T-0056).
+var closed_days: PackedInt32Array = PackedInt32Array()
 
 
 ## A lot for `place`, with the place's access and hours.
@@ -27,6 +29,7 @@ static func from_place(lot_id: int, place: PlaceDef) -> Lot:
 	lot.access = place.access
 	lot.open_hour = place.open_hour
 	lot.close_hour = place.close_hour
+	lot.closed_days = place.closed_days.duplicate()
 	return lot
 
 
@@ -37,6 +40,7 @@ func to_dict() -> Dictionary:
 		"access": access,
 		"open_hour": open_hour,
 		"close_hour": close_hour,
+		"closed_days": Array(closed_days),
 	}
 
 
@@ -47,4 +51,6 @@ static func from_dict(d: Dictionary) -> Lot:
 	lot.access = String(d["access"])
 	lot.open_hour = int(d.get("open_hour", 0))
 	lot.close_hour = int(d.get("close_hour", 24))
+	for day: Variant in d.get("closed_days", []):
+		lot.closed_days.append(int(day))
 	return lot

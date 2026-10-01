@@ -39,3 +39,5 @@ var finish_moodlet: String = ""
 var routine: String = ""
 ## What it costs in euro cents, paid when it starts performing (0 = free; T-0055).
 var price: int = 0
+## Cents moved from the bank to cash when it finishes (the cash machine; T-0056; 0 = none).
+var cash_out: int = 0

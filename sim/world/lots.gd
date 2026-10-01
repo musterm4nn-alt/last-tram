@@ -19,10 +19,16 @@ static func by_place(world: World, place_id: String) -> Lot:
 
 
 ## True if the lot is open at the clock's hour. Public and private lots are always "open"
-## (private ones still only let residents in). Hours: open_hour <= hour < close_hour, or
-## past midnight when close_hour < open_hour; equal hours mean open all day.
+## (private ones still only let residents in). Hours: closed all day on its closed days, else
+## open_hour <= hour < close_hour, or past midnight when close_hour < open_hour; equal hours
+## mean open all day. Closed days are calendar days, so a place open past midnight would
+## close at midnight before a closed day.
 static func is_open(lot: Lot, clock: SimClock) -> bool:
-	if lot.access != Lot.HOURS or lot.open_hour == lot.close_hour:
+	if lot.access != Lot.HOURS:
+		return true
+	if lot.closed_days.has(clock.weekday()):
+		return false
+	if lot.open_hour == lot.close_hour:
 		return true
 	var hour := clock.hour()
 	if lot.open_hour < lot.close_hour:
