@@ -123,9 +123,9 @@ func test_menu_shows_prices_and_reasons() -> void:
 		if obj.def_id == "bar_counter":
 			counter = obj
 	sim.clock.tick = SimClock.ticks_for(0, 20)
-	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar counter", "Have a drink · €4.00"])
+	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar", "Have a drink · €4.00"])
 	sim.clock.tick = SimClock.ticks_for(0, 10)
-	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar counter", "Have a drink · €4.00 (closed)"])
+	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar", "Have a drink · €4.00 (closed, opens 17:00)"])
 	Session.content = content()
 	Session.sim = sim
 	var menu := InteractionMenu.new()
@@ -136,7 +136,7 @@ func test_menu_shows_prices_and_reasons() -> void:
 	assert_false(menu.is_item_disabled(1))
 	var player := sim.world.player()
 	Money.spend(sim, player, player.wallet.total(), "purchase")
-	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar counter", "Have a drink · €4.00 (not enough money)"])
+	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar", "Have a drink · €4.00 (not enough money)"])
 	menu.prepare(counter.id)
 	assert_true(menu.is_item_disabled(1))
 	menu.free()

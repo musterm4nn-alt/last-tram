@@ -10,7 +10,7 @@ func test_place_line_says_closed_outside_opening_hours() -> void:
 	sim.clock.tick = SimClock.ticks_for(0, 12)
 	assert_eq(Hud.place_text(sim, player), "Späti Kaya")
 	sim.clock.tick = SimClock.ticks_for(0, 5)
-	assert_eq(Hud.place_text(sim, player), "Späti Kaya (closed)")
+	assert_eq(Hud.place_text(sim, player), "Späti Kaya (closed, opens 08:00)")
 	player.pos = Vector2(30.5, 30.5)
 	assert_eq(Hud.place_text(sim, player), "Altmarkt", "public places never close")
 
@@ -26,6 +26,37 @@ func test_place_line_says_closed_on_sunday() -> void:
 	var player := sim.world.player()
 	player.pos = Vector2(25.5, 13.5)
 	sim.clock.tick = SimClock.ticks_for(6, 12)
-	assert_eq(Hud.place_text(sim, player), "Café Wolke (closed)")
+	assert_eq(Hud.place_text(sim, player), "Café Wolke (closed, opens tomorrow 08:00)")
 	sim.clock.tick = SimClock.ticks_for(7, 12)
 	assert_eq(Hud.place_text(sim, player), "Café Wolke")
+
+
+func test_closed_places_say_when_they_open() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var cafe := Lots.by_place(sim.world, "cafe_wolke")
+	sim.clock.tick = SimClock.ticks_for(5, 20)
+	assert_eq(Lots.opening_text(cafe, sim.clock), "opens Mon 08:00", "Saturday evening: Sunday is a closed day")
+	sim.clock.tick = SimClock.ticks_for(0, 7)
+	assert_eq(Lots.opening_text(cafe, sim.clock), "opens 08:00")
+	sim.clock.tick = SimClock.ticks_for(0, 12)
+	assert_eq(Lots.opening_text(cafe, sim.clock), "", "open now")
+	var kneipe := Lots.by_place(sim.world, "kneipe_anker")
+	sim.clock.tick = SimClock.ticks_for(0, 3)
+	assert_eq(Lots.opening_text(kneipe, sim.clock), "opens 17:00")
+
+
+func test_leaving_a_paid_meal_gets_a_notice() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player_id := sim.world.player_id
+	var left := {"type": &"action_cancelled", "data": {"person_id": player_id, "interaction_id": "eat_doener", "reason": "moved", "performing": true}}
+	assert_eq(Hud.notice_for_event(left, player_id, content(), sim), "Eat a Döner: you left before finishing")
+	left["data"]["performing"] = false
+	assert_eq(Hud.notice_for_event(left, player_id, content(), sim), "", "nothing paid yet")
+	var free := {"type": &"action_cancelled", "data": {"person_id": player_id, "interaction_id": "watch_tv", "reason": "moved", "performing": true}}
+	assert_eq(Hud.notice_for_event(free, player_id, content(), sim), "")
+	var counter: WorldObject = null
+	for obj: WorldObject in sim.world.objects.values():
+		if obj.def_id == "imbiss_counter":
+			counter = obj
+	var refused := {"type": &"action_refused", "data": {"person_id": player_id, "interaction_id": "eat_doener", "target_id": counter.id, "reason": "closed"}}
+	assert_eq(Hud.notice_for_event(refused, player_id, content(), sim), "Eat a Döner: closed, opens 11:00")

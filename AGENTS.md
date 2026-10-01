@@ -24,7 +24,7 @@ are the only proof that your work is correct, so make that proof real.
 
 Other docs, for when a ticket points you there: [vision](docs/vision.md) ·
 [roadmap](docs/roadmap.md) · [architecture](docs/architecture.md) ·
-[decisions](docs/decisions.md) · [design/](docs/design/) · [art](docs/art.md) ·
+[decisions](docs/decisions.md) · [design/](docs/design/) · [art](docs/art.md) · [playtesting](docs/playtesting.md) ·
 [workflow](docs/workflow.md).
 
 ## Commands

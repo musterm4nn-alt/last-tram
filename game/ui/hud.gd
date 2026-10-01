@@ -41,7 +41,7 @@ static func money_text(person: Person) -> String:
 	return "Cash %s · Bank %s" % [Money.format(person.wallet.cash), Money.format(person.wallet.bank)]
 
 
-## Where `person` is: the place's name, plus " (closed)" while its lot is closed for
+## Where `person` is: the place's name, plus " (closed, opens 17:00)" while its lot is closed for
 ## opening hours; "Altstadt" outside every place.
 static func place_text(sim: Sim, person: Person) -> String:
 	var place: PlaceDef = sim.content.place_at(person.cell()) if person != null else null
@@ -49,7 +49,7 @@ static func place_text(sim: Sim, person: Person) -> String:
 		return "Altstadt"
 	var lot := Lots.by_place(sim.world, place.id)
 	if lot != null and not Lots.is_open(lot, sim.clock):
-		return "%s (closed)" % place.name
+		return "%s (closed, %s)" % [place.name, Lots.opening_text(lot, sim.clock)]
 	return place.name
 
 
@@ -78,7 +78,12 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		var interaction_id := String(data.get("interaction_id", ""))
 		var def: InteractionDef = content.interaction(interaction_id) if content != null else null
 		var name := def.name if def != null else interaction_id
-		return "%s: %s" % [name, FAIL_REASONS[reason] if FAIL_REASONS.has(reason) else Requirements.text(reason)]
+		var words: String = FAIL_REASONS[reason] if FAIL_REASONS.has(reason) else InteractionMenu.reason_text(sim, reason, int(data.get("target_id", 0))) if sim != null else Requirements.text(reason)
+		return "%s: %s" % [name, words]
+	if event.get("type") == &"action_cancelled" and data.get("performing", false):
+		var paid: InteractionDef = content.interaction(String(data.get("interaction_id", ""))) if content != null else null
+		if paid != null and paid.price > 0:
+			return "%s: you left before finishing" % paid.name
 	return ""
 
 
