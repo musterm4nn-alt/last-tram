@@ -29,7 +29,8 @@ func _init(p_content: ContentDB, p_world: World, p_clock: SimClock, p_rng: SimRn
 	systems = default_systems()
 
 
-## Every system, in the order it runs each step and each minute.
+## Every system, in the order it runs each step and each minute. TierSystem goes first, so
+## the minute's background updates use the latest tiers (T-0042).
 ## ActionSystem runs before MovementSystem (queued actions start before anyone
 ## moves) and before NeedsSystem (its per-minute rates apply before the decay,
 ## so one minute of sleep nets rate minus decay). SocialSystem ends moodlets before free
@@ -37,6 +38,7 @@ func _init(p_content: ContentDB, p_world: World, p_clock: SimClock, p_rng: SimRn
 ## will decides after the minute's needs have changed (D23, D24).
 static func default_systems() -> Array[SimSystem]:
 	return [
+		TierSystem.new(),
 		ActionSystem.new(),
 		MovementSystem.new(),
 		NeedsSystem.new(),

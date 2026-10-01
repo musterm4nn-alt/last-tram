@@ -7,29 +7,42 @@ extends SimSystem
 ## Direct input or an immediate walk cancels the current action.
 
 
-## Steps every front action once: QUEUED ones start or route, ROUTING ones
-## arrive, re-route or cancel, PERFORMING ones cancel on direct input.
+## Steps every active person's front action once: QUEUED ones start or route, ROUTING ones
+## arrive, re-route or cancel, PERFORMING ones cancel on direct input. Background people
+## (T-0042) get the same step once per game minute (on_minute).
 func step(sim: Sim) -> void:
 	for person: Person in sim.world.people.values():
-		if person.action_queue.is_empty():
-			continue
-		var action: Action = person.action_queue[0]
-		var def := sim.content.interaction(action.interaction_id)
-		if def != null and def.target == "person":
-			if action.state == Action.QUEUED:
-				SocialActions.step_queued(sim, person, action)
-			elif action.state == Action.ROUTING:
-				SocialActions.step_routing(sim, person, action)
-			elif action.state == Action.PERFORMING:
-				SocialActions.step_performing(sim, person, action)
-		elif action.state == Action.QUEUED:
-			_step_queued(sim, person, action)
+		if not person.background:
+			step_person(sim, person)
+
+
+func on_minute(sim: Sim) -> void:
+	for person: Person in sim.world.people.values():
+		if person.background:
+			step_person(sim, person)
+
+
+## One step of `person`'s front action.
+static func step_person(sim: Sim, person: Person) -> void:
+	if person.action_queue.is_empty():
+		return
+	var action: Action = person.action_queue[0]
+	var def := sim.content.interaction(action.interaction_id)
+	if def != null and def.target == "person":
+		if action.state == Action.QUEUED:
+			SocialActions.step_queued(sim, person, action)
 		elif action.state == Action.ROUTING:
-			_step_routing(sim, person, action)
+			SocialActions.step_routing(sim, person, action)
 		elif action.state == Action.PERFORMING:
-			_step_performing(sim, person, action)
-		if not person.action_queue.is_empty() and person.action_queue[0] == action and action.state == Action.PERFORMING:
-			_progress(sim, person, action)
+			SocialActions.step_performing(sim, person, action)
+	elif action.state == Action.QUEUED:
+		_step_queued(sim, person, action)
+	elif action.state == Action.ROUTING:
+		_step_routing(sim, person, action)
+	elif action.state == Action.PERFORMING:
+		_step_performing(sim, person, action)
+	if not person.action_queue.is_empty() and person.action_queue[0] == action and action.state == Action.PERFORMING:
+		_progress(sim, person, action)
 
 
 ## A QUEUED front action starts at once when its person already stands on a free

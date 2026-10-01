@@ -13,12 +13,22 @@ func step(sim: Sim) -> void:
 	var cells_per_step := 1.0 / SimClock.STEPS_PER_GAME_MINUTE
 	for person: Person in sim.world.people.values():
 		person.prev_pos = person.pos
+		if person.background:
+			continue  # moved a minute at a time in on_minute (T-0042)
 		if person.move_intent != Vector2.ZERO:
 			var direction := person.move_intent.limit_length(1.0)
 			person.facing = _cardinal(direction)
 			move_person(sim.world.grid, person, direction * person.move_speed() * cells_per_step)
 		elif not person.path.is_empty():
 			follow_path(sim, person, person.move_speed() * cells_per_step)
+
+
+## Background people (T-0042) follow their path a whole minute's walk at a time. They never
+## have direct input (only the player does, and the player is always active).
+func on_minute(sim: Sim) -> void:
+	for person: Person in sim.world.people.values():
+		if person.background and not person.path.is_empty():
+			follow_path(sim, person, person.move_speed())
 
 
 ## Walks `person` along their path, covering up to `budget` cells this step.

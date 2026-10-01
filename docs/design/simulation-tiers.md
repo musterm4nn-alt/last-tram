@@ -18,6 +18,12 @@ data is updated.
 Needs decay linearly, so bulk decay over *n* minutes equals *n* per-minute decays. The main
 differences between tiers are movement detail and encounter granularity.
 
+**Built in T-0042 (v1, D28):** the background tier keeps every person's data and rules, but
+`ActionSystem` and `MovementSystem` update background people once per game minute instead of
+every step (needs, social life, routines and free will were already per minute). Promotion
+and demotion are free: nobody is ever placed, so nobody ends up in a wall. The event-driven
+version below is the plan for a much bigger town.
+
 ## Moving between tiers
 
 - **Promotion** (background → active): the person is placed where they would plausibly be. At
