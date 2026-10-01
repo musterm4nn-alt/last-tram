@@ -70,6 +70,17 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 			_register(id, next_id, ids, s)
 		s.vector(obj.get("origin"), "world.objects[].origin", 3, true)
 		s.integer(obj.get("rotation"), "world.objects[].rotation", 0, 3)
+	for entry: Variant in s.list(world.get("lots", []), "world.lots"):
+		var lot := s.dictionary(entry, "world.lots[]")
+		var place_id := s.text(lot.get("place_id"), "world.lots[].place_id")
+		var lot_id := s.integer(lot.get("id"), "world.lots[].id", 1)
+		# Lots of removed places are dropped on load and cannot consume live ids.
+		if content.place(place_id) != null:
+			_register(lot_id, next_id, ids, s)
+		if not Lot.ACCESS.has(s.text(lot.get("access"), "world.lots[].access")):
+			s.reject("world.lots[].access", "unknown access")
+		s.integer(lot.get("open_hour", 0), "world.lots[].open_hour", 0, 24)
+		s.integer(lot.get("close_hour", 24), "world.lots[].close_hour", 0, 24)
 
 
 static func _register(id: int, next_id: int, ids: Dictionary[int, bool], s: SaveSchema) -> void:

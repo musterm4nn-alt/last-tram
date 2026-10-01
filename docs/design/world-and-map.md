@@ -31,7 +31,9 @@
   Altmarkt... The HUD shows where you are.
 - **Lots** (M2) turn places into world state: owner (person, household, business or city),
   kind, **access rules** (public / private / business hours / staff only), address, and for
-  homes rent and tenant. Being on a private lot without permission is **trespassing** (M4).
+  homes rent and tenant. Built in T-0032: `World.lots` (one per place, access and hours
+  from `district.json`), `Person.home_lot_id`, and `Lots.may_enter`, which free will
+  respects. Being on a private lot without permission is **trespassing** (M4).
   One building can hold many lots: each flat is a lot on its level.
 - **Rooms** (M2) are computed, not authored: a flood fill bounded by walls and doors. They are
   used for privacy (bathrooms, bedrooms), roof cut-away, "indoors", and what witnesses

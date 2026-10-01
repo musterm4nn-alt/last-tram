@@ -11,6 +11,8 @@ var people: Dictionary[int, Person] = {}
 var player_id: int = 0
 ## Every placed object by id.
 var objects: Dictionary[int, WorldObject] = {}
+## Every lot by id (one per place; see Lots).
+var lots: Dictionary[int, Lot] = {}
 
 var _next_id: int = 1
 ## Derived footprint index: cell -> object ids covering it (rebuilt on load).
@@ -116,12 +118,16 @@ func to_dict() -> Dictionary:
 	var objects_out: Array[Dictionary] = []
 	for obj: WorldObject in objects.values():
 		objects_out.append(obj.to_dict())
+	var lots_out: Array[Dictionary] = []
+	for lot: Lot in lots.values():
+		lots_out.append(lot.to_dict())
 	return {
 		"next_id": _next_id,
 		"player_id": player_id,
 		"grid": grid.to_dict(),
 		"people": people_out,
 		"objects": objects_out,
+		"lots": lots_out,
 	}
 
 
@@ -148,4 +154,12 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		if content.object_def(obj.def_id) == null:
 			continue
 		world.add_object(obj)
+	# Saves from before lots get them from content; lots of removed places are dropped.
+	if not d.has("lots"):
+		Lots.create_from_content(world)
+	else:
+		for lot_entry: Variant in d["lots"]:
+			var lot := Lot.from_dict(lot_entry)
+			if world.content.place(lot.place_id) != null:
+				world.lots[lot.id] = lot
 	return world

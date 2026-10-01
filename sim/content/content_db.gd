@@ -102,6 +102,15 @@ func need(need_id: String) -> NeedDef:
 	return null
 
 
+## The place with this id (any district), or null.
+func place(place_id: String) -> PlaceDef:
+	for district_id: String in district_order:
+		for candidate: PlaceDef in districts[district_id].places:
+			if candidate.id == place_id:
+				return candidate
+	return null
+
+
 ## The place containing a world cell, or null.
 func place_at(cell: Vector3i) -> PlaceDef:
 	for district_id: String in district_order:

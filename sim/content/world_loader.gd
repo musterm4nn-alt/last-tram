@@ -82,9 +82,44 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 			place.rect = Rect2i(int(r[0]) + district.origin.x, int(r[1]) + district.origin.y, int(r[2]), int(r[3]))
 		else:
 			reader.error("%s: rect must be [x, y, width, height] (local)" % ctx)
+		_read_access(reader, pd, place, ctx)
 		district.places.append(place)
 	load_objects(db, reader, district, dir)
 	return district
+
+
+## Kinds whose places are businesses: they must have opening hours.
+const BUSINESS_KINDS: PackedStringArray = ["shop", "cafe", "bar", "restaurant"]
+
+
+## Reads a place's optional "access" and "hours" (see PlaceDef), with defaults by kind.
+static func _read_access(reader: ContentReader, pd: Dictionary, place: PlaceDef, ctx: String) -> void:
+	if pd.has("access"):
+		place.access = reader.read_str(pd, "access", ctx)
+	elif place.kind == "home":
+		place.access = Lot.PRIVATE
+	elif BUSINESS_KINDS.has(place.kind):
+		place.access = Lot.HOURS
+	else:
+		place.access = Lot.PUBLIC
+	if not Lot.ACCESS.has(place.access):
+		reader.error("%s: access '%s' must be one of %s" % [ctx, place.access, ", ".join(Lot.ACCESS)])
+		place.access = Lot.PUBLIC
+	if place.access != Lot.HOURS:
+		if pd.has("hours"):
+			reader.error("%s: \"hours\" only applies to access \"hours\"" % ctx)
+		return
+	if not pd.has("hours"):
+		reader.error("%s: access \"hours\" needs \"hours\": [open_hour, close_hour]" % ctx)
+		return
+	var hours := reader.read_coordinates(pd, "hours", ctx, 2)
+	if hours.is_empty():
+		return  # read_coordinates reported it
+	if hours[0] < 0 or hours[0] > 24 or hours[1] < 0 or hours[1] > 24:
+		reader.error("%s: hours must be [open_hour, close_hour], whole hours 0..24" % ctx)
+		return
+	place.open_hour = hours[0]
+	place.close_hour = hours[1]
 
 
 ## The ASCII rows of one level map file.

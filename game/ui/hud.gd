@@ -23,6 +23,18 @@ static func hint_text(command_mode: bool) -> String:
 	return "WASD move   Shift run   E use   Tab command mode   M map   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug   F3 debug"
 
 
+## Where `person` is: the place's name, plus " (closed)" while its lot is closed for
+## opening hours; "Altstadt" outside every place.
+static func place_text(sim: Sim, person: Person) -> String:
+	var place: PlaceDef = sim.content.place_at(person.cell()) if person != null else null
+	if place == null:
+		return "Altstadt"
+	var lot := Lots.by_place(sim.world, place.id)
+	if lot != null and not Lots.is_open(lot, sim.clock):
+		return "%s (closed)" % place.name
+	return place.name
+
+
 ## Words for why the player's action failed (action_failed reasons); others show nothing.
 const FAIL_REASONS: Dictionary = {
 	"no_free_slot": "someone is using it",
@@ -116,9 +128,7 @@ func _process(delta: float) -> void:
 	if Session.skipping:
 		speed_text = "▶▶ skipping"
 	_clock_label.text = "Day %d   %s   %s" % [Session.sim.clock.day() + 1, Session.sim.clock.format(), speed_text]
-	var player := Session.sim.world.player()
-	var place: PlaceDef = Session.content.place_at(player.cell()) if player != null else null
-	_place_label.text = place.name if place != null else "Altstadt"
+	_place_label.text = place_text(Session.sim, Session.sim.world.player())
 	if _notice_time_left > 0.0:
 		_notice_time_left -= delta
 		_notice_label.modulate.a = clampf(_notice_time_left, 0.0, 1.0)
