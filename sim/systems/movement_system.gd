@@ -1,7 +1,7 @@
 class_name MovementSystem
 extends SimSystem
 ## Moves people by their move_intent (direct control), or else along their path (set by
-## WalkToCommand), sliding along walls.
+## WalkToCommand), sliding along walls, at Person.move_speed() (faster while running).
 ## Collision: a person is a box of half-size Person.RADIUS that may only overlap walkable
 ## cells. X and Y are resolved separately, so walking diagonally into a wall slides along it.
 
@@ -16,9 +16,9 @@ func step(sim: Sim) -> void:
 		if person.move_intent != Vector2.ZERO:
 			var direction := person.move_intent.limit_length(1.0)
 			person.facing = _cardinal(direction)
-			move_person(sim.world.grid, person, direction * person.walk_speed * cells_per_step)
+			move_person(sim.world.grid, person, direction * person.move_speed() * cells_per_step)
 		elif not person.path.is_empty():
-			follow_path(sim, person, person.walk_speed * cells_per_step)
+			follow_path(sim, person, person.move_speed() * cells_per_step)
 
 
 ## Walks `person` along their path, covering up to `budget` cells this step.
