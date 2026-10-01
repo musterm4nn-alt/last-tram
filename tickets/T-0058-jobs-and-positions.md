@@ -1,12 +1,12 @@
 ---
 id: T-0058
 title: Jobs - job data, positions, and residents with jobs
-status: todo
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0057]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -109,19 +109,37 @@ text `job_id`, integers `position`, `level` and `hired_day` ≥ 0, and `performa
 - simrun: `jobs: 17 of 21 working-age residents employed, 6 retired, 4 vacancies`.
 
 ## Acceptance criteria
-- [ ] Content loads; broken jobs (unknown place, no workplace object on the place, zero
+- [x] Content loads; broken jobs (unknown place, no workplace object on the place, zero
   wage, bad day, `from == to`) are reported → `test_jobs.gd`.
-- [ ] A new game (seeds 1–3): every `start_filled: 1.0` position is filled, the player is an
+- [x] A new game (seeds 1–3): every `start_filled: 1.0` position is filled, the player is an
   office clerk, nobody aged ≥ 67 has a job, every worker's routine fits their shift, and the
   same seed gives the same jobs → `test_jobs.gd`.
-- [ ] `shift_on` for a day shift, a day off and a shift past midnight; `fits_routine`
+- [x] `shift_on` for a day shift, a day off and a shift past midnight; `fits_routine`
   examples; `days_text` examples → `test_jobs.gd`.
-- [ ] v6 round trip, the migration, and a dropped unknown job → `test_jobs.gd`; fixture.
-- [ ] Inspector line → `test_person_inspector.gd`.
-- [ ] `tools/check.sh` passes; `--check-m2` still passes (nobody works yet). Screenshot
+- [x] v6 round trip, the migration, and a dropped unknown job → `test_jobs.gd`; fixture.
+- [x] Inspector line → `test_person_inspector.gd`.
+- [x] `tools/check.sh` passes; `--check-m2` still passes (nobody works yet). Screenshot
   `out/t0058.png` of the tram shelter.
 
 ## Implementation notes
+- As specified, with small naming changes: the workplace objects are in their own file
+  `data/objects/workplaces.json` (not `shops.json`), and the shift class is `ShiftDef` (like
+  the other `*Def`s), with `JobLevel` for levels. `Jobs.describe` gives the "Office clerk
+  (Mon–Fri 9–17)" text, and `PersonInspector.job_text` adds "Unemployed"/"Retired".
+- Broken jobs are tested from `tests/fixtures/jobs_broken.json` through `JobLoader.load`.
+- **Out of scope, but needed:** seed 1 failed `--check-m2` (hunger 2.7). A retired night owl
+  went to bed at 02:24 with hunger near 26 and slept until 10:00, because sleep in the window
+  never ended early. Jobs reshuffled routines, which exposed this; it wasn't caused by them.
+  Fix: `Routines.woken_by_hunger`, so a sleeper whose hunger falls below its critical level
+  (15) wakes after the minimum hour and gets up to eat (`ActionSystem._has_ended`;
+  `test_routines.gd::test_hunger_wakes_a_sleeper`).
+- Generated towns (seeds 1–3): every shop and police position is filled; 14/13/13 of 20/21/14
+  working-age residents are employed, 7/5/9 are retired, and 2/3/3 positions are vacant. The
+  player is an office clerk.
+- Verified: `tools/check.sh` 520 passed, 0 failed (`test_jobs.gd`, 8 tests, plus inspector,
+  validation and routine tests; fixture `v6_basic.json`). `tools/simrun.sh --days=7
+  --check-m2` PASSED on seeds 1–5 (lowest resident hunger 11.9–17.4; 0.09–0.11 ms per
+  step). Screenshot `out/t0058.png`: the tram shelter at the Altmarkt stop.
 
 ## Questions
 

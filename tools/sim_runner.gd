@@ -74,6 +74,7 @@ func _initialize() -> void:
 		print(line)
 	print(_money_line(sim))
 	print(_groceries_line(sim, resident_actions))
+	print(_jobs_line(sim))
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
 		var ms_per_step := seconds * 1000.0 / steps
@@ -121,6 +122,24 @@ func _money_line(sim: Sim) -> String:
 	return "money: people hold %s (median %s) | in: %s | out: %s" % [
 		Money.format(Money.held(sim.world)), Money.format(median),
 		_totals_text(sim.world.ledger.sources), _totals_text(sim.world.ledger.sinks)]
+
+
+## "jobs: 17 of 21 working-age residents employed, 6 retired, 4 vacancies".
+func _jobs_line(sim: Sim) -> String:
+	var working_age := 0
+	var employed := 0
+	var retired := 0
+	for person: Person in sim.world.people.values():
+		if person.id == sim.world.player_id:
+			continue
+		if person.age_years >= sim.content.economy.retirement_age:
+			retired += 1
+			continue
+		working_age += 1
+		if person.job != null:
+			employed += 1
+	return "jobs: %d of %d working-age residents employed, %d retired, %d vacancies" % [
+		employed, working_age, retired, Jobs.vacancies(sim).size()]
 
 
 ## "groceries: households hold N portions (lowest M), bags bought K".

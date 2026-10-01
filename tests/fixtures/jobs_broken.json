@@ -1,0 +1,149 @@
+{
+	"_doc": "Deliberately broken jobs (T-0058). Do not fix.",
+	"jobs": [
+		{
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"place_id": "nowhere",
+			"need_rates": {},
+			"levels": [
+				{
+					"title": "T",
+					"wage": 1000
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon"
+					],
+					"from": 9,
+					"to": 17
+				}
+			],
+			"start_filled": 1.0,
+			"id": "bad_place",
+			"name": "bad_place"
+		},
+		{
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"place_id": "church_st_nikolai",
+			"need_rates": {},
+			"levels": [
+				{
+					"title": "T",
+					"wage": 1000
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon"
+					],
+					"from": 9,
+					"to": 17
+				}
+			],
+			"start_filled": 1.0,
+			"id": "no_workplace",
+			"name": "no_workplace"
+		},
+		{
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"place_id": "tram_stop_altmarkt",
+			"need_rates": {},
+			"levels": [
+				{
+					"title": "T",
+					"wage": 0
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon"
+					],
+					"from": 9,
+					"to": 17
+				}
+			],
+			"start_filled": 1.0,
+			"id": "zero_wage",
+			"name": "zero_wage"
+		},
+		{
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"place_id": "tram_stop_altmarkt",
+			"need_rates": {},
+			"levels": [
+				{
+					"title": "T",
+					"wage": 1000
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"funday"
+					],
+					"from": 9,
+					"to": 17
+				}
+			],
+			"start_filled": 1.0,
+			"id": "bad_day",
+			"name": "bad_day"
+		},
+		{
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"place_id": "tram_stop_altmarkt",
+			"need_rates": {},
+			"levels": [
+				{
+					"title": "T",
+					"wage": 1000
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon"
+					],
+					"from": 9,
+					"to": 9
+				}
+			],
+			"start_filled": 1.0,
+			"id": "same_hours",
+			"name": "same_hours"
+		},
+		{
+			"session": "remote",
+			"workplace_tag": "tram_stop",
+			"place_id": "tram_stop_altmarkt",
+			"need_rates": {},
+			"levels": [
+				{
+					"title": "T",
+					"wage": 1000
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon"
+					],
+					"from": 9,
+					"to": 17
+				}
+			],
+			"start_filled": 1.0,
+			"id": "bad_session",
+			"name": "bad_session"
+		}
+	]
+}

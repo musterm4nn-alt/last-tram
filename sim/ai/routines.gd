@@ -63,6 +63,13 @@ static func score_bonus(sim: Sim, person: Person, def: InteractionDef) -> float:
 	return OUT_BONUS * (1.0 + 0.5 * person.personality.get_axis("sociability") / 100.0)
 
 
+## True when hunger has fallen below its critical level during a "sleep" interaction: the
+## sleeper gets up to eat instead of starving until morning.
+static func woken_by_hunger(sim: Sim, person: Person, def: InteractionDef) -> bool:
+	var hunger := sim.content.need("hunger")
+	return def.routine == "sleep" and hunger != null and float(person.needs.get("hunger", 100.0)) < hunger.critical_below
+
+
 ## True while a "sleep" interaction should go on past a full need (inside the window).
 static func keeps_sleeping(sim: Sim, person: Person, def: InteractionDef) -> bool:
 	return def.routine == "sleep" and sleeping_time(sim, person)

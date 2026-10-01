@@ -70,6 +70,7 @@ static func lines(sim: Sim, id: int, viewer_id: int) -> PackedStringArray:
 	out.append("Doing: %s" % doing(sim, person))
 	out.append("Lives: %s" % home_text(sim, person))
 	out.append("Money: %s" % Money.format(person.wallet.total()))
+	out.append("Job: %s" % job_text(sim, person))
 	if id == viewer_id:
 		return out
 	out.append("")
@@ -96,6 +97,14 @@ static func doing(sim: Sim, person: Person) -> String:
 	if not person.path.is_empty():
 		return "Walking"
 	return "Nothing"
+
+
+## "Office clerk (Mon–Fri 9–17)", "Retired" (at retirement age without a job) or "Unemployed".
+static func job_text(sim: Sim, person: Person) -> String:
+	var described := Jobs.describe(sim.content, person)
+	if not described.is_empty():
+		return described
+	return "Retired" if person.age_years >= sim.content.economy.retirement_age else "Unemployed"
 
 
 ## "Haus 9, 1st floor, with Mira" style: the home place and the other household members.

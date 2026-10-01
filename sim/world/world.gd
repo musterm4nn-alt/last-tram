@@ -170,6 +170,13 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		for need_id: String in person.needs.keys():
 			if content.need(need_id) == null:
 				person.needs.erase(need_id)
+		# Jobs the content no longer has (or a position it lost) are dropped.
+		if person.job != null:
+			var job_def := content.job(person.job.job_id)
+			if job_def == null or person.job.position >= job_def.positions.size():
+				person.job = null
+			else:
+				person.job.level = mini(person.job.level, job_def.levels.size() - 1)
 		world.add_person(person)
 	# Old saves have no objects; unknown defs (e.g. from a removed content pack)
 	# are skipped without logging errors.

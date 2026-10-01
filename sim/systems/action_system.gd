@@ -249,11 +249,14 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 
 ## Fixed actions end after duration_minutes; until_need actions end once the
 ## need is full (but not before min_minutes, and not while a "sleep" one is in the sleep
-## window, see Routines.keeps_sleeping) or at max_minutes.
+## window, see Routines.keeps_sleeping) or at max_minutes. Hunger below its critical level
+## wakes a sleeper after min_minutes (Routines.woken_by_hunger).
 static func _has_ended(sim: Sim, person: Person, def: InteractionDef, action: Action) -> bool:
 	if def.until_need.is_empty():
 		return action.minutes_done >= def.duration_minutes
 	if action.minutes_done >= def.max_minutes:
+		return true
+	if action.minutes_done >= def.min_minutes and Routines.woken_by_hunger(sim, person, def):
 		return true
 	if action.minutes_done < def.min_minutes or float(person.needs.get(def.until_need, 0.0)) < 100.0:
 		return false
