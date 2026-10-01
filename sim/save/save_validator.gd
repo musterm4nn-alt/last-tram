@@ -103,6 +103,7 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 			if not people_ids.has(s.integer(member, "world.households[].member_ids[]", 1)):
 				s.reject("world.households[].member_ids", "must reference saved people")
 		s.integer(household.get("home_lot_id"), "world.households[].home_lot_id")
+		s.integer(household.get("groceries", 0), "world.households[].groceries")
 
 
 static func _register(id: int, next_id: int, ids: Dictionary[int, bool], s: SaveSchema) -> void:

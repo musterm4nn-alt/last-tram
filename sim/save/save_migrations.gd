@@ -30,11 +30,23 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v2_to_v3(d)
 			3:
 				d = _v3_to_v4(d)
+			4:
+				d = _v4_to_v5(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v5 households have groceries (T-0057): every fridge starts with 10 portions.
+static func _v4_to_v5(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("households", []) is Array:
+		return d
+	for household: Variant in d["world"].get("households", []):
+		if household is Dictionary:
+			household["groceries"] = 10
 	return d
 
 

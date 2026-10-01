@@ -1,8 +1,13 @@
 {
-	"_doc": "Money (T-0054, D29). Amounts are euro cents. player_start: the new-game player's cash and bank (backgrounds change it in T-0075). resident_start: [min, max] for generated residents, drawn in whole euros from the \"money\" stream. Free will (T-0055): each euro of a price costs price_cost_per_euro points of score, times low_money_factor when the person holds less than low_money.",
+	"_doc": "Money (T-0054, D29). Amounts are euro cents. player_start: the new-game player's cash and bank (backgrounds change it in T-0075). resident_start: [min, max] for generated residents, drawn in whole euros from the \"money\" stream. Free will (T-0055): each euro of a price costs price_cost_per_euro points of score, times low_money_factor when the person holds less than low_money. Groceries (T-0057): a fridge holds fridge_capacity portions; new households start with start_groceries [min, max]; free will goes shopping (with restock_bonus) when the stock is below restock_below, and eats out when hunger is below hungry_below with fewer than 2 portions at home.",
 	"player_start": { "cash": 4000, "bank": 30000 },
 	"resident_start": { "cash": [1000, 8000], "bank": [20000, 300000] },
 	"price_cost_per_euro": 0.1,
 	"low_money": 5000,
-	"low_money_factor": 8.0
+	"low_money_factor": 8.0,
+	"fridge_capacity": 20,
+	"start_groceries": [6, 14],
+	"restock_below": 4,
+	"restock_bonus": 4.0,
+	"hungry_below": 40
 }

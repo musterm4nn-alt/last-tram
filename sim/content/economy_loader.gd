@@ -22,6 +22,19 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	economy.low_money_factor = reader.read_num(root, "low_money_factor", path)
 	if economy.price_cost_per_euro < 0.0 or economy.low_money < 0 or economy.low_money_factor < 0.0:
 		reader.error("%s: price_cost_per_euro, low_money and low_money_factor must be >= 0" % path)
+	economy.fridge_capacity = reader.read_int(root, "fridge_capacity", path)
+	var start := reader.read_coordinates(root, "start_groceries", path, 2)
+	if start.size() == 2:
+		if start[0] < 0 or start[0] > start[1]:
+			reader.error("%s: 'start_groceries' must be [min, max] with 0 <= min <= max" % path)
+		economy.start_groceries = Vector2i(start[0], start[1])
+	economy.restock_below = reader.read_int(root, "restock_below", path)
+	economy.restock_bonus = reader.read_num(root, "restock_bonus", path)
+	economy.hungry_below = reader.read_num(root, "hungry_below", path)
+	if economy.fridge_capacity < 1 or economy.start_groceries.y > economy.fridge_capacity:
+		reader.error("%s: 'fridge_capacity' must be >= 1 and hold the starting groceries" % path)
+	if economy.restock_below < 0 or economy.restock_bonus < 0.0 or economy.hungry_below < 0.0:
+		reader.error("%s: restock_below, restock_bonus and hungry_below must be >= 0" % path)
 	db.economy = economy
 
 

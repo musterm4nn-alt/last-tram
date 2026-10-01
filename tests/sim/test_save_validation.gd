@@ -151,3 +151,11 @@ func test_wallets_and_the_ledger_are_validated() -> void:
 		var data := _save()
 		data["world"]["ledger"] = ledger
 		_reject(data, "bad ledger %s" % [ledger])
+
+
+func test_household_groceries_must_be_whole_and_not_negative() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	for value: Variant in [-1, 2.5, "lots"]:
+		var data := SaveCodec.to_dict(sim)
+		data["world"]["households"][0]["groceries"] = value
+		_reject(data, "bad groceries %s" % [value])

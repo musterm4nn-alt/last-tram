@@ -47,6 +47,7 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 	player.household_id = household.id
 	ResidentGenerator.populate(sim, skip)
 	Money.give_start(sim)
+	Groceries.give_start(sim)
 	return sim
 
 

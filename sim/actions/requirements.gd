@@ -10,11 +10,16 @@ const TEXT: Dictionary = {
 	"closed": "closed",
 	"private": "not your home",
 	"cant_afford": "not enough money",
+	"no_food": "the fridge is empty",
+	"no_home": "no home",
+	"fridge_full": "the fridge is full",
 }
 
 
 ## Checked in order: the target object's lot is closed (opening hours) or someone else's home;
-## then the price, and the bank balance a withdrawal needs. Objects on no lot (test rooms) pass the lot rules.
+## then the price, the bank balance a withdrawal needs, and groceries (food in the fridge to
+## cook with, a home with room in the fridge for a bag). Objects on no lot (test rooms) pass
+## the lot and food rules. Objects on no lot (test rooms) pass the lot rules.
 static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
 	if def.target == "object":
 		var obj := sim.world.get_object(target_id)
@@ -27,6 +32,16 @@ static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int)
 		return "cant_afford"
 	if def.cash_out > 0 and person.wallet.bank < def.cash_out:
 		return "cant_afford"
+	if def.uses_groceries > 0 and Groceries.counts(sim, sim.world.get_object(target_id)):
+		var stock := Groceries.household_at(sim, sim.world.get_object(target_id))
+		if stock == null or stock.groceries < def.uses_groceries:
+			return "no_food"
+	if def.adds_groceries > 0:
+		var home := Groceries.home_household(sim, person)
+		if home == null:
+			return "no_home"
+		if home.groceries + def.adds_groceries > sim.content.economy.fridge_capacity:
+			return "fridge_full"
 	return ""
 
 

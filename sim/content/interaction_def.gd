@@ -41,3 +41,8 @@ var routine: String = ""
 var price: int = 0
 ## Cents moved from the bank to cash when it finishes (the cash machine; T-0056; 0 = none).
 var cash_out: int = 0
+## Grocery portions taken when it starts, from the household whose home the target object is
+## in (cooking; T-0057).
+var uses_groceries: int = 0
+## Grocery portions added to the actor's household when it finishes (buying groceries).
+var adds_groceries: int = 0

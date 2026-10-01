@@ -13,3 +13,11 @@ var price_cost_per_euro: float = 0.0
 ## ...times low_money_factor while the person holds less than low_money (cents).
 var low_money: int = 0
 var low_money_factor: float = 1.0
+## Groceries (T-0057): portions a fridge holds, and new households' [min, max] (x, y).
+var fridge_capacity: int = 20
+var start_groceries: Vector2i = Vector2i.ZERO
+## Free will shops for groceries below this stock, with this score bonus...
+var restock_below: int = 0
+var restock_bonus: float = 0.0
+## ...and eats out when hunger is below this with (almost) nothing at home.
+var hungry_below: float = 0.0
