@@ -36,6 +36,9 @@ func apply(sim: Sim) -> void:
 	if current < 0 or current >= person.action_queue.size():
 		return
 	var removed: Action = person.action_queue[current]
+	var removed_def := sim.content.interaction(removed.interaction_id)
+	if removed_def != null and removed_def.work and removed.state == Action.PERFORMING:
+		Jobs.end_shift(sim, person, removed, false)
 	person.action_queue.remove_at(current)
 	if current == 0 and removed.state == Action.ROUTING:
 		person.path.clear()

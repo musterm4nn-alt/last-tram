@@ -1,0 +1,6 @@
+{
+	"_doc": "Deliberately broken slot role (T-0059). Do not fix.",
+	"objects": [
+		{ "id": "boss_desk", "name": "Boss desk", "size": [1, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["desk"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1], "role": "boss" }], "price": 100, "debug_color": "#000000" }
+	]
+}

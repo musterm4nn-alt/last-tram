@@ -54,7 +54,7 @@ static func _step_queued(sim: Sim, person: Person, action: Action) -> void:
 	if sim.content.interaction(action.interaction_id) == null:
 		_fail(sim, person, action, "unknown_interaction")
 		return
-	var slot := Interactions.slot_at_person(sim, person, action.target_id)
+	var slot := Interactions.slot_at_person(sim, person, action.target_id, sim.content.interaction(action.interaction_id))
 	if slot >= 0 and not Interactions.slot_taken(sim, action.target_id, slot, person.id):
 		_start_performing(sim, person, action, slot)
 	else:
@@ -90,9 +90,10 @@ static func _choose_route(sim: Sim, person: Person, action: Action) -> void:
 		return
 	var obj := sim.world.get_object(action.target_id)
 	var count := obj.slot_count(sim.content) if obj != null else 0
+	var def := sim.content.interaction(action.interaction_id)
 	var free: Array[int] = []
 	for index: int in count:
-		if not Interactions.slot_taken(sim, action.target_id, index, person.id):
+		if Interactions.slot_fits(sim, action.target_id, index, def) and not Interactions.slot_taken(sim, action.target_id, index, person.id):
 			free.append(index)
 	if free.is_empty():
 		_fail(sim, person, action, "no_free_slot")
@@ -151,6 +152,8 @@ static func _start_performing(sim: Sim, person: Person, action: Action, slot: in
 	action.started_tick = sim.clock.tick
 	person.facing = Vector2(obj.slot_facing(sim.content, slot))
 	sim.emit_event(&"action_started", {"person_id": person.id, "interaction_id": action.interaction_id, "target_id": action.target_id})
+	if def.work:
+		Jobs.start_shift(sim, person, action)
 
 
 ## Pops the front action as failed (for SocialActions).
@@ -163,8 +166,10 @@ static func cancel(sim: Sim, person: Person, action: Action, reason: String) -> 
 	_cancel(sim, person, action, reason)
 
 
-## Pops the front action as failed. A ROUTING action also drops its path.
+## Pops the front action as failed. A ROUTING action also drops its path; a PERFORMING work
+## action ends its shift early.
 static func _fail(sim: Sim, person: Person, action: Action, reason: String) -> void:
+	_end_work_early(sim, person, action)
 	person.action_queue.remove_at(0)
 	if action.state == Action.ROUTING:
 		person.path.clear()
@@ -174,10 +179,18 @@ static func _fail(sim: Sim, person: Person, action: Action, reason: String) -> v
 ## Pops the front action as cancelled (direct input took over): the same shape
 ## CancelActionCommand emits. A ROUTING action also drops its path.
 static func _cancel(sim: Sim, person: Person, action: Action, reason: String) -> void:
+	_end_work_early(sim, person, action)
 	person.action_queue.remove_at(0)
 	if action.state == Action.ROUTING:
 		person.path.clear()
 	sim.emit_event(&"action_cancelled", {"person_id": person.id, "interaction_id": action.interaction_id, "reason": reason, "performing": action.state == Action.PERFORMING})
+
+
+## Ends the shift of a PERFORMING work action that stops before the shift's end.
+static func _end_work_early(sim: Sim, person: Person, action: Action) -> void:
+	var def := sim.content.interaction(action.interaction_id)
+	if def != null and def.work and action.state == Action.PERFORMING:
+		Jobs.end_shift(sim, person, action, false)
 
 
 ## An immediate walk takes over the front action; later queued actions stay queued.
@@ -228,12 +241,16 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 	for need_id: String in def.need_rates:
 		var before: float = float(person.needs.get(need_id, 0.0))
 		person.needs[need_id] = clampf(before + float(def.need_rates[need_id]) / 60.0, 0.0, 100.0)
+	if def.work:
+		Jobs.work_minute(sim, person, action)
 	action.minutes_done += 1
 	if _has_ended(sim, person, def, action):
 		for need_id: String in def.finish_needs:
 			var before: float = float(person.needs.get(need_id, 0.0))
 			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
 		person.action_queue.remove_at(0)
+		if def.work:
+			Jobs.end_shift(sim, person, action, true)
 		if def.target == "person":
 			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
 		Presentations.on_finish(sim, person, action, def)
@@ -252,6 +269,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 ## window, see Routines.keeps_sleeping) or at max_minutes. Hunger below its critical level
 ## wakes a sleeper after min_minutes (Routines.woken_by_hunger).
 static func _has_ended(sim: Sim, person: Person, def: InteractionDef, action: Action) -> bool:
+	if def.work:
+		return Jobs.shift_over(sim, person, action)
 	if def.until_need.is_empty():
 		return action.minutes_done >= def.duration_minutes
 	if action.minutes_done >= def.max_minutes:

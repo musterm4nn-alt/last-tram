@@ -186,14 +186,15 @@ static func _better(a: Dictionary, b: Dictionary) -> bool:
 	return int(a["_order"]) < int(b["_order"])
 
 
-## Path length to the object's nearest free, walkable slot: 0 when the person stands on one,
+## Path length to the object's nearest free, walkable customer slot (free will never works): 0 when the person stands on one,
 ## -1 when none can be reached. With `first_only` (far objects), the first reachable free slot
 ## stands in for the nearest, saving a route per slot.
 static func _cells_to_free_slot(sim: Sim, person: Person, obj: WorldObject, first_only: bool = false) -> int:
 	var here := person.cell()
 	var best := -1
+	var def := sim.content.object_def(obj.def_id)
 	for index: int in obj.slot_count(sim.content):
-		if Interactions.slot_taken(sim, obj.id, index, person.id):
+		if def.use_slots[index].role != "customer" or Interactions.slot_taken(sim, obj.id, index, person.id):
 			continue
 		var cell := obj.slot_cell(sim.content, index)
 		if not sim.world.grid.is_walkable(cell):

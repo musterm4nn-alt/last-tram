@@ -46,3 +46,6 @@ var cash_out: int = 0
 var uses_groceries: int = 0
 ## Grocery portions added to the actor's household when it finishes (buying groceries).
 var adds_groceries: int = 0
+## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's
+## WorkSession drives it. Work has no duration of its own.
+var work: bool = false

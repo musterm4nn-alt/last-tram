@@ -1,8 +1,148 @@
 {
-	"_doc": "Shop furniture (T-0056): the Späti and Imbiss counters and the cash machine. Same format as furniture.json. Customers use the slots in front of a counter; staff slots behind it come with T-0059.",
+	"_doc": "Shop furniture (T-0056): the Späti and Imbiss counters and the ATM. Same format as furniture.json. Customers use the slots in front of a counter; the staff slot behind it (role \"staff\") is where people work (T-0059).",
 	"objects": [
-		{ "id": "spaeti_counter", "name": "Späti", "size": [3, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["spaeti_counter"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }, { "offset": [2, 1], "facing": [0, -1] }], "price": 150000, "debug_color": "#c9a227" },
-		{ "id": "imbiss_counter", "name": "Imbiss", "size": [3, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["imbiss_counter"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }, { "offset": [2, 1], "facing": [0, -1] }], "price": 250000, "debug_color": "#b5651d" },
-		{ "id": "atm", "name": "ATM", "size": [1, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["atm"], "use_slots": [{ "offset": [1, 0], "facing": [-1, 0] }], "price": 1500000, "debug_color": "#3a6ea5" }
+		{
+			"id": "spaeti_counter",
+			"name": "Späti",
+			"size": [
+				3,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"spaeti_counter"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						2,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						-1
+					],
+					"facing": [
+						0,
+						1
+					],
+					"role": "staff"
+				}
+			],
+			"price": 150000,
+			"debug_color": "#c9a227"
+		},
+		{
+			"id": "imbiss_counter",
+			"name": "Imbiss",
+			"size": [
+				3,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"imbiss_counter"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						2,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						-1
+					],
+					"facing": [
+						0,
+						1
+					],
+					"role": "staff"
+				}
+			],
+			"price": 250000,
+			"debug_color": "#b5651d"
+		},
+		{
+			"id": "atm",
+			"name": "ATM",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"atm"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						1,
+						0
+					],
+					"facing": [
+						-1,
+						0
+					]
+				}
+			],
+			"price": 1500000,
+			"debug_color": "#3a6ea5"
+		}
 	]
 }

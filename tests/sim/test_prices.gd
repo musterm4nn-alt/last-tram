@@ -2,8 +2,8 @@ extends TestCase
 ## T-0055: prices, paying when an action starts, and the shared requirements check.
 
 const BROKEN_PRICES: String = "res://tests/fixtures/content_broken/interactions/prices.json"
-## A use slot of the Kneipe's bar counter (the counter is at (47, 7)).
-const BAR_SLOT: Vector2 = Vector2(47.5, 8.5)
+## A use slot of the Kneipe's bar counter (the counter is at (47, 8) since T-0059).
+const BAR_SLOT: Vector2 = Vector2(47.5, 9.5)
 
 
 func _object(sim: Sim, def_id: String) -> WorldObject:

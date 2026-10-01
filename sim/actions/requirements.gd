@@ -13,7 +13,10 @@ const TEXT: Dictionary = {
 	"no_food": "the fridge is empty",
 	"no_home": "no home",
 	"fridge_full": "the fridge is full",
+	"not_your_shift": "not your shift",
 }
+## Reasons the menu doesn't show at all (the option isn't for this person).
+const HIDDEN: PackedStringArray = ["not_your_job"]
 
 
 ## Checked in order: the target object's lot is closed (opening hours) or someone else's home;
@@ -21,6 +24,8 @@ const TEXT: Dictionary = {
 ## cook with, a home with room in the fridge for a bag). Objects on no lot (test rooms) pass
 ## the lot and food rules. Objects on no lot (test rooms) pass the lot rules.
 static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
+	if def.work:
+		return _work(sim, person, sim.world.get_object(target_id))
 	if def.target == "object":
 		var obj := sim.world.get_object(target_id)
 		var lot := Lots.lot_at(sim, obj.origin) if obj != null else null
@@ -42,6 +47,19 @@ static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int)
 			return "no_home"
 		if home.groceries + def.adds_groceries > sim.content.economy.fridge_capacity:
 			return "fridge_full"
+	return ""
+
+
+## Work (T-0059): the object must be the person's workplace (tag and place), and it must be
+## between an hour before their shift and its end.
+static func _work(sim: Sim, person: Person, obj: WorldObject) -> String:
+	var job := sim.content.job(person.job.job_id) if person.job != null else null
+	var object_def := sim.content.object_def(obj.def_id) if obj != null else null
+	var place := sim.content.place_at(obj.origin) if obj != null else null
+	if job == null or object_def == null or not object_def.tags.has(job.workplace_tag) or place == null or place.id != job.place_id:
+		return "not_your_job"
+	if Jobs.shift_window(sim, person, sim.clock.tick).x < 0:
+		return "not_your_shift"
 	return ""
 
 

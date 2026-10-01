@@ -132,7 +132,7 @@ static func person_at(sim: Sim, point: Vector2, level: int, except_id: int) -> i
 	var best := 0
 	var best_distance := INF
 	for person: Person in sim.world.people.values():
-		if person.id == except_id or person.level != level:
+		if person.id == except_id or person.level != level or Jobs.hidden(sim, person):
 			continue
 		var offset := point - person.pos
 		if absf(offset.x) > PERSON_HALF_WIDTH or offset.y > 0.2 or offset.y < -PERSON_HEIGHT:
@@ -165,7 +165,7 @@ static func nearest_person(sim: Sim, person: Person) -> int:
 	ids.sort()
 	for id: int in ids:
 		var other: Person = sim.world.people[id]
-		if id == person.id or other.level != person.level:
+		if id == person.id or other.level != person.level or Jobs.hidden(sim, other):
 			continue
 		var score := _score(person, other.pos)
 		if score < best_score:
