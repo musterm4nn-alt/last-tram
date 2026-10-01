@@ -36,6 +36,22 @@ static func is_open(lot: Lot, clock: SimClock) -> bool:
 	return hour >= lot.open_hour or hour < lot.close_hour
 
 
+## When a closed "hours" lot opens next, for menus and the HUD: "opens 17:00", "opens
+## tomorrow 08:00", "opens Mon 08:00" (skipping closed days); "" when it is open now.
+static func opening_text(lot: Lot, clock: SimClock) -> String:
+	if is_open(lot, clock):
+		return ""
+	var ahead := 0 if clock.hour() < lot.open_hour and not lot.closed_days.has(clock.weekday()) else 1
+	while ahead < SimClock.DAYS_PER_WEEK and lot.closed_days.has((clock.weekday() + ahead) % SimClock.DAYS_PER_WEEK):
+		ahead += 1
+	var when := ""
+	if ahead == 1:
+		when = "tomorrow "
+	elif ahead > 1:
+		when = SimClock.WEEKDAY_NAMES[(clock.weekday() + ahead) % SimClock.DAYS_PER_WEEK] + " "
+	return "opens %s%02d:00" % [when, lot.open_hour]
+
+
 ## Public: yes. Hours: while open. Private: only for the people who live there.
 static func may_enter(sim: Sim, person: Person, lot: Lot) -> bool:
 	match lot.access:

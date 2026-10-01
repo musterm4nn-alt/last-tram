@@ -177,7 +177,7 @@ static func _cancel(sim: Sim, person: Person, action: Action, reason: String) ->
 	person.action_queue.remove_at(0)
 	if action.state == Action.ROUTING:
 		person.path.clear()
-	sim.emit_event(&"action_cancelled", {"person_id": person.id, "interaction_id": action.interaction_id, "reason": reason})
+	sim.emit_event(&"action_cancelled", {"person_id": person.id, "interaction_id": action.interaction_id, "reason": reason, "performing": action.state == Action.PERFORMING})
 
 
 ## An immediate walk takes over the front action; later queued actions stay queued.

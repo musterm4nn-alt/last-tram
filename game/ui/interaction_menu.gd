@@ -51,7 +51,7 @@ static func options(sim: Sim, target_id: int) -> Array[InteractionDef]:
 	return Interactions.offered_by(sim, target_id)
 
 
-## An entry's text: the name, " · €4.00" when it has a price, and " (closed)" style when
+## An entry's text: the name, " · €4.00" when it has a price, and " (not enough money)" style when
 ## `person` may not do it now (Requirements; T-0055).
 static func label(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
 	var text := def.name
@@ -59,8 +59,17 @@ static func label(sim: Sim, person: Person, def: InteractionDef, target_id: int)
 		text += " · %s" % Money.format(def.price)
 	var reason := Requirements.check(sim, person, def, target_id) if person != null else ""
 	if not reason.is_empty():
-		text += " (%s)" % Requirements.text(reason)
+		text += " (%s)" % reason_text(sim, reason, target_id)
 	return text
+
+
+## Requirements.text, plus when the place opens for "closed": "closed, opens 17:00".
+static func reason_text(sim: Sim, reason: String, target_id: int) -> String:
+	var obj := sim.world.get_object(target_id)
+	var lot := Lots.lot_at(sim, obj.origin) if reason == "closed" and obj != null else null
+	if lot != null:
+		return "closed, %s" % Lots.opening_text(lot, sim.clock)
+	return Requirements.text(reason)
 
 
 ## The labels prepare() shows, header first (pure, for tests). [] for an unknown target.

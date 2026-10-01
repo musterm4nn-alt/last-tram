@@ -39,7 +39,7 @@ func apply(sim: Sim) -> void:
 	person.action_queue.remove_at(current)
 	if current == 0 and removed.state == Action.ROUTING:
 		person.path.clear()
-	sim.emit_event(&"action_cancelled", {"person_id": person_id, "interaction_id": removed.interaction_id, "reason": "player"})
+	sim.emit_event(&"action_cancelled", {"person_id": person_id, "interaction_id": removed.interaction_id, "reason": "player", "performing": removed.state == Action.PERFORMING})
 
 
 func to_dict() -> Dictionary:
