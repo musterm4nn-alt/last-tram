@@ -6,7 +6,8 @@ extends RefCounted
 ## Household kinds by weight; flatmates are FLATMATES_MIN..FLATMATES_MAX people.
 const KIND_WEIGHTS: Dictionary = {Household.SINGLE: 30, Household.COUPLE: 40, Household.FLATMATES: 30}
 const FLATMATES_MIN: int = 2
-const FLATMATES_MAX: int = 3
+## Two: the flats have one double bed (two sides). A third flatmate never got a bed (T-0045).
+const FLATMATES_MAX: int = 2
 ## A partner's age is within this many years of the first member's.
 const COUPLE_AGE_GAP: int = 8
 ## How often partners share a last name.
@@ -36,6 +37,8 @@ static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: Plac
 	var household := Household.new()
 	household.id = sim.world.new_id()
 	household.kind = _pick_kind(rng)
+	if bed_places(sim, place) < 2:
+		household.kind = Household.SINGLE  # one usable side of the bed: one sleeper (T-0045)
 	household.home_lot_id = lot.id
 	var size := 1
 	if household.kind == Household.COUPLE:
@@ -65,6 +68,19 @@ static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: Plac
 			for b: int in household.member_ids:
 				if a != b:
 					Social.set_values(sim.world.get_person(a), b, BONDS[household.kind], sim.clock.tick)
+
+
+## How many people can sleep in `place`: the walkable use slots of its objects tagged "bed".
+static func bed_places(sim: Sim, place: PlaceDef) -> int:
+	var count := 0
+	for obj: WorldObject in sim.world.objects.values():
+		var def := sim.content.object_def(obj.def_id)
+		if def == null or not def.tags.has("bed") or sim.content.place_at(obj.origin) != place:
+			continue
+		for index: int in obj.slot_count(sim.content):
+			if sim.world.grid.is_walkable(obj.slot_cell(sim.content, index)):
+				count += 1
+	return count
 
 
 static func _pick_kind(rng: RandomNumberGenerator) -> String:

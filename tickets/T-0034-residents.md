@@ -74,6 +74,7 @@ between household members (T-0037), the population changing over time.
 - Test updates for a populated town (not weakened): `test_free_will.gd` counts only the
   player's choices and finished actions; `test_bug_report.gd` moves everyone's
   `last_input_tick` with the clock it rewinds, and reads reports with `Ser.parse_json`.
+- Later (T-0045): flatmates are 2 people, and households only go where the beds fit them.
 - Verified: `tools/check.sh` 398 passed, 0 failed (`test_residents.gd`, 8 tests).
   `tools/simrun.sh --days=1` OK. Screenshot `out/t0034.png`: residents in their first-floor
   flats at 08:30.

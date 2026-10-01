@@ -437,7 +437,7 @@
 			"def": "sink",
 			"cell": [
 				58,
-				9,
+				13,
 				1
 			],
 			"rotation": 0
@@ -446,7 +446,7 @@
 			"def": "shower",
 			"cell": [
 				58,
-				10,
+				14,
 				1
 			],
 			"rotation": 0
@@ -455,7 +455,7 @@
 			"def": "bed_double",
 			"cell": [
 				59,
-				12,
+				9,
 				1
 			],
 			"rotation": 0
@@ -491,7 +491,7 @@
 			"def": "sink",
 			"cell": [
 				58,
-				9,
+				13,
 				2
 			],
 			"rotation": 0
@@ -500,7 +500,7 @@
 			"def": "shower",
 			"cell": [
 				58,
-				10,
+				14,
 				2
 			],
 			"rotation": 0
@@ -509,7 +509,7 @@
 			"def": "bed_double",
 			"cell": [
 				59,
-				12,
+				9,
 				2
 			],
 			"rotation": 0
@@ -562,8 +562,8 @@
 		{
 			"def": "bed_double",
 			"cell": [
-				68,
-				12,
+				67,
+				13,
 				1
 			],
 			"rotation": 0
@@ -616,8 +616,8 @@
 		{
 			"def": "bed_double",
 			"cell": [
-				68,
-				12,
+				67,
+				13,
 				2
 			],
 			"rotation": 0
@@ -1057,8 +1057,8 @@
 		{
 			"def": "tv",
 			"cell": [
-				61,
-				9,
+				60,
+				12,
 				1
 			],
 			"rotation": 0
@@ -1120,8 +1120,8 @@
 		{
 			"def": "tv",
 			"cell": [
-				61,
-				9,
+				60,
+				12,
 				2
 			],
 			"rotation": 0

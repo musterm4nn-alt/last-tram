@@ -9,7 +9,12 @@ extends SceneTree
 ##          --no-free-will (turns the player's free will off at the start, so needs are
 ##          not looked after; useful to contrast with the default run for M1's acceptance),
 ##          --tiers=full|tiered and --active-radius=CELLS (the fidelity dial, T-0042; the
-##          demote radius is 10 cells more).
+##          demote radius is 10 cells more), --check-m2 (M2 acceptance, T-0045: fails the run
+##          unless the town lives well, see TownCheck, and the cost stays within
+##          BUDGET_MS_PER_STEP).
+
+## The M2 cost budget: milliseconds of sim work per step, with ~30 people.
+const BUDGET_MS_PER_STEP: float = 0.25
 ## The summary covers the player and, separately, all residents together (T-0035).
 ## As systems are added, extend _report() with their key numbers (needs, money, crimes...).
 
@@ -44,12 +49,14 @@ func _initialize() -> void:
 	var resident_stats := _new_need_stats(sim)
 	var action_counts: Dictionary = {}
 	var resident_actions: Dictionary = {}
+	var town := TownCheck.new()
 	var started := Time.get_ticks_usec()
 	for m: int in minutes:
 		sim.run_minutes(1)
 		_sample_needs(sim, need_stats)
 		_sample_residents(sim, resident_stats)
-		_count_finished_actions(sim, action_counts, resident_actions)
+		_count_finished_actions(sim, action_counts, resident_actions, town)
+		town.sample(sim)
 		if (m + 1) % report_every == 0:
 			_report(sim)
 	var seconds := (Time.get_ticks_usec() - started) / 1_000_000.0
@@ -63,6 +70,20 @@ func _initialize() -> void:
 		print("residents (%d), over all their minutes:" % residents)
 		_report_need_stats(sim, resident_stats, minutes)
 		_report_action_counts(resident_actions, "resident actions")
+	for line: String in town.summary(sim):
+		print(line)
+	if args.has("check-m2"):
+		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
+		var ms_per_step := seconds * 1000.0 / steps
+		if ms_per_step > BUDGET_MS_PER_STEP:
+			problems.append("%.3f ms per step is over the %.2f ms budget" % [ms_per_step, BUDGET_MS_PER_STEP])
+		for problem: String in problems:
+			print("M2 CHECK: " + problem)
+		print("M2 CHECK: %s" % ("PASSED" if problems.is_empty() else "FAILED"))
+		if not problems.is_empty():
+			print("LAST_TRAM_SIMRUN: FAILED")
+			quit(1)
+			return
 	print("LAST_TRAM_SIMRUN: OK")
 	quit(0)
 
@@ -127,8 +148,9 @@ func _sample_residents(sim: Sim, stats: Dictionary) -> void:
 
 ## Drains this minute's events and tallies finished interactions: the player's in `counts`,
 ## everyone else's in `resident_counts`.
-func _count_finished_actions(sim: Sim, counts: Dictionary, resident_counts: Dictionary) -> void:
+func _count_finished_actions(sim: Sim, counts: Dictionary, resident_counts: Dictionary, town: TownCheck) -> void:
 	for event: Dictionary in sim.events.drain():
+		town.observe(sim, event)
 		if event["type"] != &"action_finished":
 			continue
 		var data: Dictionary = event["data"]
