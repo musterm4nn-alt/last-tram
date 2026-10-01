@@ -38,7 +38,9 @@ flowchart LR
 - **`data/`** is content (terrain, districts, and later objects, interactions, jobs, names),
   loaded and validated by `ContentDB`.
 
-These rules are enforced by lint tests (`tests/lint/`), not just by convention.
+These rules are enforced by lint tests (`tests/lint/`), not just by convention. The lints
+are best-effort textual checks: they catch the obvious shapes of a violation, while reviews
+remain the backstop for anything a regex cannot see.
 
 ## Folder map
 

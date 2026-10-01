@@ -24,11 +24,6 @@ func _on_sim_event(event: Dictionary) -> void:
 	match event["type"]:
 		&"person_spawned":
 			_add(int(data["person_id"]))
-		&"person_removed":
-			var id := int(data["person_id"])
-			if _views.has(id):
-				_views[id].queue_free()
-				_views.erase(id)
 
 
 func _add(person_id: int) -> void:

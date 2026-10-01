@@ -22,6 +22,8 @@ const MAX_STEPS_PER_FRAME: int = 200
 ## While the player does a time_skip action (sleeping), one frame runs the sim until it ends,
 ## up to this many steps (one game day).
 const SKIP_MAX_STEPS: int = 24 * 60 * SimClock.STEPS_PER_GAME_MINUTE
+## advance_minutes forwards events every this many game minutes (bounded memory).
+const ADVANCE_CHUNK_MINUTES: int = 60
 const SAVE_DIR: String = "user://saves"
 ## Where F9 bug reports go (tests pass their own folder).
 const BUG_REPORT_DIR: String = "user://bug_reports"
@@ -131,8 +133,10 @@ func toggle_pause() -> void:
 func advance_minutes(minutes: int) -> void:
 	if sim == null:
 		return
-	sim.run_minutes(minutes)
-	command_log.append_array(sim.take_applied_commands())
+	for start: int in range(0, minutes, ADVANCE_CHUNK_MINUTES):
+		sim.run_minutes(mini(ADVANCE_CHUNK_MINUTES, minutes - start))
+		command_log.append_array(sim.take_applied_commands())
+		_forward_events()
 
 
 func _process(delta: float) -> void:

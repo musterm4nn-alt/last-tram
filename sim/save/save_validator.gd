@@ -111,8 +111,6 @@ static func _grid(grid: Dictionary, s: SaveSchema) -> void:
 	if levels.is_empty() or width * height * levels.size() > MAX_GRID_CELLS:
 		s.reject("world.grid", "must have levels within the supported grid size")
 		return
-	if width <= 0 or height <= 0 or width > 4096 or height > 4096:
-		return
 	for key: Variant in levels:
 		var name := s.text(key, "world.grid level")
 		if name.length() > 11 or not name.is_valid_int() or name != str(name.to_int()) or name.to_int() < -2147483648 or name.to_int() > 2147483647:

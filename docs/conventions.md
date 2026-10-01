@@ -64,7 +64,8 @@ for i: int in 10:                         # range loops over ints are typed auto
 9. Numbers that tune gameplay (rates, speeds, thresholds) go in `data/` JSON, not constants,
    once they're more than a placeholder.
 
-`tests/lint/test_sim_purity.gd` enforces rules 1–3. Reviews enforce the rest.
+`tests/lint/test_sim_purity.gd` enforces rules 1–3. The lint rules are textual (regex over
+the source), so treat them as a tripwire rather than a proof: reviews enforce the rest.
 
 ## game/ rules
 
