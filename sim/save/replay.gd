@@ -105,8 +105,8 @@ static func check(start: Dictionary, commands: Array, end: Dictionary, content: 
 ## The first difference between `sim` and the save dictionary `end`, both round-tripped
 ## through JSON so numbers compare the same way; "pending_commands" is ignored.
 static func compare(sim: Sim, end: Dictionary) -> String:
-	var replayed: Dictionary = JSON.parse_string(Ser.to_json(SaveCodec.to_dict(sim)))
-	var expected: Dictionary = JSON.parse_string(Ser.to_json(end))
+	var replayed: Dictionary = Ser.restore_floats(JSON.parse_string(Ser.to_json(SaveCodec.to_dict(sim))))
+	var expected: Dictionary = Ser.restore_floats(JSON.parse_string(Ser.to_json(end)))
 	replayed.erase("pending_commands")
 	expected.erase("pending_commands")
 	return first_difference(expected, replayed)

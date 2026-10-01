@@ -61,7 +61,7 @@ static func from_json(text: String, content: ContentDB, errors: Array[String] = 
 		errors.append("Save file exceeds the supported size.")
 		return null
 	var json := JSON.new()
-	if json.parse(text) != OK:
+	if Ser.parse_json(json, text) != OK:
 		errors.append("Save file is not valid JSON (line %d: %s)." % [json.get_error_line(), json.get_error_message()])
 		return null
 	if not json.data is Dictionary:
