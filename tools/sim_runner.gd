@@ -73,6 +73,7 @@ func _initialize() -> void:
 	for line: String in town.summary(sim):
 		print(line)
 	print(_money_line(sim))
+	print(_groceries_line(sim, resident_actions))
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
 		var ms_per_step := seconds * 1000.0 / steps
@@ -120,6 +121,17 @@ func _money_line(sim: Sim) -> String:
 	return "money: people hold %s (median %s) | in: %s | out: %s" % [
 		Money.format(Money.held(sim.world)), Money.format(median),
 		_totals_text(sim.world.ledger.sources), _totals_text(sim.world.ledger.sinks)]
+
+
+## "groceries: households hold N portions (lowest M), bags bought K".
+func _groceries_line(sim: Sim, resident_actions: Dictionary) -> String:
+	var total := 0
+	var lowest := -1
+	for household: Household in sim.world.households.values():
+		total += household.groceries
+		lowest = household.groceries if lowest < 0 else mini(lowest, household.groceries)
+	return "groceries: households hold %d portions (lowest %d), bags bought %d" % [
+		total, maxi(lowest, 0), int(resident_actions.get("buy_groceries", 0))]
 
 
 func _totals_text(totals: Dictionary[String, int]) -> String:

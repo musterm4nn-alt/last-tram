@@ -139,6 +139,9 @@ static func _start_performing(sim: Sim, person: Person, action: Action, slot: in
 	if def.price > 0 and not Money.spend(sim, person, def.price, "purchase", def.id):
 		_fail(sim, person, action, "cant_afford")
 		return
+	var stock := Groceries.household_at(sim, obj) if def.uses_groceries > 0 else null
+	if stock != null:
+		Groceries.change(sim, stock, -def.uses_groceries)
 	var cell := obj.slot_cell(sim.content, slot)
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
 	person.path.clear()
@@ -238,6 +241,9 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 			Social.add_moodlet(sim, person, def.finish_moodlet)
 		if def.cash_out > 0:
 			Money.withdraw(sim, person, def.cash_out)  # false (nothing happens) if the bank emptied
+		var home := Groceries.home_household(sim, person) if def.adds_groceries > 0 else null
+		if home != null:
+			Groceries.change(sim, home, def.adds_groceries)
 		sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})
 
 

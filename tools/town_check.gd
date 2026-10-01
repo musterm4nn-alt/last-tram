@@ -5,7 +5,7 @@ extends RefCounted
 ## lists what went wrong in plain words ([] = healthy). Used by `tools/simrun.sh --check-m2`
 ## and tests/sim/test_m2_town_lives.gd.
 
-const EATING: PackedStringArray = ["cook_meal", "grab_snack"]
+const EATING: PackedStringArray = ["cook_meal", "grab_snack", "eat_doener", "eat_fries", "buy_snack"]
 ## Share of person-minutes any need may spend below 30.
 const MAX_LOW_SHARE: float = 0.02
 ## No need may ever fall below this.

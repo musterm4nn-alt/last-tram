@@ -1,12 +1,12 @@
 ---
 id: T-0057
 title: Groceries - the fridge can run empty
-status: todo
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0056]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -83,21 +83,36 @@ Change `data/economy.json`, `sim/content/economy_def.gd`, `economy_loader.gd`,
   report adds `groceries: households hold N portions (lowest M), bags bought K`.
 
 ## Acceptance criteria
-- [ ] `test_groceries.gd::test_cooking_uses_portions` (cook −2, snack −1) and
+- [x] `test_groceries.gd::test_cooking_uses_portions` (cook −2, snack −1) and
   `test_an_empty_fridge_greys_out_cooking` (refused `no_food`; menu "… (the fridge is
   empty)").
-- [ ] `test_buying_groceries_fills_the_fridge` (+6 at home, −€9) and
+- [x] `test_buying_groceries_fills_the_fridge` (+6 at home, −€9) and
   `test_a_full_fridge_refuses_more`.
-- [ ] Free will → `test_low_stock_sends_people_shopping` (a resident with 2 portions at home
+- [x] Free will → `test_low_stock_sends_people_shopping` (a resident with 2 portions at home
   gets a `buy_groceries` option at the Späti from across town; with 12 they don't) and
   `test_hungry_people_with_empty_fridges_eat_out`.
-- [ ] Saving → v5 round trip, the migration gives 10 portions, starting stock is
+- [x] Saving → v5 round trip, the migration gives 10 portions, starting stock is
   deterministic and within the range.
-- [ ] `tools/check.sh` passes. `tools/simrun.sh --days=7 --check-m2` passes on seeds 1–3 (so
+- [x] `tools/check.sh` passes. `tools/simrun.sh --days=7 --check-m2` passes on seeds 1–3 (so
   everyone still eats); the notes give bags bought, Döner and snacks eaten, and the lowest
   stock.
 
 ## Implementation notes
+- As specified: `Groceries` (`sim/economy/groceries.gd`), `Household.groceries` (save v5,
+  `_v4_to_v5`, the validator, `v5_basic.json`), `uses_groceries`/`adds_groceries`, the
+  `no_food`/`no_home`/`fridge_full` requirements, errands in `Autonomy.candidates`
+  (`Autonomy.errand`), the fridge's menu header, `TownCheck.EATING`, the simrun groceries line.
+- One addition: objects on **no lot** (only in `from_rows` test rooms) aren't limited by
+  groceries (`Groceries.counts`), as they already pass the lot rules. Without it, every test
+  room's fridge counted as empty. In the real town every fridge is in a home.
+- Built in a second worktree while Muse playtested T-0054..56 in the first.
+- Verified: `tools/check.sh` 508 passed, 0 failed (`test_groceries.gd`, 8 tests, and a
+  validation test). `tools/simrun.sh --days=7 --check-m2` PASSED on seeds 1, 2 and 3:
+  residents bought 121/122/105 bags of groceries a week, plus 63/53/63 Späti snacks,
+  16/19/10 Döner and 20/15/23 fries. The lowest resident hunger was 16.3/14.9/18.8 (under 30
+  for 0.6/0.8/0.3% of minutes), and households ended the week with 27/35/45 portions. Residents
+  spent €3,490/€3,311/€3,075 in a week (food and drinks). Screenshot `out/t0057.png`: "Fridge
+  · 11 portions".
 
 ## Questions
 

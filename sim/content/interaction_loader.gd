@@ -82,6 +82,12 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.cash_out = reader.read_int(d, "cash_out", ctx)
 			if def.cash_out < 0:
 				reader.error("%s: 'cash_out' must be >= 0" % ctx)
+		for key: String in ["uses_groceries", "adds_groceries"]:
+			if d.has(key):
+				var portions := reader.read_int(d, key, ctx)
+				if portions < 0:
+					reader.error("%s: '%s' must be >= 0" % [ctx, key])
+				def.set(key, portions)
 		if d.has("routine"):
 			def.routine = reader.read_str(d, "routine", ctx)
 			if not def.routine in ["sleep", "out"]:

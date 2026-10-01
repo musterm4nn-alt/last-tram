@@ -16,7 +16,9 @@ const NOISE: float = 1.0
 const TOP_N: int = 3
 ## Objects whose origin is within this many cells (Chebyshev distance, same level) count,
 ## if the person may enter the object's lot (Lots.may_enter; objects on no lot are public).
-## In the person's out window, objects offering an "out" interaction count anywhere (T-0052).
+## In the person's out window, objects offering an "out" interaction count anywhere (T-0052),
+## and so do errands (T-0057): a grocery run while the home fridge is low, and food for sale
+## while hungry with (almost) nothing at home.
 const SEARCH_RADIUS: int = 12
 
 
@@ -29,11 +31,13 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 	var here := person.cell()
 	var ids: Array = sim.world.objects.keys()
 	ids.sort()
-	var outings := _outing_objects(sim) if Routines.going_out_time(sim, person) else {}
+	var going_out := Routines.going_out_time(sim, person)
+	var far_defs := _outing_objects(sim) if going_out else {}
+	far_defs.merge(_errand_objects(sim, person))
 	for id: int in ids:
 		var obj: WorldObject = sim.world.objects[id]
 		var near := obj.origin.z == here.z and maxi(absi(obj.origin.x - here.x), absi(obj.origin.y - here.y)) <= SEARCH_RADIUS
-		if not near and not outings.has(obj.def_id):
+		if not near and not far_defs.has(obj.def_id):
 			continue
 		var lot := Lots.lot_at(sim, obj.origin)
 		if lot != null and not Lots.may_enter(sim, person, lot):
@@ -42,7 +46,9 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 		if cells < 0:
 			continue
 		for def: InteractionDef in Interactions.offered_by(sim, id):
-			if not near and def.routine != "out":
+			if not near and not (going_out and def.routine == "out") and not errand(sim, person, def):
+				continue
+			if def.adds_groceries > 0 and not _restock_needed(sim, person):
 				continue
 			if not Requirements.check(sim, person, def, id).is_empty():
 				continue
@@ -51,7 +57,8 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 				"interaction_id": def.id,
 				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
 					+ Routines.score_bonus(sim, person, def) - Utility.price_cost(person, def, sim.content)
-					- TRAVEL_COST_PER_CELL * cells,
+					- TRAVEL_COST_PER_CELL * cells
+					+ (sim.content.economy.restock_bonus if def.adds_groceries > 0 else 0.0),
 				"cells": cells,
 			})
 	out.append_array(_person_options(sim, person))
@@ -97,6 +104,38 @@ static func _person_options(sim: Sim, person: Person) -> Array[Dictionary]:
 					- TRAVEL_COST_PER_CELL * cells,
 				"cells": cells,
 			})
+	return out
+
+
+## True for errands worth crossing town for (T-0057): a grocery run while the home stock is
+## below restock_below, and food for sale (a price, advertises hunger) while hunger is below
+## hungry_below and the home has fewer than 2 portions.
+static func errand(sim: Sim, person: Person, def: InteractionDef) -> bool:
+	if def.adds_groceries > 0:
+		return _restock_needed(sim, person)
+	if def.price <= 0 or not def.advertise.has("hunger"):
+		return false
+	if float(person.needs.get("hunger", 100.0)) >= sim.content.economy.hungry_below:
+		return false
+	var home := Groceries.home_household(sim, person)
+	return home == null or home.groceries < 2
+
+
+## True while the person's home fridge holds fewer than restock_below portions.
+static func _restock_needed(sim: Sim, person: Person) -> bool:
+	var home := Groceries.home_household(sim, person)
+	return home != null and home.groceries < sim.content.economy.restock_below
+
+
+## Object def ids offering an errand for this person now (see errand()).
+static func _errand_objects(sim: Sim, person: Person) -> Dictionary:
+	var out: Dictionary = {}
+	for interaction: InteractionDef in sim.content.interactions.values():
+		if interaction.target != "object" or not errand(sim, person, interaction):
+			continue
+		for def: ObjectDef in sim.content.objects.values():
+			if Array(interaction.object_tags).any(func(tag: String) -> bool: return tag in def.tags):
+				out[def.id] = true
 	return out
 
 

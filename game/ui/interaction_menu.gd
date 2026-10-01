@@ -72,7 +72,11 @@ static func entries(sim: Sim, object_id: int) -> Array[String]:
 		out.append(person.full_name())
 	elif obj != null:
 		var def := sim.content.object_def(obj.def_id)
-		out.append(def.name if def != null else obj.def_id)
+		var header := def.name if def != null else obj.def_id
+		var stock := Groceries.stock_text(sim, obj)
+		if not stock.is_empty() and Interactions.offered_by(sim, object_id).any(func(i: InteractionDef) -> bool: return i.uses_groceries > 0):
+			header += " · " + stock
+		out.append(header)
 	else:
 		return out
 	var offered := options(sim, object_id)
