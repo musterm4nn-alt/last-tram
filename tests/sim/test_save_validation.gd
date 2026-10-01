@@ -159,3 +159,11 @@ func test_household_groceries_must_be_whole_and_not_negative() -> void:
 		var data := SaveCodec.to_dict(sim)
 		data["world"]["households"][0]["groceries"] = value
 		_reject(data, "bad groceries %s" % [value])
+
+
+func test_jobs_are_validated() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	for job: Variant in ["clerk", {"job_id": 5}, {"job_id": "office_clerk", "position": -1}, {"job_id": "office_clerk", "performance": 140}]:
+		var data := SaveCodec.to_dict(sim)
+		data["world"]["people"][0]["job"] = job
+		_reject(data, "bad job %s" % [job])

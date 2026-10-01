@@ -1,0 +1,7 @@
+{
+	"_doc": "Workplaces (T-0058): the tram shelter where people with city jobs take the tram, and the desk in the Polizeiposten. Same format as furniture.json. Nothing offers interactions on them until work arrives (T-0059).",
+	"objects": [
+		{ "id": "tram_stop", "name": "Tram shelter", "size": [6, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["tram_stop"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }, { "offset": [2, 1], "facing": [0, -1] }, { "offset": [3, 1], "facing": [0, -1] }, { "offset": [4, 1], "facing": [0, -1] }, { "offset": [5, 1], "facing": [0, -1] }, { "offset": [-1, 0], "facing": [0, -1] }, { "offset": [6, 0], "facing": [0, -1] }], "price": 800000, "debug_color": "#4d7c8a" },
+		{ "id": "police_desk", "name": "Desk", "size": [2, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["police_desk"], "use_slots": [{ "offset": [0, -1], "facing": [0, 1] }, { "offset": [1, -1], "facing": [0, 1] }, { "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }], "price": 60000, "debug_color": "#5b6f8f" }
+	]
+}

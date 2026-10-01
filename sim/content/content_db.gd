@@ -28,6 +28,8 @@ var moodlets: Dictionary[String, MoodletDef] = {}
 ## Daily rhythms by id (data/routines.json) and the id people get by default.
 var routines: Dictionary[String, RoutineDef] = {}
 var default_routine: String = ""
+## Jobs by id (data/jobs.json, T-0058).
+var jobs: Dictionary[String, JobDef] = {}
 ## Money tuning (data/economy.json, D29).
 var economy: EconomyDef = EconomyDef.new()
 var errors: PackedStringArray = []
@@ -79,6 +81,7 @@ func load_from(root: String) -> void:
 	RoutineLoader.load(self, reader, root.path_join("routines.json"))
 	DialogueLoader.load(self, reader, root.path_join("dialogue"))
 	WorldLoader.load(self, reader, root.path_join("world"))
+	JobLoader.load(self, reader, root.path_join("jobs.json"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
 		errors.append(problem)
@@ -190,6 +193,11 @@ func moodlet(id: String) -> MoodletDef:
 ## The routine with this id, or null.
 func routine(id: String) -> RoutineDef:
 	return routines.get(id)
+
+
+## The job with this id, or null.
+func job(id: String) -> JobDef:
+	return jobs.get(id)
 
 
 ## The interaction with this id, or null.

@@ -35,6 +35,10 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		reader.error("%s: 'fridge_capacity' must be >= 1 and hold the starting groceries" % path)
 	if economy.restock_below < 0 or economy.restock_bonus < 0.0 or economy.hungry_below < 0.0:
 		reader.error("%s: restock_below, restock_bonus and hungry_below must be >= 0" % path)
+	economy.player_job = reader.read_str(root, "player_job", path) if root.has("player_job") else ""
+	economy.retirement_age = reader.read_int(root, "retirement_age", path)
+	if economy.retirement_age <= Person.MIN_AGE:
+		reader.error("%s: 'retirement_age' must be above %d" % [path, Person.MIN_AGE])
 	db.economy = economy
 
 

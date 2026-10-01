@@ -1,0 +1,374 @@
+{
+	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay (the hunger term stands for lunch). levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated.",
+	"jobs": [
+		{
+			"id": "spaeti_clerk",
+			"name": "Späti clerk",
+			"place_id": "spaeti_kaya",
+			"session": "on_site",
+			"workplace_tag": "spaeti_counter",
+			"need_rates": {
+				"energy": -3.0,
+				"fun": -3.0,
+				"social": 4.0,
+				"comfort": -2.0,
+				"hunger": 3.0
+			},
+			"levels": [
+				{
+					"title": "Späti clerk",
+					"wage": 1150
+				},
+				{
+					"title": "Späti manager",
+					"wage": 1300
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri",
+						"sat",
+						"sun"
+					],
+					"from": 8,
+					"to": 17
+				},
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu"
+					],
+					"from": 17,
+					"to": 2
+				},
+				{
+					"days": [
+						"fri",
+						"sat",
+						"sun"
+					],
+					"from": 17,
+					"to": 2
+				}
+			],
+			"start_filled": 1.0
+		},
+		{
+			"id": "imbiss_cook",
+			"name": "Imbiss cook",
+			"place_id": "imbiss_anadolu",
+			"session": "on_site",
+			"workplace_tag": "imbiss_counter",
+			"need_rates": {
+				"energy": -3.0,
+				"fun": -3.0,
+				"social": 4.0,
+				"comfort": -2.0,
+				"hunger": 3.0
+			},
+			"levels": [
+				{
+					"title": "Imbiss cook",
+					"wage": 1200
+				},
+				{
+					"title": "Head cook",
+					"wage": 1400
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri",
+						"sat",
+						"sun"
+					],
+					"from": 11,
+					"to": 17
+				},
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri",
+						"sat",
+						"sun"
+					],
+					"from": 17,
+					"to": 23
+				}
+			],
+			"start_filled": 1.0
+		},
+		{
+			"id": "bartender",
+			"name": "Bartender",
+			"place_id": "kneipe_anker",
+			"session": "on_site",
+			"workplace_tag": "bar",
+			"need_rates": {
+				"energy": -3.0,
+				"fun": -3.0,
+				"social": 4.0,
+				"comfort": -2.0,
+				"hunger": 3.0
+			},
+			"levels": [
+				{
+					"title": "Bartender",
+					"wage": 1250
+				},
+				{
+					"title": "Head bartender",
+					"wage": 1450
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri",
+						"sat",
+						"sun"
+					],
+					"from": 17,
+					"to": 2
+				}
+			],
+			"start_filled": 1.0
+		},
+		{
+			"id": "police_officer",
+			"name": "Police officer",
+			"place_id": "polizeiposten",
+			"session": "rabbit_hole",
+			"workplace_tag": "police_desk",
+			"need_rates": {
+				"energy": -3.0,
+				"fun": -4.0,
+				"comfort": 6.0,
+				"hunger": 3.0
+			},
+			"levels": [
+				{
+					"title": "Police officer",
+					"wage": 1900
+				},
+				{
+					"title": "Sergeant",
+					"wage": 2300
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri"
+					],
+					"from": 6,
+					"to": 14
+				},
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri"
+					],
+					"from": 14,
+					"to": 22
+				}
+			],
+			"start_filled": 1.0
+		},
+		{
+			"id": "office_clerk",
+			"name": "Office clerk",
+			"place_id": "tram_stop_altmarkt",
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"need_rates": {
+				"energy": -3.0,
+				"fun": -4.0,
+				"comfort": 6.0,
+				"hunger": 3.0
+			},
+			"levels": [
+				{
+					"title": "Office clerk",
+					"wage": 1400
+				},
+				{
+					"title": "Senior clerk",
+					"wage": 1700
+				},
+				{
+					"title": "Team lead",
+					"wage": 2100
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri"
+					],
+					"from": 9,
+					"to": 17,
+					"count": 3
+				}
+			],
+			"start_filled": 0.7
+		},
+		{
+			"id": "warehouse_worker",
+			"name": "Warehouse worker",
+			"place_id": "tram_stop_altmarkt",
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"need_rates": {
+				"energy": -6.0,
+				"fun": -3.0,
+				"comfort": -3.0,
+				"hunger": 2.0,
+				"hygiene": -3.0
+			},
+			"levels": [
+				{
+					"title": "Warehouse worker",
+					"wage": 1300
+				},
+				{
+					"title": "Forklift driver",
+					"wage": 1500
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri"
+					],
+					"from": 6,
+					"to": 14,
+					"count": 2
+				}
+			],
+			"start_filled": 0.7
+		},
+		{
+			"id": "care_worker",
+			"name": "Care worker",
+			"place_id": "tram_stop_altmarkt",
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"need_rates": {
+				"energy": -3.0,
+				"fun": -3.0,
+				"social": 4.0,
+				"comfort": -2.0,
+				"hunger": 3.0
+			},
+			"levels": [
+				{
+					"title": "Care worker",
+					"wage": 1500
+				},
+				{
+					"title": "Senior carer",
+					"wage": 1800
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri"
+					],
+					"from": 7,
+					"to": 15
+				},
+				{
+					"days": [
+						"wed",
+						"thu",
+						"fri",
+						"sat",
+						"sun"
+					],
+					"from": 14,
+					"to": 22
+				}
+			],
+			"start_filled": 0.7
+		},
+		{
+			"id": "builder",
+			"name": "Builder",
+			"place_id": "tram_stop_altmarkt",
+			"session": "rabbit_hole",
+			"workplace_tag": "tram_stop",
+			"need_rates": {
+				"energy": -6.0,
+				"fun": -3.0,
+				"comfort": -3.0,
+				"hunger": 2.0,
+				"hygiene": -3.0
+			},
+			"levels": [
+				{
+					"title": "Builder",
+					"wage": 1600
+				},
+				{
+					"title": "Foreman",
+					"wage": 1900
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri"
+					],
+					"from": 7,
+					"to": 16,
+					"count": 2
+				}
+			],
+			"start_filled": 0.7
+		}
+	]
+}

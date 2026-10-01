@@ -21,3 +21,6 @@ var restock_below: int = 0
 var restock_bonus: float = 0.0
 ## ...and eats out when hunger is below this with (almost) nothing at home.
 var hungry_below: float = 0.0
+## Jobs (T-0058): the job a new game's player starts in ("" = none), and the age people retire.
+var player_job: String = ""
+var retirement_age: int = 67

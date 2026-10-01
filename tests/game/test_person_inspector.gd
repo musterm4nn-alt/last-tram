@@ -35,6 +35,13 @@ func test_lines_show_who_they_are_and_how_they_see_you() -> void:
 	assert_true(lines[4].contains("with %s" % partner.display_name()), lines[4])
 	assert_eq(lines[5], "Money: %s" % Money.format(person.wallet.total()))
 	assert_true(person.wallet.total() > 0, "residents have starting money")
+	assert_eq(lines[6], "Job: %s" % PersonInspector.job_text(sim, person))
+	assert_eq(PersonInspector.job_text(sim, sim.world.player()), "Office clerk (Mon–Fri 9–17)")
+	var someone := sim.world.player()
+	someone.job = null
+	assert_eq(PersonInspector.job_text(sim, someone), "Unemployed")
+	someone.age_years = 70
+	assert_eq(PersonInspector.job_text(sim, someone), "Retired")
 	assert_has(lines, "You: a stranger")
 	assert_has(lines, "  Remembers nothing about you yet.")
 

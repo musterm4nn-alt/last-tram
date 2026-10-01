@@ -160,3 +160,18 @@ func _object(sim: Sim, def_id: String) -> int:
 		if sim.world.objects[id].def_id == def_id:
 			return id
 	return 0
+
+
+func test_hunger_wakes_a_sleeper() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	player.free_will = false
+	_at(sim, 2)
+	player.needs["energy"] = 30.0
+	player.needs["hunger"] = 16.0
+	sim.submit(QueueInteractionCommand.new(player.id, "sleep", _object(sim, "bed_double")))
+	sim.run_minutes(50)
+	assert_true(_asleep(sim, player), "hunger is critical, but the first hour of sleep is kept")
+	sim.run_minutes(15)
+	assert_false(_asleep(sim, player), "starving at 03:00: up to eat, not asleep until 07:00")
+	assert_true(player.needs["hunger"] < 15.0)
