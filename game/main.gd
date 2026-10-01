@@ -52,6 +52,7 @@ func _ready() -> void:
 	add_child(PeopleView2D.new())
 	_camera = CameraRig2D.new()
 	add_child(_camera)
+	add_child(BubblesLayer.new())
 	_hud = Hud.new()
 	_hud.visible = false
 	add_child(_hud)

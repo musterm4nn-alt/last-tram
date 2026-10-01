@@ -19,6 +19,8 @@ var start_district: String = ""
 var objects: Dictionary[String, ObjectDef] = {}
 ## Interactions by id, loaded from every file in data/interactions/.
 var interactions: Dictionary[String, InteractionDef] = {}
+## Bubble text for the view (data/dialogue/, T-0040).
+var dialogue: DialogueDef = DialogueDef.new()
 ## Temporary mood modifiers by id (data/moodlets.json).
 var moodlets: Dictionary[String, MoodletDef] = {}
 ## Daily rhythms by id (data/routines.json) and the id people get by default.
@@ -69,6 +71,7 @@ func load_from(root: String) -> void:
 	MoodletLoader.load(self, reader, root.path_join("moodlets.json"))
 	InteractionLoader.load(self, reader, root.path_join("interactions"))
 	RoutineLoader.load(self, reader, root.path_join("routines.json"))
+	DialogueLoader.load(self, reader, root.path_join("dialogue"))
 	WorldLoader.load(self, reader, root.path_join("world"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
