@@ -42,6 +42,10 @@ static func _paint(image: Image, x0: int, px: int, t: TerrainDef, content: Conte
 		"fountain":
 			_disc(image, x0 + px / 2, px / 2, px / 3, base.lightened(0.3))
 			return
+		"stairs":
+			for i: int in 3:
+				image.fill_rect(Rect2i(x0, px * (i + 1) / 4 - 1, px, 2), base.darkened(0.3))
+			return
 	match t.surface:
 		"wall":
 			image.fill_rect(Rect2i(x0, 0, px, px / 4), base.lightened(0.18))

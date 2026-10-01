@@ -22,7 +22,8 @@ func step(sim: Sim) -> void:
 
 
 ## Walks `person` along their path, covering up to `budget` cells this step.
-## Leftover distance carries on to the next waypoint in the same step.
+## Leftover distance carries on to the next waypoint in the same step. A waypoint on another
+## level is a stair hop (same x, y): the person changes level there, spending 1.0.
 static func follow_path(sim: Sim, person: Person, budget: float) -> void:
 	while budget > 0.0 and not person.path.is_empty():
 		var next: Vector3i = person.path[0]
@@ -31,6 +32,12 @@ static func follow_path(sim: Sim, person: Person, budget: float) -> void:
 			person.path.clear()
 			sim.emit_event(&"path_blocked", {"person_id": person.id})
 			return
+		if next.z != person.level:
+			person.level = next.z
+			person.pos = Vector2(next.x + 0.5, next.y + 0.5)
+			person.path.remove_at(0)
+			budget -= 1.0
+			continue
 		var centre := Vector2(next.x + 0.5, next.y + 0.5)
 		var to_centre := centre - person.pos
 		var dist := to_centre.length()

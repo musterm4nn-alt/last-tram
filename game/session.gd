@@ -131,6 +131,10 @@ func _process(delta: float) -> void:
 				break
 		if steps_last_frame == MAX_STEPS_PER_FRAME:
 			_accumulator = 0.0
+		# The view shows the player's floor (stairs change it).
+		var player := sim.world.player()
+		if player != null:
+			viewed_level = player.level
 		alpha = clampf(_accumulator, 0.0, 1.0)
 		sim_usec_last_frame = Time.get_ticks_usec() - started
 	command_log.append_array(sim.take_applied_commands())
