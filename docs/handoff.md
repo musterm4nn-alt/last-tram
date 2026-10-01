@@ -7,8 +7,9 @@ rewrite it once M3 is under way.
 ## Where things stand
 
 - **M1** ✅ (signed off by the owner). **M2** is fully built: T-0030 to T-0053 are all `done`
-  and merged into `main` (last merge `0b7a834`). The headless criteria pass:
-  `tools/simrun.sh --days=7 --check-m2` on seeds 1, 2 and 3. `tools/check.sh`: 462 tests pass,
+  and merged into `main` (last merge `0b7a834`, plus owner-directed review fixes `6e2e5b6`
+  on top). The headless criteria pass:
+  `tools/simrun.sh --days=7 --check-m2` on seeds 1, 2 and 3. `tools/check.sh`: 463 tests pass,
   in about 40 s.
 - **Waiting for the owner:** the M2 evening playtest. The checklist is in
   `tickets/T-0045-*.md`, and the playbook step "Playtest M2" is not ticked yet. The roadmap
@@ -36,6 +37,8 @@ rewrite it once M3 is under way.
   `git -C /Users/xamxim/last-tram merge --no-ff t/NNNN-slug`, then push `main` from there,
   then `git merge --ff-only main` back in the worktree and delete the branch.
 - Never `--no-verify`, and never a bare `git stash` (use a tagged stash with its SHA).
+- CI: `.github/workflows/check.yml` runs `tools/check.sh` on pushes to `main` and pull
+  requests (Godot 4.7.1 on ubuntu-latest).
 - After adding a `class_name`, run `tools/check.sh` (it imports) before `tools/test.sh`.
 - Throwaway experiments: `godot --headless --path . --script res://out/x.gd` (`out/` is
   git-ignored). See memory "headless-godot-experiments". For golden values from `main`
@@ -85,6 +88,39 @@ people) and D28 (tiers v1) are in `docs/decisions.md`.
 - Tiers: the event-driven background (next_wake_tick) waits for a second district (M7).
 - The player's own bed has one usable side (fine for one person; matters for M6
   partners).
+
+## Owner-directed addition: secrets and discoveries
+
+On 1 October the owner asked for the secrets/discoveries idea from their own small-hours
+browser prototype to be brought over. A design draft is written:
+**`docs/design/discoveries.md`** (in `/Users/xamxim/last-tram` — see it before planning).
+It is systemic, not a story: clues are learned by trust, by reading notice boards, mail and
+bins, or by searching a place; uncovering is a deterministic time + level check once per
+person, and effects are typed — note, money, item, moodlet, contact, unlock_interaction.
+Knowledge is per person, resource effects are world-once, so the M3 ledger stays honest.
+It expects the phone (M3) to grow a Notebook app and the map to hide unknown places.
+
+Proposed slices, to turn into tickets while planning M3:
+
+1. **Discovery data + sim plumbing (M):** `DiscoveryDef` / `DiscoveryLoader`,
+   `Person.known_clues` and `Person.discoveries`, the world-once set on `World`, validator,
+   SAVE_VERSION bump, migration and fixture. Gates stay trust, time, level and knowledge —
+   skills don't exist yet.
+2. **Search and clue sources (M):** the place-level `search` interaction, trust-gated
+   sharing, read/check objects; `clue_learned` / `discovery_uncovered` events; a memory on
+   uncover.
+3. **Notebook and map filter (M):** phone Notebook (Leads / Finds), unknown places hidden on
+   the map (a T-0048 change), HUD notices.
+4. **Altstadt v1 content (S/M):** the eight examples in the doc, with clue text and scenes.
+5. **M4 deepening (later):** real world changes (a cellar door, a shortcut), clue chains and
+   distorted rumours, drunken/false clues, personal secrets as leverage.
+
+`requires_discovery` is the first tenant of the interaction `requirements` already planned in
+`docs/design/actions-and-autonomy.md`. Content rules apply as always (D17/D20).
+
+Smaller ideas from the same prototype, for when the milestone fits: tuned crime/heat/fine/debt
+numbers (M4), clothing dirt and washing, small furniture effects, per-shift pay progression,
+and a read/act surface over save files for agent playtesting.
 
 ## Suggested M3 plan (to refine with `/next`)
 
