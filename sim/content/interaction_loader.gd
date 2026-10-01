@@ -78,6 +78,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 				reader.error("%s: 'price' must be >= 0" % ctx)
 			elif def.price > 0 and def.target == "person":
 				reader.error("%s: person-targeted interactions are free" % ctx)
+		if d.has("cash_out"):
+			def.cash_out = reader.read_int(d, "cash_out", ctx)
+			if def.cash_out < 0:
+				reader.error("%s: 'cash_out' must be >= 0" % ctx)
 		if d.has("routine"):
 			def.routine = reader.read_str(d, "routine", ctx)
 			if not def.routine in ["sleep", "out"]:

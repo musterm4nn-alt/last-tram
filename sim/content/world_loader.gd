@@ -108,7 +108,15 @@ static func _read_access(reader: ContentReader, pd: Dictionary, place: PlaceDef,
 	if place.access != Lot.HOURS:
 		if pd.has("hours"):
 			reader.error("%s: \"hours\" only applies to access \"hours\"" % ctx)
+		if pd.has("closed"):
+			reader.error("%s: \"closed\" only applies to access \"hours\"" % ctx)
 		return
+	for day: String in reader.read_str_array(pd, "closed", ctx) if pd.has("closed") else PackedStringArray():
+		var weekday := Array(SimClock.WEEKDAY_NAMES).map(func(n: String) -> String: return n.to_lower()).find(day)
+		if weekday < 0:
+			reader.error("%s: unknown day '%s' in \"closed\" (use mon … sun)" % [ctx, day])
+		elif not place.closed_days.has(weekday):
+			place.closed_days.append(weekday)
 	if not pd.has("hours"):
 		reader.error("%s: access \"hours\" needs \"hours\": [open_hour, close_hour]" % ctx)
 		return

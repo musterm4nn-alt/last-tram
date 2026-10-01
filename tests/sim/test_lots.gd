@@ -175,3 +175,25 @@ func test_content_validation_of_access_and_hours() -> void:
 	assert_false(_district({"access": "hours", "hours": [8]}).errors.is_empty(), "one hour")
 	assert_false(_district({"kind": "home", "hours": [8, 20]}).errors.is_empty(), "hours on a home")
 	assert_true(content().errors.is_empty(), "%s" % [content().errors])
+
+
+func test_closed_days_are_saved_and_older_lots_have_none() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var errors: Array[String] = []
+	var loaded := SaveCodec.from_json(SaveCodec.to_json(sim), content(), errors)
+	assert_true(loaded != null, "%s" % [errors])
+	if loaded != null:
+		assert_eq(Lots.by_place(loaded.world, "cafe_wolke").closed_days, PackedInt32Array([6]))
+	# A save whose lots were made before T-0056 keeps them as they were.
+	var data := SaveCodec.to_dict(sim)
+	for lot: Dictionary in data["world"]["lots"]:
+		lot.erase("closed_days")
+	var before := SaveCodec.from_dict(data, content(), errors)
+	assert_true(before != null, "%s" % [errors])
+	if before != null:
+		assert_true(Lots.by_place(before.world, "cafe_wolke").closed_days.is_empty())
+	# Saves from before lots (v3) get their lots, closed days included, from content.
+	var old := SaveCodec.from_json(FileAccess.get_file_as_string(V3_SAVE), content(), errors)
+	assert_true(old != null, "%s" % [errors])
+	if old != null:
+		assert_eq(Lots.by_place(old.world, "cafe_wolke").closed_days, PackedInt32Array([6]))

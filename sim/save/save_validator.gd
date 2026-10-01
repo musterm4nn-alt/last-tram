@@ -81,6 +81,8 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 			s.reject("world.lots[].access", "unknown access")
 		s.integer(lot.get("open_hour", 0), "world.lots[].open_hour", 0, 24)
 		s.integer(lot.get("close_hour", 24), "world.lots[].close_hour", 0, 24)
+		for day: Variant in s.list(lot.get("closed_days", []), "world.lots[].closed_days"):
+			s.integer(day, "world.lots[].closed_days[]", 0, 6)
 	var ledger := s.dictionary(world.get("ledger", {}), "world.ledger")
 	for key: String in ["sources", "sinks"]:
 		var totals := s.dictionary(ledger.get(key, {}), "world.ledger." + key)

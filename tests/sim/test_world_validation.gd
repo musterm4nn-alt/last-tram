@@ -76,3 +76,18 @@ func test_object_coordinates_and_rotation_reject_fractional_values() -> void:
 		_write("objects.json", Ser.to_json({"objects": [placement]}))
 		var reader := _load(_district())
 		assert_false(reader.errors.is_empty())
+
+
+func test_closed_days_need_hours_and_known_day_names() -> void:
+	var public := _district()
+	public["places"][0]["kind"] = "public"
+	public["places"][0]["closed"] = ["sun"]
+	assert_true("\n".join(_load(public).errors).contains("\"closed\" only applies to access \"hours\""))
+	var shop := _district()
+	shop["places"][0]["kind"] = "shop"
+	shop["places"][0]["hours"] = [8, 18]
+	shop["places"][0]["closed"] = ["sun", "funday"]
+	var all := "\n".join(_load(shop).errors)
+	assert_true(all.contains("unknown day 'funday'"), all)
+	shop["places"][0]["closed"] = ["sat", "sun"]
+	assert_true(_load(shop).errors.is_empty())
