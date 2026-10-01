@@ -10,3 +10,5 @@ var topics: PackedStringArray = PackedStringArray()
 var lines: Dictionary[String, Dictionary] = {}
 ## Need id -> thought line.
 var needs: Dictionary[String, String] = {}
+## Memory kind -> how the person inspector words it ("laughed at your joke", T-0041).
+var memories: Dictionary[String, String] = {}

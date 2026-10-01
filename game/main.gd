@@ -21,6 +21,7 @@ extends Node2D
 ##   --screen=pause      open the Esc menu after the quick start
 ##   --screen=map        open the full map (M) after the quick start
 ##   --level=N           show floor N after the quick start (if the world has it)
+##   --inspect           open the person inspector on the first resident
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind
@@ -71,6 +72,7 @@ func _ready() -> void:
 	_controller.menu = _interaction_menu
 	_controller.pause_menu = _pause_menu
 	_controller.town_map = _town_map
+	_controller.inspector = _hud.inspector
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
 	Session.game_loaded.connect(_on_game_loaded)
@@ -194,6 +196,13 @@ func _start_quick() -> void:
 		_town_map.open()
 	if _options.level != LaunchOptions.NO_LEVEL:
 		Session.view_level(_options.level)
+	if _options.inspect:
+		var ids: Array = Session.sim.world.people.keys()
+		ids.sort()
+		for id: int in ids:
+			if id != Session.sim.world.player_id:
+				_hud.inspector.show_person(id)
+				break
 
 
 ## F9: saves a bug report folder (see Session.write_bug_report) and says where it went.

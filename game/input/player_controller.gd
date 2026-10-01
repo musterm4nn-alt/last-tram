@@ -24,6 +24,9 @@ var forced_direction: Vector2 = Vector2.ZERO
 var camera: CameraRig2D
 ## The interaction menu (set by main.gd). No walking while it is open.
 var menu: InteractionMenu
+## The person inspector (set by main.gd): a click on someone shows them, a click elsewhere
+## hides it.
+var inspector: PersonInspector
 ## The Esc menu (set by main.gd). No input at all while it is open.
 var pause_menu: PauseMenu
 ## The full map (set by main.gd). No input at all while it is open.
@@ -72,6 +75,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		var cell := ViewConfig.cell_at(world_px)
 		var someone := person_at(Session.sim, world_px / ViewConfig.TILE_PX, Session.viewed_level, player.id)
 		var here := Session.sim.world.objects_at(Vector3i(cell.x, cell.y, Session.viewed_level))
+		if inspector != null:
+			inspector.show_person(someone)
 		if someone > 0 and menu != null:
 			menu.open_for(someone, get_viewport().get_mouse_position())
 		elif not here.is_empty() and menu != null:

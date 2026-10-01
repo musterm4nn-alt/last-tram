@@ -14,6 +14,8 @@ var _mode_label: Label
 var _hint_label: Label
 var _notice_label: Label
 var _notice_time_left: float = 0.0
+## The person inspector panel (T-0041; PlayerController selects who it shows).
+var inspector: PersonInspector
 
 
 ## The key hints for the bottom line, by control mode.
@@ -119,6 +121,8 @@ func _ready() -> void:
 	needs_panel.offset_bottom = -56
 	add_child(needs_panel)
 	add_child(ActionQueuePanel.new())
+	inspector = PersonInspector.new()
+	add_child(inspector)
 
 	_notice_label = Label.new()
 	_notice_label.set_anchors_preset(Control.PRESET_CENTER_TOP)

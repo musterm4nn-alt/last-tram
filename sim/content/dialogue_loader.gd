@@ -42,6 +42,10 @@ static func _load_file(db: ContentDB, reader: ContentReader, path: String) -> vo
 					reader.error("%s: no lines for '%s'" % [ctx, outcome_id])
 				out[String(outcome_id)] = texts
 			db.dialogue.lines[String(interaction_id)] = out
+	if d.has("memories"):
+		var by_kind := reader.read_obj(d, "memories", path)
+		for kind: Variant in by_kind:
+			db.dialogue.memories[String(kind)] = reader.read_str(by_kind, String(kind), path)
 	if d.has("needs"):
 		var by_need := reader.read_obj(d, "needs", path)
 		for need_id: Variant in by_need:
