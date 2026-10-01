@@ -84,6 +84,11 @@ When a person is idle (queue empty), and at most every few minutes:
   student, unemployed, retiree, night-life/criminal. Each has sleep windows and preferred
   leisure places.
 - Free time is filled by autonomy, with a bonus for the routine's preferred places.
+- Built in T-0036: `data/routines.json` (early bird 22–6, regular 23–7, night owl 2–10),
+  `Person.routine_id`, and `Routines`. Sleep scores ×2 inside the window and ×0.3 outside, and
+  sleepers stay in bed until the window ends. Sleeping slows the overnight fade of hunger,
+  hygiene, fun and social. Away from home, people head home in their sleep window, or when
+  nothing is worth doing where they are.
 
 ## Background (abstract) execution
 

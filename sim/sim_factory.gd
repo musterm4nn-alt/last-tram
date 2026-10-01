@@ -38,6 +38,7 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 	if home != null:
 		player.home_lot_id = home.id
 		skip.append(home.id)
+	player.routine_id = content.default_routine
 	var household := Household.new()
 	household.id = sim.world.new_id()
 	household.member_ids.append(player.id)

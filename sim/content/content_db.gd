@@ -19,6 +19,9 @@ var start_district: String = ""
 var objects: Dictionary[String, ObjectDef] = {}
 ## Interactions by id, loaded from every file in data/interactions/.
 var interactions: Dictionary[String, InteractionDef] = {}
+## Daily rhythms by id (data/routines.json) and the id people get by default.
+var routines: Dictionary[String, RoutineDef] = {}
+var default_routine: String = ""
 var errors: PackedStringArray = []
 
 ## Every choice the character creator offers (genders, colours, hair, names...).
@@ -62,6 +65,7 @@ func load_from(root: String) -> void:
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
 	ObjectLoader.load(self, reader, root.path_join("objects"))
 	InteractionLoader.load(self, reader, root.path_join("interactions"))
+	RoutineLoader.load(self, reader, root.path_join("routines.json"))
 	WorldLoader.load(self, reader, root.path_join("world"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
@@ -164,6 +168,11 @@ func clothing_def(id: String) -> ClothingDef:
 ## The object definition with this id, or null.
 func object_def(id: String) -> ObjectDef:
 	return objects.get(id)
+
+
+## The routine with this id, or null.
+func routine(id: String) -> RoutineDef:
+	return routines.get(id)
 
 
 ## The interaction with this id, or null.

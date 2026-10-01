@@ -37,7 +37,7 @@ static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: Plac
 		size = 2
 	elif household.kind == Household.FLATMATES:
 		size = rng.randi_range(FLATMATES_MIN, FLATMATES_MAX)
-	var spots := free_cells(sim, place)
+	var spots := Lots.free_cells(sim, place)
 	var first: CharacterSpec = null
 	for i: int in size:
 		if spots.is_empty():
@@ -45,9 +45,11 @@ static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: Plac
 		var spec := CharacterSpec.random(sim.content, rng)
 		if household.kind == Household.COUPLE and first != null:
 			_partner_of(spec, first, sim.content, rng)
+		var routine_id := _pick_routine(sim.content, rng)
 		var cell: Vector3i = spots.pop_at(rng.randi_range(0, spots.size() - 1))
 		var person := SimFactory.spawn_person(sim, cell, spec)
 		person.household_id = household.id
+		person.routine_id = routine_id
 		person.home_lot_id = lot.id
 		household.member_ids.append(person.id)
 		if first == null:
@@ -77,16 +79,16 @@ static func _partner_of(spec: CharacterSpec, first: CharacterSpec, content: Cont
 		spec.last_name = first.last_name
 
 
-## Walkable cells of `place` (on its level, not claimed by an earlier place) where nobody
-## stands yet, in scan order.
-static func free_cells(sim: Sim, place: PlaceDef) -> Array[Vector3i]:
-	var taken: Dictionary[Vector3i, bool] = {}
-	for person: Person in sim.world.people.values():
-		taken[person.cell()] = true
-	var out: Array[Vector3i] = []
-	for y: int in range(place.rect.position.y, place.rect.end.y):
-		for x: int in range(place.rect.position.x, place.rect.end.x):
-			var cell := Vector3i(x, y, place.level)
-			if sim.content.place_at(cell) == place and sim.world.grid.is_walkable(cell) and not taken.has(cell):
-				out.append(cell)
-	return out
+## A routine id, weighted by RoutineDef.weight (in id order).
+static func _pick_routine(content: ContentDB, rng: RandomNumberGenerator) -> String:
+	var ids: Array = content.routines.keys()
+	ids.sort()
+	var total := 0
+	for id: String in ids:
+		total += content.routines[id].weight
+	var pick := rng.randi_range(1, maxi(total, 1))
+	for id: String in ids:
+		pick -= content.routines[id].weight
+		if pick <= 0:
+			return id
+	return content.default_routine
