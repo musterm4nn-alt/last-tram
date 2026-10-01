@@ -47,13 +47,17 @@ static func place_text(sim: Sim, person: Person) -> String:
 const FAIL_REASONS: Dictionary = {
 	"no_free_slot": "someone is using it",
 	"no_path": "can't get there",
+	"target_busy": "they're busy",
+	"target_left": "they walked away",
 }
 
 
 ## The notice a sim event deserves for the player ("" for none). `content` names the
 ## interaction of a failed action (its id is used without it).
-static func notice_for_event(event: Dictionary, player_id: int, content: ContentDB = null) -> String:
+static func notice_for_event(event: Dictionary, player_id: int, content: ContentDB = null, sim: Sim = null) -> String:
 	var data: Dictionary = event.get("data", {})
+	if event.get("type") == &"social_exchange":
+		return social_notice(data, player_id, content, sim)
 	if int(data.get("person_id", -1)) != player_id:
 		return ""
 	if event.get("type") == &"path_failed":
@@ -148,10 +152,27 @@ func _on_command_mode_changed(on: bool) -> void:
 	_hint_label.text = hint_text(on)
 
 
+## How a social exchange went, when the player took part: "Chat with Mira Kovač: went well",
+## or "Mira Kovač: Tell a joke" when someone does it to the player (T-0053).
+static func social_notice(data: Dictionary, player_id: int, content: ContentDB, sim: Sim) -> String:
+	var interaction: InteractionDef = content.interaction(String(data.get("interaction_id", ""))) if content != null else null
+	var label := interaction.name if interaction != null else String(data.get("interaction_id", ""))
+	var actor_id := int(data.get("actor_id", 0))
+	var target_id := int(data.get("target_id", 0))
+	if actor_id == player_id:
+		var other := sim.world.get_person(target_id) if sim != null else null
+		var verdict := "went well" if data.get("outcome") == "success" else "didn't go well"
+		return "%s with %s: %s" % [label, other.full_name() if other != null else "them", verdict]
+	if target_id == player_id:
+		var actor := sim.world.get_person(actor_id) if sim != null else null
+		return "%s: %s" % [actor.full_name() if actor != null else "Someone", label]
+	return ""
+
+
 func _on_sim_event(event: Dictionary) -> void:
 	if Session.sim == null or Session.sim.world.player() == null:
 		return
-	var text := notice_for_event(event, Session.sim.world.player_id, Session.content)
+	var text := notice_for_event(event, Session.sim.world.player_id, Session.content, Session.sim)
 	if not text.is_empty():
 		_show_notice(text)
 
