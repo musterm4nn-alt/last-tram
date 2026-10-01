@@ -28,6 +28,8 @@ func test_a_day_in_town_keeps_everyone_fed_rested_and_apart() -> void:
 			if person.action_queue.is_empty():
 				continue
 			var action: Action = person.action_queue[0]
+			if not sim.world.objects.has(action.target_id):
+				continue  # talking to someone: two people may talk to the same person (T-0039)
 			if action.state == Action.ROUTING or action.state == Action.PERFORMING:
 				var slot := "%d/%d" % [action.target_id, action.slot_index]
 				assert_false(used.has(slot), "%d and %d both hold slot %s" % [used.get(slot, 0), person.id, slot])
@@ -47,5 +49,7 @@ func test_residents_only_use_things_in_their_own_home() -> void:
 				continue
 			var person := sim.world.get_person(int(event["data"]["person_id"]))
 			var obj := sim.world.get_object(int(event["data"]["target_id"]))
+			if obj == null:
+				continue  # a person (T-0039); their lot is checked when choosing them
 			var lot := Lots.lot_at(sim, obj.origin)
 			assert_true(lot == null or Lots.may_enter(sim, person, lot), "%s chose %s" % [person.full_name(), obj.def_id])
