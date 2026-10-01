@@ -109,7 +109,7 @@ func _route_across_levels(from: Vector3i, to: Vector3i) -> Array[Vector3i]:
 				_relax(node, other, dist[node] + _segment(node, other)["cost"], false, dist, came, open)
 		for dz: int in [1, -1]:
 			var linked := Vector3i(node.x, node.y, node.z + dz)
-			if _is_linked_pair(node, linked) and not done.has(linked):
+			if is_stair_link(node, linked) and not done.has(linked):
 				_relax(node, linked, dist[node] + LINK_COST, true, dist, came, open)
 	var none: Array[Vector3i] = []
 	return none
@@ -144,8 +144,9 @@ func _is_stairs(cell: Vector3i) -> bool:
 	return _world.grid.terrain_def_at(cell).id == STAIRS and _world.grid.is_walkable(cell)
 
 
-## True if `a` and `b` are the two ends of a stair link (same x, y, one level apart).
-func _is_linked_pair(a: Vector3i, b: Vector3i) -> bool:
+## True if `a` and `b` are the two ends of a stair link (same x, y, one level apart, both
+## walkable stairs).
+func is_stair_link(a: Vector3i, b: Vector3i) -> bool:
 	return a.x == b.x and a.y == b.y and absi(a.z - b.z) == 1 and _is_stairs(a) and _is_stairs(b)
 
 
@@ -178,7 +179,7 @@ func _grid_for(level: int) -> AStarGrid2D:
 				astar.set_point_solid(Vector2i(x, y), true)
 			else:
 				astar.set_point_weight_scale(Vector2i(x, y), _world.grid.terrain_def_at(cell).path_cost)
-				if _is_linked_pair(cell, cell + Vector3i(0, 0, 1)) or _is_linked_pair(cell, cell - Vector3i(0, 0, 1)):
+				if is_stair_link(cell, cell + Vector3i(0, 0, 1)) or is_stair_link(cell, cell - Vector3i(0, 0, 1)):
 					stairs.append(cell)
 	_stairs[level] = stairs
 	_grids[level] = astar

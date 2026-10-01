@@ -24,7 +24,7 @@ Tools and tests skip the menu with command-line options (`--quickstart`, `--scre
 | F9 | bug report (save + command log + screenshot) | M1 |
 | Shift (hold) | run: twice the walking speed, with WASD and on click-to-walk routes | M1 |
 | M | town map (pauses); a minimap is always in the top right | M1 |
-| Page Up / Down | view the floor above or below (command mode) | M2 |
+| Page Up / Down | climb the stairs you stand on (direct mode); view the floor above or below, and click to walk there (command mode) | M2 |
 | B | build/buy mode | M5 |
 | P | phone | M3 |
 

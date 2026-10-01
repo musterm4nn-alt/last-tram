@@ -19,8 +19,16 @@ var _notice_time_left: float = 0.0
 ## The key hints for the bottom line, by control mode.
 static func hint_text(command_mode: bool) -> String:
 	if command_mode:
-		return "Click an object to use it, the ground to walk   Shift run   WASD / right-drag pan   Tab direct mode   M map   Space pause   1-3 speed   Wheel zoom   Esc menu   F9 report a bug"
-	return "WASD move   Shift run   E use   Tab command mode   M map   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug   F3 debug"
+		return "Click an object to use it, the ground to walk   Shift run   WASD / right-drag pan   PgUp/PgDn floors   Tab direct mode   M map   Space pause   1-3 speed   Wheel zoom   Esc menu   F9 report a bug"
+	return "WASD move   Shift run   E use   PgUp/PgDn stairs   Tab command mode   M map   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug"
+
+
+## The command-mode label: "Command mode", plus " · floor N" while viewing another floor
+## than the player's.
+static func mode_text(viewed_level: int, player: Person) -> String:
+	if player != null and viewed_level != player.level:
+		return "Command mode · floor %d" % viewed_level
+	return "Command mode"
 
 
 ## Where `person` is: the place's name, plus " (closed)" while its lot is closed for
@@ -129,6 +137,7 @@ func _process(delta: float) -> void:
 		speed_text = "▶▶ skipping"
 	_clock_label.text = "Day %d   %s   %s" % [Session.sim.clock.day() + 1, Session.sim.clock.format(), speed_text]
 	_place_label.text = place_text(Session.sim, Session.sim.world.player())
+	_mode_label.text = mode_text(Session.viewed_level, Session.sim.world.player())
 	if _notice_time_left > 0.0:
 		_notice_time_left -= delta
 		_notice_label.modulate.a = clampf(_notice_time_left, 0.0, 1.0)

@@ -1,12 +1,12 @@
 ---
 id: T-0049
 title: Floors in the view - Page Up/Down, keyboard stairs, clicking on other floors
-status: todo
+status: done
 milestone: M2
 size: M
 owner: builder
 depends_on: [T-0030]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -60,17 +60,33 @@ Create `tests/game/test_floor_view.gd`.
 
 ## Acceptance criteria (`tests/game/test_floor_view.gd`)
 Two- or three-level worlds: `SimFactory.from_rows` + `grid.stamp_rows(level, ...)`.
-- [ ] `page_level` walks through existing levels (0 → 1 → 2 and back), skips a missing
+- [x] `page_level` walks through existing levels (0 → 1 → 2 and back), skips a missing
   level and stops at the ends.
-- [ ] A paged view stays put while the player stays on one floor; when the player's level
+- [x] A paged view stays put while the player stays on one floor; when the player's level
   changes, it follows; direct mode snaps it back.
-- [ ] Direct mode: Page Up on a linked stairs cell sends a WalkTo to the cell above, and after
+- [x] Direct mode: Page Up on a linked stairs cell sends a WalkTo to the cell above, and after
   running the sim the player is on level 1; Page Down brings them back. Off the stairs, no
   command and the notice "No stairs here".
-- [ ] Command mode: a click while viewing level 1 sends a WalkTo whose target has z = 1.
-- [ ] `tools/check.sh` passes; screenshot `out/t0049.png` (the hint line fits).
+- [x] Command mode: a click while viewing level 1 sends a WalkTo whose target has z = 1.
+- [x] `tools/check.sh` passes; screenshot `out/t0049.png` (the hint line fits).
 
 ## Implementation notes
+- `Pathfinder.is_stair_link` (renamed from `_is_linked_pair`).
+- `Session`: `_followed_level` + `_follow_player_level()` after stepping (replacing
+  T-0030's unconditional follow), reset on load; `view_level`, `page_level`; leaving
+  command mode snaps to the player's floor.
+- `PlayerController.press_level_key(delta)` holds the Page Up/Down logic (so tests can call
+  it without a viewport); `_unhandled_input` routes `level_up`/`level_down` to it.
+  `stairs_command`, and `walk_command(player, world_px, level)`; clicks use
+  `Session.viewed_level` for walking and for objects.
+- HUD: `Hud.mode_text` ("Command mode · floor N"); hints gain PgUp/PgDn, and "F3 debug"
+  left the direct-mode line to make room (F3 still works).
+- `--level=N` (`LaunchOptions.level`, `NO_LEVEL`).
+- `test_command_mode.gd`: the walk-command test now passes the level explicitly and also
+  checks another level (the signature changed by spec).
+- Verified: `tools/check.sh` 374 passed, 0 failed (`test_floor_view.gd`, 8 tests).
+  Screenshots `out/t0049.png` (direct hints) and `out/t0049_command.png` (command hints):
+  both lines fit at 1280 px. Floors themselves arrive with T-0031.
 
 ## Questions
 
