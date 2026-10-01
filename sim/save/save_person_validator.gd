@@ -30,6 +30,10 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 		var worn := s.dictionary(outfit[key], path + ".outfit." + str(key))
 		s.text(worn.get("item", ""), path + ".outfit item")
 		s.text(worn.get("colour", ""), path + ".outfit colour")
+	var personality := s.dictionary(p.get("personality", {}), path + ".personality")
+	for axis: String in Personality.AXES:
+		if personality.has(axis):
+			s.integer(personality[axis], path + ".personality." + axis, Personality.MIN_VALUE, Personality.MAX_VALUE)
 	var ids: Array[int] = []
 	var queue := s.list(p.get("action_queue", []), path + ".action_queue")
 	if queue.size() > Person.MAX_QUEUE:

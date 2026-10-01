@@ -13,6 +13,8 @@ var pronouns: String = ""
 var age_years: int = 18
 var appearance: Appearance = Appearance.new()
 var outfit: Outfit = Outfit.new()
+## Neutral (all 0) unless chosen or drawn at random.
+var personality: Personality = Personality.new()
 
 
 ## One message per problem with names, gender, pronouns, age, appearance and outfit.
@@ -45,7 +47,8 @@ static func default_player(content: ContentDB) -> CharacterSpec:
 
 
 ## Deterministic random character. Draws from `rng` in this order: gender, pronouns, name
-## list, first name, last name, age, then Appearance.random() and Outfit.random().
+## list, first name, last name, age, then Appearance.random(), Outfit.random() and last
+## Personality.random() (so adding it kept every earlier draw the same).
 static func random(content: ContentDB, rng: RandomNumberGenerator) -> CharacterSpec:
 	var out := CharacterSpec.new()
 	var catalog: AppearanceCatalog = content.appearance
@@ -66,10 +69,11 @@ static func random(content: ContentDB, rng: RandomNumberGenerator) -> CharacterS
 	out.age_years = rng.randi_range(maxi(Person.MIN_AGE, catalog.age_min), maxi(Person.MIN_AGE, catalog.age_max))
 	out.appearance = Appearance.random(content, rng)
 	out.outfit = Outfit.random(content, rng)
+	out.personality = Personality.random(rng)
 	return out
 
 
-## Copies everything onto `person` (appearance/outfit via copy()).
+## Copies everything onto `person` (appearance, outfit and personality via copy()).
 func apply_to(person: Person) -> void:
 	person.first_name = first_name
 	person.last_name = last_name
@@ -79,6 +83,7 @@ func apply_to(person: Person) -> void:
 	person.age_years = age_years
 	person.appearance = appearance.copy()
 	person.outfit = outfit.copy()
+	person.personality = personality.copy()
 
 
 func to_dict() -> Dictionary:
@@ -91,6 +96,7 @@ func to_dict() -> Dictionary:
 		"age_years": age_years,
 		"appearance": appearance.to_dict(),
 		"outfit": outfit.to_dict(),
+		"personality": personality.to_dict(),
 	}
 
 
@@ -108,4 +114,7 @@ static func from_dict(d: Dictionary) -> CharacterSpec:
 	var outfit_data: Variant = d.get("outfit", {})
 	if outfit_data is Dictionary:
 		out.outfit = Outfit.from_dict(outfit_data)
+	var personality_data: Variant = d.get("personality", {})
+	if personality_data is Dictionary:
+		out.personality = Personality.from_dict(personality_data)
 	return out
