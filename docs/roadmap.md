@@ -9,8 +9,8 @@ Legend: ✅ done · ▶ current · ◻ planned
 | # | Milestone | You can… | Status |
 |---|---|---|---|
 | M0 | Foundation | walk around the Altstadt; save and load | ✅ |
-| M1 | A Day at Home | create your character, then live a full day in your flat: sleep, eat, shower, relax | ▶ |
-| M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ◻ |
+| M1 | A Day at Home | create your character, then live a full day in your flat: sleep, eat, shower, relax | ✅ |
+| M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ▶ |
 | M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ◻ |
 | ◆ | Art direction gate | pick the art style from real side-by-side tests | ◻ |
 | M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ◻ |
@@ -38,7 +38,7 @@ The walking skeleton, which proves the architecture end to end.
 - Tooling: `tools/check.sh` (import + tests + architecture lint), `tools/simrun.sh` (headless
   sim), `tools/screenshot.sh`, pre-commit hook, ticket system.
 
-## M1 · A Day at Home ▶
+## M1 · A Day at Home ✅
 
 **Goal:** make your character, then the core Sims loop in one flat. Needs go down, you use
 objects to fill them, and time passes.
@@ -59,12 +59,14 @@ objects to fill them, and time passes.
 - Sleep fast-forward; autosave and save slots; Esc menu.
 - **Bug report key (F9)** that captures a save, the command log and a screenshot, plus a
   headless replay tool, so any bug the owner hits can be reproduced by an agent.
+- From the owner's playtest (October 2026): hold **Shift to run**, a **minimap**, and a
+  **town map** on M.
 
 **Done when:** a 3-day headless run with free will on keeps every need out of the red; the
 owner creates a character and plays through a full day in the flat; save/load mid-action
 continues identically.
 
-## M2 · The Neighbours
+## M2 · The Neighbours ▶
 
 **Goal:** the town is alive.
 

@@ -211,6 +211,7 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 | M1 | Main menu, character creator, portrait | `game/launch_options.gd`, `game/ui/main_menu.gd`, `creator_model.gd`, `character_creator.gd`, `figure_preview.gd`, `character_portrait.gd`, `look_gallery.gd` |
 | M1 | Command mode, interaction menu, queue panel | `game/input/player_controller.gd`, `game/ui/interaction_menu.gd`, `action_queue_panel.gd`, `game/view2d/path_marker_2d.gd` |
 | M1 | Save slots, autosave, Esc menu | `game/save_slots.gd`, `game/ui/pause_menu.gd`, `save_list.gd` |
+| M1 | Running, minimap and town map | `sim/commands/set_running_command.gd`, `game/ui/map_view.gd`, `town_map.gd` |
 | M1 | Replays and F9 bug reports | `sim/save/replay.gd`, `tools/replay_files.gd`, `tools/replay.gd`, `game/session.gd` |
 | M2 | Lots, households, residents | `sim/world/lot.gd`, `sim/people/household.gd`, `sim/people/generator.gd` |
 | M2 | Relationships, memories | `sim/social/` |

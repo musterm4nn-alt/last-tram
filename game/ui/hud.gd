@@ -1,9 +1,12 @@
 class_name Hud
 extends CanvasLayer
-## Always-visible info: clock and speed, where the player is, the control mode, key hints,
-## short notices.
+## Always-visible info: clock and speed, where the player is, the control mode, the
+## minimap (top right), key hints, short notices.
 
 const NOTICE_SECONDS: float = 2.5
+## The minimap's size on screen and its scale.
+const MINIMAP_SIZE: Vector2 = Vector2(224, 144)
+const MINIMAP_PX_PER_CELL: float = 4.0
 
 var _clock_label: Label
 var _place_label: Label
@@ -16,8 +19,8 @@ var _notice_time_left: float = 0.0
 ## The key hints for the bottom line, by control mode.
 static func hint_text(command_mode: bool) -> String:
 	if command_mode:
-		return "Click an object to use it, the ground to walk   Shift run   WASD / right-drag pan   Tab direct mode   Space pause   1-3 speed   Wheel zoom   Esc menu   F9 report a bug"
-	return "WASD move   Shift run   E use   Tab command mode   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug   F3 debug"
+		return "Click an object to use it, the ground to walk   Shift run   WASD / right-drag pan   Tab direct mode   M map   Space pause   1-3 speed   Wheel zoom   Esc menu   F9 report a bug"
+	return "WASD move   Shift run   E use   Tab command mode   M map   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug   F3 debug"
 
 
 ## Words for why the player's action failed (action_failed reasons); others show nothing.
@@ -63,6 +66,25 @@ func _ready() -> void:
 	_hint_label = _label(hints, 13)
 	_hint_label.text = hint_text(Session.command_mode)
 	_hint_label.modulate = Color(1, 1, 1, 0.75)
+
+	var minimap_panel := _panel(Vector2.ZERO)
+	minimap_panel.anchor_left = 1.0
+	minimap_panel.anchor_right = 1.0
+	minimap_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	minimap_panel.offset_left = -12
+	minimap_panel.offset_right = -12
+	minimap_panel.offset_top = 12
+	var minimap_box := VBoxContainer.new()
+	minimap_panel.add_child(minimap_box)
+	var minimap := MapView.new()
+	minimap.follow = true
+	minimap.px_per_cell = MINIMAP_PX_PER_CELL
+	minimap.custom_minimum_size = MINIMAP_SIZE
+	minimap_box.add_child(minimap)
+	var caption := _label(minimap_box, 12)
+	caption.text = "M map"
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	caption.modulate = Color(1, 1, 1, 0.75)
 
 	var needs_panel := NeedsPanel.new()
 	needs_panel.anchor_top = 1.0

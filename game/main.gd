@@ -19,6 +19,7 @@ extends Node2D
 ##   --screen=gallery    show every look option (portraits and figures); --gallery-page=2 for clothes
 ##   --screen=load       open the main menu's Load list (with the menu)
 ##   --screen=pause      open the Esc menu after the quick start
+##   --screen=map        open the full map (M) after the quick start
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind
@@ -30,6 +31,7 @@ var _camera: CameraRig2D
 var _hud: Hud
 var _debug_overlay: DebugOverlay
 var _pause_menu: PauseMenu
+var _town_map: TownMap
 var _menu: MainMenu
 var _creator: CharacterCreator
 var _options: LaunchOptions
@@ -56,6 +58,8 @@ func _ready() -> void:
 	add_child(_debug_overlay)
 	_pause_menu = PauseMenu.new()
 	add_child(_pause_menu)
+	_town_map = TownMap.new()
+	add_child(_town_map)
 	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
 	# would inherit the camera's zoom).
 	_interaction_menu = InteractionMenu.new()
@@ -64,6 +68,7 @@ func _ready() -> void:
 	_controller.camera = _camera
 	_controller.menu = _interaction_menu
 	_controller.pause_menu = _pause_menu
+	_controller.town_map = _town_map
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
 	Session.game_loaded.connect(_on_game_loaded)
@@ -120,6 +125,10 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _town_map.is_open and (event.is_action_pressed("menu") or event.is_action_pressed("map")):
+		get_viewport().set_input_as_handled()
+		_town_map.close()
+		return
 	if event.is_action_pressed("menu") and _can_toggle_pause_menu():
 		get_viewport().set_input_as_handled()
 		if _pause_menu.is_open:
@@ -130,9 +139,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("bug_report") and Session.sim != null:
 		_write_bug_report()
 		return
-	if _pause_menu.is_open:
+	if _pause_menu.is_open or _town_map.is_open:
 		return
-	if event.is_action_pressed("pause"):
+	if event.is_action_pressed("map") and _can_toggle_pause_menu():
+		get_viewport().set_input_as_handled()
+		_town_map.open()
+	elif event.is_action_pressed("pause"):
 		Session.toggle_pause()
 	elif event.is_action_pressed("speed_1"):
 		Session.set_speed(1)
@@ -176,6 +188,8 @@ func _start_quick() -> void:
 	_interact_on = _options.interact
 	if _options.screen == "pause":
 		_pause_menu.open()
+	elif _options.screen == "map":
+		_town_map.open()
 
 
 ## F9: saves a bug report folder (see Session.write_bug_report) and says where it went.

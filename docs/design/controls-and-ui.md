@@ -22,7 +22,8 @@ Tools and tests skip the menu with command-line options (`--quickstart`, `--scre
 | Left click | select or open the interaction menu; click the ground to walk (command mode) | M1 |
 | Esc | cancel, or open the menu (resume, save, load, settings, quit) | M1 |
 | F9 | bug report (save + command log + screenshot) | M1 |
-| Shift | run (direct mode) | M2 |
+| Shift (hold) | run: twice the walking speed, with WASD and on click-to-walk routes | M1 |
+| M | town map (pauses); a minimap is always in the top right | M1 |
 | Page Up / Down | view the floor above or below (command mode) | M2 |
 | B | build/buy mode | M5 |
 | P | phone | M3 |
@@ -56,6 +57,8 @@ Keys are physical positions, so they work on QWERTZ.
   unavailable options greyed out and the reason ("Closed", "Not enough money").
 - **Person inspector** (click a person in command mode): name, relationship with you, their
   mood, what they're doing, and what they remember about you.
+- **Minimap** (top right): the town around you, with your marker. **M** opens the full map
+  with every place's name.
 - **Notifications:** short feed lines for important events.
 - **Phone** (M3): contacts and messages, jobs, bank, map, property listings (M5), transit
   times (M7).
