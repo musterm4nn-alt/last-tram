@@ -25,7 +25,7 @@ var menu: bool = false
 ## "pause" (the Esc menu, after the quick start), "map" (the full map, after the quick
 ## start), "gallery" (the look gallery, no game).
 var screen: String = ""
-## The creator's tab to show (--creator-tab=body); "" = the first.
+## The creator's tab to show (--creator-tab=body, ...=personality); "" = the first.
 var creator_tab: String = ""
 ## Start the creator from CharacterSpec.random with this seed (--creator-seed=7); -1 = no.
 var creator_seed: int = -1

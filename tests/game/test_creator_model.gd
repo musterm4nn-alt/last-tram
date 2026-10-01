@@ -3,6 +3,13 @@ extends TestCase
 ## starter outfit, and randomising one section without touching the others.
 
 
+## CreatorModel.randomise_all(seed) before the personality section existed.
+const RANDOMISE_ALL_GOLDEN: Dictionary = {
+	77: '{"age_years":56,"appearance":{"build":"slim","eye_colour":"green","facial_hair":"none","features":[],"hair_colour":"blonde","hair_style":"ponytail","height_cm":179,"skin_tone":"skin_07"},"first_name":"Anna","gender":"nonbinary","last_name":"Schmidt","nickname":"","outfit":{"bottom":{"colour":"navy","item":"skirt"},"feet":{"colour":"black","item":"boots"},"neck":{"colour":"mustard","item":"chain"},"outer":{"colour":"navy","item":"blazer"},"top":{"colour":"pink","item":"blouse"}},"pronouns":"she"}',
+	5: '{"age_years":65,"appearance":{"build":"average","eye_colour":"green","facial_hair":"none","features":[],"hair_colour":"purple","hair_style":"afro","height_cm":201,"skin_tone":"skin_07"},"first_name":"Matthias","gender":"woman","last_name":"Khoury","nickname":"","outfit":{"bottom":{"colour":"burgundy","item":"skirt"},"face":{"colour":"brown","item":"sunglasses"},"feet":{"colour":"brown","item":"boots"},"hands":{"colour":"brown","item":"gloves"},"top":{"colour":"navy","item":"t_shirt"}},"pronouns":"she"}',
+}
+
+
 func _model() -> CreatorModel:
 	return CreatorModel.new(content())
 
@@ -17,6 +24,7 @@ func _sections(model: CreatorModel) -> Dictionary:
 		"body": "%d|%s|%s" % [look.height_cm, look.build, look.skin_tone],
 		"face": "%s|%s|%s|%s|%s" % [look.hair_style, look.hair_colour, look.eye_colour, look.facial_hair, ",".join(look.features)],
 		"clothes": Ser.to_json(s.outfit.to_dict()),
+		"personality": Ser.to_json(s.personality.to_dict()),
 	}
 
 
@@ -144,6 +152,34 @@ func test_random_names_come_from_the_genders_name_lists() -> void:
 		assert_true(allowed.has(model.spec.first_name), model.spec.first_name)
 		assert_true(content().last_names.has(model.spec.last_name), model.spec.last_name)
 		assert_eq(model.spec.nickname, "")
+
+
+func test_personality_section_randomises_and_sets_traits() -> void:
+	var model := _model()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 9
+	model.randomise("personality", rng)
+	var check := RandomNumberGenerator.new()
+	check.seed = 9
+	assert_eq(model.spec.personality.to_dict(), Personality.random(check).to_dict())
+	model.set_trait("temper", 140)
+	model.set_trait("kindness", -35)
+	model.set_trait("charm", 50)
+	assert_eq(model.spec.personality.get_axis("temper"), 100, "clamped")
+	assert_eq(model.spec.personality.get_axis("kindness"), -35)
+	assert_false(model.spec.personality.values.has("charm"))
+
+
+func test_randomise_all_keeps_the_earlier_sections_as_before_personality() -> void:
+	# Recorded on main before T-0044 (spec.to_dict() without "personality").
+	for seed_value: int in RANDOMISE_ALL_GOLDEN:
+		var model := _model()
+		var rng := RandomNumberGenerator.new()
+		rng.seed = seed_value
+		model.randomise_all(rng)
+		var d := model.spec.to_dict()
+		d.erase("personality")
+		assert_eq(JSON.stringify(d), RANDOMISE_ALL_GOLDEN[seed_value], "seed %d" % seed_value)
 
 
 func test_randomise_all_is_repeatable_and_always_valid() -> void:

@@ -1,12 +1,12 @@
 ---
 id: T-0044
 title: Personality in the character creator
-status: todo
+status: done
 milestone: M2
 size: S
 owner: builder
 depends_on: [T-0033]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -46,15 +46,27 @@ Create `game/ui/creator_personality_tab.gd`. Change `game/ui/creator_model.gd`,
   `CreatorNameTab` class if needed.
 
 ## Acceptance criteria
-- [ ] `randomise("personality")` changes only the personality; other sections' randomise
+- [x] `randomise("personality")` changes only the personality; other sections' randomise
   leave it alone; `randomise_all` with a fixed seed gives the same non-personality result
   as before → `test_creator_model.gd`.
-- [ ] Moving a slider updates `model.spec.personality`, and the started character has
+- [x] Moving a slider updates `model.spec.personality`, and the started character has
   it → `test_character_creator.gd` (emit `value_changed`, see the conventions' gotchas).
-- [ ] `tools/check.sh` passes; screenshot `out/t0044.png` with
+- [x] `tools/check.sh` passes; screenshot `out/t0044.png` with
   `--screen=creator --creator-tab=personality --creator-seed=3`.
 
 ## Implementation notes
+- `CreatorPersonalityTab` (`game/ui/creator_personality_tab.gd`) as specified, with one
+  deviation: sliders step by **1**, not 5. With 5, a random personality value like 86 showed
+  as 85 (caught by `test_personality_tab_has_a_randomise_button_and_follows_the_model`).
+- `CreatorModel`: `"personality"` is the last section; `set_trait`.
+- To stay under the line limit, the picker and number rows moved into `CreatorRows`
+  (`game/ui/creator_rows.gd`) instead of moving the Name tab. That was smaller, since the
+  name fields are used all over the screen. `character_creator.gd` is now 327 lines.
+- The tab area is 540 px wide (was 430), so all six tab titles fit without scroll arrows.
+- Proof that Randomise everything is unchanged for the other sections: a golden test with
+  seeds 77 and 5, recorded on main before this change.
+- Verified: `tools/check.sh` 384 passed, 0 failed. Screenshots `out/t0044.png` (Personality
+  tab, seed 3) and `out/t0044_name.png` (all six tabs visible).
 
 ## Questions
 
