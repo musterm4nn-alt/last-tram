@@ -10,7 +10,8 @@ const AGE_MAX: int = 80
 const HEIGHT_MIN: int = 150
 const HEIGHT_MAX: int = 205
 ## Section ids, in tab order.
-const SECTIONS: PackedStringArray = ["name", "identity", "body", "face", "clothes"]
+## "personality" is last, so Randomise everything draws the others as before it existed.
+const SECTIONS: PackedStringArray = ["name", "identity", "body", "face", "clothes", "personality"]
 ## Fields stepped with next()/previous(), and the section each belongs to.
 const LIST_FIELDS: Dictionary = {
 	"gender": "identity", "pronouns": "identity",
@@ -201,6 +202,13 @@ func randomise(section: String, rng: RandomNumberGenerator) -> void:
 			spec.appearance.features = look.features
 		"clothes":
 			spec.outfit = Outfit.random(_content, rng, true)
+		"personality":
+			spec.personality = Personality.random(rng)
+
+
+## Sets one personality axis (clamped to −100..100; unknown axes are ignored).
+func set_trait(axis: String, value: int) -> void:
+	spec.personality.set_axis(axis, value)
 
 
 ## Every section, in SECTIONS order.

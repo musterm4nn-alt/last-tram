@@ -14,7 +14,7 @@ extends Node2D
 ##   --quickstart        skip the menu and start straight into a new game
 ##   --menu              force the menu even with quickstart options
 ##   --screen=creator    open the character creator directly (with the menu); "name" is the same
-##   --creator-tab=TAB   the creator's tab: name, identity, body, face
+##   --creator-tab=TAB   the creator's tab: name, identity, body, face, clothes, personality
 ##   --creator-seed=N    start the creator from a random character (for repeatable screenshots)
 ##   --screen=gallery    show every look option (portraits and figures); --gallery-page=2 for clothes
 ##   --screen=load       open the main menu's Load list (with the menu)

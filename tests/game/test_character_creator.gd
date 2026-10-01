@@ -245,3 +245,41 @@ func _make_screen() -> CharacterCreator:
 
 func _drop(screen: CharacterCreator) -> void:
 	screen.free()
+
+
+func test_personality_sliders_set_the_started_characters_personality() -> void:
+	var screen := _make_screen()
+	var started: Array[CharacterSpec] = []
+	screen.start_pressed.connect(func(spec: CharacterSpec) -> void: started.append(spec))
+	_type(screen, "Mira", "Jovanović", "")
+	screen.show_tab("personality")
+	var tab := screen._personality
+	assert_eq(tab._sliders.size(), Personality.AXES.size())
+	tab._sliders["temper"].value_changed.emit(-60.0)
+	tab._sliders["sociability"].value_changed.emit(75.0)
+	assert_eq(screen.model.spec.personality.get_axis("temper"), -60)
+	screen._try_start()
+	assert_eq(started.size(), 1)
+	assert_eq(started[0].personality.get_axis("temper"), -60)
+	assert_eq(started[0].personality.get_axis("sociability"), 75)
+	var sim := SimFactory.new_game(content(), 1, started[0])
+	assert_eq(sim.world.player().personality.get_axis("sociability"), 75, "the player gets it")
+	_drop(screen)
+
+
+func test_personality_tab_has_a_randomise_button_and_follows_the_model() -> void:
+	var screen := _make_screen()
+	var tab := screen._personality
+	var randomise: Button = null
+	for child: Node in tab.get_children():
+		if child is Button:
+			randomise = child
+	assert_true(randomise != null, "the tab has a Randomise button")
+	screen.use_seed(4)
+	randomise.pressed.emit()
+	var expected := RandomNumberGenerator.new()
+	expected.seed = 4
+	var drawn := Personality.random(expected)
+	assert_eq(screen.model.spec.personality.to_dict(), drawn.to_dict())
+	assert_eq(int(tab._sliders["kindness"].value), drawn.get_axis("kindness"), "sliders show it")
+	_drop(screen)

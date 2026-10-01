@@ -1,6 +1,7 @@
 class_name CharacterCreator
 extends CanvasLayer
-## The character creator (New game): tabs for Name, Identity, Body, Face & hair and Clothes,
+## The character creator (New game): tabs for Name, Identity, Body, Face & hair, Clothes and
+## Personality,
 ## each with a Randomise button, a live preview from all four sides, and Start / Randomise
 ## everything / Back. Every choice goes through a CreatorModel. Enter = Start (when valid),
 ## Esc = Back, even while typing a name.
@@ -13,9 +14,8 @@ const HINT: String = "Type a first and last name, or press Random name."
 const HINT_COLOR: Color = Color(1, 1, 1, 0.6)
 const ERROR_COLOR: Color = Color("#e06c6c")
 ## Tab ids in order, and their titles.
-const TABS: PackedStringArray = ["name", "identity", "body", "face", "clothes"]
-const TAB_TITLES: PackedStringArray = ["Name", "Identity", "Body", "Face & hair", "Clothes"]
-const LABEL_WIDTH: float = 110.0
+const TABS: PackedStringArray = ["name", "identity", "body", "face", "clothes", "personality"]
+const TAB_TITLES: PackedStringArray = ["Name", "Identity", "Body", "Face & hair", "Clothes", "Personality"]
 
 var model: CreatorModel
 
@@ -34,6 +34,7 @@ var _height: SpinBox
 ## Feature id -> its checkbox.
 var _feature_boxes: Dictionary[String, CheckBox] = {}
 var _clothes: CreatorClothesTab
+var _personality: CreatorPersonalityTab
 ## Randomise buttons draw from this (seeded by --creator-seed, else random).
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _rng_seeded: bool = false
@@ -70,7 +71,7 @@ func _ready() -> void:
 	columns.add_theme_constant_override("separation", 20)
 	box.add_child(columns)
 	_tabs = TabContainer.new()
-	_tabs.custom_minimum_size = Vector2(430, 300)
+	_tabs.custom_minimum_size = Vector2(540, 300)
 	columns.add_child(_tabs)
 	_build_name_tab(_tab("Name"))
 	_build_identity_tab(_tab("Identity"))
@@ -81,6 +82,11 @@ func _ready() -> void:
 	_tabs.add_child(_clothes)
 	_clothes.build(model)
 	_clothes.changed.connect(_sync_from_model)
+	_personality = CreatorPersonalityTab.new()
+	_personality.name = "Personality"
+	_tabs.add_child(_personality)
+	_personality.build(model)
+	_personality.changed.connect(_sync_from_model)
 	# The Name tab's "Random name" button is its Randomise.
 	for index: int in range(1, TABS.size()):
 		_randomise_button(_tabs.get_child(index) as VBoxContainer, TABS[index])
@@ -136,8 +142,8 @@ func use_seed(seed_value: int) -> void:
 	_rng_seeded = true
 
 
-## Shows the tab with this id ("name", "identity", "body", "face", "clothes"); unknown ids
-## are ignored.
+## Shows the tab with this id ("name", "identity", "body", "face", "clothes", "personality");
+## unknown ids are ignored.
 func show_tab(id: String) -> void:
 	var index := TABS.find(id)
 	if index >= 0:
@@ -191,14 +197,14 @@ func _build_name_tab(page: VBoxContainer) -> void:
 func _build_identity_tab(page: VBoxContainer) -> void:
 	_picker(page, "Gender", "gender")
 	_picker(page, "Pronouns", "pronouns")
-	_age = _spin(page, "Age", CreatorModel.AGE_MIN, CreatorModel.AGE_MAX, "")
+	_age = CreatorRows.spin(page, "Age", CreatorModel.AGE_MIN, CreatorModel.AGE_MAX, "")
 	_age.value_changed.connect(func(value: float) -> void:
 		model.set_age(int(value))
 		_sync_from_model())
 
 
 func _build_body_tab(page: VBoxContainer) -> void:
-	_height = _spin(page, "Height", CreatorModel.HEIGHT_MIN, CreatorModel.HEIGHT_MAX, "cm")
+	_height = CreatorRows.spin(page, "Height", CreatorModel.HEIGHT_MIN, CreatorModel.HEIGHT_MAX, "cm")
 	_height.value_changed.connect(func(value: float) -> void:
 		model.set_height(int(value))
 		_sync_from_model())
@@ -226,48 +232,17 @@ func _build_face_tab(page: VBoxContainer) -> void:
 		_feature_boxes[id] = check
 
 
-## One row: a label, ◀, the current option's name, ▶ (the same for every list field).
+## One row: a label, ◀, the current option's name, ▶ (see CreatorRows.picker).
 func _picker(page: VBoxContainer, label_text: String, field: String) -> void:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 6)
-	page.add_child(row)
-	var label := Label.new()
-	label.text = label_text
-	label.custom_minimum_size = Vector2(LABEL_WIDTH, 0)
-	row.add_child(label)
-	var back := Button.new()
-	back.text = "◀"
-	back.pressed.connect(func() -> void:
-		model.previous(field)
-		_sync_from_model())
-	row.add_child(back)
-	var shown := Label.new()
-	shown.custom_minimum_size = Vector2(170, 0)
-	shown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	row.add_child(shown)
-	var forward := Button.new()
-	forward.text = "▶"
-	forward.pressed.connect(func() -> void:
+	_pickers[field] = CreatorRows.picker(page, label_text, _step.bind(field, -1), _step.bind(field, 1))
+
+
+func _step(field: String, direction: int) -> void:
+	if direction > 0:
 		model.next(field)
-		_sync_from_model())
-	row.add_child(forward)
-	_pickers[field] = shown
-
-
-func _spin(page: VBoxContainer, label_text: String, low: int, high: int, suffix: String) -> SpinBox:
-	var row := HBoxContainer.new()
-	page.add_child(row)
-	var label := Label.new()
-	label.text = label_text
-	label.custom_minimum_size = Vector2(LABEL_WIDTH, 0)
-	row.add_child(label)
-	var spin := SpinBox.new()
-	spin.min_value = low
-	spin.max_value = high
-	spin.step = 1
-	spin.suffix = suffix
-	row.add_child(spin)
-	return spin
+	else:
+		model.previous(field)
+	_sync_from_model()
 
 
 func _field(parent: Control, label_text: String, max_length: int) -> LineEdit:
@@ -299,6 +274,7 @@ func _sync_from_model() -> void:
 	for id: String in _feature_boxes:
 		_feature_boxes[id].set_pressed_no_signal(model.spec.appearance.features.has(id))
 	_clothes.sync(model)
+	_personality.sync(model)
 	_refresh()
 
 
