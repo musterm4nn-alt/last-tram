@@ -55,6 +55,69 @@ static func shift_on(sim: Sim, person: Person, day: int) -> Vector2i:
 	return Vector2i(start, start + SimClock.ticks_for(0, shift.hours()))
 
 
+## The shift (start and end ticks) that `tick` falls in, counting the hour before it starts:
+## today's, or yesterday's when it runs past midnight. (-1, -1) for none.
+static func shift_window(sim: Sim, person: Person, tick: int) -> Vector2i:
+	var day := tick / SimClock.ticks_for(1)
+	for start_day: int in [day, day - 1, day + 1]:
+		var window := shift_on(sim, person, start_day)
+		if window.x >= 0 and tick >= window.x - SimClock.ticks_for(0, 1) and tick < window.y:
+			return window
+	return Vector2i(-1, -1)
+
+
+## The work action started performing: begin the job's WorkSession and emit &"shift_started"
+## {person_id, job_id, late_minutes}.
+static func start_shift(sim: Sim, person: Person, action: Action) -> void:
+	var job := sim.content.job(person.job.job_id) if person.job != null else null
+	if job == null:
+		return
+	WorkSessions.for_job(job).begin(sim, person, action)
+	var window := shift_window(sim, person, action.started_tick)
+	var late := maxi(0, (action.started_tick - window.x) / SimClock.STEPS_PER_GAME_MINUTE) if window.x >= 0 else 0
+	sim.emit_event(&"shift_started", {"person_id": person.id, "job_id": job.id, "late_minutes": late})
+
+
+## One personal minute of work (the session applies the job's needs).
+static func work_minute(sim: Sim, person: Person, action: Action) -> void:
+	var job := sim.content.job(person.job.job_id) if person.job != null else null
+	if job != null:
+		WorkSessions.for_job(job).on_minute(sim, person, action)
+
+
+## True once the shift the work action started in is over (or the person lost the job).
+static func shift_over(sim: Sim, person: Person, action: Action) -> bool:
+	var window := shift_window(sim, person, action.started_tick)
+	return window.x < 0 or sim.clock.tick >= window.y
+
+
+## A PERFORMING work action ends (finished when `completed`, else cancelled or failed): the
+## session's WorkResult goes out as &"shift_ended" {person_id, job_id, minutes, late_minutes,
+## left_early}. Returns the result (T-0061 pays from it).
+static func end_shift(sim: Sim, person: Person, action: Action, completed: bool) -> WorkResult:
+	var job := sim.content.job(person.job.job_id) if person.job != null else null
+	var result := WorkSessions.for_job(job).finish(sim, person, action, completed) if job != null else WorkResult.new()
+	sim.emit_event(&"shift_ended", {"person_id": person.id, "job_id": result.job_id, "minutes": result.minutes,
+		"late_minutes": result.late_minutes, "left_early": result.left_early})
+	return result
+
+
+## True while the person performs their work action.
+static func working(sim: Sim, person: Person) -> bool:
+	if person.action_queue.is_empty() or person.action_queue[0].state != Action.PERFORMING:
+		return false
+	var def := sim.content.interaction(person.action_queue[0].interaction_id)
+	return def != null and def.work
+
+
+## True while the person works out of sight (the rabbit hole).
+static func hidden(sim: Sim, person: Person) -> bool:
+	if not working(sim, person) or person.job == null:
+		return false
+	var job := sim.content.job(person.job.job_id)
+	return job != null and WorkSessions.for_job(job).hidden()
+
+
 ## True if the position's working hours never fall in the routine's sleep window.
 static func fits_routine(content: ContentDB, job: JobDef, position: int, routine_id: String) -> bool:
 	var routine := content.routine(routine_id)

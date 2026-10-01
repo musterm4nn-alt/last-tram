@@ -14,6 +14,8 @@ const MEMORY_SALIENCE: float = 20.0
 static func available(sim: Sim, target: Person) -> bool:
 	if target == null or not target.path.is_empty() or target.move_intent != Vector2.ZERO:
 		return false
+	if Jobs.hidden(sim, target):
+		return false  # at work, out of sight (T-0059)
 	if target.action_queue.is_empty() or target.action_queue[0].state != Action.PERFORMING:
 		return true
 	var def := sim.content.interaction(target.action_queue[0].interaction_id)

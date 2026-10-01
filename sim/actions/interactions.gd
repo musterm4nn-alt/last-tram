@@ -33,17 +33,28 @@ static func offered_by_person(sim: Sim, actor_id: int, target_id: int) -> Array[
 	return out
 
 
-## Index of the use slot `person` stands on for this object, or -1.
-## Compares full cells (including level), so standing under the slot is not enough.
-static func slot_at_person(sim: Sim, person: Person, object_id: int) -> int:
+## Index of the use slot `person` stands on for this object, or -1. With `def`, only slots
+## that fit it (slot_fits). Compares full cells (including level), so standing under the slot
+## is not enough.
+static func slot_at_person(sim: Sim, person: Person, object_id: int, def: InteractionDef = null) -> int:
 	var obj := sim.world.get_object(object_id)
 	if obj == null:
 		return -1
 	var here := person.cell()
 	for index: int in obj.slot_count(sim.content):
-		if obj.slot_cell(sim.content, index) == here:
+		if obj.slot_cell(sim.content, index) == here and (def == null or slot_fits(sim, object_id, index, def)):
 			return index
 	return -1
+
+
+## True if the slot's role fits the interaction (T-0059): staff slots for work, customer slots
+## for everything else.
+static func slot_fits(sim: Sim, object_id: int, slot_index: int, def: InteractionDef) -> bool:
+	var obj := sim.world.get_object(object_id)
+	var object_def := sim.content.object_def(obj.def_id) if obj != null else null
+	if object_def == null or slot_index < 0 or slot_index >= object_def.use_slots.size():
+		return false
+	return (object_def.use_slots[slot_index].role == "staff") == def.work
 
 
 ## True if another person's front action is routing to or performing on this slot.

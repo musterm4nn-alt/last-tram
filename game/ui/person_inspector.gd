@@ -86,6 +86,11 @@ static func lines(sim: Sim, id: int, viewer_id: int) -> PackedStringArray:
 ## What the person is doing: the front action's name ("walking there" while routing),
 ## "Walking", or "Nothing".
 static func doing(sim: Sim, person: Person) -> String:
+	if Jobs.working(sim, person):
+		var window := Jobs.shift_window(sim, person, person.action_queue[0].started_tick)
+		var end := SimClock.new()
+		end.tick = maxi(window.y, 0)
+		return "At work until %02d:%02d" % [end.hour(), end.minute()]
 	if not person.action_queue.is_empty():
 		var action: Action = person.action_queue[0]
 		var def := sim.content.interaction(action.interaction_id)

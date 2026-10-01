@@ -96,3 +96,19 @@ func test_the_panel_shows_and_hides() -> void:
 	panel.show_person(0)
 	assert_false(panel.visible)
 	panel.free()
+
+
+func test_doing_says_when_work_ends() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	sim.clock.tick = SimClock.ticks_for(0, 9)
+	var player := sim.world.player()
+	player.free_will = false
+	var shelter: WorldObject = null
+	for obj: WorldObject in sim.world.objects.values():
+		if obj.def_id == "tram_stop":
+			shelter = obj
+	var cell := shelter.slot_cell(content(), 0)
+	player.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
+	sim.submit(QueueInteractionCommand.new(player.id, "work", shelter.id))
+	sim.step()
+	assert_eq(PersonInspector.doing(sim, player), "At work until 17:00")

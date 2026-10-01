@@ -62,6 +62,8 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.need_rates = _read_needs(reader, d, "need_rates", ctx)
 		def.finish_needs = _read_needs(reader, d, "finish_needs", ctx)
 		def.advertise = _read_needs(reader, d, "advertise", ctx)
+		if d.has("work"):
+			def.work = reader.read_bool(d, "work", ctx)
 		if d.has("time_skip"):
 			def.time_skip = reader.read_bool(d, "time_skip", ctx)
 		if d.has("presentation"):
@@ -98,7 +100,7 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		if db.interaction(def.id) != null:
 			reader.error("%s: duplicate interaction id" % ctx)
 			continue
-		if has_duration == has_until:
+		if has_duration == has_until and not (def.work and not has_duration):
 			reader.error("%s: exactly one of 'duration_minutes' or 'until_need' (with 'min_minutes' and 'max_minutes') is required" % ctx)
 		if has_duration and def.duration_minutes <= 0:
 			reader.error("%s: 'duration_minutes' must be > 0" % ctx)

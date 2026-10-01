@@ -118,7 +118,7 @@
 			"name": "Bartender",
 			"place_id": "kneipe_anker",
 			"session": "on_site",
-			"workplace_tag": "bar",
+			"workplace_tag": "bar_counter",
 			"need_rates": {
 				"energy": -3.0,
 				"fun": -3.0,

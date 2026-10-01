@@ -6,3 +6,5 @@ extends RefCounted
 
 var offset: Vector2i = Vector2i.ZERO
 var facing: Vector2i = Vector2i.ZERO
+## "customer" (anyone using the object) or "staff" (working there: behind a counter, T-0059).
+var role: String = "customer"

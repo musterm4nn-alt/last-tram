@@ -92,6 +92,10 @@ static func _read_slots(reader: ContentReader, d: Dictionary, ctx: String) -> Ar
 		var slot := UseSlotDef.new()
 		slot.offset = _read_vec2i(reader, slot_dict, "offset", slot_ctx)
 		slot.facing = _read_vec2i(reader, slot_dict, "facing", slot_ctx)
+		if slot_dict.has("role"):
+			slot.role = reader.read_str(slot_dict, "role", slot_ctx)
+			if not slot.role in ["customer", "staff"]:
+				reader.error("%s: role '%s' must be \"customer\" or \"staff\"" % [slot_ctx, slot.role])
 		if not slot.facing in CARDINALS:
 			reader.error("%s: facing %s must be a unit cardinal vector (one of [1,0], [-1,0], [0,1], [0,-1])" % [slot_ctx, slot.facing])
 		out.append(slot)

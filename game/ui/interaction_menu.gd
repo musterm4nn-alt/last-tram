@@ -44,11 +44,14 @@ func open_for(object_id: int, screen_pos: Vector2) -> void:
 	popup(Rect2i(Vector2i(screen_pos), Vector2i.ZERO))
 
 
-## What the player can do with this object or person (T-0053), in content order.
+## What the player can do with this object or person (T-0053), in content order. Options
+## whose reason is in Requirements.HIDDEN (someone else's job) are left out.
 static func options(sim: Sim, target_id: int) -> Array[InteractionDef]:
 	if sim.world.get_person(target_id) != null:
 		return Interactions.offered_by_person(sim, sim.world.player_id, target_id)
-	return Interactions.offered_by(sim, target_id)
+	var player := sim.world.player()
+	return Interactions.offered_by(sim, target_id).filter(func(def: InteractionDef) -> bool:
+		return player == null or not Requirements.check(sim, player, def, target_id) in Requirements.HIDDEN)
 
 
 ## An entry's text: the name, " · €4.00" when it has a price, and " (not enough money)" style when
