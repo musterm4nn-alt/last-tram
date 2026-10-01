@@ -13,8 +13,13 @@ var player_id: int = 0
 var objects: Dictionary[int, WorldObject] = {}
 ## Every lot by id (one per place; see Lots).
 var lots: Dictionary[int, Lot] = {}
+## Every household by id.
+var households: Dictionary[int, Household] = {}
 
 var _next_id: int = 1
+## Derived: place id -> lot id (rebuilt by lot_id_for_place when the lot count changes).
+var _lot_by_place: Dictionary[String, int] = {}
+var _lots_indexed: int = -1
 ## Derived footprint index: cell -> object ids covering it (rebuilt on load).
 var _objects_by_cell: Dictionary = {}
 
@@ -22,6 +27,17 @@ var _objects_by_cell: Dictionary = {}
 func _init(p_content: ContentDB, p_grid: WorldGrid) -> void:
 	content = p_content
 	grid = p_grid
+
+
+## The id of the lot covering `place_id`, or 0.
+func lot_id_for_place(place_id: String) -> int:
+	if _lots_indexed != lots.size():
+		_lot_by_place.clear()
+		for lot: Lot in lots.values():
+			if not _lot_by_place.has(lot.place_id):
+				_lot_by_place[lot.place_id] = lot.id
+		_lots_indexed = lots.size()
+	return _lot_by_place.get(place_id, 0)
 
 
 func new_id() -> int:
@@ -121,6 +137,9 @@ func to_dict() -> Dictionary:
 	var lots_out: Array[Dictionary] = []
 	for lot: Lot in lots.values():
 		lots_out.append(lot.to_dict())
+	var households_out: Array[Dictionary] = []
+	for household: Household in households.values():
+		households_out.append(household.to_dict())
 	return {
 		"next_id": _next_id,
 		"player_id": player_id,
@@ -128,6 +147,7 @@ func to_dict() -> Dictionary:
 		"people": people_out,
 		"objects": objects_out,
 		"lots": lots_out,
+		"households": households_out,
 	}
 
 
@@ -164,4 +184,7 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 			world.lots[lot.id] = lot
 	if not d.has("lots") or not saved_lots.is_empty():
 		Lots.create_from_content(world, true)
+	for household_entry: Variant in d.get("households", []):
+		var household := Household.from_dict(household_entry)
+		world.households[household.id] = household
 	return world

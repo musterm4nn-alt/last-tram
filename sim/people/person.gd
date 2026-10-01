@@ -34,6 +34,10 @@ var outfit: Outfit = Outfit.new()
 var personality: Personality = Personality.new()
 ## Id of the Lot the person lives in (0 = none). Private lots let only their residents in.
 var home_lot_id: int = 0
+## Id of the person's Household (0 = none).
+var household_id: int = 0
+## Free will found nothing to do: it looks again at this tick (AutonomySystem.RETRY_MINUTES).
+var autonomy_retry_tick: int = 0
 ## Floor the person is on (the z of their cell).
 var level: int = 0
 ## Feet position in cell units: cell (3, 4) spans x 3..4, y 4..5, so its centre is (3.5, 4.5).
@@ -103,6 +107,8 @@ func to_dict() -> Dictionary:
 		"outfit": outfit.to_dict(),
 		"personality": personality.to_dict(),
 		"home_lot_id": home_lot_id,
+		"household_id": household_id,
+		"autonomy_retry_tick": autonomy_retry_tick,
 		"level": level,
 		"pos": Ser.vec2(pos),
 		"facing": Ser.vec2(facing),
@@ -136,6 +142,8 @@ static func from_dict(d: Dictionary) -> Person:
 	if personality_data is Dictionary:
 		p.personality = Personality.from_dict(personality_data)
 	p.home_lot_id = int(d.get("home_lot_id", 0))
+	p.household_id = int(d.get("household_id", 0))
+	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))
 	p.level = int(d["level"])
 	p.pos = Ser.to_vec2(d["pos"])
 	p.facing = Ser.to_vec2(d["facing"])

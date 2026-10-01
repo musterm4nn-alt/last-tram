@@ -14,10 +14,8 @@ static func lot_at(sim: Sim, cell: Vector3i) -> Lot:
 
 ## The lot covering the place with this id, or null.
 static func by_place(world: World, place_id: String) -> Lot:
-	for lot: Lot in world.lots.values():
-		if lot.place_id == place_id:
-			return lot
-	return null
+	var lot_id := world.lot_id_for_place(place_id)
+	return world.lots.get(lot_id) if lot_id > 0 else null
 
 
 ## True if the lot is open at the clock's hour. Public and private lots are always "open"

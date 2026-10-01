@@ -17,13 +17,13 @@ func _set_needs(person: Person, needs: Dictionary) -> void:
 		person.needs[need_id] = float(needs[need_id])
 
 
-## Runs `minutes` game minutes and returns the autonomy_chose events.
+## Runs `minutes` game minutes and returns the player's autonomy_chose events.
 func _run_choices(sim: Sim, minutes: int) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for i: int in minutes:
 		sim.run_minutes(1)
 		for event: Dictionary in sim.events.drain():
-			if event["type"] == &"autonomy_chose":
+			if event["type"] == &"autonomy_chose" and int(event["data"]["person_id"]) == sim.world.player_id:
 				out.append(event)
 	return out
 
@@ -107,6 +107,8 @@ func test_free_will_never_adds_to_a_queue() -> void:
 		sim.run_minutes(1)
 		var chosen := false
 		for event: Dictionary in sim.events.drain():
+			if int(event["data"].get("person_id", -1)) != player.id:
+				continue  # the residents live their own lives
 			if event["type"] == &"autonomy_chose":
 				chosen = true
 			elif event["type"] == &"action_finished":

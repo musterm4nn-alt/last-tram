@@ -31,11 +31,20 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 	_place_district_objects(sim)
 	var start: DistrictDef = content.districts[content.start_district]
 	var player := _spawn_player(sim, start.player_spawn, spec if spec != null else CharacterSpec.default_player(content))
-	# Lots come last, so object and player ids stay as they were before lots existed.
+	# Lots and residents come last, so object and player ids stay as they were before.
 	Lots.create_from_content(sim.world)
 	var home := Lots.by_place(sim.world, PLAYER_HOME_PLACE)
+	var skip: Array[int] = []
 	if home != null:
 		player.home_lot_id = home.id
+		skip.append(home.id)
+	var household := Household.new()
+	household.id = sim.world.new_id()
+	household.member_ids.append(player.id)
+	household.home_lot_id = player.home_lot_id
+	sim.world.households[household.id] = household
+	player.household_id = household.id
+	ResidentGenerator.populate(sim, skip)
 	return sim
 
 
@@ -79,17 +88,24 @@ static func _place_district_objects(sim: Sim) -> void:
 
 
 static func _spawn_player(sim: Sim, cell: Vector3i, spec: CharacterSpec) -> Person:
+	var person := spawn_person(sim, cell, spec)
+	sim.world.player_id = person.id
+	return person
+
+
+## Adds a person made from `spec`, standing at the centre of `cell` with starting needs, and
+## emits &"person_spawned". New people count as fresh input, so free will waits its idle
+## minutes before acting for them.
+static func spawn_person(sim: Sim, cell: Vector3i, spec: CharacterSpec) -> Person:
 	var person := Person.new()
 	person.id = sim.world.new_id()
 	spec.apply_to(person)
 	person.level = cell.z
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
 	person.prev_pos = person.pos
-	# A new game counts as fresh input, so free will waits its idle minutes before acting.
 	person.last_input_tick = sim.clock.tick
 	for need_def: NeedDef in sim.content.needs:
 		person.needs[need_def.id] = need_def.start
 	sim.world.add_person(person)
-	sim.world.player_id = person.id
 	sim.emit_event(&"person_spawned", {"person_id": person.id})
 	return person

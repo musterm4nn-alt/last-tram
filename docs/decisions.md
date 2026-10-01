@@ -143,3 +143,11 @@ float that would not read back exactly as `"#f64:"` plus its 8 bytes in hex, and
 mostly readable and old saves load unchanged. Alternatives rejected: fixed-point needs and
 positions (a large change for every system), and a binary save format (unreadable,
 undiffable).
+
+**D27 · A town of 30 must stay cheap.** Residents made a simulated day 27× slower, mostly
+free will re-planning for content people every minute and per-step slot checks. Fixes:
+free will that finds nothing waits five minutes (saved per person); a performing action
+checks its slot and target fully once per personal minute, before benefits apply (input and
+paths, the only ways to move, are still checked every step); `ContentDB.place_at` and
+`Lots.by_place` use derived indexes. Real paths are still computed for every candidate slot,
+so free will's choices keep using true walking distances.

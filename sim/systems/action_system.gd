@@ -143,25 +143,40 @@ static func cancel_front(sim: Sim, person: Person, reason: String) -> void:
 		_cancel(sim, person, person.action_queue[0], reason)
 
 
+## Cheap checks every step (input, the target still exists); where the person stands is
+## checked once per personal minute, before its benefits apply (_progress). Only input or a
+## path can move someone, so a performer cannot leave the slot unnoticed in between.
 static func _step_performing(sim: Sim, person: Person, action: Action) -> void:
 	if person.move_intent != Vector2.ZERO or not person.path.is_empty():
 		_cancel(sim, person, action, "moved")
 		return
+	if not sim.world.objects.has(action.target_id):
+		_fail(sim, person, action, "target_unavailable")
+
+
+## False (and the action failed or cancelled) when the target or the person's place on its
+## slot is no longer right.
+static func _still_in_place(sim: Sim, person: Person, action: Action) -> bool:
 	var obj := sim.world.get_object(action.target_id)
 	if obj == null or action.slot_index < 0 or action.slot_index >= obj.slot_count(sim.content):
 		_fail(sim, person, action, "target_unavailable")
-	elif person.cell() != obj.slot_cell(sim.content, action.slot_index):
+		return false
+	if person.cell() != obj.slot_cell(sim.content, action.slot_index):
 		_cancel(sim, person, action, "moved")
+		return false
+	return true
 
 
 ## Counts complete personal minutes, independent of the global clock's minute phase.
 static func _progress(sim: Sim, person: Person, action: Action) -> void:
+	var elapsed := sim.clock.tick + 1 - action.started_tick
+	if elapsed < (action.minutes_done + 1) * SimClock.STEPS_PER_GAME_MINUTE:
+		return
 	var def := sim.content.interaction(action.interaction_id)
 	if def == null:
 		_fail(sim, person, action, "unknown_interaction")
 		return
-	var elapsed := sim.clock.tick + 1 - action.started_tick
-	if elapsed < (action.minutes_done + 1) * SimClock.STEPS_PER_GAME_MINUTE:
+	if not _still_in_place(sim, person, action):
 		return
 	for need_id: String in def.need_rates:
 		var before: float = float(person.needs.get(need_id, 0.0))

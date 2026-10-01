@@ -7,6 +7,9 @@ extends SimSystem
 
 ## Game minutes without input before autonomy may act for a person.
 const IDLE_MINUTES: int = 10
+## After finding nothing worth doing, a person looks again only after this many minutes
+## (most checks in a town of content people find nothing; T-0034).
+const RETRY_MINUTES: int = 5
 
 
 func on_minute(sim: Sim) -> void:
@@ -16,8 +19,11 @@ func on_minute(sim: Sim) -> void:
 			continue
 		if person.move_intent != Vector2.ZERO or sim.clock.tick - person.last_input_tick < idle_ticks:
 			continue
+		if sim.clock.tick < person.autonomy_retry_tick:
+			continue
 		var choice := Autonomy.choose(Autonomy.candidates(sim, person), sim.rng.stream("autonomy"))
 		if choice.is_empty():
+			person.autonomy_retry_tick = sim.clock.tick + RETRY_MINUTES * SimClock.STEPS_PER_GAME_MINUTE
 			continue
 		var action := Action.new(String(choice["interaction_id"]), int(choice["object_id"]))
 		action.id = sim.world.new_id()
