@@ -72,6 +72,12 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.finish_moodlet = reader.read_str(d, "finish_moodlet", ctx)
 			if db.moodlet(def.finish_moodlet) == null:
 				reader.error("%s: unknown moodlet '%s' in 'finish_moodlet'" % [ctx, def.finish_moodlet])
+		if d.has("price"):
+			def.price = reader.read_int(d, "price", ctx)
+			if def.price < 0:
+				reader.error("%s: 'price' must be >= 0" % ctx)
+			elif def.price > 0 and def.target == "person":
+				reader.error("%s: person-targeted interactions are free" % ctx)
 		if d.has("routine"):
 			def.routine = reader.read_str(d, "routine", ctx)
 			if not def.routine in ["sleep", "out"]:

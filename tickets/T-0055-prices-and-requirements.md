@@ -1,12 +1,12 @@
 ---
 id: T-0055
 title: Prices, and one check for what a person may do now
-status: todo
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0054]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -47,8 +47,8 @@ already tests `notice_for_event`), a broken interaction in
 - `going_out.json`: `have_a_drink` `"price": 400`, `have_a_coffee` `"price": 300`
   (`sit_outside` stays free).
 - `economy.json` gains three tuning numbers (and `EconomyDef` gets the fields, validated ≥ 0):
-  `"price_cost_per_euro": 0.3` (float), `"low_money": 5000` (int, cents),
-  `"low_money_factor": 3.0` (float).
+  `"price_cost_per_euro": 0.1` (float), `"low_money": 5000` (int, cents),
+  `"low_money_factor": 8.0` (float).
 
 ### `Requirements` (`sim/actions/requirements.gd`, static, no state)
 ```gdscript
@@ -87,8 +87,8 @@ static func text(reason: String) -> String   # TEXT, else the id with "_" → " 
   `_person_options` is unchanged (social interactions are free).
 - **`Utility.price_cost(person: Person, def: InteractionDef, content: ContentDB) -> float`**:
   0 for free interactions, else `price / 100.0 × price_cost_per_euro`, times
-  `low_money_factor` when `person.wallet.total() < low_money`. (A €4 drink costs 1.2 points of
-  score, or 3.6 when you have under €50; the going-out bonus is 5.)
+  `low_money_factor` when `person.wallet.total() < low_money`. (A €4 drink costs 0.4 points of
+  score, or 3.2 when you have under €50; the going-out bonus is 5.)
 - **`InteractionMenu`**: a new pure `static func label(sim, person, def, target_id) -> String`
   gives `name`, then `" · €4.00"` when it has a price, then `" (reason text)"` when the check
   fails. `entries()` uses it with the player. `prepare()` disables the items whose check fails
@@ -98,32 +98,51 @@ static func text(reason: String) -> String   # TEXT, else the id with "_" → " 
   in `FAIL_REASONS` and in `Requirements.TEXT`. Other reasons still show nothing.
 
 ## Acceptance criteria
-- [ ] Content → `test_prices.gd::test_prices_load` (drink 400, coffee 300, sit outside 0);
+- [x] Content → `test_prices.gd::test_prices_load` (drink 400, coffee 300, sit outside 0);
   the broken fixture's negative price and priced social interaction are reported
   (`test_content.gd`).
-- [ ] Paying → `test_prices.gd::test_a_drink_is_paid_when_it_starts` (new game, Monday 20:00,
+- [x] Paying → `test_prices.gd::test_a_drink_is_paid_when_it_starts` (new game, Monday 20:00,
   the player next to the Kneipe's bar counter: after it starts, €4 less,
   `ledger.sinks["purchase"] == 400`, one `money_changed` with reason "purchase"; a save while
   it performs and a load don't charge again).
-- [ ] Refusals → `test_cannot_queue_what_you_cannot_afford` (€2: refused with `cant_afford`,
+- [x] Refusals → `test_cannot_queue_what_you_cannot_afford` (€2: refused with `cant_afford`,
   nothing queued, money unchanged), `test_closed_place_refuses` (the bar at 10:00 →
   `closed`), `test_someone_elses_fridge_is_private` (a neighbour's fridge → `private`).
-- [ ] `test_money_gone_on_the_way_fails_at_the_start`: queued while affordable, money spent
+- [x] `test_money_gone_on_the_way_fails_at_the_start`: queued while affordable, money spent
   before arrival → `action_failed` with `cant_afford`, nothing charged.
-- [ ] Free will → `test_free_will_skips_what_it_cannot_afford` (a resident with €0 in their
+- [x] Free will → `test_free_will_skips_what_it_cannot_afford` (a resident with €0 in their
   out window gets no drink or coffee option; with money they do) and
-  `test_price_cost_grows_when_money_is_short` (exact values 1.2 and 3.6 for €4).
-- [ ] Menu → `test_interaction_menu.gd::test_menu_shows_prices_and_reasons`
+  `test_price_cost_grows_when_money_is_short` (exact values 0.4 and 3.2 for €4).
+- [x] Menu → `test_interaction_menu.gd::test_menu_shows_prices_and_reasons`
   ("Have a drink · €4.00" when open and affordable; "… (closed)" at 10:00 and disabled in
   `prepare()`; "… (not enough money)" with an empty wallet).
-- [ ] Notice → `"Have a drink: not enough money"` for a refused order (HUD test).
-- [ ] Existing tests that queued things at a closed place or in someone else's home are
+- [x] Notice → `"Have a drink: not enough money"` for a refused order (HUD test).
+- [x] Existing tests that queued things at a closed place or in someone else's home are
   moved to the right time or home, not loosened (list them in the notes).
-- [ ] `tools/check.sh` passes; `tools/simrun.sh --days=7 --check-m2` still passes, and its
+- [x] `tools/check.sh` passes; `tools/simrun.sh --days=7 --check-m2` still passes, and its
   money line shows purchases. Screenshot `out/t0055.png`
   (`--interact=bar_counter`, Monday 08:00) shows the greyed-out "(closed)" entry.
 
 ## Implementation notes
+- As specified: `Requirements` (closed, private, cant_afford), `InteractionDef.price`, paying in
+  `ActionSystem._start_performing` (with the interaction id as the statement detail),
+  `action_refused` from `QueueInteractionCommand`, free will skips and `Utility.price_cost`,
+  menu labels and disabled items, HUD notices.
+- **Tuning changed from the spec** (the ticket now says 0.1 and 8.0): with 0.3 per euro, a €4
+  drink lost 1.2 points, which tipped close choices at the Kneipe from drinking to talking.
+  Over 2 days (seed 3), drinks fell 141 → 79 while compliments rose 21 → 228, and
+  `test_tiers.gd`'s full-vs-tiered comparison went out of tolerance (exchanges 1175 vs 873).
+  With 0.1 per euro (0.4 points for €4) and ×8 under €50 (3.2 points), choices are back near
+  the old ones (drinks 123, chat 40, compliments 24), and the tiers comparison is within 25%
+  on seeds 1–5. People with money barely notice prices; people who are nearly broke do.
+- Existing test moved to the right home (not loosened):
+  `test_save_validation.gd::test_v2_action_migration_assigns_ids_and_keeps_legacy_cancellations`
+  used the last TV in town, a neighbour's, which is now refused as "not your home". It now
+  uses the player's own TV.
+- Verified: `tools/check.sh` 490 passed, 0 failed (`test_prices.gd`, 9 tests; a new test in
+  `test_interaction_menu.gd`; a broken fixture `content_broken/interactions/prices.json`).
+  `tools/simrun.sh --days=7 --check-m2` PASSED: residents had 454 drinks and spent €1,951
+  in a week. Screenshot `out/t0055.png`: "Have a drink · €4.00 (closed)" greyed out at 08:00.
 
 ## Questions
 

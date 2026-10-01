@@ -28,8 +28,10 @@ func prepare(object_id: int) -> void:
 	if labels.is_empty():
 		return
 	add_separator(labels[0])
+	var player := Session.sim.world.player()
 	for def: InteractionDef in options(Session.sim, object_id):
-		add_item(def.name, _offered.size())
+		add_item(label(Session.sim, player, def, object_id), _offered.size())
+		set_item_disabled(item_count - 1, player != null and not Requirements.check(Session.sim, player, def, object_id).is_empty())
 		_offered.append(def.id)
 	if _offered.is_empty():
 		add_item(NOTHING, 0)
@@ -49,6 +51,18 @@ static func options(sim: Sim, target_id: int) -> Array[InteractionDef]:
 	return Interactions.offered_by(sim, target_id)
 
 
+## An entry's text: the name, " · €4.00" when it has a price, and " (closed)" style when
+## `person` may not do it now (Requirements; T-0055).
+static func label(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
+	var text := def.name
+	if def.price > 0:
+		text += " · %s" % Money.format(def.price)
+	var reason := Requirements.check(sim, person, def, target_id) if person != null else ""
+	if not reason.is_empty():
+		text += " (%s)" % Requirements.text(reason)
+	return text
+
+
 ## The labels prepare() shows, header first (pure, for tests). [] for an unknown target.
 static func entries(sim: Sim, object_id: int) -> Array[String]:
 	var out: Array[String] = []
@@ -63,7 +77,7 @@ static func entries(sim: Sim, object_id: int) -> Array[String]:
 		return out
 	var offered := options(sim, object_id)
 	for interaction: InteractionDef in offered:
-		out.append(interaction.name)
+		out.append(label(sim, sim.world.player(), interaction, object_id))
 	if offered.is_empty():
 		out.append(NOTHING)
 	return out

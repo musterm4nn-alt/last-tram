@@ -53,7 +53,8 @@ static func place_text(sim: Sim, person: Person) -> String:
 	return place.name
 
 
-## Words for why the player's action failed (action_failed reasons); others show nothing.
+## Words for why the player's action failed (action_failed reasons; Requirements.TEXT adds
+## the reasons an action can be refused or fail for); others show nothing.
 const FAIL_REASONS: Dictionary = {
 	"no_free_slot": "someone is using it",
 	"no_path": "can't get there",
@@ -72,11 +73,12 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return ""
 	if event.get("type") == &"path_failed":
 		return "Can't get there"
-	if event.get("type") == &"action_failed" and FAIL_REASONS.has(String(data.get("reason", ""))):
+	var reason := String(data.get("reason", ""))
+	if event.get("type") in [&"action_failed", &"action_refused"] and (FAIL_REASONS.has(reason) or Requirements.TEXT.has(reason)):
 		var interaction_id := String(data.get("interaction_id", ""))
 		var def: InteractionDef = content.interaction(interaction_id) if content != null else null
 		var name := def.name if def != null else interaction_id
-		return "%s: %s" % [name, FAIL_REASONS[String(data["reason"])]]
+		return "%s: %s" % [name, FAIL_REASONS[reason] if FAIL_REASONS.has(reason) else Requirements.text(reason)]
 	return ""
 
 

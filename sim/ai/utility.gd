@@ -47,6 +47,16 @@ static func _raw_social_bias(person: Person, other: Person, def: InteractionDef)
 	return 0.0
 
 
+## How much the price puts the person off (T-0055): 0 when free, else euros ×
+## price_cost_per_euro, times low_money_factor while they hold less than low_money.
+static func price_cost(person: Person, def: InteractionDef, content: ContentDB) -> float:
+	if def.price <= 0:
+		return 0.0
+	var economy := content.economy
+	var factor := economy.low_money_factor if person.wallet.total() < economy.low_money else 1.0
+	return def.price / 100.0 * economy.price_cost_per_euro * factor
+
+
 ## Σ over the interaction's advertised needs of urgency(need value, need weight) ×
 ## min(advertised amount, 100 - need value). Capping by the room left stops a nearly rested
 ## person from wanting 80 energy of sleep. Needs the person lacks count as 100 (full);
