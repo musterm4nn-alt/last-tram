@@ -51,6 +51,10 @@
   zebra crossings; the **Altmarkt** square with fountain and trees; Späti Kaya and Imbiss
   Anadolu with a Hinterhof behind; **Haus 12** (the player's ground-floor flat: living room,
   kitchen, bedroom, bathroom); the Polizeiposten; Kirchgasse; the Stadtpark.
+  Upstairs (T-0031, levels 1 and 2): **Haus 5** (above Café Wolke and the Waschsalon),
+  **Haus 9** (above the Kneipe), **Haus 3** and **Haus 14** (above the Späti and the Imbiss,
+  entered from the Hinterhof) have stairwells and 14 small flats, two per floor (one in
+  Haus 9). Haus 3's ground floor is a flat too, so 15 homes wait for neighbours.
 - Authoring now: agents edit the ASCII maps. From M5: the in-game **town editor** (build
   mode without limits, saving back to the district files) lets the owner hand-craft the town.
 

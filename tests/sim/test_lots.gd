@@ -85,7 +85,8 @@ func test_free_will_ignores_a_fridge_in_someone_elses_flat() -> void:
 	var player := sim.world.player()
 	var own_fridge := 0
 	for id: int in sim.world.objects:
-		if sim.world.objects[id].def_id == "fridge":
+		var obj: WorldObject = sim.world.objects[id]
+		if obj.def_id == "fridge" and sim.content.place_at(obj.origin).id == "home_player":
 			own_fridge = id
 	assert_true(_offers(sim, player, own_fridge), "uses the fridge in the player's flat")
 	var fridge := WorldObject.new()
@@ -130,9 +131,12 @@ func test_saved_lots_of_removed_places_are_dropped() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var data: Dictionary = JSON.parse_string(SaveCodec.to_json(sim))
 	(data["world"]["lots"][0] as Dictionary)["place_id"] = "torn_down"
+	var replaced_place: String = sim.world.lots[int(data["world"]["lots"][0]["id"])].place_id
 	var loaded := SaveCodec.from_json(JSON.stringify(data), content())
 	assert_true(loaded != null)
-	assert_eq(loaded.world.lots.size(), sim.world.lots.size() - 1)
+	assert_eq(Lots.by_place(loaded.world, "torn_down"), null, "the removed place's lot is gone")
+	assert_eq(loaded.world.lots.size(), sim.world.lots.size(), "one lot per place again")
+	assert_true(Lots.by_place(loaded.world, replaced_place) != null, "its place got a fresh lot (T-0031)")
 
 
 func test_a_bad_saved_lot_access_is_rejected() -> void:

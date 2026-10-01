@@ -1,5 +1,5 @@
 {
-	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Entrance hall (NW, wood) with a 2x2 bathroom in its south-west corner (tiled): shower and sink. Kitchen (NE, tiled): stove, fridge and kitchen table. Bedroom (SE, tiled): double bed. Living room (SW, wood): desk with laptop, sofa and TV. Door cells and their neighbours are kept free, and the spawn (50,26) in the hall stays clear.",
+	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Entrance hall (NW, wood) with a 2x2 bathroom in its south-west corner (tiled): shower and sink. Kitchen (NE, tiled): stove, fridge and kitchen table. Bedroom (SE, tiled): double bed. Living room (SW, wood): desk with laptop, sofa and TV. Door cells and their neighbours are kept free, and the spawn (50,26) in the hall stays clear. Then (T-0031) the neighbours' flats: Haus 3's ground floor and 14 flats on levels 1 and 2 of Haus 5, 9, 3 and 14, each with a stove, fridge, sink, shower, double bed and sofa.",
 	"objects": [
 		{
 			"def": "fridge",
@@ -78,6 +78,816 @@
 			"cell": [
 				48,
 				30,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				21,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				22,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				21,
+				10,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				21,
+				11,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				24,
+				13,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				25,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				21,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				22,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				21,
+				10,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				21,
+				11,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				24,
+				13,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				25,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				39,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				40,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				31,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				31,
+				8,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				38,
+				12,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				34,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				39,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				40,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				31,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				31,
+				8,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				38,
+				12,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				34,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				46,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				47,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				46,
+				10,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				46,
+				11,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				49,
+				13,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				51,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				46,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				47,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				46,
+				10,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				46,
+				11,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				49,
+				13,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				51,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				58,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				59,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				61,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				58,
+				9,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				58,
+				10,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				59,
+				12,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				58,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				59,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				61,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				58,
+				9,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				58,
+				10,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				59,
+				12,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				68,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				69,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				64,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				64,
+				9,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				64,
+				10,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				68,
+				12,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				68,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				69,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				64,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				64,
+				9,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				64,
+				10,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				68,
+				12,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				2,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				3,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				5,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				2,
+				27,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				2,
+				28,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				6,
+				27,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				2,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				3,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				5,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				2,
+				27,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				2,
+				28,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				6,
+				27,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				15,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				16,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				12,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				11,
+				26,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				11,
+				27,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				14,
+				28,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				15,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				16,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				12,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				11,
+				26,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				11,
+				27,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				14,
+				28,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "stove",
+			"cell": [
+				58,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "fridge",
+			"cell": [
+				59,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sink",
+			"cell": [
+				58,
+				10,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "shower",
+			"cell": [
+				58,
+				11,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "bed_double",
+			"cell": [
+				67,
+				13,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "sofa",
+			"cell": [
+				64,
+				7,
 				0
 			],
 			"rotation": 0

@@ -154,12 +154,14 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		if content.object_def(obj.def_id) == null:
 			continue
 		world.add_object(obj)
-	# Saves from before lots get them from content; lots of removed places are dropped.
-	if not d.has("lots"):
-		Lots.create_from_content(world)
-	else:
-		for lot_entry: Variant in d["lots"]:
-			var lot := Lot.from_dict(lot_entry)
-			if world.content.place(lot.place_id) != null:
-				world.lots[lot.id] = lot
+	# Lots of removed places are dropped. Saves from before lots get them all; saves with
+	# lots get one for each newer place. (Worlds saved with no lots, like test rooms, stay
+	# without.)
+	var saved_lots: Array = d.get("lots", [])
+	for lot_entry: Variant in saved_lots:
+		var lot := Lot.from_dict(lot_entry)
+		if world.content.place(lot.place_id) != null:
+			world.lots[lot.id] = lot
+	if not d.has("lots") or not saved_lots.is_empty():
+		Lots.create_from_content(world, true)
 	return world
