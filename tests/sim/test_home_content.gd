@@ -69,6 +69,8 @@ func test_every_interaction_is_offered_in_the_flat() -> void:
 		for def: InteractionDef in Interactions.offered_by(sim, id):
 			offered[def.id] = true
 	for interaction_id: String in content().interactions:
+		if content().interaction(interaction_id).target != "object":
+			continue  # person-targeted interactions are offered by people (T-0038)
 		assert_true(offered.has(interaction_id), "nothing in the flat offers '%s'" % interaction_id)
 
 

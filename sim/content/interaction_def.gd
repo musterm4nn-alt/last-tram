@@ -8,6 +8,11 @@ extends RefCounted
 
 var id: String = ""
 var name: String = ""
+## "object" (offered by objects via object_tags) or "person" (done to another person, with
+## `social`; T-0038).
+var target: String = "object"
+## For person-targeted interactions: kind, acceptance and outcomes (null otherwise).
+var social: SocialDef = null
 ## Object tags that offer this interaction (at least one must be used by some object).
 var object_tags: PackedStringArray = PackedStringArray()
 ## Fixed length in game minutes, or 0 when `until_need` is used.

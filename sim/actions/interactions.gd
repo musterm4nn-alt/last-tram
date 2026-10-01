@@ -21,6 +21,18 @@ static func offered_by(sim: Sim, object_id: int) -> Array[InteractionDef]:
 	return out
 
 
+## Person-targeted interactions `actor_id` may start with `target_id` (T-0038), in content
+## order. Empty for an unknown person or for oneself.
+static func offered_by_person(sim: Sim, actor_id: int, target_id: int) -> Array[InteractionDef]:
+	var out: Array[InteractionDef] = []
+	if actor_id == target_id or sim.world.get_person(target_id) == null:
+		return out
+	for candidate: InteractionDef in sim.content.interactions.values():
+		if candidate.target == "person":
+			out.append(candidate)
+	return out
+
+
 ## Index of the use slot `person` stands on for this object, or -1.
 ## Compares full cells (including level), so standing under the slot is not enough.
 static func slot_at_person(sim: Sim, person: Person, object_id: int) -> int:

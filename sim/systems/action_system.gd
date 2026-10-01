@@ -14,7 +14,15 @@ func step(sim: Sim) -> void:
 		if person.action_queue.is_empty():
 			continue
 		var action: Action = person.action_queue[0]
-		if action.state == Action.QUEUED:
+		var def := sim.content.interaction(action.interaction_id)
+		if def != null and def.target == "person":
+			if action.state == Action.QUEUED:
+				SocialActions.step_queued(sim, person, action)
+			elif action.state == Action.ROUTING:
+				SocialActions.step_routing(sim, person, action)
+			elif action.state == Action.PERFORMING:
+				SocialActions.step_performing(sim, person, action)
+		elif action.state == Action.QUEUED:
 			_step_queued(sim, person, action)
 		elif action.state == Action.ROUTING:
 			_step_routing(sim, person, action)
@@ -120,6 +128,16 @@ static func _start_performing(sim: Sim, person: Person, action: Action, slot: in
 	sim.emit_event(&"action_started", {"person_id": person.id, "interaction_id": action.interaction_id, "target_id": action.target_id})
 
 
+## Pops the front action as failed (for SocialActions).
+static func fail(sim: Sim, person: Person, action: Action, reason: String) -> void:
+	_fail(sim, person, action, reason)
+
+
+## Pops the front action as cancelled (for SocialActions).
+static func cancel(sim: Sim, person: Person, action: Action, reason: String) -> void:
+	_cancel(sim, person, action, reason)
+
+
 ## Pops the front action as failed. A ROUTING action also drops its path.
 static func _fail(sim: Sim, person: Person, action: Action, reason: String) -> void:
 	person.action_queue.remove_at(0)
@@ -176,7 +194,11 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 	if def == null:
 		_fail(sim, person, action, "unknown_interaction")
 		return
-	if not _still_in_place(sim, person, action):
+	if def.target == "person":
+		if not SocialActions.still_with_target(sim, person, action):
+			_cancel(sim, person, action, "target_left")
+			return
+	elif not _still_in_place(sim, person, action):
 		return
 	for need_id: String in def.need_rates:
 		var before: float = float(person.needs.get(need_id, 0.0))
@@ -187,6 +209,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 			var before: float = float(person.needs.get(need_id, 0.0))
 			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
 		person.action_queue.remove_at(0)
+		if def.target == "person":
+			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
 		if not def.finish_moodlet.is_empty():
 			Social.add_moodlet(sim, person, def.finish_moodlet)
 		sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})

@@ -10,7 +10,9 @@ extends RefCounted
 ##     "advertise": {"energy": 80}}]}
 ## A fixed-length interaction uses "duration_minutes" instead of "until_need"
 ## plus "min_minutes"/"max_minutes". Optional: "time_skip": true (the game skips ahead while
-## the player does it, like sleeping), "routine": "sleep" | "out" (see Routines).
+## the player does it, like sleeping), "routine": "sleep" | "out" (see Routines),
+## "finish_moodlet", and "target": "person" with a "social" block (SocialLoader) instead of
+## object_tags for things done to another person.
 
 
 ## Read `dir` (every sorted .json file) into `db.interactions`.
@@ -40,7 +42,14 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.id = reader.read_str(d, "id", path)
 		var ctx := "%s: interaction '%s'" % [path, def.id]
 		def.name = reader.read_str(d, "name", ctx)
-		def.object_tags = reader.read_str_array(d, "object_tags", ctx)
+		if d.has("target"):
+			def.target = reader.read_str(d, "target", ctx)
+		if def.target == "person":
+			def.social = SocialLoader.read(db, reader, d, ctx)
+		elif def.target != "object":
+			reader.error("%s: 'target' must be \"object\" or \"person\"" % ctx)
+		if def.target == "object" or d.has("object_tags"):
+			def.object_tags = reader.read_str_array(d, "object_tags", ctx)
 		var has_duration := d.has("duration_minutes")
 		var has_until := d.has("until_need")
 		if has_duration:
@@ -90,8 +99,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		for need_id: String in def.advertise:
 			if db.need(need_id) == null:
 				reader.error("%s: unknown need '%s' in 'advertise'" % [ctx, need_id])
-		if def.object_tags.is_empty():
+		if def.target == "object" and def.object_tags.is_empty():
 			reader.error("%s: 'object_tags' must not be empty" % ctx)
+		if def.target == "person" and not def.object_tags.is_empty():
+			reader.error("%s: person-targeted interactions have no 'object_tags'" % ctx)
 		for tag: String in def.object_tags:
 			if not _any_object_uses(db, tag):
 				reader.error("%s: tag '%s' is used by no object (see data/objects/)" % [ctx, tag])
