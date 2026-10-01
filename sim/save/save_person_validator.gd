@@ -16,6 +16,7 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 	s.number(p.get("walk_speed"), path + ".walk_speed", 0.0)
 	s.boolean(p.get("free_will", true), path + ".free_will")
 	s.boolean(p.get("running", false), path + ".running")
+	s.integer(p.get("home_lot_id", 0), path + ".home_lot_id")
 	s.integer(p.get("last_input_tick", 0), path + ".last_input_tick")
 	for entry: Variant in s.list(p.get("path", []), path + ".path"):
 		s.vector(entry, path + ".path[]", 3, true)

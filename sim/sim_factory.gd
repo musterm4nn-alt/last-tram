@@ -13,6 +13,8 @@ extends RefCounted
 
 ## New games start on Monday at 08:00.
 const START_TICK: int = 8 * SimClock.MINUTES_PER_HOUR * SimClock.STEPS_PER_GAME_MINUTE
+## The place whose lot is the new-game player's home.
+const PLAYER_HOME_PLACE: String = "home_player"
 
 
 static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = null) -> Sim:
@@ -28,7 +30,12 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 	var sim := _make_sim(content, grid, seed_value)
 	_place_district_objects(sim)
 	var start: DistrictDef = content.districts[content.start_district]
-	_spawn_player(sim, start.player_spawn, spec if spec != null else CharacterSpec.default_player(content))
+	var player := _spawn_player(sim, start.player_spawn, spec if spec != null else CharacterSpec.default_player(content))
+	# Lots come last, so object and player ids stay as they were before lots existed.
+	Lots.create_from_content(sim.world)
+	var home := Lots.by_place(sim.world, PLAYER_HOME_PLACE)
+	if home != null:
+		player.home_lot_id = home.id
 	return sim
 
 

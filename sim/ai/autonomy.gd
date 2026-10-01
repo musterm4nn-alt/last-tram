@@ -12,8 +12,8 @@ const MIN_SCORE: float = 3.0
 const NOISE: float = 1.0
 ## How many of the best options the final pick chooses among.
 const TOP_N: int = 3
-## Objects whose origin is within this many cells (Chebyshev distance, same level) count.
-## M2 replaces this with the person's lot and its access rules.
+## Objects whose origin is within this many cells (Chebyshev distance, same level) count,
+## if the person may enter the object's lot (Lots.may_enter; objects on no lot are public).
 const SEARCH_RADIUS: int = 12
 
 
@@ -31,6 +31,9 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 		if obj.origin.z != here.z:
 			continue
 		if maxi(absi(obj.origin.x - here.x), absi(obj.origin.y - here.y)) > SEARCH_RADIUS:
+			continue
+		var lot := Lots.lot_at(sim, obj.origin)
+		if lot != null and not Lots.may_enter(sim, person, lot):
 			continue
 		var cells := _cells_to_free_slot(sim, person, obj)
 		if cells < 0:
