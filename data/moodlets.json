@@ -1,0 +1,18 @@
+{
+	"_doc": "Moodlets (T-0037): temporary mood modifiers. value is added to mood (-100..100) for duration_hours. Interactions name one in finish_moodlet; adding a moodlet a person already has restarts its time.",
+	"moodlets": [
+		{ "id": "slept_well", "name": "Slept well", "value": 10, "duration_hours": 6 },
+		{ "id": "good_meal", "name": "Good meal", "value": 6, "duration_hours": 3 },
+		{ "id": "fresh", "name": "Fresh and clean", "value": 5, "duration_hours": 4 },
+		{ "id": "night_out", "name": "Good night out", "value": 12, "duration_hours": 8 },
+		{ "id": "nice_coffee", "name": "Nice coffee", "value": 5, "duration_hours": 3 },
+		{ "id": "fresh_air", "name": "Fresh air", "value": 6, "duration_hours": 3 },
+		{ "id": "good_talk", "name": "Good talk", "value": 8, "duration_hours": 4 },
+		{ "id": "had_a_laugh", "name": "Had a laugh", "value": 10, "duration_hours": 4 },
+		{ "id": "flattered", "name": "Flattered", "value": 8, "duration_hours": 6 },
+		{ "id": "insulted", "name": "Insulted", "value": -15, "duration_hours": 8 },
+		{ "id": "argued", "name": "Had an argument", "value": -12, "duration_hours": 6 },
+		{ "id": "awkward", "name": "Awkward moment", "value": -5, "duration_hours": 2 },
+		{ "id": "rejected", "name": "Rejected", "value": -10, "duration_hours": 6 }
+	]
+}

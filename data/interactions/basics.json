@@ -3,7 +3,7 @@
 	"interactions": [
 		{
 			"id": "sleep",
-			"name": "Sleep",
+			"name": "Sleep", "finish_moodlet": "slept_well",
 			"object_tags": [
 				"bed"
 			],

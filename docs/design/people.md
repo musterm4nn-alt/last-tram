@@ -94,6 +94,10 @@ Each person keeps a capped list (for example the 60 most salient) of memory reco
 Memories drive relationship changes, gossip (sharing memories), witness reports to the police,
 reputation, what people talk about, and later LLM dialogue prompts.
 
+Built in T-0037: `sim/social/` (`Relationship`, `Memory`, `Moodlet`, the `Social` API) and
+`SocialSystem` (moodlets end, relationships drift after 2 quiet days, memories fade 5 a day),
+with moodlets from `data/moodlets.json`. Couples and flatmates start out knowing each other.
+
 ## Reputation
 
 There is no global score. What someone thinks of you is their relationship with you plus

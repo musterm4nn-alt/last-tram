@@ -20,6 +20,33 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 	s.integer(p.get("household_id", 0), path + ".household_id")
 	s.integer(p.get("autonomy_retry_tick", 0), path + ".autonomy_retry_tick")
 	s.text(p.get("routine_id", ""), path + ".routine_id")
+	var others: Dictionary[int, bool] = {}
+	for entry: Variant in s.list(p.get("relationships", []), path + ".relationships"):
+		var r := s.dictionary(entry, path + ".relationships[]")
+		var other := s.integer(r.get("other_id"), path + ".relationships[].other_id", 1)
+		if others.has(other):
+			s.reject(path + ".relationships", "one relationship per person")
+		others[other] = true
+		for key: String in Relationship.RANGES:
+			var bounds: Array = Relationship.RANGES[key]
+			s.number(r.get(key, 0.0), path + ".relationships[]." + key, float(bounds[0]), float(bounds[1]))
+		s.integer(r.get("last_contact_tick", 0), path + ".relationships[].last_contact_tick", -SaveSchema.MAX_INTEGER)
+	for entry: Variant in s.list(p.get("memories", []), path + ".memories"):
+		var m := s.dictionary(entry, path + ".memories[]")
+		s.integer(m.get("tick"), path + ".memories[].tick", -SaveSchema.MAX_INTEGER)
+		s.text(m.get("kind"), path + ".memories[].kind")
+		for subject: Variant in s.list(m.get("subject_ids", []), path + ".memories[].subject_ids"):
+			s.integer(subject, path + ".memories[].subject_ids[]")
+		s.text(m.get("place_id", ""), path + ".memories[].place_id")
+		s.integer(m.get("valence", 0), path + ".memories[].valence", -100, 100)
+		s.number(m.get("salience", 0.0), path + ".memories[].salience", 0.0, 100.0)
+		if not s.text(m.get("source", Memory.EXPERIENCED), path + ".memories[].source") in [Memory.EXPERIENCED, Memory.WITNESSED, Memory.HEARD]:
+			s.reject(path + ".memories[].source", "unknown memory source")
+		s.integer(m.get("source_id", 0), path + ".memories[].source_id")
+	for entry: Variant in s.list(p.get("moodlets", []), path + ".moodlets"):
+		var m := s.dictionary(entry, path + ".moodlets[]")
+		s.text(m.get("id"), path + ".moodlets[].id")
+		s.integer(m.get("ends_tick"), path + ".moodlets[].ends_tick", -SaveSchema.MAX_INTEGER)
 	s.integer(p.get("last_input_tick", 0), path + ".last_input_tick")
 	for entry: Variant in s.list(p.get("path", []), path + ".path"):
 		s.vector(entry, path + ".path[]", 3, true)

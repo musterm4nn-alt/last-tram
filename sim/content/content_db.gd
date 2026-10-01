@@ -19,6 +19,8 @@ var start_district: String = ""
 var objects: Dictionary[String, ObjectDef] = {}
 ## Interactions by id, loaded from every file in data/interactions/.
 var interactions: Dictionary[String, InteractionDef] = {}
+## Temporary mood modifiers by id (data/moodlets.json).
+var moodlets: Dictionary[String, MoodletDef] = {}
 ## Daily rhythms by id (data/routines.json) and the id people get by default.
 var routines: Dictionary[String, RoutineDef] = {}
 var default_routine: String = ""
@@ -64,6 +66,7 @@ func load_from(root: String) -> void:
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
 	ObjectLoader.load(self, reader, root.path_join("objects"))
+	MoodletLoader.load(self, reader, root.path_join("moodlets.json"))
 	InteractionLoader.load(self, reader, root.path_join("interactions"))
 	RoutineLoader.load(self, reader, root.path_join("routines.json"))
 	WorldLoader.load(self, reader, root.path_join("world"))
@@ -168,6 +171,11 @@ func clothing_def(id: String) -> ClothingDef:
 ## The object definition with this id, or null.
 func object_def(id: String) -> ObjectDef:
 	return objects.get(id)
+
+
+## The moodlet definition with this id, or null.
+func moodlet(id: String) -> MoodletDef:
+	return moodlets.get(id)
 
 
 ## The routine with this id, or null.

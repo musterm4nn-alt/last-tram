@@ -3,7 +3,7 @@
 	"interactions": [
 		{
 			"id": "cook_meal",
-			"name": "Cook a meal",
+			"name": "Cook a meal", "finish_moodlet": "good_meal",
 			"object_tags": [
 				"stove"
 			],
@@ -18,7 +18,7 @@
 		},
 		{
 			"id": "take_shower",
-			"name": "Take a shower",
+			"name": "Take a shower", "finish_moodlet": "fresh",
 			"object_tags": [
 				"shower"
 			],

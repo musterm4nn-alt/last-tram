@@ -36,6 +36,12 @@ var personality: Personality = Personality.new()
 var home_lot_id: int = 0
 ## Id of the person's Household (0 = none).
 var household_id: int = 0
+## This person's view of others, by their id (T-0037).
+var relationships: Dictionary[int, Relationship] = {}
+## What they remember, at most Social.MEMORY_CAP.
+var memories: Array[Memory] = []
+## Running moodlets.
+var moodlets: Array[Moodlet] = []
 ## RoutineDef id ("" = the content's default routine).
 var routine_id: String = ""
 ## Free will found nothing to do: it looks again at this tick (AutonomySystem.RETRY_MINUTES).
@@ -112,6 +118,9 @@ func to_dict() -> Dictionary:
 		"household_id": household_id,
 		"autonomy_retry_tick": autonomy_retry_tick,
 		"routine_id": routine_id,
+		"relationships": _relationships_out(),
+		"memories": memories.map(func(m: Memory) -> Dictionary: return m.to_dict()),
+		"moodlets": moodlets.map(func(m: Moodlet) -> Dictionary: return m.to_dict()),
 		"level": level,
 		"pos": Ser.vec2(pos),
 		"facing": Ser.vec2(facing),
@@ -124,6 +133,13 @@ func to_dict() -> Dictionary:
 		"free_will": free_will,
 		"last_input_tick": last_input_tick,
 	}
+
+
+## Relationships as a list sorted by the other person's id (stable save text).
+func _relationships_out() -> Array:
+	var ids: Array = relationships.keys()
+	ids.sort()
+	return ids.map(func(id: int) -> Dictionary: return relationships[id].to_dict())
 
 
 static func from_dict(d: Dictionary) -> Person:
@@ -148,6 +164,13 @@ static func from_dict(d: Dictionary) -> Person:
 	p.household_id = int(d.get("household_id", 0))
 	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))
 	p.routine_id = String(d.get("routine_id", ""))
+	for entry: Variant in d.get("relationships", []):
+		var r := Relationship.from_dict(entry)
+		p.relationships[r.other_id] = r
+	for entry: Variant in d.get("memories", []):
+		p.memories.append(Memory.from_dict(entry))
+	for entry: Variant in d.get("moodlets", []):
+		p.moodlets.append(Moodlet.from_dict(entry))
 	p.level = int(d["level"])
 	p.pos = Ser.to_vec2(d["pos"])
 	p.facing = Ser.to_vec2(d["facing"])

@@ -187,6 +187,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 			var before: float = float(person.needs.get(need_id, 0.0))
 			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
 		person.action_queue.remove_at(0)
+		if not def.finish_moodlet.is_empty():
+			Social.add_moodlet(sim, person, def.finish_moodlet)
 		sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})
 
 
