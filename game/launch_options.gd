@@ -33,6 +33,8 @@ var creator_seed: int = -1
 var gallery_page: int = 1
 ## Start in command mode (--command).
 var command_mode: bool = false
+## Show the person inspector for the first resident after the quick start (--inspect).
+var inspect: bool = false
 ## Floor to show after the quick start (--level=1); NO_LEVEL = the player's.
 var level: int = NO_LEVEL
 ## Walk the player to this cell at the start (--walk-to=X,Y); NO_CELL = none.
@@ -91,6 +93,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.command_mode = true
 			"level":
 				out.level = value.to_int()
+			"inspect":
+				out.inspect = true
 			"walk-to":
 				var cell := _parse_walk(value)
 				out.walk_to = Vector2i(int(cell.x), int(cell.y))
