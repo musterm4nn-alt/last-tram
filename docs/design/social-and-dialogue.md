@@ -38,7 +38,8 @@ and presentation come later.
 ## Knowing people
 
 Strangers become acquaintances through familiarity; introducing yourself teaches names;
-exchanging numbers adds a phone contact (calls and texts from M3).
+exchanging numbers adds a phone contact. M3's phone lists contacts and can call them
+(T-0063); texts come later.
 
 ## Gossip
 

@@ -107,8 +107,10 @@ separately (M4).
 
 ## Households (M2)
 
-A household has members (one person, a couple, or flatmates sharing a WG), a home lot and,
-from M3, shared money. The player controls one member; switching to another comes in M6.
+A household has members (one person, a couple, or flatmates sharing a WG), a home lot, a
+lease (M3: each member pays an equal share of the rent) and a fridge of groceries. Money is
+per person in M3; couples get joint accounts in M6 (D29). The player controls one member;
+switching to another comes in M6.
 There are no births: the population renews through newcomers moving to town.
 
 ## Content rules

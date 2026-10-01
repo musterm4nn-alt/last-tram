@@ -7,6 +7,10 @@ There is no quest log, no marker and no required order, and the notebook only re
 a person already knows. (The idea comes from the owner's Small Hours prototype; this
 document rebuilds it system-first, in `sim/`.)
 
+Tickets: T-0067 (data and sim plumbing), T-0068 (searching and clues), T-0069 (the
+Notebook and the map) and T-0070 (the first Altstadt secrets). A discovery's
+`requires_discovery` interaction is one more rule in the shared requirements check (D29).
+
 ## Clues and discoveries
 
 - A **clue** is a lead: one line of text plus the discovery id. It tells you what to look
@@ -59,9 +63,9 @@ economy ledger stays honest. All effects are integers or enums — validated at 
 |---|---|
 | `note` | a line in the notebook and an annotation on the map; no mechanical change |
 | `money` | a stash, in integer cents; world-once (ledger) |
-| `item` | an inventory item (M3 inventory); world-once |
+| `item` | an inventory item; world-once. **M4**: M3 has no personal inventory (D29) |
 | `moodlet` | a one-off moodlet, `data/moodlets.json` |
-| `contact` | adds a phone contact (M3 phone) |
+| `contact` | adds a phone contact (the M3 phone, T-0063) |
 | `unlock_interaction` | an interaction that lists `requires_discovery` becomes offerable to this person |
 
 Later effects — enabling a door object or shortcut, opening a hidden lot with its own

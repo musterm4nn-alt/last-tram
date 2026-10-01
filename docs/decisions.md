@@ -159,3 +159,39 @@ data and rules, and their action and movement steps run once per game minute ins
 step. Aggregates match full detail within a few percent over 3 days (T-0042), and the cost
 drops 37% at a 10-cell radius. Promotion and demotion need no placement logic. The event-driven
 background comes back when a second district (M7) makes it worth its complexity.
+
+**D29 · M3 order and the economy model.** M3 is planned as T-0054 to T-0076. Money comes
+first (wallet, ledger), then prices with one shared check for what a person may do, the shops
+and the fridge. Jobs follow (data, the work action, leaving on time, pay and performance),
+then rent and benefit, the phone, applying for jobs, staffed counters and eviction. After
+those come the discoveries the owner asked for, skills, clothes, backgrounds and the 30-day
+acceptance run. The key choices:
+- **Money is integer euro cents, per person**: cash in the pocket and a bank account.
+  Households do not share money until joint accounts arrive with M6. The world's `Ledger`
+  keeps totals by reason, split into sources (starting money, wages, benefit, pension, finds)
+  and sinks (purchases, rent, bills). The money people hold always equals sources minus sinks,
+  which makes "money is conserved" a cheap test. The full transaction stream is the
+  `money_changed` event (output only). Each person also keeps their last 20 changes for the
+  bank app.
+- **The economy is open.** Employers, shops, landlords and the state are outside parties with
+  no accounts, so the town cannot drain itself by simulating businesses' cash flow. Business
+  accounts arrive with business ownership (backlog).
+- **One requirements check.** `Requirements.check(sim, person, interaction, target)` returns
+  "" or a reason (closed, not your home, not enough money, and later no food, nobody serving,
+  not your shift, an unknown secret). The menu (greyed out, with the reason), commands, free
+  will and the action system all use it, so a new rule is written once.
+- **Work is an action.** Working is a `work` interaction on a workplace object, and the job's
+  `WorkSession` drives it each minute (D10). In a rabbit-hole job the person is hidden: they
+  went into the station, or took the tram from the stop. In an on-site job they stand behind
+  the counter. Routing, slots, saving, tiers and cancelling (leaving work early) come from the
+  action system.
+- **Jobs are positions.** A position is one job plus one shift pattern (days and hours).
+  Residents fill positions when the town is generated. Shop staff positions are always filled
+  (shops sell only while staffed); the others are filled only partly, so there are vacancies.
+- **The weekly cycle.** Benefit and pensions are paid on Monday at 06:00, rent and bills are
+  due on Monday at 08:00, and wages are paid on Friday at 18:00. Unemployment benefit also
+  covers the person's share of the rent (like German housing costs), so unemployment alone
+  does not cause evictions. Eviction comes after three weeks behind on the rent.
+- **Items: groceries only.** In M3 the only items are groceries: each household has a stock of
+  portions in its fridge. A personal inventory comes with M4, when stolen goods, drugs and
+  tools need one. Discoveries v1 have no `item` effect.

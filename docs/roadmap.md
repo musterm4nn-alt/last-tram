@@ -10,8 +10,8 @@ Legend: ✅ done · ▶ current · ◻ planned
 |---|---|---|---|
 | M0 | Foundation | walk around the Altstadt; save and load | ✅ |
 | M1 | A Day at Home | create your character, then live a full day in your flat: sleep, eat, shower, relax | ✅ |
-| M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ▶ |
-| M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ◻ |
+| M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ✅ |
+| M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ▶ |
 | ◆ | Art direction gate | pick the art style from real side-by-side tests | ◻ |
 | M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ◻ |
 | M5 | Home Sweet Home | redecorate, rebuild, buy property; add your own content packs | ◻ |
@@ -66,7 +66,7 @@ objects to fill them, and time passes.
 owner creates a character and plays through a full day in the flat; save/load mid-action
 continues identically.
 
-## M2 · The Neighbours ▶
+## M2 · The Neighbours ✅
 
 **Goal:** the town is alive.
 
@@ -92,30 +92,45 @@ continues identically.
 home, socialises, and relationships form); sim cost is within budget; the owner can watch the
 town for an evening and it looks alive.
 
-**Status (October 2026):** every M2 ticket is built. The headless criteria pass
+**Status:** done. Every M2 ticket is built, and the headless criteria pass
 (`tools/simrun.sh --days=7 --check-m2`, T-0045). Also built: going out to the Kneipe, café and
-benches (T-0052), talking to people (T-0053), and exact saves (T-0051). Waiting for the owner's
-evening checklist in T-0045.
+benches (T-0052), talking to people (T-0053), and exact saves (T-0051). The owner played the
+evening checklist and signed M2 off on 1 October 2026 ("didn't feel bad").
 
-## M3 · Making a Living
+## M3 · Making a Living ▶
 
 **Goal:** money matters.
 
-- Cash (wallet) and bank account; a ledger of every transaction.
-- Shops and services (Späti, Imbiss, café, Kneipe): opening hours, staffed counters, buying
-  food, drinks and items; inventory; fridge stock.
-- Jobs and careers behind the `WorkSession` interface: "rabbit hole" (disappear into the
-  building) and "on-site" (stand at a counter) implementations; performance, promotion, firing,
-  applying.
-- NPCs hold jobs (shopkeepers, bar staff, office workers, police officers).
-- Rent, bills and eviction; unemployment benefit (keeps the economy from collapsing).
-- Smartphone UI v1: contacts, jobs, bank, map.
-- Clothes and looks: clothes shops, a wardrobe at home with saved outfits, clothes that get
+- Cash (wallet) and bank account, per person; a ledger that proves money is conserved (D29).
+- Prices, and one shared check for what a person may do now (closed, not your home, not enough
+  money...), shown in the menus with the reason.
+- Shops and services (Späti, Imbiss, café, Kneipe): opening hours, Sunday closing, counters,
+  an ATM, and staffed counters that sell only while someone is working there.
+- Groceries: each household's fridge holds portions; cooking uses them, the Späti sells them.
+  (A personal inventory comes in M4, when stolen goods, drugs and tools need it.)
+- Jobs and careers behind the `WorkSession` interface: "rabbit hole" (into the building, or
+  off on the tram) and "on-site" (behind a counter) implementations; shifts as obligations;
+  pay, performance, promotion, firing, applying.
+- NPCs hold jobs (shopkeepers, bar staff, police officers, and city jobs by tram).
+- Rent, bills and eviction; unemployment benefit and pensions (keep the economy from
+  collapsing); sleeping rough and moving into empty flats.
+- Smartphone UI v1: bank, contacts, jobs, map (and the Notebook for discoveries).
+- **Secrets and discoveries** (the owner's idea): clues from people, notice boards and
+  searching, uncovered at the right place and time ([design/discoveries.md](design/discoveries.md)).
+- Skills v1 (levels from practice; jobs and promotions use them).
+- Clothes and looks: a clothes shop, a wardrobe at home with saved outfits, clothes that get
   dirty (the Waschsalon), a barber. **Backgrounds** in the character creator (Newcomer, Local,
   Student, Ex-con, Burnout) set your starting money, skills and contacts.
 
 **Done when:** a 30-day headless run keeps the economy stable (no mass bankruptcy or
 evictions), and the player can get hired, get paid, pay rent and get fired.
+
+**Tickets** (D29; drafts are detailed as their foundations land): money T-0054, prices and
+requirements T-0055, Späti and Imbiss T-0056, groceries T-0057; jobs T-0058, going to work
+T-0059, leaving on time T-0060, pay and performance T-0061; rent and benefit T-0062, the phone
+T-0063, applying T-0064, staffed counters T-0065, eviction T-0066; discoveries T-0067 to
+T-0070; skills T-0071; wardrobe T-0072, clothes shop and barber T-0073, laundry T-0074,
+backgrounds T-0075; M3 acceptance T-0076.
 
 ## ◆ Art direction gate
 
@@ -144,6 +159,7 @@ Claude Code. See [art.md](art.md).
 - Reputation spreads by gossip; underworld contacts; illegal jobs (dealer, fence).
 - NPCs commit crimes on their own when needs, personality and opportunity line up.
 - Intoxication and addiction v1.
+- A personal inventory (D29): stolen goods, drugs, tools; discoveries' item rewards.
 - Clothes matter for crime: hoods, caps and masks make you harder to identify, changing clothes
   helps you lose the police's description, and fights damage clothes and can leave scars.
 

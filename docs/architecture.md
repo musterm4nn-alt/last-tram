@@ -101,8 +101,10 @@ art/                      art sources and exports (after the art gate)
 
 - A `SimSystem` has `step(sim)` and `on_minute(sim)` and **no state of its own**. The order is
   defined in one place: `Sim.default_systems()`.
-- Planned order (grows milestone by milestone): commands → actions → movement → needs →
-  autonomy → schedules → social → economy → crime/police → tiers.
+- Today: tiers → actions → movement → needs → social → autonomy (see the comment on
+  `Sim.default_systems()`). M3 adds `WorkSystem` before autonomy (obligations go before free
+  will: leaving for a shift, missed shifts) and `EconomySystem` (the weekly cycle: benefit,
+  rent, wages). Crime and police come in M4.
 
 ### Input: Commands
 
@@ -222,7 +224,11 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 | M2 | Relationships, memories | `sim/social/` |
 | M2 | Simulation tiers | `sim/systems/tier_system.gd` |
 | M2 | Scenes (presentation only) | `sim/content/scene_def.gd`, `data/scenes/`, `game/ui/scene_popup.gd` |
-| M3 | Money, items, shops, jobs | `sim/economy/`, `sim/jobs/` (with `WorkSession`) |
+| M3 | Money, ledger, groceries, rent, the weekly cycle | `sim/economy/` (`Wallet`, `Money`, `Ledger`, later `Lease`), `sim/systems/economy_system.gd`, `data/economy.json` |
+| M3 | Requirements (what a person may do now, and why not) | `sim/actions/requirements.gd` |
+| M3 | Jobs, positions, work sessions | `sim/content/job_def.gd`, `data/jobs.json`, `sim/jobs/` (`Employment`, `Jobs`, `WorkSession`, `RabbitHoleWork`, `OnSiteWork`), `sim/systems/work_system.gd` |
+| M3 | Phone | `game/ui/phone/` (one file per app) |
+| M3 | Discoveries | `sim/content/discovery_def.gd`, `data/discoveries/`, `sim/discoveries/` |
 | M4 | Health, crime, witnesses, police | `sim/crime/`, `sim/health/` |
 | M5 | Build mode rules | `sim/build/` (commands + validation) |
 | M5 | Content packs, settings | `sim/content/pack_loader.gd`, `game/settings.gd`, `game/ui/packs_screen.gd`, `examples/packs/` |
