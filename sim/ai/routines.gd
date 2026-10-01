@@ -7,6 +7,13 @@ extends RefCounted
 const SLEEP_IN_WINDOW: float = 2.0
 ## Score factor for routine "sleep" interactions outside it (only exhaustion wins then).
 const SLEEP_OUTSIDE: float = 0.3
+## Added to routine "sleep" scores in the sleep window: bedtime wins over the TV even when a
+## daytime nap left the person less tired.
+const SLEEP_BONUS: float = 6.0
+## Added to routine "out" scores in the out window, scaled by sociability (score_bonus).
+const OUT_BONUS: float = 5.0
+## Score factor for routine "out" interactions outside the out window.
+const OUT_OUTSIDE: float = 0.5
 
 
 ## The person's routine, or the content's default (also for unknown ids).
@@ -28,11 +35,30 @@ static func sleeping_time(sim: Sim, person: Person) -> bool:
 	return routine != null and in_hours(routine.sleep_hours, sim.clock.hour())
 
 
+## True during the person's evening window for going out.
+static func going_out_time(sim: Sim, person: Person) -> bool:
+	var routine := routine_of(sim, person)
+	return routine != null and in_hours(routine.out_hours, sim.clock.hour())
+
+
 ## Multiplies free will's need score for `def`.
 static func score_factor(sim: Sim, person: Person, def: InteractionDef) -> float:
 	if def.routine == "sleep":
 		return SLEEP_IN_WINDOW if sleeping_time(sim, person) else SLEEP_OUTSIDE
+	if def.routine == "out" and not going_out_time(sim, person):
+		return OUT_OUTSIDE
 	return 1.0
+
+
+## Added to free will's score for `def`: SLEEP_BONUS for "sleep" in the sleep window;
+## OUT_BONUS × (1 + 0.5 × sociability / 100) for "out" in the out window (2.5 for a loner,
+## 7.5 for the most outgoing); else 0.
+static func score_bonus(sim: Sim, person: Person, def: InteractionDef) -> float:
+	if def.routine == "sleep":
+		return SLEEP_BONUS if sleeping_time(sim, person) else 0.0
+	if def.routine != "out" or not going_out_time(sim, person):
+		return 0.0
+	return OUT_BONUS * (1.0 + 0.5 * person.personality.get_axis("sociability") / 100.0)
 
 
 ## True while a "sleep" interaction should go on past a full need (inside the window).

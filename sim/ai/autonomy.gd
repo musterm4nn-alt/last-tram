@@ -14,6 +14,7 @@ const NOISE: float = 1.0
 const TOP_N: int = 3
 ## Objects whose origin is within this many cells (Chebyshev distance, same level) count,
 ## if the person may enter the object's lot (Lots.may_enter; objects on no lot are public).
+## In the person's out window, objects offering an "out" interaction count anywhere (T-0052).
 const SEARCH_RADIUS: int = 12
 
 
@@ -26,25 +27,39 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 	var here := person.cell()
 	var ids: Array = sim.world.objects.keys()
 	ids.sort()
+	var outings := _outing_objects(sim) if Routines.going_out_time(sim, person) else {}
 	for id: int in ids:
 		var obj: WorldObject = sim.world.objects[id]
-		if obj.origin.z != here.z:
-			continue
-		if maxi(absi(obj.origin.x - here.x), absi(obj.origin.y - here.y)) > SEARCH_RADIUS:
+		var near := obj.origin.z == here.z and maxi(absi(obj.origin.x - here.x), absi(obj.origin.y - here.y)) <= SEARCH_RADIUS
+		if not near and not outings.has(obj.def_id):
 			continue
 		var lot := Lots.lot_at(sim, obj.origin)
 		if lot != null and not Lots.may_enter(sim, person, lot):
 			continue
-		var cells := _cells_to_free_slot(sim, person, obj)
+		var cells := _cells_to_free_slot(sim, person, obj, not near)
 		if cells < 0:
 			continue
 		for def: InteractionDef in Interactions.offered_by(sim, id):
+			if not near and def.routine != "out":
+				continue
 			out.append({
 				"object_id": id,
 				"interaction_id": def.id,
-				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def) - TRAVEL_COST_PER_CELL * cells,
+				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
+					+ Routines.score_bonus(sim, person, def) - TRAVEL_COST_PER_CELL * cells,
 				"cells": cells,
 			})
+	return out
+
+
+## Object def ids offering at least one routine "out" interaction.
+static func _outing_objects(sim: Sim) -> Dictionary:
+	var out: Dictionary = {}
+	for def: ObjectDef in sim.content.objects.values():
+		for interaction: InteractionDef in sim.content.interactions.values():
+			if interaction.routine == "out" and Array(interaction.object_tags).any(func(tag: String) -> bool: return tag in def.tags):
+				out[def.id] = true
+				break
 	return out
 
 
@@ -85,8 +100,9 @@ static func _better(a: Dictionary, b: Dictionary) -> bool:
 
 
 ## Path length to the object's nearest free, walkable slot: 0 when the person stands on one,
-## -1 when none can be reached.
-static func _cells_to_free_slot(sim: Sim, person: Person, obj: WorldObject) -> int:
+## -1 when none can be reached. With `first_only` (far objects), the first reachable free slot
+## stands in for the nearest, saving a route per slot.
+static func _cells_to_free_slot(sim: Sim, person: Person, obj: WorldObject, first_only: bool = false) -> int:
 	var here := person.cell()
 	var best := -1
 	for index: int in obj.slot_count(sim.content):
@@ -102,4 +118,6 @@ static func _cells_to_free_slot(sim: Sim, person: Person, obj: WorldObject) -> i
 			continue
 		if best < 0 or path.size() < best:
 			best = path.size()
+		if first_only:
+			break
 	return best
