@@ -128,7 +128,10 @@ reports and "run 30 days headless" tests trustworthy. To keep it:
 - All randomness comes from `sim.rng.stream("<system name>")`, one stream per system.
 - No real time, no frame time, no iteration over unordered collections whose order could vary
   (GDScript dictionaries keep insertion order, which is fine).
-- Floats are fine (same machine, same results); saves store them at full precision.
+- Floats are fine (same machine, same results); saves store them exactly. Godot's JSON parser
+  reads some decimals back a bit off, so `Ser.to_json` writes those floats as `"#f64:<hex>"`
+  and `Ser.parse_json` restores them (D26). Read save and command-log text with
+  `Ser.parse_json`, never `JSON.parse`.
 
 ### Content: data-driven, validated
 

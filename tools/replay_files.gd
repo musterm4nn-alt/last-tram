@@ -38,7 +38,7 @@ static func _read(path: String, result: Dictionary) -> Variant:
 		result["message"] = "%s is missing." % path.get_file()
 		return null
 	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(path)) != OK:
+	if Ser.parse_json(json, FileAccess.get_file_as_string(path)) != OK:
 		result["message"] = "%s is not valid JSON (line %d)." % [path.get_file(), json.get_error_line()]
 		return null
 	return json.data

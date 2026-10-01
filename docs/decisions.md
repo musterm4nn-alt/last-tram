@@ -135,3 +135,11 @@ the rest are drafts detailed as their foundations land. Access rules are checked
 and routing, not baked into the pathfinding graph (one shared graph stays cheap); trespassing
 is M4.
 
+**D26 · Exact floats in saves.** Godot's JSON parser reads about one float in ten back a
+little off (measured 9.5% of random values, at every precision we tried), which broke "save
+mid-run equals uninterrupted run" once the town had 30 people. `Ser.to_json` now writes a
+float that would not read back exactly as `"#f64:"` plus its 8 bytes in hex, and
+`Ser.parse_json` turns it back. Floats that survive stay plain numbers, so saves remain
+mostly readable and old saves load unchanged. Alternatives rejected: fixed-point needs and
+positions (a large change for every system), and a binary save format (unreadable,
+undiffable).

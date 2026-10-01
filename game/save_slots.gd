@@ -79,7 +79,7 @@ static func describe_game_time(path: String) -> String:
 	if not FileAccess.file_exists(path):
 		return ""
 	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
+	if Ser.parse_json(json, FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
 		return ""
 	var clock_data: Variant = (json.data as Dictionary).get("clock")
 	if not clock_data is Dictionary or not (clock_data as Dictionary).has("tick"):
