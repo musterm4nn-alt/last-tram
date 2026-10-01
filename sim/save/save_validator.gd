@@ -81,6 +81,11 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 			s.reject("world.lots[].access", "unknown access")
 		s.integer(lot.get("open_hour", 0), "world.lots[].open_hour", 0, 24)
 		s.integer(lot.get("close_hour", 24), "world.lots[].close_hour", 0, 24)
+	var tiers := s.dictionary(world.get("tiers", {}), "world.tiers")
+	if not String(tiers.get("mode", TierSettings.TIERED)) in [TierSettings.TIERED, TierSettings.FULL]:
+		s.reject("world.tiers.mode", "unknown tier mode")
+	s.number(tiers.get("active_radius", 40.0), "world.tiers.active_radius", 0.0)
+	s.number(tiers.get("demote_radius", 50.0), "world.tiers.demote_radius", 0.0)
 	for entry: Variant in s.list(world.get("households", []), "world.households"):
 		var household := s.dictionary(entry, "world.households[]")
 		_register(s.integer(household.get("id"), "world.households[].id", 1), next_id, ids, s)
@@ -134,5 +139,8 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			s.boolean(command.get("enabled"), path + ".enabled")
 		"set_running":
 			s.boolean(command.get("running"), path + ".running")
+		"set_tier_mode":
+			if not s.text(command.get("mode"), path + ".mode") in [TierSettings.TIERED, TierSettings.FULL]:
+				s.reject(path + ".mode", "unknown tier mode")
 		_:
 			s.reject(path + ".type", "unknown command type")

@@ -18,6 +18,8 @@ static func create(type_id: String) -> Command:
 			return SetFreeWillCommand.new()
 		"set_running":
 			return SetRunningCommand.new()
+		"set_tier_mode":
+			return SetTierModeCommand.new()
 	return null
 
 

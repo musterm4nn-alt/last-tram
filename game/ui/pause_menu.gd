@@ -1,8 +1,8 @@
 class_name PauseMenu
 extends CanvasLayer
 ## The Esc menu during a game: pauses, and offers Resume, Save game (one of three slots),
-## Load game (any save), Free will on/off and Quit game. Closing it restores the speed it
-## had before.
+## Load game (any save), Free will on/off, Full lives on/off (T-0042) and Quit game. Closing
+## it restores the speed it had before.
 
 ## True while the menu is shown (the rest of the game ignores input then).
 var is_open: bool = false
@@ -10,6 +10,7 @@ var is_open: bool = false
 var _speed_before: int = 1
 var _page: VBoxContainer
 var _free_will_button: Button
+var _full_lives_button: Button
 var _list: SaveList
 ## "save" or "load" while the list is shown.
 var _list_mode: String = ""
@@ -46,6 +47,7 @@ func _init() -> void:
 	_page_button("Save game", _show_list.bind("save"))
 	_page_button("Load game", _show_list.bind("load"))
 	_free_will_button = _page_button("Free will: On", _toggle_free_will)
+	_full_lives_button = _page_button("Full lives: Off", _toggle_full_lives)
 	_page_button("Quit game", func() -> void: get_tree().quit())
 	_list = SaveList.new()
 	_list.add_theme_constant_override("separation", 8)
@@ -83,6 +85,8 @@ func _show_page() -> void:
 	var player := Session.sim.world.player() if Session.sim != null else null
 	if player != null:
 		_show_free_will(player.free_will)
+	if Session.sim != null:
+		_show_full_lives(Session.sim.world.tiers.mode == TierSettings.FULL)
 	if _page.is_inside_tree():
 		(_page.get_child(0) as Button).grab_focus()
 
@@ -117,6 +121,19 @@ func _toggle_free_will() -> void:
 	var enabled := _free_will_button.text.ends_with("Off")
 	Session.submit(SetFreeWillCommand.new(player.id, enabled))
 	_show_free_will(enabled)
+
+
+## "Full lives" (T-0042): everyone simulated in full detail instead of only people near you.
+func _toggle_full_lives() -> void:
+	if Session.sim == null:
+		return
+	var full := _full_lives_button.text.ends_with("Off")
+	Session.submit(SetTierModeCommand.new(TierSettings.FULL if full else TierSettings.TIERED))
+	_show_full_lives(full)
+
+
+func _show_full_lives(full: bool) -> void:
+	_full_lives_button.text = "Full lives: On" if full else "Full lives: Off"
 
 
 func _show_free_will(enabled: bool) -> void:

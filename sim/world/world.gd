@@ -15,6 +15,8 @@ var objects: Dictionary[int, WorldObject] = {}
 var lots: Dictionary[int, Lot] = {}
 ## Every household by id.
 var households: Dictionary[int, Household] = {}
+## The simulation fidelity dial (T-0042).
+var tiers: TierSettings = TierSettings.new()
 
 var _next_id: int = 1
 ## Derived: place id -> lot id (rebuilt by lot_id_for_place when the lot count changes).
@@ -148,6 +150,7 @@ func to_dict() -> Dictionary:
 		"objects": objects_out,
 		"lots": lots_out,
 		"households": households_out,
+		"tiers": tiers.to_dict(),
 	}
 
 
@@ -184,6 +187,9 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 			world.lots[lot.id] = lot
 	if not d.has("lots") or not saved_lots.is_empty():
 		Lots.create_from_content(world, true)
+	var tiers_data: Variant = d.get("tiers", {})
+	if tiers_data is Dictionary:
+		world.tiers = TierSettings.from_dict(tiers_data)
 	for household_entry: Variant in d.get("households", []):
 		var household := Household.from_dict(household_entry)
 		world.households[household.id] = household

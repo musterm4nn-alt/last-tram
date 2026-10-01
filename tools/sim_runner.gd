@@ -7,7 +7,9 @@ extends SceneTree
 ## Options: --seed=N, --days=N, --minutes=N, --report-every=MINUTES (default 60),
 ##          --walk=X,Y (player holds a walking direction),
 ##          --no-free-will (turns the player's free will off at the start, so needs are
-##          not looked after; useful to contrast with the default run for M1's acceptance).
+##          not looked after; useful to contrast with the default run for M1's acceptance),
+##          --tiers=full|tiered and --active-radius=CELLS (the fidelity dial, T-0042; the
+##          demote radius is 10 cells more).
 ## The summary covers the player and, separately, all residents together (T-0035).
 ## As systems are added, extend _report() with their key numbers (needs, money, crimes...).
 
@@ -21,6 +23,11 @@ func _initialize() -> void:
 		quit(1)
 		return
 	var sim := SimFactory.new_game(content, int(args.get("seed", "1")))
+	if args.has("tiers"):
+		sim.world.tiers.mode = String(args["tiers"])
+	if args.has("active-radius"):
+		sim.world.tiers.active_radius = float(args["active-radius"])
+		sim.world.tiers.demote_radius = sim.world.tiers.active_radius + 10.0
 	if args.has("no-free-will"):
 		sim.submit(SetFreeWillCommand.new(sim.world.player_id, false))
 	var minutes := int(args.get("minutes", "0")) + int(args.get("days", "0")) * SimClock.MINUTES_PER_DAY
@@ -67,13 +74,16 @@ func _report(sim: Sim) -> void:
 	for need_def: NeedDef in sim.content.needs:
 		need_parts.append("%s=%.1f" % [need_def.id, float(player.needs.get(need_def.id, need_def.start))])
 	var asleep := 0
+	var background := 0
 	for person: Person in sim.world.people.values():
+		if person.background:
+			background += 1
 		if not person.action_queue.is_empty() and person.action_queue[0].state == Action.PERFORMING:
 			var def := sim.content.interaction(person.action_queue[0].interaction_id)
 			if def != null and def.routine == "sleep":
 				asleep += 1
-	print("[%s] people %d (%d asleep) | player (%.1f, %.1f) %s | needs %s | mood %.1f (%s)" % [
-		sim.clock.format(), sim.world.people.size(), asleep, player.pos.x, player.pos.y,
+	print("[%s] people %d (%d asleep, %d background) | player (%.1f, %.1f) %s | needs %s | mood %.1f (%s)" % [
+		sim.clock.format(), sim.world.people.size(), asleep, background, player.pos.x, player.pos.y,
 		place.name if place != null else "-", " ".join(need_parts),
 		Mood.compute(player, sim.content), Mood.label(Mood.compute(player, sim.content))])
 

@@ -151,3 +151,11 @@ checks its slot and target fully once per personal minute, before benefits apply
 paths, the only ways to move, are still checked every step); `ContentDB.place_at` and
 `Lots.by_place` use derived indexes. Real paths are still computed for every candidate slot,
 so free will's choices keep using true walking distances.
+
+**D28 · Simulation tiers v1 = update rates.** The design's background tier is event-driven
+(next_wake_tick, travel estimates, encounters rolled per window). For a 72×44 town of 31
+people, a much smaller change gives the same behaviour: background people keep all their
+data and rules, and their action and movement steps run once per game minute instead of every
+step. Aggregates match full detail within a few percent over 3 days (T-0042), and the cost
+drops 37% at a 10-cell radius. Promotion and demotion need no placement logic. The event-driven
+background comes back when a second district (M7) makes it worth its complexity.

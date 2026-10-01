@@ -20,6 +20,7 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 	s.integer(p.get("household_id", 0), path + ".household_id")
 	s.integer(p.get("autonomy_retry_tick", 0), path + ".autonomy_retry_tick")
 	s.text(p.get("routine_id", ""), path + ".routine_id")
+	s.boolean(p.get("background", false), path + ".background")
 	for scene_id: Variant in s.list(p.get("scenes_requested", []), path + ".scenes_requested"):
 		s.text(scene_id, path + ".scenes_requested[]")
 	var others: Dictionary[int, bool] = {}
