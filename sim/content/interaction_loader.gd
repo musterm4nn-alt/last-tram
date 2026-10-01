@@ -9,8 +9,8 @@ extends RefCounted
 ##     "need_rates": {"energy": 16.0}, "finish_needs": {},
 ##     "advertise": {"energy": 80}}]}
 ## A fixed-length interaction uses "duration_minutes" instead of "until_need"
-## plus "min_minutes"/"max_minutes". Optional: "time_skip": true (the game speeds up while
-## the player does it, like sleeping).
+## plus "min_minutes"/"max_minutes". Optional: "time_skip": true (the game skips ahead while
+## the player does it, like sleeping), "routine": "sleep" | "out" (see Routines).
 
 
 ## Read `dir` (every sorted .json file) into `db.interactions`.
@@ -55,6 +55,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.advertise = _read_needs(reader, d, "advertise", ctx)
 		if d.has("time_skip"):
 			def.time_skip = reader.read_bool(d, "time_skip", ctx)
+		if d.has("routine"):
+			def.routine = reader.read_str(d, "routine", ctx)
+			if not def.routine in ["sleep", "out"]:
+				reader.error("%s: 'routine' must be \"sleep\" or \"out\"" % ctx)
 		if def.id.is_empty():
 			reader.error("%s: an interaction has an empty 'id'" % path)
 			continue

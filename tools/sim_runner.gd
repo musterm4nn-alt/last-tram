@@ -66,8 +66,14 @@ func _report(sim: Sim) -> void:
 	var need_parts: PackedStringArray = []
 	for need_def: NeedDef in sim.content.needs:
 		need_parts.append("%s=%.1f" % [need_def.id, float(player.needs.get(need_def.id, need_def.start))])
-	print("[%s] people %d | player (%.1f, %.1f) %s | needs %s | mood %.1f (%s)" % [
-		sim.clock.format(), sim.world.people.size(), player.pos.x, player.pos.y,
+	var asleep := 0
+	for person: Person in sim.world.people.values():
+		if not person.action_queue.is_empty() and person.action_queue[0].state == Action.PERFORMING:
+			var def := sim.content.interaction(person.action_queue[0].interaction_id)
+			if def != null and def.routine == "sleep":
+				asleep += 1
+	print("[%s] people %d (%d asleep) | player (%.1f, %.1f) %s | needs %s | mood %.1f (%s)" % [
+		sim.clock.format(), sim.world.people.size(), asleep, player.pos.x, player.pos.y,
 		place.name if place != null else "-", " ".join(need_parts),
 		Mood.compute(player, sim.content), Mood.label(Mood.compute(player, sim.content))])
 

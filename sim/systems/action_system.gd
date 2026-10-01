@@ -182,7 +182,7 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		var before: float = float(person.needs.get(need_id, 0.0))
 		person.needs[need_id] = clampf(before + float(def.need_rates[need_id]) / 60.0, 0.0, 100.0)
 	action.minutes_done += 1
-	if _has_ended(person, def, action):
+	if _has_ended(sim, person, def, action):
 		for need_id: String in def.finish_needs:
 			var before: float = float(person.needs.get(need_id, 0.0))
 			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
@@ -191,10 +191,13 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 
 
 ## Fixed actions end after duration_minutes; until_need actions end once the
-## need is full (but not before min_minutes) or at max_minutes.
-static func _has_ended(person: Person, def: InteractionDef, action: Action) -> bool:
+## need is full (but not before min_minutes, and not while a "sleep" one is in the sleep
+## window, see Routines.keeps_sleeping) or at max_minutes.
+static func _has_ended(sim: Sim, person: Person, def: InteractionDef, action: Action) -> bool:
 	if def.until_need.is_empty():
 		return action.minutes_done >= def.duration_minutes
 	if action.minutes_done >= def.max_minutes:
 		return true
-	return action.minutes_done >= def.min_minutes and float(person.needs.get(def.until_need, 0.0)) >= 100.0
+	if action.minutes_done < def.min_minutes or float(person.needs.get(def.until_need, 0.0)) < 100.0:
+		return false
+	return not Routines.keeps_sleeping(sim, person, def)

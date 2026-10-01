@@ -49,3 +49,18 @@ static func create_from_content(world: World, only_missing: bool = false) -> voi
 				continue
 			var lot := Lot.from_place(world.new_id(), place)
 			world.lots[lot.id] = lot
+
+
+## Walkable cells of `place` (on its level, not claimed by an earlier place) where nobody
+## stands yet, in scan order.
+static func free_cells(sim: Sim, place: PlaceDef) -> Array[Vector3i]:
+	var taken: Dictionary[Vector3i, bool] = {}
+	for person: Person in sim.world.people.values():
+		taken[person.cell()] = true
+	var out: Array[Vector3i] = []
+	for y: int in range(place.rect.position.y, place.rect.end.y):
+		for x: int in range(place.rect.position.x, place.rect.end.x):
+			var cell := Vector3i(x, y, place.level)
+			if sim.content.place_at(cell) == place and sim.world.grid.is_walkable(cell) and not taken.has(cell):
+				out.append(cell)
+	return out

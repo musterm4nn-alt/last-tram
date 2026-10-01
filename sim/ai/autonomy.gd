@@ -42,7 +42,7 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 			out.append({
 				"object_id": id,
 				"interaction_id": def.id,
-				"score": Utility.need_score(person, def, sim.content) - TRAVEL_COST_PER_CELL * cells,
+				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def) - TRAVEL_COST_PER_CELL * cells,
 				"cells": cells,
 			})
 	return out

@@ -101,7 +101,8 @@ func test_one_frame_skips_the_whole_sleep() -> void:
 
 
 func test_a_critical_need_wakes_the_player() -> void:
-	var sim := _sleeper("sleep", {"hunger": 15.05})
+	# Sleep slows hunger to 3 per hour (T-0036): 15.02 + 0.05 - 0.1 crosses 15 in the first minute.
+	var sim := _sleeper("sleep", {"hunger": 15.02})
 	var first_boundary := (sim.clock.tick / SimClock.STEPS_PER_GAME_MINUTE + 1) * SimClock.STEPS_PER_GAME_MINUTE
 	var notices: Array[String] = []
 	var listener := func(text: String) -> void: notices.append(text)
@@ -110,7 +111,7 @@ func test_a_critical_need_wakes_the_player() -> void:
 	Session.notice.disconnect(listener)
 	assert_false(Session.skipping, "hunger went critical: stop skipping")
 	assert_eq(sim.clock.tick, first_boundary, "stop at the event, without spending the remaining skip budget")
-	assert_near(sim.world.player().needs["hunger"], 14.95)
+	assert_near(sim.world.player().needs["hunger"], 14.97)
 	assert_has(notices, "Woke up: Hunger is low")
 	Session._accumulator = 0.0
 	Session._process(0.05)

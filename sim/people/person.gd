@@ -36,6 +36,8 @@ var personality: Personality = Personality.new()
 var home_lot_id: int = 0
 ## Id of the person's Household (0 = none).
 var household_id: int = 0
+## RoutineDef id ("" = the content's default routine).
+var routine_id: String = ""
 ## Free will found nothing to do: it looks again at this tick (AutonomySystem.RETRY_MINUTES).
 var autonomy_retry_tick: int = 0
 ## Floor the person is on (the z of their cell).
@@ -109,6 +111,7 @@ func to_dict() -> Dictionary:
 		"home_lot_id": home_lot_id,
 		"household_id": household_id,
 		"autonomy_retry_tick": autonomy_retry_tick,
+		"routine_id": routine_id,
 		"level": level,
 		"pos": Ser.vec2(pos),
 		"facing": Ser.vec2(facing),
@@ -144,6 +147,7 @@ static func from_dict(d: Dictionary) -> Person:
 	p.home_lot_id = int(d.get("home_lot_id", 0))
 	p.household_id = int(d.get("household_id", 0))
 	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))
+	p.routine_id = String(d.get("routine_id", ""))
 	p.level = int(d["level"])
 	p.pos = Ser.to_vec2(d["pos"])
 	p.facing = Ser.to_vec2(d["facing"])

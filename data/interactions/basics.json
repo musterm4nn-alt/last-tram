@@ -1,5 +1,5 @@
 {
-	"_doc": "Interactions people can perform on objects (T-0006). Exactly one of duration_minutes or until_need (with min_minutes and max_minutes). need_rates are per game hour and apply on top of normal decay; time_skip (optional) speeds the game up while the player does it; finish_needs are one-off gains at the end; advertise is what autonomy scoring expects. object_tags must each be used by at least one object in data/objects/.",
+	"_doc": "Interactions people can perform on objects (T-0006). Exactly one of duration_minutes or until_need (with min_minutes and max_minutes). need_rates are per game hour and apply on top of normal decay (sleep's hunger/hygiene/fun/social rates make those needs fade more slowly overnight, T-0036); time_skip (optional) skips ahead while the player does it; routine (optional) \"sleep\" or \"out\" ties it to daily routines (T-0036); finish_needs are one-off gains at the end; advertise is what autonomy scoring expects. object_tags must each be used by at least one object in data/objects/.",
 	"interactions": [
 		{
 			"id": "sleep",
@@ -11,9 +11,14 @@
 			"min_minutes": 60,
 			"max_minutes": 720,
 			"time_skip": true,
+			"routine": "sleep",
 			"need_rates": {
 				"energy": 16.0,
-				"comfort": 10.0
+				"comfort": 10.0,
+				"hunger": 3.0,
+				"hygiene": 2.0,
+				"fun": 5.0,
+				"social": 3.0
 			},
 			"finish_needs": {},
 			"advertise": {

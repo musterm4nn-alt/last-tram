@@ -1,0 +1,10 @@
+class_name RoutineDef
+extends RefCounted
+## A daily rhythm (data/routines.json): when a person with this routine sleeps.
+
+var id: String = ""
+var name: String = ""
+## [start, end] whole hours; wraps past midnight when end < start.
+var sleep_hours: Vector2i = Vector2i(23, 7)
+## How often generated residents get this routine (relative).
+var weight: int = 1
