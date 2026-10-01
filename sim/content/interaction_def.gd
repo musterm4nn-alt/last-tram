@@ -30,6 +30,8 @@ var finish_needs: Dictionary[String, float] = {}
 var advertise: Dictionary[String, float] = {}
 ## While the player performs this, the game runs at Session.SKIP_SPEED (sleeping).
 var time_skip: bool = false
+## The scene to request when it finishes (null for none; T-0043).
+var presentation: PresentationDef = null
 ## Moodlet started when the action finishes ("" for none).
 var finish_moodlet: String = ""
 ## "" or the part of a daily routine this belongs to: "sleep" (scored and ended by the sleep

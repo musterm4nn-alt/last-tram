@@ -211,6 +211,7 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		person.action_queue.remove_at(0)
 		if def.target == "person":
 			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
+		Presentations.on_finish(sim, person, action, def)
 		if not def.finish_moodlet.is_empty():
 			Social.add_moodlet(sim, person, def.finish_moodlet)
 		sim.emit_event(&"action_finished", {"person_id": person.id, "interaction_id": action.interaction_id, "minutes": action.minutes_done})

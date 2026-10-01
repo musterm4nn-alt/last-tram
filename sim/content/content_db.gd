@@ -19,6 +19,8 @@ var start_district: String = ""
 var objects: Dictionary[String, ObjectDef] = {}
 ## Interactions by id, loaded from every file in data/interactions/.
 var interactions: Dictionary[String, InteractionDef] = {}
+## Short text moments by id (data/scenes/, T-0043).
+var scenes: Dictionary[String, SceneDef] = {}
 ## Bubble text for the view (data/dialogue/, T-0040).
 var dialogue: DialogueDef = DialogueDef.new()
 ## Temporary mood modifiers by id (data/moodlets.json).
@@ -69,6 +71,7 @@ func load_from(root: String) -> void:
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
 	ObjectLoader.load(self, reader, root.path_join("objects"))
 	MoodletLoader.load(self, reader, root.path_join("moodlets.json"))
+	SceneLoader.load(self, reader, root.path_join("scenes"))
 	InteractionLoader.load(self, reader, root.path_join("interactions"))
 	RoutineLoader.load(self, reader, root.path_join("routines.json"))
 	DialogueLoader.load(self, reader, root.path_join("dialogue"))

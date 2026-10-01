@@ -1,0 +1,17 @@
+{
+	"_doc": "Scenes (T-0043): short text moments shown in a popup. pages: the text of each page, with {actor}, {target}, {place} and pronoun forms {actor.they}, {actor.them}, {actor.their}, {actor.themself} (same for target) filled in by the view. adult must be false in the core game. Triggered by an interaction's presentation (see data/interactions). Scenes never change the game.",
+	"scenes": [
+		{ "id": "first_night_home", "adult": false, "pages": [
+			"The radiator ticks. Somewhere upstairs, someone is arguing about money, then a door slams and it's quiet.",
+			"{actor} wakes up in the new flat. Through the window the first tram rattles past on the Hauptstraße. Day two in the Altstadt."
+		] },
+		{ "id": "night_at_the_kneipe", "adult": false, "pages": [
+			"The Anker is loud tonight. Someone has put the same song on the jukebox three times, and nobody minds.",
+			"{actor} leans on the bar a little longer than planned. The barman refills {actor.their} glass without asking."
+		] },
+		{ "id": "coffee_at_wolke", "adult": false, "pages": [
+			"Café Wolke smells of burnt milk and cinnamon. Outside, the tram bell rings twice.",
+			"For a moment {actor} forgets about everything else."
+		] }
+	]
+}

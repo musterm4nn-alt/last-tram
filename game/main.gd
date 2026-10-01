@@ -22,6 +22,7 @@ extends Node2D
 ##   --screen=map        open the full map (M) after the quick start
 ##   --level=N           show floor N after the quick start (if the world has it)
 ##   --inspect           open the person inspector on the first resident
+##   --scene=ID          show that scene (as the player) after the quick start
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind
@@ -34,6 +35,7 @@ var _hud: Hud
 var _debug_overlay: DebugOverlay
 var _pause_menu: PauseMenu
 var _town_map: TownMap
+var _scene_popup: ScenePopup
 var _menu: MainMenu
 var _creator: CharacterCreator
 var _options: LaunchOptions
@@ -63,6 +65,8 @@ func _ready() -> void:
 	add_child(_pause_menu)
 	_town_map = TownMap.new()
 	add_child(_town_map)
+	_scene_popup = ScenePopup.new()
+	add_child(_scene_popup)
 	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
 	# would inherit the camera's zoom).
 	_interaction_menu = InteractionMenu.new()
@@ -72,6 +76,7 @@ func _ready() -> void:
 	_controller.menu = _interaction_menu
 	_controller.pause_menu = _pause_menu
 	_controller.town_map = _town_map
+	_controller.scene_popup = _scene_popup
 	_controller.inspector = _hud.inspector
 	add_child(_controller)
 	Session.game_loaded.connect(_controller.reset)
@@ -129,6 +134,8 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _scene_popup.is_open:
+		return  # its button takes Enter and Space
 	if _town_map.is_open and (event.is_action_pressed("menu") or event.is_action_pressed("map")):
 		get_viewport().set_input_as_handled()
 		_town_map.close()
@@ -196,6 +203,8 @@ func _start_quick() -> void:
 		_town_map.open()
 	if _options.level != LaunchOptions.NO_LEVEL:
 		Session.view_level(_options.level)
+	if not _options.scene.is_empty():
+		_scene_popup.request({"scene_id": _options.scene, "actor_id": Session.sim.world.player_id, "target_id": 0, "place_id": ""})
 	if _options.inspect:
 		var ids: Array = Session.sim.world.people.keys()
 		ids.sort()
