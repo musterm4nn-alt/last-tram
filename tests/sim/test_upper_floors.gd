@@ -2,7 +2,7 @@ extends TestCase
 ## T-0031: flats on the upper floors, reachable by stairs, each furnished.
 
 const ALTMARKT: Vector3i = Vector3i(30, 30, 0)
-const REQUIRED: PackedStringArray = ["bed_double", "fridge", "stove", "sink", "shower", "sofa"]
+const REQUIRED: PackedStringArray = ["bed_double", "fridge", "stove", "sink", "shower", "sofa", "desk", "tv"]
 const V3_SAVE: String = "res://tests/fixtures/saves/v3_basic.json"
 ## The doors of the shops on the ground floor (front and back).
 const SHOP_DOORS: Array[Vector3i] = [
@@ -54,7 +54,7 @@ func test_every_home_and_stairwell_is_reachable_from_the_altmarkt() -> void:
 		assert_true(reachable, "%s can be reached" % place.id)
 
 
-func test_every_new_flat_has_the_six_objects_with_a_reachable_free_slot() -> void:
+func test_every_new_flat_has_its_furniture_with_a_reachable_free_slot() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	for place: PlaceDef in _homes():
 		var found: Dictionary = {}

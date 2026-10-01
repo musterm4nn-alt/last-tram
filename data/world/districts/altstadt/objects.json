@@ -1,5 +1,5 @@
 {
-	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Entrance hall (NW, wood) with a 2x2 bathroom in its south-west corner (tiled): shower and sink. Kitchen (NE, tiled): stove, fridge and kitchen table. Bedroom (SE, tiled): double bed. Living room (SW, wood): desk with laptop, sofa and TV. Door cells and their neighbours are kept free, and the spawn (50,26) in the hall stays clear. Then (T-0031) the neighbours' flats: Haus 3's ground floor and 14 flats on levels 1 and 2 of Haus 5, 9, 3 and 14, each with a stove, fridge, sink, shower, double bed and sofa.",
+	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Entrance hall (NW, wood) with a 2x2 bathroom in its south-west corner (tiled): shower and sink. Kitchen (NE, tiled): stove, fridge and kitchen table. Bedroom (SE, tiled): double bed. Living room (SW, wood): desk with laptop, sofa and TV. Door cells and their neighbours are kept free, and the spawn (50,26) in the hall stays clear. Then (T-0031) the neighbours' flats: Haus 3's ground floor and 14 flats on levels 1 and 2 of Haus 5, 9, 3 and 14, each with a stove, fridge, sink, shower, double bed and sofa, plus (T-0035) a desk with a laptop and a TV for fun and video calls.",
 	"objects": [
 		{
 			"def": "fridge",
@@ -887,6 +887,276 @@
 			"def": "sofa",
 			"cell": [
 				64,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				23,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				37,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				54,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				60,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				66,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				8,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				14,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				23,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				37,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				54,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				60,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				66,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				8,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				14,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "desk",
+			"cell": [
+				61,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				24,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				33,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				49,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				61,
+				9,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				67,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				4,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				16,
+				26,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				24,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				33,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				49,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				61,
+				9,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				67,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				4,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				16,
+				26,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "tv",
+			"cell": [
+				62,
 				7,
 				0
 			],
