@@ -3,7 +3,7 @@
 	"interactions": [
 		{
 			"id": "sleep",
-			"name": "Sleep", "finish_moodlet": "slept_well",
+			"name": "Sleep", "finish_moodlet": "slept_well", "presentation": { "scene": "first_night_home", "player_only": true, "day": 1, "once": true },
 			"object_tags": [
 				"bed"
 			],

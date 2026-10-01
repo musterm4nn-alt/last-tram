@@ -42,6 +42,8 @@ var relationships: Dictionary[int, Relationship] = {}
 var memories: Array[Memory] = []
 ## Running moodlets.
 var moodlets: Array[Moodlet] = []
+## Scene ids of "once" presentations already requested for this person (T-0043).
+var scenes_requested: PackedStringArray = PackedStringArray()
 ## RoutineDef id ("" = the content's default routine).
 var routine_id: String = ""
 ## Free will found nothing to do: it looks again at this tick (AutonomySystem.RETRY_MINUTES).
@@ -118,6 +120,7 @@ func to_dict() -> Dictionary:
 		"household_id": household_id,
 		"autonomy_retry_tick": autonomy_retry_tick,
 		"routine_id": routine_id,
+		"scenes_requested": Array(scenes_requested),
 		"relationships": _relationships_out(),
 		"memories": memories.map(func(m: Memory) -> Dictionary: return m.to_dict()),
 		"moodlets": moodlets.map(func(m: Moodlet) -> Dictionary: return m.to_dict()),
@@ -164,6 +167,8 @@ static func from_dict(d: Dictionary) -> Person:
 	p.household_id = int(d.get("household_id", 0))
 	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))
 	p.routine_id = String(d.get("routine_id", ""))
+	for scene_id: Variant in d.get("scenes_requested", []):
+		p.scenes_requested.append(String(scene_id))
 	for entry: Variant in d.get("relationships", []):
 		var r := Relationship.from_dict(entry)
 		p.relationships[r.other_id] = r

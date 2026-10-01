@@ -64,6 +64,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.advertise = _read_needs(reader, d, "advertise", ctx)
 		if d.has("time_skip"):
 			def.time_skip = reader.read_bool(d, "time_skip", ctx)
+		if d.has("presentation"):
+			def.presentation = SceneLoader.read_presentation(reader, d, ctx)
+			if not db.scenes.has(def.presentation.scene_id):
+				reader.error("%s: unknown scene '%s' in 'presentation'" % [ctx, def.presentation.scene_id])
 		if d.has("finish_moodlet"):
 			def.finish_moodlet = reader.read_str(d, "finish_moodlet", ctx)
 			if db.moodlet(def.finish_moodlet) == null:
