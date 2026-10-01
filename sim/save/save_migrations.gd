@@ -28,11 +28,30 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v1_to_v2(d)
 			2:
 				d = _v2_to_v3(d)
+			3:
+				d = _v3_to_v4(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v4 people have money (T-0054): everyone gets €40 cash and €300 in the bank, and the ledger
+## records it as starting money so old towns balance.
+static func _v3_to_v4(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	var world: Dictionary = d["world"]
+	if not world.get("people") is Array:
+		return d
+	var count := 0
+	for person: Variant in world["people"]:
+		if person is Dictionary:
+			person["wallet"] = {"cash": 4000, "bank": 30000, "statement": []}
+			count += 1
+	world["ledger"] = {"sources": {"start": 34000 * count}, "sinks": {}}
 	return d
 
 

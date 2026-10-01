@@ -132,3 +132,21 @@ func test_v2_action_migration_assigns_ids_and_keeps_legacy_cancellations() -> vo
 	loaded.step()
 	assert_eq(loaded.world.player().action_queue.size(), 1)
 	assert_true(errors.is_empty())
+
+
+func test_wallets_and_the_ledger_are_validated() -> void:
+	var bad_wallets: Array[Dictionary] = [
+		{"cash": -1, "bank": 0, "statement": []},
+		{"cash": 0, "bank": "lots", "statement": []},
+		{"cash": 0, "bank": 0.5, "statement": []},
+		{"cash": 0, "bank": 0, "statement": [{"tick": 1, "amount": 5, "account": "sock", "reason": "start", "detail": ""}]},
+		{"cash": 0, "bank": 0, "statement": "none"},
+	]
+	for wallet: Dictionary in bad_wallets:
+		var data := _save()
+		data["world"]["people"][0]["wallet"] = wallet
+		_reject(data, "bad wallet %s" % [wallet])
+	for ledger: Variant in ["bad", {"sources": {"start": -5}, "sinks": {}}, {"sources": {}, "sinks": {"rent": "x"}}]:
+		var data := _save()
+		data["world"]["ledger"] = ledger
+		_reject(data, "bad ledger %s" % [ledger])

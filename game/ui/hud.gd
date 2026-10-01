@@ -9,6 +9,7 @@ const MINIMAP_SIZE: Vector2 = Vector2(224, 144)
 const MINIMAP_PX_PER_CELL: float = 4.0
 
 var _clock_label: Label
+var _money_label: Label
 var _place_label: Label
 var _mode_label: Label
 var _hint_label: Label
@@ -31,6 +32,13 @@ static func mode_text(viewed_level: int, player: Person) -> String:
 	if player != null and viewed_level != player.level:
 		return "Command mode · floor %d" % viewed_level
 	return "Command mode"
+
+
+## The player's money for the HUD: "Cash €40.00 · Bank €300.00" ("" for nobody).
+static func money_text(person: Person) -> String:
+	if person == null:
+		return ""
+	return "Cash %s · Bank %s" % [Money.format(person.wallet.cash), Money.format(person.wallet.bank)]
 
 
 ## Where `person` is: the place's name, plus " (closed)" while its lot is closed for
@@ -77,6 +85,7 @@ func _ready() -> void:
 	var box := VBoxContainer.new()
 	top.add_child(box)
 	_clock_label = _label(box, 20)
+	_money_label = _label(box, 14)
 	_place_label = _label(box, 14)
 	_mode_label = _label(box, 14)
 	_mode_label.text = "Command mode"
@@ -144,6 +153,7 @@ func _process(delta: float) -> void:
 	if Session.skipping:
 		speed_text = "▶▶ skipping"
 	_clock_label.text = "Day %d   %s   %s" % [Session.sim.clock.day() + 1, Session.sim.clock.format(), speed_text]
+	_money_label.text = money_text(Session.sim.world.player())
 	_place_label.text = place_text(Session.sim, Session.sim.world.player())
 	_mode_label.text = mode_text(Session.viewed_level, Session.sim.world.player())
 	if _notice_time_left > 0.0:

@@ -32,6 +32,8 @@ var appearance: Appearance = Appearance.new()
 var outfit: Outfit = Outfit.new()
 ## Who the person is: seven axes, −100..+100 (old saves: all 0).
 var personality: Personality = Personality.new()
+## Cash and bank account (T-0054). Change it only through Money.
+var wallet: Wallet = Wallet.new()
 ## Id of the Lot the person lives in (0 = none). Private lots let only their residents in.
 var home_lot_id: int = 0
 ## Id of the person's Household (0 = none).
@@ -119,6 +121,7 @@ func to_dict() -> Dictionary:
 		"appearance": appearance.to_dict(),
 		"outfit": outfit.to_dict(),
 		"personality": personality.to_dict(),
+		"wallet": wallet.to_dict(),
 		"home_lot_id": home_lot_id,
 		"household_id": household_id,
 		"autonomy_retry_tick": autonomy_retry_tick,
@@ -167,6 +170,9 @@ static func from_dict(d: Dictionary) -> Person:
 	var personality_data: Variant = d.get("personality", {})
 	if personality_data is Dictionary:
 		p.personality = Personality.from_dict(personality_data)
+	var wallet_data: Variant = d.get("wallet", {})
+	if wallet_data is Dictionary:
+		p.wallet = Wallet.from_dict(wallet_data)
 	p.home_lot_id = int(d.get("home_lot_id", 0))
 	p.household_id = int(d.get("household_id", 0))
 	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))

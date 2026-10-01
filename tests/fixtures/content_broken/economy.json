@@ -1,0 +1,5 @@
+{
+	"_doc": "Broken on purpose (T-0054): a negative start amount and a range with min > max.",
+	"player_start": { "cash": -100, "bank": 30000 },
+	"resident_start": { "cash": [8000, 1000], "bank": [20000, 300000] }
+}

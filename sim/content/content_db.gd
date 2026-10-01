@@ -28,6 +28,8 @@ var moodlets: Dictionary[String, MoodletDef] = {}
 ## Daily rhythms by id (data/routines.json) and the id people get by default.
 var routines: Dictionary[String, RoutineDef] = {}
 var default_routine: String = ""
+## Money tuning (data/economy.json, D29).
+var economy: EconomyDef = EconomyDef.new()
 var errors: PackedStringArray = []
 
 ## Every choice the character creator offers (genders, colours, hair, names...).
@@ -66,6 +68,7 @@ func load_from(root: String) -> void:
 	var reader := ContentReader.new()
 	TerrainLoader.load(self, reader, root.path_join("terrain.json"))
 	NeedsLoader.load(self, reader, root.path_join("needs.json"))
+	EconomyLoader.load(self, reader, root.path_join("economy.json"))
 	NamesLoader.load(self, reader, root.path_join("names").path_join("names.json"))
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))

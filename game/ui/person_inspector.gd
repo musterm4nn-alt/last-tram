@@ -69,6 +69,7 @@ static func lines(sim: Sim, id: int, viewer_id: int) -> PackedStringArray:
 	out.append("Mood: %s%s" % [Mood.label(mood), (" (%s)" % ", ".join(moodlet_names)) if not moodlet_names.is_empty() else ""])
 	out.append("Doing: %s" % doing(sim, person))
 	out.append("Lives: %s" % home_text(sim, person))
+	out.append("Money: %s" % Money.format(person.wallet.total()))
 	if id == viewer_id:
 		return out
 	out.append("")
