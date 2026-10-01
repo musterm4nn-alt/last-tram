@@ -123,12 +123,21 @@ static func _choose_route(sim: Sim, person: Person, action: Action) -> void:
 	sim.emit_event(&"action_routing", {"person_id": person.id, "interaction_id": action.interaction_id, "target_id": action.target_id, "slot_index": best})
 
 
-## Snaps the person onto the slot cell centre, then marks the front action
-## PERFORMING with its slot, start tick and facing, emitting action_started.
+## Checks the requirements again (money may have gone on the way) and pays the price, then
+## snaps the person onto the slot cell centre and marks the front action PERFORMING with its
+## slot, start tick and facing, emitting action_started. A PERFORMING action has been paid.
 static func _start_performing(sim: Sim, person: Person, action: Action, slot: int) -> void:
 	var obj := sim.world.get_object(action.target_id)
 	if obj == null:
 		_fail(sim, person, action, "no_path")
+		return
+	var def := sim.content.interaction(action.interaction_id)
+	var reason := Requirements.check(sim, person, def, action.target_id)
+	if not reason.is_empty():
+		_fail(sim, person, action, reason)
+		return
+	if def.price > 0 and not Money.spend(sim, person, def.price, "purchase", def.id):
+		_fail(sim, person, action, "cant_afford")
 		return
 	var cell := obj.slot_cell(sim.content, slot)
 	person.pos = Vector2(cell.x + 0.5, cell.y + 0.5)

@@ -44,11 +44,14 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 		for def: InteractionDef in Interactions.offered_by(sim, id):
 			if not near and def.routine != "out":
 				continue
+			if not Requirements.check(sim, person, def, id).is_empty():
+				continue
 			out.append({
 				"object_id": id,
 				"interaction_id": def.id,
 				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
-					+ Routines.score_bonus(sim, person, def) - TRAVEL_COST_PER_CELL * cells,
+					+ Routines.score_bonus(sim, person, def) - Utility.price_cost(person, def, sim.content)
+					- TRAVEL_COST_PER_CELL * cells,
 				"cells": cells,
 			})
 	out.append_array(_person_options(sim, person))

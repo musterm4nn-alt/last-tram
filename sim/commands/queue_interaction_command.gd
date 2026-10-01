@@ -2,7 +2,9 @@ class_name QueueInteractionCommand
 extends Command
 ## Queues an interaction for a person (the front of the queue is current), on an object or,
 ## for person-targeted interactions, on another person (T-0038). Ignored unless the person
-## and the target exist, the target offers the interaction, and the queue has room.
+## and the target exist, the target offers the interaction, and the queue has room. Refused,
+## with &"action_refused" {person_id, interaction_id, target_id, reason}, when the person may
+## not do it now (Requirements: closed, not their home, can't afford...).
 ## ActionSystem then walks the person to a free use slot (or next to the other person) and
 ## starts it there.
 
@@ -39,6 +41,10 @@ func apply(sim: Sim) -> void:
 			offered = true
 			break
 	if not offered:
+		return
+	var reason := Requirements.check(sim, person, def, target_id)
+	if not reason.is_empty():
+		sim.emit_event(&"action_refused", {"person_id": person_id, "interaction_id": interaction_id, "target_id": target_id, "reason": reason})
 		return
 	var action := Action.new(interaction_id, target_id)
 	action.id = sim.world.new_id()

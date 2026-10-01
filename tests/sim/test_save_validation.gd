@@ -109,8 +109,9 @@ func test_v2_action_migration_assigns_ids_and_keeps_legacy_cancellations() -> vo
 	var sim := SimFactory.new_game(content(), 7)
 	var tv: WorldObject
 	for obj: WorldObject in sim.world.objects.values():
-		if obj.def_id == "tv":
-			tv = obj
+		var lot := Lots.lot_at(sim, obj.origin)
+		if obj.def_id == "tv" and lot != null and lot.id == sim.world.player().home_lot_id:
+			tv = obj  # the player's own TV (T-0055: other homes are private)
 	sim.submit(QueueInteractionCommand.new(sim.world.player_id, "watch_tv", tv.id))
 	sim.submit(QueueInteractionCommand.new(sim.world.player_id, "watch_tv", tv.id))
 	sim.step()

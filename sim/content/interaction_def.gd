@@ -37,3 +37,5 @@ var finish_moodlet: String = ""
 ## "" or the part of a daily routine this belongs to: "sleep" (scored and ended by the sleep
 ## window, see Routines) or "out" (going out, T-0052).
 var routine: String = ""
+## What it costs in euro cents, paid when it starts performing (0 = free; T-0055).
+var price: int = 0

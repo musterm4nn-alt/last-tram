@@ -17,6 +17,11 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	var residents := reader.read_obj(root, "resident_start", path)
 	economy.resident_cash = _range(reader, residents, "cash", path)
 	economy.resident_bank = _range(reader, residents, "bank", path)
+	economy.price_cost_per_euro = reader.read_num(root, "price_cost_per_euro", path)
+	economy.low_money = reader.read_int(root, "low_money", path)
+	economy.low_money_factor = reader.read_num(root, "low_money_factor", path)
+	if economy.price_cost_per_euro < 0.0 or economy.low_money < 0 or economy.low_money_factor < 0.0:
+		reader.error("%s: price_cost_per_euro, low_money and low_money_factor must be >= 0" % path)
 	db.economy = economy
 
 
