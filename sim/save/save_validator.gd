@@ -81,6 +81,15 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 			s.reject("world.lots[].access", "unknown access")
 		s.integer(lot.get("open_hour", 0), "world.lots[].open_hour", 0, 24)
 		s.integer(lot.get("close_hour", 24), "world.lots[].close_hour", 0, 24)
+	for entry: Variant in s.list(world.get("households", []), "world.households"):
+		var household := s.dictionary(entry, "world.households[]")
+		_register(s.integer(household.get("id"), "world.households[].id", 1), next_id, ids, s)
+		if not Household.KINDS.has(s.text(household.get("kind"), "world.households[].kind")):
+			s.reject("world.households[].kind", "unknown household kind")
+		for member: Variant in s.list(household.get("member_ids"), "world.households[].member_ids"):
+			if not people_ids.has(s.integer(member, "world.households[].member_ids[]", 1)):
+				s.reject("world.households[].member_ids", "must reference saved people")
+		s.integer(household.get("home_lot_id"), "world.households[].home_lot_id")
 
 
 static func _register(id: int, next_id: int, ids: Dictionary[int, bool], s: SaveSchema) -> void:

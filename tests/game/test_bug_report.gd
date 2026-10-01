@@ -51,6 +51,8 @@ func _remove_tree(path: String) -> void:
 func _start_game(day: int, hour: int, minute: int) -> Sim:
 	var sim := SimFactory.new_game(content(), 1)
 	sim.clock.tick = SimClock.ticks_for(day, hour, minute)
+	for person: Person in sim.world.people.values():
+		person.last_input_tick = sim.clock.tick  # the clock was moved; nobody acted in the future
 	Session.sim = sim
 	Session._after_load()
 	Session._accumulator = 0.0
@@ -59,7 +61,7 @@ func _start_game(day: int, hour: int, minute: int) -> Sim:
 
 func _read_json(path: String) -> Variant:
 	var json := JSON.new()
-	assert_eq(json.parse(FileAccess.get_file_as_string(path)), OK, "%s should be JSON" % path)
+	assert_eq(Ser.parse_json(json, FileAccess.get_file_as_string(path)), OK, "%s should be JSON" % path)
 	return json.data
 
 

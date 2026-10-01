@@ -37,6 +37,12 @@ var default_player: Dictionary = {}
 var _terrain_by_id: Dictionary[String, int] = {}
 var _terrain_by_glyph: Dictionary[String, int] = {}
 var _need_by_id: Dictionary[String, NeedDef] = {}
+## Derived place lookup for place_at (rebuilt when the places change): per level, one entry
+## per cell of _place_area, holding 1 + the index into _place_list (0 = no place).
+var _place_grid: Dictionary[int, PackedInt32Array] = {}
+var _place_list: Array[PlaceDef] = []
+var _place_area: Vector2i = Vector2i.ZERO
+var _place_signature: int = -1
 
 
 static func load_default() -> ContentDB:
@@ -111,13 +117,43 @@ func place(place_id: String) -> PlaceDef:
 	return null
 
 
-## The place containing a world cell, or null.
+## The place containing a world cell, or null. Where places overlap, the first in district
+## and list order wins.
 func place_at(cell: Vector3i) -> PlaceDef:
+	_index_places()
+	if cell.x < 0 or cell.y < 0 or cell.x >= _place_area.x or cell.y >= _place_area.y or not _place_grid.has(cell.z):
+		return null
+	var index := _place_grid[cell.z][cell.y * _place_area.x + cell.x]
+	return _place_list[index - 1] if index > 0 else null
+
+
+## Builds the place lookup the first time, and again whenever districts or places change.
+func _index_places() -> void:
+	var signature := districts.size()
+	for district_id: String in district_order:
+		signature = signature * 31 + districts[district_id].places.size()
+	if signature == _place_signature:
+		return
+	_place_signature = signature
+	_place_grid.clear()
+	_place_list.clear()
+	_place_area = Vector2i.ZERO
 	for district_id: String in district_order:
 		for place: PlaceDef in districts[district_id].places:
-			if place.contains(cell):
-				return place
-	return null
+			_place_area = _place_area.max(place.rect.end)
+	for district_id: String in district_order:
+		for place: PlaceDef in districts[district_id].places:
+			_place_list.append(place)
+			if not _place_grid.has(place.level):
+				var cells := PackedInt32Array()
+				cells.resize(_place_area.x * _place_area.y)
+				_place_grid[place.level] = cells
+			var grid := _place_grid[place.level]
+			for y: int in range(maxi(place.rect.position.y, 0), place.rect.end.y):
+				for x: int in range(maxi(place.rect.position.x, 0), place.rect.end.x):
+					if grid[y * _place_area.x + x] == 0:
+						grid[y * _place_area.x + x] = _place_list.size()
+			_place_grid[place.level] = grid
 
 
 ## The clothing item with this id, or null.
