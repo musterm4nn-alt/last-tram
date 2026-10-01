@@ -8,6 +8,7 @@ extends SceneTree
 ##          --walk=X,Y (player holds a walking direction),
 ##          --no-free-will (turns the player's free will off at the start, so needs are
 ##          not looked after; useful to contrast with the default run for M1's acceptance).
+## The summary covers the player and, separately, all residents together (T-0035).
 ## As systems are added, extend _report() with their key numbers (needs, money, crimes...).
 
 
@@ -33,12 +34,15 @@ func _initialize() -> void:
 	print("Simulating %d game minutes (seed %s)" % [minutes, args.get("seed", "1")])
 	_report(sim)
 	var need_stats := _new_need_stats(sim)
+	var resident_stats := _new_need_stats(sim)
 	var action_counts: Dictionary = {}
+	var resident_actions: Dictionary = {}
 	var started := Time.get_ticks_usec()
 	for m: int in minutes:
 		sim.run_minutes(1)
 		_sample_needs(sim, need_stats)
-		_count_finished_actions(sim, action_counts)
+		_sample_residents(sim, resident_stats)
+		_count_finished_actions(sim, action_counts, resident_actions)
 		if (m + 1) % report_every == 0:
 			_report(sim)
 	var seconds := (Time.get_ticks_usec() - started) / 1_000_000.0
@@ -47,6 +51,11 @@ func _initialize() -> void:
 		steps, seconds, seconds * 1000.0 / steps])
 	_report_need_stats(sim, need_stats, minutes)
 	_report_action_counts(action_counts)
+	var residents := sim.world.people.size() - 1
+	if residents > 0:
+		print("residents (%d), over all their minutes:" % residents)
+		_report_need_stats(sim, resident_stats, minutes)
+		_report_action_counts(resident_actions, "resident actions")
 	print("LAST_TRAM_SIMRUN: OK")
 	quit(0)
 
@@ -85,16 +94,31 @@ func _sample_needs(sim: Sim, stats: Dictionary) -> void:
 			entry["below_30"] = int(entry["below_30"]) + 1
 
 
-## Drains this minute's events and tallies the player's finished interactions.
-func _count_finished_actions(sim: Sim, counts: Dictionary) -> void:
+## Samples every resident's needs into `stats` (one sample per resident per minute).
+func _sample_residents(sim: Sim, stats: Dictionary) -> void:
+	for person: Person in sim.world.people.values():
+		if person.id == sim.world.player_id:
+			continue
+		for need_id: String in stats:
+			var value: float = float(person.needs.get(need_id, 0.0))
+			var entry: Dictionary = stats[need_id]
+			entry["min"] = minf(float(entry["min"]), value)
+			entry["sum"] = float(entry["sum"]) + value
+			entry["count"] = int(entry["count"]) + 1
+			if value < 30.0:
+				entry["below_30"] = int(entry["below_30"]) + 1
+
+
+## Drains this minute's events and tallies finished interactions: the player's in `counts`,
+## everyone else's in `resident_counts`.
+func _count_finished_actions(sim: Sim, counts: Dictionary, resident_counts: Dictionary) -> void:
 	for event: Dictionary in sim.events.drain():
 		if event["type"] != &"action_finished":
 			continue
 		var data: Dictionary = event["data"]
-		if int(data.get("person_id", -1)) != sim.world.player_id:
-			continue
+		var target := counts if int(data.get("person_id", -1)) == sim.world.player_id else resident_counts
 		var interaction_id := String(data["interaction_id"])
-		counts[interaction_id] = int(counts.get(interaction_id, 0)) + 1
+		target[interaction_id] = int(target.get(interaction_id, 0)) + 1
 
 
 func _report_need_stats(sim: Sim, stats: Dictionary, minutes: int) -> void:
@@ -107,7 +131,7 @@ func _report_need_stats(sim: Sim, stats: Dictionary, minutes: int) -> void:
 			need_def.id, float(entry["min"]), avg, below_pct])
 
 
-func _report_action_counts(counts: Dictionary) -> void:
+func _report_action_counts(counts: Dictionary, label: String = "actions") -> void:
 	var ids: Array = counts.keys()
 	ids.sort_custom(func(a: String, b: String) -> bool:
 		if int(counts[a]) != int(counts[b]):
@@ -116,7 +140,7 @@ func _report_action_counts(counts: Dictionary) -> void:
 	var parts: PackedStringArray = []
 	for id: String in ids:
 		parts.append("%s %d" % [id, int(counts[id])])
-	print("actions: %s" % (", ".join(parts) if not parts.is_empty() else "none"))
+	print("%s: %s" % [label, ", ".join(parts) if not parts.is_empty() else "none"])
 
 
 func _parse_args() -> Dictionary:
