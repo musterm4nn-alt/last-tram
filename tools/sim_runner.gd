@@ -72,6 +72,7 @@ func _initialize() -> void:
 		_report_action_counts(resident_actions, "resident actions")
 	for line: String in town.summary(sim):
 		print(line)
+	print(_money_line(sim))
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
 		var ms_per_step := seconds * 1000.0 / steps
@@ -107,6 +108,27 @@ func _report(sim: Sim) -> void:
 		sim.clock.format(), sim.world.people.size(), asleep, background, player.pos.x, player.pos.y,
 		place.name if place != null else "-", " ".join(need_parts),
 		Mood.compute(player, sim.content), Mood.label(Mood.compute(player, sim.content))])
+
+
+## "money: people hold €X (median €Y) | in: start €A, … | out: purchase €B, …".
+func _money_line(sim: Sim) -> String:
+	var amounts: Array[int] = []
+	for person: Person in sim.world.people.values():
+		amounts.append(person.wallet.total())
+	amounts.sort()
+	var median := amounts[amounts.size() / 2] if not amounts.is_empty() else 0
+	return "money: people hold %s (median %s) | in: %s | out: %s" % [
+		Money.format(Money.held(sim.world)), Money.format(median),
+		_totals_text(sim.world.ledger.sources), _totals_text(sim.world.ledger.sinks)]
+
+
+func _totals_text(totals: Dictionary[String, int]) -> String:
+	var keys: Array = totals.keys()
+	keys.sort()
+	var parts: PackedStringArray = []
+	for reason: String in keys:
+		parts.append("%s %s" % [reason, Money.format(totals[reason])])
+	return ", ".join(parts) if not parts.is_empty() else "none"
 
 
 ## One {"min": float, "sum": float, "count": int, "below_30": int} entry per need id.

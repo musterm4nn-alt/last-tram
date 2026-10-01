@@ -23,6 +23,7 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 	s.boolean(p.get("background", false), path + ".background")
 	for scene_id: Variant in s.list(p.get("scenes_requested", []), path + ".scenes_requested"):
 		s.text(scene_id, path + ".scenes_requested[]")
+	_wallet(s.dictionary(p.get("wallet", {}), path + ".wallet"), s, path + ".wallet")
 	var others: Dictionary[int, bool] = {}
 	for entry: Variant in s.list(p.get("relationships", []), path + ".relationships"):
 		var r := s.dictionary(entry, path + ".relationships[]")
@@ -90,6 +91,22 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 		if i > 0 and state != Action.QUEUED:
 			s.reject(action_path, "only the front action may be active")
 	return ids
+
+
+static func _wallet(w: Dictionary, s: SaveSchema, path: String) -> void:
+	s.integer(w.get("cash", 0), path + ".cash")
+	s.integer(w.get("bank", 0), path + ".bank", -SaveSchema.MAX_INTEGER)
+	var entries := s.list(w.get("statement", []), path + ".statement")
+	if entries.size() > Wallet.STATEMENT_SIZE:
+		s.reject(path + ".statement", "statement exceeds its size")
+	for entry: Variant in entries:
+		var e := s.dictionary(entry, path + ".statement[]")
+		s.integer(e.get("tick"), path + ".statement[].tick", -SaveSchema.MAX_INTEGER)
+		s.integer(e.get("amount"), path + ".statement[].amount", -SaveSchema.MAX_INTEGER)
+		if not s.text(e.get("account"), path + ".statement[].account") in [Money.CASH, Money.BANK]:
+			s.reject(path + ".statement[].account", "unknown account")
+		s.text(e.get("reason"), path + ".statement[].reason")
+		s.text(e.get("detail", ""), path + ".statement[].detail")
 
 
 static func _appearance(a: Dictionary, s: SaveSchema, path: String) -> void:

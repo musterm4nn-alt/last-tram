@@ -33,6 +33,8 @@ func test_lines_show_who_they_are_and_how_they_see_you() -> void:
 	assert_true(lines[2].begins_with("Mood: "))
 	assert_eq(lines[3], "Doing: Nothing")
 	assert_true(lines[4].contains("with %s" % partner.display_name()), lines[4])
+	assert_eq(lines[5], "Money: %s" % Money.format(person.wallet.total()))
+	assert_true(person.wallet.total() > 0, "residents have starting money")
 	assert_has(lines, "You: a stranger")
 	assert_has(lines, "  Remembers nothing about you yet.")
 

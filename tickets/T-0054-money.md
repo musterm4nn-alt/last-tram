@@ -1,12 +1,12 @@
 ---
 id: T-0054
 title: Money - cash, a bank account and the ledger
-status: todo
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: []
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -152,35 +152,46 @@ static func format(cents: int) -> String
   sorted; "none" when empty).
 
 ## Acceptance criteria
-- [ ] Money moves correctly → `test_money.gd`: `test_spend_uses_cash_first_then_the_card`,
+- [x] Money moves correctly → `test_money.gd`: `test_spend_uses_cash_first_then_the_card`,
   `test_spend_splits_cash_and_card` (cash €2 + bank €3 pays €4: cash 0, bank €1, two events),
   `test_cannot_spend_more_than_you_have` (false, nothing changes, no event),
   `test_charge_takes_only_from_the_bank`, `test_withdraw_moves_bank_to_cash_outside_the_ledger`,
   `test_bad_amounts_and_reasons_change_nothing`.
-- [ ] Money is conserved → `test_money_is_conserved`: 500 random earn/spend/charge/withdraw
+- [x] Money is conserved → `test_money_is_conserved`: 500 random earn/spend/charge/withdraw
   calls on 5 people (fixed seed); after each one, `Money.held(world) == ledger.balance()` and
   no wallet is negative.
-- [ ] `test_statement_keeps_the_newest_twenty` and
+- [x] `test_statement_keeps_the_newest_twenty` and
   `test_money_changed_reports_the_new_balances`.
-- [ ] New games → `test_new_game_gives_everyone_starting_money` (the player gets exactly the
+- [x] New games → `test_new_game_gives_everyone_starting_money` (the player gets exactly the
   data amounts, residents get amounts within the ranges in whole euros, and
   `held == ledger.balance() == sources["start"]`) and `test_starting_money_is_deterministic`
   (same seed, same amounts).
-- [ ] Saving → `test_money_survives_save_and_load` (wallets, statements and ledger round-trip;
+- [x] Saving → `test_money_survives_save_and_load` (wallets, statements and ledger round-trip;
   "save mid-run equals uninterrupted run" in `test_save.gd` still passes);
   `test_v3_saves_get_starting_money` (the v3 fixture loads with €40/€300 each and a balanced
   ledger); `test_save_validation.gd` rejects negative cash, a non-integer bank and an unknown
   statement account.
-- [ ] Content → `test_money.gd::test_economy_content_loads` (the real values) and a broken
+- [x] Content → `test_money.gd::test_economy_content_loads` (the real values) and a broken
   `tests/fixtures/content_broken/economy.json` (min > max, negative amount) is reported
   (`test_content.gd`).
-- [ ] `test_money.gd::test_format` covers the four format cases above.
-- [ ] HUD and inspector → `test_hud_place.gd::test_money_text`,
+- [x] `test_money.gd::test_format` covers the four format cases above.
+- [x] HUD and inspector → `test_hud_place.gd::test_money_text`,
   `test_person_inspector.gd` checks the Money line.
-- [ ] `tools/check.sh` passes; `tools/simrun.sh --days=7 --check-m2` still passes and prints
+- [x] `tools/check.sh` passes; `tools/simrun.sh --days=7 --check-m2` still passes and prints
   the money line. Screenshot `out/t0054.png` shows the money line under the clock.
 
 ## Implementation notes
+- As specified: `sim/economy/` (`Wallet`, `Ledger`, `Money`), `EconomyDef`/`EconomyLoader`
+  with `data/economy.json`, `Person.wallet`, `World.ledger`, `Money.give_start` at the end of
+  `SimFactory.new_game`, save v4 (`_v3_to_v4`, validators, `v4_basic.json`), the HUD money
+  line, the inspector's Money line and the simrun money line.
+- Verified: `tools/check.sh` 480 passed, 0 failed (`test_money.gd`, 15 tests; plus new
+  checks in `test_save_validation.gd`, `test_content.gd`, `test_hud_place.gd`,
+  `test_person_inspector.gd`). Mutation check: recording only the cash part of a split
+  payment in the ledger makes `test_money_is_conserved` fail.
+- `tools/simrun.sh --days=7 --check-m2`: PASSED; "money: people hold €40,593.00 (median
+  €1,427.00) | in: start €40,593.00 | out: none". Screenshot `out/t0054.png`: "Cash €40.00 ·
+  Bank €300.00" under the clock.
 
 ## Questions
 

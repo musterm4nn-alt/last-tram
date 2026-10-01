@@ -41,6 +41,8 @@ func test_broken_content_is_reported_not_crashed() -> void:
 	assert_true(all.contains("unknown glyph"), all)
 	assert_true(all.contains("expected"), "unequal row lengths must be reported: " + all)
 	assert_true(all.contains("not walkable"), "spawn in a wall must be reported: " + all)
+	assert_true(all.contains("player_start amounts must be >= 0"), all)
+	assert_true(all.contains("'cash' must be [min, max] with min <= max"), all)
 
 
 func test_broken_objects_are_reported_not_crashed() -> void:

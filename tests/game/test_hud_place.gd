@@ -13,3 +13,9 @@ func test_place_line_says_closed_outside_opening_hours() -> void:
 	assert_eq(Hud.place_text(sim, player), "Späti Kaya (closed)")
 	player.pos = Vector2(30.5, 30.5)
 	assert_eq(Hud.place_text(sim, player), "Altmarkt", "public places never close")
+
+
+func test_money_text() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	assert_eq(Hud.money_text(sim.world.player()), "Cash €40.00 · Bank €300.00")
+	assert_eq(Hud.money_text(null), "")
