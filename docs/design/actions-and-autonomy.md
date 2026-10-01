@@ -89,6 +89,10 @@ When a person is idle (queue empty), and at most every few minutes:
   sleepers stay in bed until the window ends. Sleeping slows the overnight fade of hunger,
   hygiene, fun and social. Away from home, people head home in their sleep window, or when
   nothing is worth doing where they are.
+- Built in T-0052: each routine has an evening `out_hours` window. Inside it, objects offering
+  a routine "out" interaction (the Kneipe's counter and tables, café tables, benches) count
+  anywhere in town, with a bonus of 5 × (1 + ½ sociability / 100). Bedtime adds a +6 sleep
+  bonus in the sleep window.
 
 ## Background (abstract) execution
 

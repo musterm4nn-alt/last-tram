@@ -38,7 +38,7 @@ func test_routines_load_and_bad_ones_are_reported() -> void:
 	assert_eq(content().default_routine, "regular")
 	assert_eq(content().routine("night_owl").sleep_hours, Vector2i(2, 10))
 	assert_eq(content().interaction("sleep").routine, "sleep")
-	var good := {"default": "a", "routines": [{"id": "a", "name": "A", "sleep_hours": [23, 7], "weight": 1}]}
+	var good := {"default": "a", "routines": [{"id": "a", "name": "A", "sleep_hours": [23, 7], "out_hours": [19, 23], "weight": 1}]}
 	assert_true(_load_routines(good).errors.is_empty())
 	var bad_hours := good.duplicate(true)
 	bad_hours["routines"][0]["sleep_hours"] = [25, 7]
@@ -131,13 +131,14 @@ func test_out_in_the_sleep_window_heads_home_first() -> void:
 
 func test_the_town_sleeps_at_night_and_is_awake_in_the_afternoon() -> void:
 	var sim := SimFactory.new_game(content(), 2)
-	sim.run_minutes(SimClock.MINUTES_PER_DAY + 19 * 60)  # Tuesday 03:00
+	# 05:00: night owls go out until 2 and walk home from the Kneipe (T-0052).
+	sim.run_minutes(SimClock.MINUTES_PER_DAY + 21 * 60)  # Tuesday 05:00
 	var asleep := 0
 	for person: Person in sim.world.people.values():
 		if _asleep(sim, person) and Routines.at_home(sim, person):
 			asleep += 1
-	assert_true(asleep * 10 >= sim.world.people.size() * 8, "%d of %d asleep at home at 03:00" % [asleep, sim.world.people.size()])
-	sim.run_minutes(12 * 60)  # 15:00
+	assert_true(asleep * 4 >= sim.world.people.size() * 3, "%d of %d asleep at home at 05:00" % [asleep, sim.world.people.size()])
+	sim.run_minutes(10 * 60)  # 15:00
 	asleep = 0
 	for person: Person in sim.world.people.values():
 		if _asleep(sim, person):

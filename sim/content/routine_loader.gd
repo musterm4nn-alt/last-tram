@@ -21,6 +21,11 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			if hours[0] < 0 or hours[0] > 24 or hours[1] < 0 or hours[1] > 24 or hours[0] == hours[1]:
 				reader.error("%s: sleep_hours must be two different whole hours 0..24" % ctx)
 			routine.sleep_hours = Vector2i(hours[0], hours[1])
+		var out := reader.read_coordinates(d, "out_hours", ctx, 2)
+		if out.size() == 2:
+			if out[0] < 0 or out[0] > 24 or out[1] < 0 or out[1] > 24 or out[0] == out[1]:
+				reader.error("%s: out_hours must be two different whole hours 0..24" % ctx)
+			routine.out_hours = Vector2i(out[0], out[1])
 		routine.weight = reader.read_int(d, "weight", ctx)
 		if routine.weight <= 0:
 			reader.error("%s: 'weight' must be > 0" % ctx)
