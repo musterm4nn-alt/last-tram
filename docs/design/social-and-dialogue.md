@@ -31,6 +31,10 @@ acceptance = sigmoid( base(interaction)
 Rolled with rng stream `"social"`. The outcome (success / fail / awkward / backfire) produces
 relationship deltas, memories ("X made me laugh at the Kneipe"), moodlets and skill XP.
 
+Built in T-0038 (`Conversations`, `data/interactions/social.json`): chat, joke, compliment,
+insult, argue and flirt, with success and fail outcomes. Awkward and backfire outcomes, charisma
+and presentation come later.
+
 ## Knowing people
 
 Strangers become acquaintances through familiarity; introducing yourself teaches names;
