@@ -1,5 +1,5 @@
 extends TestCase
-## T-0013: time runs at Session.SKIP_SPEED while the player sleeps, and a critical need
+## T-0013 / T-0050: a sleep is skipped to its end in one frame, and a critical need
 ## wakes them (and stops the skip for that sleep).
 
 const ROOM: PackedStringArray = [
@@ -83,19 +83,20 @@ func test_should_skip_only_while_sleeping_unpaused() -> void:
 	assert_false(Session.should_skip(tv_sim, 1, -1), "watching TV does not skip")
 
 
-func test_sleeping_runs_many_steps_per_frame_until_the_sleep_ends() -> void:
+func test_one_frame_skips_the_whole_sleep() -> void:
 	var sim := _sleeper("sleep", {"energy": 95.0})
+	var started := sim.world.player().action_queue[0].started_tick
+	var notices: Array[String] = []
+	var listener := func(text: String) -> void: notices.append(text)
+	Session.notice.connect(listener)
 	Session._process(0.05)
-	assert_true(Session.skipping)
-	assert_eq(Session.steps_last_frame, 120, "0.05 s at 120x is 6 game minutes")
-	for i: int in 20:
-		if sim.world.player().action_queue.is_empty():
-			break
-		Session._process(0.05)
-	assert_true(sim.world.player().action_queue.is_empty(), "sleep should end (60 minutes)")
-	Session._accumulator = 0.0
-	Session._process(0.05)
+	Session.notice.disconnect(listener)
+	assert_true(sim.world.player().action_queue.is_empty(), "the sleep ended in one frame")
+	assert_true(Session.steps_last_frame > SimClock.STEPS_PER_GAME_MINUTE * 50, "many steps in one frame")
+	assert_true(sim.clock.tick >= started + SimClock.STEPS_PER_GAME_MINUTE * 60, "slept its 60 minutes")
 	assert_false(Session.skipping)
+	assert_eq(notices, ["Woke up at %s" % sim.clock.format()] as Array[String])
+	Session._process(0.05)
 	assert_eq(Session.steps_last_frame, 1, "back to 1x")
 
 
@@ -155,5 +156,5 @@ func test_replacing_sleep_with_another_sleep_discards_the_old_budget() -> void:
 	assert_ne(sim.world.player().action_queue[0].id, previous.id)
 	assert_false(Session.skipping)
 	Session._process(0.05)
-	assert_true(Session.skipping, "the new sleep can skip on its own next frame")
-	assert_eq(Session.steps_last_frame, 120)
+	assert_true(Session.steps_last_frame > SimClock.STEPS_PER_GAME_MINUTE * 60, "the new sleep skips on its own next frame")
+	assert_true(sim.world.player().action_queue.is_empty())

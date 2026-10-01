@@ -23,8 +23,8 @@ const KEYS: Dictionary = {
 	"interact": [KEY_E],
 	"menu": [KEY_ESCAPE],
 	"map": [KEY_M],
-	"level_up": [KEY_PAGEUP],
-	"level_down": [KEY_PAGEDOWN],
+	"level_up": [KEY_PAGEUP, KEY_R],
+	"level_down": [KEY_PAGEDOWN, KEY_F],
 	"bug_report": [KEY_F9],
 }
 

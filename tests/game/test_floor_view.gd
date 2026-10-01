@@ -143,3 +143,12 @@ func test_mode_label_names_another_floor() -> void:
 func test_level_launch_option_parses() -> void:
 	assert_eq(LaunchOptions.parse(PackedStringArray(["--level=2"])).level, 2)
 	assert_eq(LaunchOptions.parse(PackedStringArray([])).level, LaunchOptions.NO_LEVEL)
+
+
+func test_r_and_f_work_like_page_up_and_down() -> void:
+	InputActions.register()
+	for pair: Array in [["level_up", KEY_R], ["level_down", KEY_F], ["level_up", KEY_PAGEUP], ["level_down", KEY_PAGEDOWN]]:
+		var event := InputEventKey.new()
+		event.physical_keycode = pair[1]
+		event.pressed = true
+		assert_true(event.is_action_pressed(pair[0]), "%s on %s" % [OS.get_keycode_string(pair[1]), pair[0]])
