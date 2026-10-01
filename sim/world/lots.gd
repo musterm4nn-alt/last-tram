@@ -42,10 +42,12 @@ static func may_enter(sim: Sim, person: Person, lot: Lot) -> bool:
 	return person.home_lot_id == lot.id
 
 
-## Creates one lot per place, in district and place order (new games, and saves from
-## before lots existed).
-static func create_from_content(world: World) -> void:
+## Creates one lot per place, in district and place order (new games). With
+## `only_missing`, skips places that already have a lot (loading older saves).
+static func create_from_content(world: World, only_missing: bool = false) -> void:
 	for district_id: String in world.content.district_order:
 		for place: PlaceDef in world.content.districts[district_id].places:
+			if only_missing and by_place(world, place.id) != null:
+				continue
 			var lot := Lot.from_place(world.new_id(), place)
 			world.lots[lot.id] = lot

@@ -71,7 +71,12 @@ func test_every_place_on_the_level_gets_a_label_at_its_centre() -> void:
 		if label["name"] == "Altmarkt":
 			altmarkt = label
 	assert_eq(altmarkt.get("cell"), Vector2(32, 29), "rect [18, 23, 28, 12]")
-	assert_true(MapView.labels(content(), 1).is_empty(), "no places upstairs yet")
+	var upstairs := MapView.labels(content(), 1)
+	var names: Array[String] = []
+	for label: Dictionary in upstairs:
+		names.append(label["name"])
+	assert_has(names, "Haus 9, 1st floor", "upper floors have their own labels (T-0031)")
+	assert_false(names.has("Altmarkt"), "ground-floor places stay on level 0")
 
 
 func test_fit_scale_is_the_largest_whole_scale_that_fits() -> void:
