@@ -20,6 +20,11 @@ var exchanges: Dictionary[int, int] = {}
 var low: Dictionary[String, int] = {}
 var lowest: Dictionary[String, float] = {}
 var samples: int = 0
+## Work (T-0060): shifts started, how late in total, and shifts left early.
+var shifts_started: int = 0
+var late_shifts: int = 0
+var late_minutes: int = 0
+var left_early: int = 0
 
 
 func observe(sim: Sim, event: Dictionary) -> void:
@@ -30,10 +35,21 @@ func observe(sim: Sim, event: Dictionary) -> void:
 			var interaction := String(data["interaction_id"])
 			if EATING.has(interaction):
 				meals[id] = meals.get(id, 0) + 1
+			elif interaction == "work":
+				# A finished shift includes lunch and colleagues (the job's hunger and social
+				# rates, T-0060), so it counts as a meal and as social contact.
+				meals[id] = meals.get(id, 0) + 1
+				exchanges[id] = exchanges.get(id, 0) + 1
 			elif interaction == "sleep":
 				sleeps[id] = sleeps.get(id, 0) + 1
 				if not Routines.at_home(sim, sim.world.get_person(id)):
 					sleeps_away[id] = sleeps_away.get(id, 0) + 1
+		&"shift_started":
+			shifts_started += 1
+			late_minutes += int(data["late_minutes"])
+			late_shifts += 1 if int(data["late_minutes"]) > 0 else 0
+		&"shift_ended":
+			left_early += 1 if data["left_early"] else 0
 		&"social_exchange":
 			for key: String in ["actor_id", "target_id"]:
 				var id := int(data[key])
@@ -89,6 +105,12 @@ func failures(sim: Sim, days: int) -> PackedStringArray:
 	if connected < residents * MIN_CONNECTED_SHARE * minf(1.0, days / 7.0):
 		out.append("only %d of %d residents know someone outside their household" % [connected, residents])
 	return out
+
+
+## "work: shifts started N (late M, average lateness X min), left early K".
+func work_summary() -> String:
+	return "work: shifts started %d (late %d, average lateness %.1f min), left early %d" % [
+		shifts_started, late_shifts, float(late_minutes) / maxf(1.0, shifts_started), left_early]
 
 
 ## Plain-words numbers for the report.

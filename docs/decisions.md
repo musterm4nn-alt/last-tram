@@ -195,3 +195,25 @@ acceptance run. The key choices:
 - **Items: groceries only.** In M3 the only items are groceries: each household has a stock of
   portions in its fridge. A personal inventory comes with M4, when stolen goods, drugs and
   tools need one. Discoveries v1 have no `item` effect.
+
+**D30 · A working day must leave room to live.** With 8–9 hour shifts (T-0060), residents
+went to bed unwashed, went out hungry and hit zero fun and comfort, and `--check-m2` failed.
+Fixes (measured on seeds 1–6, all passing a week):
+- **Jobs look after people a little:** lunch and breaks at work cancel hunger's decay (+6 an
+  hour) and soften fun and comfort (+4 and +6). Shop and bar staff work Mon–Thu or Fri–Sun,
+  not every day. Shifts must leave an hour awake before them, and an `early_shift` routine
+  (asleep 21–5, given only to people whose shift needs it) covers 06:00 starts.
+- **One shower a day is enough:** a shower gives 85 hygiene (a day costs about 80), and
+  hygiene weighs 1.2 in free will, like hunger.
+- **Home needs come first:** before free will picks anything, someone with hygiene under 45,
+  hunger under 35 or any other need under 30 goes and does the best thing for it at home
+  (`Routines.home_needs`). A hungry person with no food at home goes to the shops or the
+  Imbiss, and a fridge running low triggers a grocery run while the Späti is open. Hunger
+  below its critical level wakes a sleeper. Free will still decides everything else, so
+  evenings stay varied.
+- **Colleagues** in the same job who work the same day get to know each other a little after
+  each shift (+10 familiarity, +3 friendship). Workers chat less around town, and colleagues
+  are where working people meet others.
+- `TownCheck` counts a finished shift as a meal (lunch) and as social contact (colleagues).
+Rejected: filtering free will to an urgent need's options (it got worse and twice as slow),
+and dropping options under half the best score (it made the town much less sociable).

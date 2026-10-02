@@ -50,6 +50,7 @@ func _count_finished(sim: Sim, counts: Dictionary) -> void:
 ## Prints "seed N: <need> min .. avg .. below30 ..%" lines for the review, as the ticket asks.
 func _run_and_report(seed_value: int, minutes: int) -> Dictionary:
 	var sim := SimFactory.new_game(content(), seed_value)
+	sim.world.player().job = null  # M1 is a day at home; working days are checked by TownCheck (T-0060)
 	var stats := _new_need_stats(sim)
 	var finished: Dictionary = {}
 	for m: int in minutes:

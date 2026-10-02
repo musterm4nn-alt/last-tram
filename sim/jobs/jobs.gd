@@ -99,7 +99,75 @@ static func end_shift(sim: Sim, person: Person, action: Action, completed: bool)
 	var result := WorkSessions.for_job(job).finish(sim, person, action, completed) if job != null else WorkResult.new()
 	sim.emit_event(&"shift_ended", {"person_id": person.id, "job_id": result.job_id, "minutes": result.minutes,
 		"late_minutes": result.late_minutes, "left_early": result.left_early})
+	if completed:
+		_know_colleagues(sim, person, action)
 	return result
+
+
+## Colleagues (the same job, working the same day: a team, with handovers) get to know each
+## other a little each shift.
+const COLLEAGUE_DELTAS: Dictionary = {"familiarity": 10.0, "friendship": 3.0}
+
+
+static func _know_colleagues(sim: Sim, person: Person, action: Action) -> void:
+	var mine := shift_window(sim, person, action.started_tick)
+	if mine.x < 0:
+		return
+	var day := mine.x / SimClock.ticks_for(1)
+	for other: Person in sim.world.people.values():
+		if other.id == person.id or other.job == null or other.job.job_id != person.job.job_id:
+			continue
+		if shift_on(sim, other, day).x >= 0:
+			Social.change(sim, person, other.id, COLLEAGUE_DELTAS)
+
+
+## The person's next shift that hasn't ended (start and end ticks): yesterday's past
+## midnight, today's or tomorrow's, whichever comes first. (-1, -1) for none.
+static func next_shift(sim: Sim, person: Person) -> Vector2i:
+	var today := sim.clock.day()
+	for day: int in [today - 1, today, today + 1]:
+		var window := shift_on(sim, person, day)
+		if window.x >= 0 and sim.clock.tick < window.y:
+			return window
+	return Vector2i(-1, -1)
+
+
+## The nearest object (Manhattan distance) where the person's job is done, with a free staff
+## slot (when `free_slot`); null if none.
+static func workplace(sim: Sim, person: Person, free_slot: bool = true) -> WorldObject:
+	var job := sim.content.job(person.job.job_id) if person.job != null else null
+	if job == null:
+		return null
+	var work := sim.content.interaction("work")
+	var here := person.cell()
+	var best: WorldObject = null
+	var best_distance := 0
+	for obj: WorldObject in sim.world.objects.values():
+		var def := sim.content.object_def(obj.def_id)
+		var place := sim.content.place_at(obj.origin)
+		if def == null or not def.tags.has(job.workplace_tag) or place == null or place.id != job.place_id:
+			continue
+		var free := not free_slot
+		for slot: int in obj.slot_count(sim.content) if free_slot else 0:
+			if Interactions.slot_fits(sim, obj.id, slot, work) and not Interactions.slot_taken(sim, obj.id, slot, person.id):
+				free = true
+				break
+		var distance := absi(obj.origin.x - here.x) + absi(obj.origin.y - here.y) + 10 * absi(obj.origin.z - here.z)
+		if free and (best == null or distance < best_distance):
+			best = obj
+			best_distance = distance
+	return best
+
+
+## About how many minutes the walk to work takes: Manhattan distance × 1.3 / walk speed,
+## plus 2 per floor between (rounded up). 0 without a workplace.
+static func travel_minutes(sim: Sim, person: Person) -> int:
+	var obj := workplace(sim, person, false)
+	if obj == null:
+		return 0
+	var here := person.cell()
+	var cells := absi(obj.origin.x - here.x) + absi(obj.origin.y - here.y)
+	return ceili(cells * 1.3 / maxf(person.walk_speed, 0.1)) + 2 * absi(obj.origin.z - here.z)
 
 
 ## True while the person performs their work action.
@@ -118,14 +186,15 @@ static func hidden(sim: Sim, person: Person) -> bool:
 	return job != null and WorkSessions.for_job(job).hidden()
 
 
-## True if the position's working hours never fall in the routine's sleep window.
+## True if the position's working hours, and the hour before them (getting up and getting
+## there), never fall in the routine's sleep window.
 static func fits_routine(content: ContentDB, job: JobDef, position: int, routine_id: String) -> bool:
 	var routine := content.routine(routine_id)
 	if routine == null:
 		return false
 	var shift := job.positions[position]
-	for i: int in shift.hours():
-		if Routines.in_hours(routine.sleep_hours, (shift.from + i) % 24):
+	for i: int in shift.hours() + 1:
+		if Routines.in_hours(routine.sleep_hours, (shift.from + 23 + i) % 24):
 			return false
 	return true
 

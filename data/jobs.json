@@ -1,5 +1,5 @@
 {
-	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay (the hunger term stands for lunch). levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated.",
+	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay (hunger +6 is lunch and breaks: it cancels the hourly decay, so nobody starves at work). levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated.",
 	"jobs": [
 		{
 			"id": "spaeti_clerk",
@@ -8,11 +8,11 @@
 			"session": "on_site",
 			"workplace_tag": "spaeti_counter",
 			"need_rates": {
-				"energy": -3.0,
-				"fun": -3.0,
+				"energy": -0.5,
+				"fun": 4.0,
 				"social": 4.0,
-				"comfort": -2.0,
-				"hunger": 3.0
+				"comfort": 6.0,
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -30,7 +30,13 @@
 						"mon",
 						"tue",
 						"wed",
-						"thu",
+						"thu"
+					],
+					"from": 8,
+					"to": 17
+				},
+				{
+					"days": [
 						"fri",
 						"sat",
 						"sun"
@@ -67,11 +73,11 @@
 			"session": "on_site",
 			"workplace_tag": "imbiss_counter",
 			"need_rates": {
-				"energy": -3.0,
-				"fun": -3.0,
+				"energy": -0.5,
+				"fun": 4.0,
 				"social": 4.0,
-				"comfort": -2.0,
-				"hunger": 3.0
+				"comfort": 6.0,
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -89,7 +95,13 @@
 						"mon",
 						"tue",
 						"wed",
-						"thu",
+						"thu"
+					],
+					"from": 11,
+					"to": 17
+				},
+				{
+					"days": [
 						"fri",
 						"sat",
 						"sun"
@@ -102,7 +114,13 @@
 						"mon",
 						"tue",
 						"wed",
-						"thu",
+						"thu"
+					],
+					"from": 17,
+					"to": 23
+				},
+				{
+					"days": [
 						"fri",
 						"sat",
 						"sun"
@@ -120,11 +138,11 @@
 			"session": "on_site",
 			"workplace_tag": "bar_counter",
 			"need_rates": {
-				"energy": -3.0,
-				"fun": -3.0,
+				"energy": -0.5,
+				"fun": 4.0,
 				"social": 4.0,
-				"comfort": -2.0,
-				"hunger": 3.0
+				"comfort": 6.0,
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -142,7 +160,13 @@
 						"mon",
 						"tue",
 						"wed",
-						"thu",
+						"thu"
+					],
+					"from": 17,
+					"to": 2
+				},
+				{
+					"days": [
 						"fri",
 						"sat",
 						"sun"
@@ -160,10 +184,10 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "police_desk",
 			"need_rates": {
-				"energy": -3.0,
-				"fun": -4.0,
+				"fun": 4.0,
+				"social": 3.0,
 				"comfort": 6.0,
-				"hunger": 3.0
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -208,10 +232,10 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -3.0,
-				"fun": -4.0,
+				"fun": 4.0,
+				"social": 3.0,
 				"comfort": 6.0,
-				"hunger": 3.0
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -250,11 +274,11 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -6.0,
-				"fun": -3.0,
-				"comfort": -3.0,
-				"hunger": 2.0,
-				"hygiene": -3.0
+				"energy": -1.0,
+				"fun": 4.0,
+				"social": 3.0,
+				"comfort": 6.0,
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -289,11 +313,11 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -3.0,
-				"fun": -3.0,
+				"energy": -0.5,
+				"fun": 4.0,
 				"social": 4.0,
-				"comfort": -2.0,
-				"hunger": 3.0
+				"comfort": 6.0,
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -338,11 +362,11 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -6.0,
-				"fun": -3.0,
-				"comfort": -3.0,
-				"hunger": 2.0,
-				"hygiene": -3.0
+				"energy": -1.0,
+				"fun": 4.0,
+				"social": 3.0,
+				"comfort": 6.0,
+				"hunger": 6.0
 			},
 			"levels": [
 				{
@@ -364,7 +388,7 @@
 						"fri"
 					],
 					"from": 7,
-					"to": 16,
+					"to": 15,
 					"count": 2
 				}
 			],

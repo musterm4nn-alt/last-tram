@@ -85,9 +85,9 @@ func test_cook_meal_takes_half_an_hour_and_fills_hunger() -> void:
 
 func test_take_shower_and_wash_hands_fill_hygiene() -> void:
 	var sim := SimFactory.new_game(content(), 1)
-	var player := _run(sim, "shower", "take_shower", {"hygiene": 20.0}, 15)
+	var player := _run(sim, "shower", "take_shower", {"hygiene": 10.0}, 15)
 	assert_true(player.action_queue.is_empty(), "a shower takes 15 minutes")
-	assert_near(player.needs["hygiene"], 20.0 - 15.0 * 4.0 / 60.0 + 70.0, 0.001)
+	assert_near(player.needs["hygiene"], 10.0 - 15.0 * 4.0 / 60.0 + 85.0, 0.001, "one shower a day is enough (T-0060)")
 	var sim2 := SimFactory.new_game(content(), 1)
 	var washer := _run(sim2, "sink", "wash_hands", {}, 2)
 	assert_true(washer.action_queue.is_empty(), "washing hands takes 2 minutes")

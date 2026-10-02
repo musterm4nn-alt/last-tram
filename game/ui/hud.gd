@@ -71,6 +71,13 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return social_notice(data, player_id, content, sim)
 	if int(data.get("person_id", -1)) != player_id:
 		return ""
+	if event.get("type") == &"work_reminder" and sim != null:
+		var job: JobDef = content.job(String(data.get("job_id", ""))) if content != null else null
+		var start := SimClock.new()
+		start.tick = int(data.get("start_tick", 0))
+		var at: WorldObject = Jobs.workplace(sim, sim.world.get_person(player_id))
+		var where: ObjectDef = content.object_def(at.def_id) if at != null and content != null else null
+		return "Work at %02d:%02d: %s%s" % [start.hour(), start.minute(), job.name if job != null else "your job", " (%s)" % where.name if where != null else ""]
 	if event.get("type") == &"path_failed":
 		return "Can't get there"
 	var reason := String(data.get("reason", ""))
