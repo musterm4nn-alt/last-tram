@@ -24,6 +24,7 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 	for scene_id: Variant in s.list(p.get("scenes_requested", []), path + ".scenes_requested"):
 		s.text(scene_id, path + ".scenes_requested[]")
 	_wallet(s.dictionary(p.get("wallet", {}), path + ".wallet"), s, path + ".wallet")
+	s.boolean(p.get("benefit_registered", false), path + ".benefit_registered")
 	if p.get("job") != null:
 		var job := s.dictionary(p.get("job"), path + ".job")
 		s.text(job.get("job_id"), path + ".job.job_id")

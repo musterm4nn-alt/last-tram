@@ -76,6 +76,7 @@ func _initialize() -> void:
 	print(_groceries_line(sim, resident_actions))
 	print(_jobs_line(sim))
 	print(town.work_summary())
+	print(_housing_line(sim))
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
 		var ms_per_step := seconds * 1000.0 / steps
@@ -123,6 +124,19 @@ func _money_line(sim: Sim) -> String:
 	return "money: people hold %s (median %s) | in: %s | out: %s" % [
 		Money.format(Money.held(sim.world)), Money.format(median),
 		_totals_text(sim.world.ledger.sources), _totals_text(sim.world.ledger.sinks)]
+
+
+## "housing: N households behind on rent (owing €X in all), most weeks behind W".
+func _housing_line(sim: Sim) -> String:
+	var behind := 0
+	var owed := 0
+	var weeks := 0
+	for lot: Lot in sim.world.lots.values():
+		if lot.arrears > 0:
+			behind += 1
+			owed += lot.arrears
+			weeks = maxi(weeks, lot.weeks_behind)
+	return "housing: %d households behind on rent (owing %s in all), most weeks behind %d" % [behind, Money.format(owed), weeks]
 
 
 ## "jobs: 17 of 21 working-age residents employed, 6 retired, 4 vacancies".

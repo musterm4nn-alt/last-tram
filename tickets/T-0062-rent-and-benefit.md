@@ -1,12 +1,12 @@
 ---
 id: T-0062
 title: Rent, bills, benefit and pensions - the weekly cycle
-status: draft
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0061]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -46,6 +46,17 @@ D29; `docs/design/jobs-and-economy.md` → Weekly cycle, Housing; `sim/world/lot
   balances, and `--check-m2` passes.
 
 ## Implementation notes
+- Built from the draft: weekly rent per home in `district.json` (`PlaceDef.rent`, required
+  for homes and only for them), `Lot.arrears`/`weeks_behind`, `Person.benefit_registered`
+  (residents yes, the player no), save v8 (`_v7_to_v8`, `v8_basic.json`), `Housing`
+  (`sim/economy/housing.gd`: `pay_benefits`, `collect_rent`, `rent_share`), the Monday steps
+  in `EconomySystem`, `economy.json` "week", `bills_week`, `benefit_week`, `housing_cap`,
+  `pension_week`. HUD: "Rent: €205.00 unpaid (1 week behind)". simrun `housing:` line.
+- `test_world_validation.gd`'s sample district home gained a rent (now required).
+- Verified: `tools/check.sh` 545 passed, 0 failed (`test_rent.gd`, 5 tests).
+  `tools/simrun.sh --days=14 --check-m2` PASSED on seeds 1–3: rent €4,190 and bills €480 paid
+  over two weeks, nobody behind, pensions and benefit paid, the ledger balanced. The town
+  gains money overall (wages €11–16k against €10–11k spent); balance is for T-0076.
 
 ## Questions
 

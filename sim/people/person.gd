@@ -36,6 +36,9 @@ var personality: Personality = Personality.new()
 var wallet: Wallet = Wallet.new()
 ## Their job (T-0058), or null when they have none.
 var job: Employment = null
+## Registered as unemployed, so benefit is paid while they have no job (T-0062). Residents are
+## registered from the start; the player registers on the phone (T-0064).
+var benefit_registered: bool = false
 ## Id of the Lot the person lives in (0 = none). Private lots let only their residents in.
 var home_lot_id: int = 0
 ## Id of the person's Household (0 = none).
@@ -125,6 +128,7 @@ func to_dict() -> Dictionary:
 		"personality": personality.to_dict(),
 		"wallet": wallet.to_dict(),
 		"job": job.to_dict() if job != null else null,
+		"benefit_registered": benefit_registered,
 		"home_lot_id": home_lot_id,
 		"household_id": household_id,
 		"autonomy_retry_tick": autonomy_retry_tick,
@@ -178,6 +182,7 @@ static func from_dict(d: Dictionary) -> Person:
 		p.wallet = Wallet.from_dict(wallet_data)
 	if d.get("job") is Dictionary:
 		p.job = Employment.from_dict(d["job"])
+	p.benefit_registered = bool(d.get("benefit_registered", false))
 	p.home_lot_id = int(d.get("home_lot_id", 0))
 	p.household_id = int(d.get("household_id", 0))
 	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))
