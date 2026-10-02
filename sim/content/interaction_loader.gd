@@ -12,7 +12,8 @@ extends RefCounted
 ## plus "min_minutes"/"max_minutes". Optional: "time_skip": true (the game skips ahead while
 ## the player does it, like sleeping), "routine": "sleep" | "out" (see Routines),
 ## "finish_moodlet", and "target": "person" with a "social" block (SocialLoader) instead of
-## object_tags for things done to another person.
+## object_tags for things done to another person, or "target": "place" for things done where
+## the person stands (T-0068: searching; the target id is the lot).
 
 
 ## Read `dir` (every sorted .json file) into `db.interactions`.
@@ -46,8 +47,8 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.target = reader.read_str(d, "target", ctx)
 		if def.target == "person":
 			def.social = SocialLoader.read(db, reader, d, ctx)
-		elif def.target != "object":
-			reader.error("%s: 'target' must be \"object\" or \"person\"" % ctx)
+		elif def.target != "object" and def.target != "place":
+			reader.error("%s: 'target' must be \"object\", \"person\" or \"place\"" % ctx)
 		if def.target == "object" or d.has("object_tags"):
 			def.object_tags = reader.read_str_array(d, "object_tags", ctx)
 		var has_duration := d.has("duration_minutes")

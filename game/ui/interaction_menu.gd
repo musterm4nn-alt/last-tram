@@ -1,6 +1,7 @@
 class_name InteractionMenu
 extends PopupMenu
-## The small menu of what an object or a person offers ("Grab a snack", "Chat"...). Opened by
+## The small menu of what an object, a person or the place you stand on (T-0068: "Have a look
+## around") offers ("Grab a snack", "Chat"...). Opened by
 ## a click on an object or person in command mode or by E in direct mode (PlayerController);
 ## choosing an entry queues it for the player with a QueueInteractionCommand. PopupMenu closes itself on
 ## a choice, on Esc and on a click outside.
@@ -50,6 +51,8 @@ static func options(sim: Sim, target_id: int) -> Array[InteractionDef]:
 	if sim.world.get_person(target_id) != null:
 		return Interactions.offered_by_person(sim, sim.world.player_id, target_id)
 	var player := sim.world.player()
+	if sim.world.lots.has(target_id):
+		return Interactions.offered_by_place(sim, player, target_id)
 	return Interactions.offered_by(sim, target_id).filter(func(def: InteractionDef) -> bool:
 		return player == null or not Requirements.check(sim, player, def, target_id) in Requirements.HIDDEN)
 
@@ -84,8 +87,11 @@ static func entries(sim: Sim, object_id: int) -> Array[String]:
 	var out: Array[String] = []
 	var person := sim.world.get_person(object_id)
 	var obj := sim.world.get_object(object_id)
+	var lot: Lot = sim.world.lots.get(object_id)
 	if person != null:
 		out.append(person.full_name())
+	elif lot != null:
+		out.append(sim.content.place(lot.place_id).name)
 	elif obj != null:
 		var def := sim.content.object_def(obj.def_id)
 		var header := def.name if def != null else obj.def_id

@@ -35,6 +35,8 @@ static func step_person(sim: Sim, person: Person) -> void:
 			SocialActions.step_routing(sim, person, action)
 		elif action.state == Action.PERFORMING:
 			SocialActions.step_performing(sim, person, action)
+	elif def != null and def.target == "place":
+		PlaceActions.step(sim, person, action)
 	elif action.state == Action.QUEUED:
 		_step_queued(sim, person, action)
 	elif action.state == Action.ROUTING:
@@ -236,6 +238,10 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		if not SocialActions.still_with_target(sim, person, action):
 			_cancel(sim, person, action, "target_left")
 			return
+	elif def.target == "place":
+		if not PlaceActions.still_there(sim, person, action):
+			_cancel(sim, person, action, "moved")
+			return
 	elif not _still_in_place(sim, person, action):
 		return
 	for need_id: String in def.need_rates:
@@ -253,6 +259,10 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 			Jobs.end_shift(sim, person, action, true)
 		if def.target == "person":
 			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
+		if def.target == "place":
+			PlaceActions.finish(sim, person, action)
+		if not def.teaches_clue.is_empty():
+			Discoveries.learn_clue(sim, person, def.teaches_clue, "read", action.target_id)
 		Presentations.on_finish(sim, person, action, def)
 		if not def.finish_moodlet.is_empty():
 			Social.add_moodlet(sim, person, def.finish_moodlet)

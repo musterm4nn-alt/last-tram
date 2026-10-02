@@ -121,6 +121,8 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return rent_notice(event, sim)
 	if event.get("type") in [&"evicted", &"moved_in", &"rent_flat_refused"]:
 		return HousingApp.notice(event, sim)
+	if event.get("type") in [&"clue_learned", &"discovery_uncovered", &"searched"]:
+		return NotebookApp.notice(event, sim)
 	if int(data.get("person_id", -1)) != player_id:
 		return ""
 	if event.get("type") == &"work_reminder" and sim != null:

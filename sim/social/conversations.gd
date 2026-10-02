@@ -91,6 +91,8 @@ static func resolve(sim: Sim, actor: Person, target: Person, def: InteractionDef
 	var salience := absf(outcome.valence) + MEMORY_SALIENCE
 	Social.remember(sim, actor, outcome.memory, [target.id] as Array[int], outcome.valence, salience)
 	Social.remember(sim, target, outcome.memory, [actor.id] as Array[int], outcome.valence, salience)
+	if outcome_id == "success" and def.social.kind == "friendly":
+		Discoveries.share_clues(sim, actor, target)
 	var place := sim.content.place_at(actor.cell())
 	sim.emit_event(&"social_exchange", {
 		"actor_id": actor.id,
