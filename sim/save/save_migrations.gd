@@ -40,12 +40,44 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v7_to_v8(d)
 			8:
 				d = _v8_to_v9(d)
+			9:
+				d = _v9_to_v10(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
 	return d
+
+
+## v10 (T-0077): a job remembers the shift being attended. Someone saved while working
+## (a performing "work" action at the front) is attending the shift that started at
+## last_shift_start (v9 set it on arrival), with the minutes they worked inside it so far.
+static func _v9_to_v10(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("people", []) is Array:
+		return d
+	var per_minute := 20  # SimClock.STEPS_PER_GAME_MINUTE when v10 was made
+	for person: Variant in d["world"].get("people", []):
+		if not person is Dictionary or not person.get("job") is Dictionary:
+			continue
+		var job: Dictionary = person["job"]
+		job.merge({"shift_start": -1, "shift_minutes": 0, "shift_late": 0})
+		var queue: Variant = person.get("action_queue", [])
+		var front: Variant = queue[0] if queue is Array and not queue.is_empty() else null
+		var start := _int(job.get("last_shift_start"), -1)
+		if not front is Dictionary or front.get("interaction_id") != "work" or front.get("state") != "performing" or start < 0:
+			continue
+		var started := _int(front.get("started_tick"), start)
+		var before_start := maxi(0, ceili(float(start - started) / per_minute))
+		job["shift_start"] = start
+		job["shift_minutes"] = maxi(0, _int(front.get("minutes_done"), 0) - before_start)
+		job["shift_late"] = maxi(0, (started - start) / per_minute)
+	return d
+
+
+## A number from a save dictionary as an int, or `fallback` (validation comes later).
+static func _int(value: Variant, fallback: int) -> int:
+	return int(value) if value is int or value is float else fallback
 
 
 ## v9 (T-0064): nobody has applied for a job yet.

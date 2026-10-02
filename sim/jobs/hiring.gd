@@ -56,11 +56,13 @@ static func apply(sim: Sim, person: Person, job_id: String, position: int) -> bo
 	return hired
 
 
-## Leaves the job (unpaid wages paid at once); &"quit_job" {person_id, job_id}.
+## Leaves the job (an open shift's minutes and unpaid wages paid at once); &"quit_job"
+## {person_id, job_id}.
 static func quit(sim: Sim, person: Person) -> void:
 	if person.job == null:
 		return
 	var job_id := person.job.job_id
+	Careers.close_shift(sim, person)
 	Careers.pay(sim, person)
 	person.job = null
 	sim.emit_event(&"quit_job", {"person_id": person.id, "job_id": job_id})

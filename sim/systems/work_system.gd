@@ -22,7 +22,7 @@ func on_minute(sim: Sim) -> void:
 	for person: Person in sim.world.people.values():
 		if person.job == null:
 			continue
-		_notice_missed(sim, person)
+		_settle_shifts(sim, person)
 		if person.job == null:
 			continue  # fired just now
 		var shift := Jobs.next_shift(sim, person)
@@ -40,11 +40,22 @@ func on_minute(sim: Sim) -> void:
 		_go(sim, person)
 
 
-## A shift that ends this minute and that they never started counts as missed (T-0061).
-static func _notice_missed(sim: Sim, person: Person) -> void:
+## Settles an attended shift once its window is over and they're no longer working it, and
+## counts a shift that ends this minute, that they never turned up for, as missed (T-0061,
+## T-0077).
+static func _settle_shifts(sim: Sim, person: Person) -> void:
+	var employment := person.job
+	if employment.shift_start >= 0 and not Jobs.working(sim, person):
+		var window := Jobs.shift_on(sim, person, employment.shift_start / SimClock.ticks_for(1))
+		if window.x != employment.shift_start or sim.clock.tick >= window.y:
+			Careers.settle(sim, person)
+			if person.job == null:
+				return
 	for day: int in [sim.clock.day() - 1, sim.clock.day()]:
 		var window := Jobs.shift_on(sim, person, day)
-		if window.y == sim.clock.tick and window.x >= SimClock.ticks_for(person.job.hired_day) and person.job.last_shift_start != window.x:
+		if window.y != sim.clock.tick or window.x < SimClock.ticks_for(employment.hired_day):
+			continue
+		if employment.last_shift_start != window.x and employment.shift_start != window.x:
 			Careers.miss(sim, person)
 			return
 
@@ -75,7 +86,8 @@ static func _goes_alone(sim: Sim, person: Person) -> bool:
 	return person.free_will and sim.clock.tick - person.last_input_tick >= AutonomySystem.IDLE_MINUTES * SimClock.STEPS_PER_GAME_MINUTE
 
 
-## Drops the current action (waking a sleeper) and queues work at the front.
+## Drops the current action (waking a sleeper) and queues work at the front. An NPC's other
+## queued plans go too (they'd be stale after a shift); the player's stay queued (T-0077).
 static func _go(sim: Sim, person: Person) -> void:
 	var workplace := Jobs.workplace(sim, person)
 	if workplace == null:
@@ -86,6 +98,8 @@ static func _go(sim: Sim, person: Person) -> void:
 		if def != null and def.routine == "sleep" and front.state == Action.PERFORMING:
 			sim.emit_event(&"woke_for_work", {"person_id": person.id})
 		ActionSystem.cancel_front(sim, person, "work")
+	if person.id != sim.world.player_id:
+		person.action_queue.clear()
 	person.path.clear()
 	var action := Action.new("work", workplace.id)
 	action.id = sim.world.new_id()

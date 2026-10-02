@@ -1,12 +1,12 @@
 ---
 id: T-0077
 title: Hardening after the October reviews - shifts, needs, honest checks, docs
-status: todo
+status: in-progress
 milestone: M3
 size: L
 owner: builder
 depends_on: []
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -135,6 +135,51 @@ later), new features.
 - [ ] `tools/check.sh` passes; nothing weakened (any changed test explained in the notes).
 
 ## Implementation notes
+
+Built by Opus in three branches, as the ticket allows: `t/0077a-shifts` (A),
+`t/0077b-needs` (B), `t/0077c-docs` (C), each merged on its own.
+
+### A. Shifts are settled once (`t/0077a-shifts`)
+- `Employment` keeps the shift being attended: `shift_start`, `shift_minutes`, `shift_late`.
+  `last_shift_start` now means "the last settled shift they worked in".
+- `Jobs.start_shift` → `Careers.attend` (a new shift, or coming back to the same one, which
+  keeps the first arrival's lateness). `Jobs.work_minute` counts a personal minute only if
+  it began inside the window, so minutes before 09:00 never count.
+- `Careers.settle` runs once per shift: when the work action completes, or, for a shift
+  left early, in `WorkSystem._settle_shifts` once the window is over and they aren't
+  working it. It pays `minutes × wage / 60` rounded once, judges lateness once, counts
+  `shifts_worked`/`level_shifts`, meets colleagues, and emits `shift_settled`
+  {person_id, job_id, minutes, late_minutes, left_early, pay}. No minutes inside the
+  window: a missed shift. "Left early" is now "worked minutes + lateness more than 30
+  short of the shift" (a late arrival who stays to the end isn't also "left early").
+  `shift_ended` still goes out per segment (views and reports use it).
+- Missed shifts: at a window's end, `shift_missed` unless that shift was settled or is
+  being attended.
+- Quitting or being fired mid-shift pays the open minutes (`Careers.close_shift`).
+- Warning hysteresis: `performance.warning_clears_at` (35) in `economy.json`.
+  `EconomyLoader.read_performance` checks the rules by meaning; six broken fixtures in
+  `tests/fixtures/economy_broken/`.
+- `WorkSystem._go` drops an NPC's whole queue; the player's queue keeps everything but the
+  front.
+- `Jobs.know_colleagues(sim, person, shift_start)` counts only colleagues whose settled
+  shift started that day, or who are working that day's shift now (`Jobs.worked_on`).
+- `Careers._change` returns when the job is unknown. `Jobs.HOUR_BEFORE_SHIFT` names the 23.
+- Save v10: migration `_v9_to_v10` derives `shift_start`/`shift_minutes`/`shift_late` from
+  a performing `work` action and v9's `last_shift_start` (set on arrival in v9). Saves
+  older than that, which have no `last_shift_start`, are picked up at the first worked
+  minute after loading (`Jobs.work_minute`), so they aren't marked missed either. Fixture
+  `tests/fixtures/saves/v10_basic.json`.
+- Tests (`test_careers.gd`): split shift (475 minutes, one settlement, lateness 0,
+  `shifts_worked` +1), cancel before the shift (no penalty; never coming back is a miss),
+  pay that doesn't depend on interruptions (3 × 1 minute = 1 × 3 minutes = 70 cents at
+  €14/h), an old v9 save made mid-shift (full pay, no miss), warning hysteresis, unknown
+  job. `test_leaving_for_work.gd`: the queue on leaving, colleagues who turned up.
+  `test_content.gd`: the career rule fixtures.
+- Verified: `tools/check.sh` 569 tests pass; `tools/simrun.sh --days=7 --check-m2` PASSED
+  on seeds 1–6 (0.152, 0.146, 0.122, 0.140, 0.133, 0.129 ms/step).
+- **Changed test:** `test_lateness_and_leaving_early_cost_performance` now checks that
+  nothing is judged on walking away, and the same numbers once the shift's window is over.
+  That's the behaviour the ticket asks for (item 1); the numbers it checks are unchanged.
 
 ## Questions
 

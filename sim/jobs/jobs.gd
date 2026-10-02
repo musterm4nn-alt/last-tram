@@ -66,24 +66,34 @@ static func shift_window(sim: Sim, person: Person, tick: int) -> Vector2i:
 	return Vector2i(-1, -1)
 
 
-## The work action started performing: begin the job's WorkSession and emit &"shift_started"
-## {person_id, job_id, late_minutes}.
+## The work action started performing: begin the job's WorkSession, attend the shift
+## (Careers.attend) and emit &"shift_started" {person_id, job_id, late_minutes}.
 static func start_shift(sim: Sim, person: Person, action: Action) -> void:
 	var job := sim.content.job(person.job.job_id) if person.job != null else null
 	if job == null:
 		return
 	WorkSessions.for_job(job).begin(sim, person, action)
 	var window := shift_window(sim, person, action.started_tick)
-	person.job.last_shift_start = window.x
 	var late := maxi(0, (action.started_tick - window.x) / SimClock.STEPS_PER_GAME_MINUTE) if window.x >= 0 else 0
+	if window.x >= 0:
+		Careers.attend(sim, person, window.x, late)
 	sim.emit_event(&"shift_started", {"person_id": person.id, "job_id": job.id, "late_minutes": late})
 
 
-## One personal minute of work (the session applies the job's needs).
+## One personal minute of work (the session applies the job's needs). A minute that began
+## inside the shift's window counts towards the shift (T-0077); earlier ones don't.
 static func work_minute(sim: Sim, person: Person, action: Action) -> void:
 	var job := sim.content.job(person.job.job_id) if person.job != null else null
-	if job != null:
-		WorkSessions.for_job(job).on_minute(sim, person, action)
+	if job == null:
+		return
+	WorkSessions.for_job(job).on_minute(sim, person, action)
+	var window := shift_window(sim, person, action.started_tick)
+	var minute_start := sim.clock.tick + 1 - SimClock.STEPS_PER_GAME_MINUTE
+	if window.x < 0 or minute_start < window.x or minute_start >= window.y:
+		return
+	if person.job.shift_start != window.x:  # a save from before T-0077 (or a lost start): attend now
+		Careers.attend(sim, person, window.x, maxi(0, (action.started_tick - window.x) / SimClock.STEPS_PER_GAME_MINUTE))
+	person.job.shift_minutes += 1
 
 
 ## True once the shift the work action started in is over (or the person lost the job).
@@ -93,17 +103,16 @@ static func shift_over(sim: Sim, person: Person, action: Action) -> bool:
 
 
 ## A PERFORMING work action ends (finished when `completed`, else cancelled or failed): the
-## session's WorkResult goes out as &"shift_ended" {person_id, job_id, minutes, late_minutes,
-## left_early}. Returns the result (T-0061 pays from it).
+## session's WorkResult for this segment goes out as &"shift_ended" {person_id, job_id,
+## minutes, late_minutes, left_early}. A completed shift is settled at once; one left early
+## is settled when its window ends (WorkSystem), so coming back the same shift is one shift.
 static func end_shift(sim: Sim, person: Person, action: Action, completed: bool) -> WorkResult:
 	var job := sim.content.job(person.job.job_id) if person.job != null else null
 	var result := WorkSessions.for_job(job).finish(sim, person, action, completed) if job != null else WorkResult.new()
 	sim.emit_event(&"shift_ended", {"person_id": person.id, "job_id": result.job_id, "minutes": result.minutes,
 		"late_minutes": result.late_minutes, "left_early": result.left_early})
 	if completed:
-		_know_colleagues(sim, person, action)
-	if job != null:
-		Careers.record_shift(sim, person, result)
+		Careers.settle(sim, person)
 	return result
 
 
@@ -112,16 +121,21 @@ static func end_shift(sim: Sim, person: Person, action: Action, completed: bool)
 const COLLEAGUE_DELTAS: Dictionary = {"familiarity": 10.0, "friendship": 3.0}
 
 
-static func _know_colleagues(sim: Sim, person: Person, action: Action) -> void:
-	var mine := shift_window(sim, person, action.started_tick)
-	if mine.x < 0:
-		return
-	var day := mine.x / SimClock.ticks_for(1)
+## After the person's shift starting at `shift_start` is settled: they get to know the
+## colleagues who really worked that day (T-0077), not everyone on the rota.
+static func know_colleagues(sim: Sim, person: Person, shift_start: int) -> void:
+	var day := shift_start / SimClock.ticks_for(1)
 	for other: Person in sim.world.people.values():
-		if other.id == person.id or other.job == null or other.job.job_id != person.job.job_id:
-			continue
-		if shift_on(sim, other, day).x >= 0:
+		if other.id != person.id and other.job != null and other.job.job_id == person.job.job_id and worked_on(other.job, day):
 			Social.change(sim, person, other.id, COLLEAGUE_DELTAS)
+
+
+## True if the shift they worked last, or the one they are working now, started on `day`.
+static func worked_on(employment: Employment, day: int) -> bool:
+	var ticks_per_day := SimClock.ticks_for(1)
+	if employment.last_shift_start >= 0 and employment.last_shift_start / ticks_per_day == day:
+		return true
+	return employment.shift_start >= 0 and employment.shift_minutes > 0 and employment.shift_start / ticks_per_day == day
 
 
 ## The person's next shift that hasn't ended (start and end ticks): yesterday's past
@@ -189,6 +203,10 @@ static func hidden(sim: Sim, person: Person) -> bool:
 	return job != null and WorkSessions.for_job(job).hidden()
 
 
+## (shift.from + HOUR_BEFORE_SHIFT) % 24 is the hour before a shift starts (23 = -1 mod 24).
+const HOUR_BEFORE_SHIFT: int = 23
+
+
 ## True if the position's working hours, and the hour before them (getting up and getting
 ## there), never fall in the routine's sleep window.
 static func fits_routine(content: ContentDB, job: JobDef, position: int, routine_id: String) -> bool:
@@ -197,7 +215,7 @@ static func fits_routine(content: ContentDB, job: JobDef, position: int, routine
 		return false
 	var shift := job.positions[position]
 	for i: int in shift.hours() + 1:
-		if Routines.in_hours(routine.sleep_hours, (shift.from + 23 + i) % 24):
+		if Routines.in_hours(routine.sleep_hours, (shift.from + HOUR_BEFORE_SHIFT + i) % 24):
 			return false
 	return true
 

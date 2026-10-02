@@ -1,22 +1,54 @@
 class_name Careers
 extends RefCounted
 ## Pay and performance (T-0061; static, no state): what a shift earns, how it moves
-## performance, and promotion, warnings and firing. The numbers are in data/economy.json
-## ("performance"); the record is on Employment.
+## performance, and promotion, warnings and firing. A shift is settled once, after its window
+## (T-0077), however many times the person left and came back. The numbers are in
+## data/economy.json ("performance"); the record is on Employment.
+
+## Minutes a shift may be short (besides lateness) before it counts as leaving early.
+const LEFT_EARLY_SLACK: int = 30
 
 
-## After a shift ends (WorkSession result): the wage for its minutes goes into `unpaid`, and
-## performance moves by how it went.
-static func record_shift(sim: Sim, person: Person, result: WorkResult) -> void:
-	var job := sim.content.job(person.job.job_id) if person.job != null else null
+## The person arrived for the shift starting at `window_start` (Jobs.start_shift), `late_minutes`
+## after it began. Returning to the same shift keeps the first arrival's lateness; a shift
+## still open from before is settled first.
+static func attend(sim: Sim, person: Person, window_start: int, late_minutes: int) -> void:
+	if person.job == null or person.job.shift_start == window_start:
+		return
+	if person.job.shift_start >= 0:
+		settle(sim, person)
+		if person.job == null:
+			return
+	person.job.shift_start = window_start
+	person.job.shift_minutes = 0
+	person.job.shift_late = late_minutes
+
+
+## Settles the attended shift once (T-0077), after its window: the wage for every minute
+## worked in it goes into `unpaid` (rounded once), performance moves by how it went, and
+## colleagues who were there get to know them. Emits &"shift_settled" {person_id, job_id,
+## minutes, late_minutes, left_early, pay}. No minutes inside the window: a missed shift.
+static func settle(sim: Sim, person: Person) -> void:
+	var employment := person.job
+	if employment == null or employment.shift_start < 0:
+		return
+	var start := employment.shift_start
+	var minutes := employment.shift_minutes
+	employment.shift_start = -1
+	employment.shift_minutes = 0
+	var job := sim.content.job(employment.job_id)
 	if job == null:
 		return
+	if minutes <= 0:
+		miss(sim, person)
+		return
 	var rules := sim.content.economy.performance
-	var employment := person.job
-	employment.unpaid += result.minutes * _level(job, employment).wage / 60
-	var shift_minutes := job.positions[employment.position].hours() * 60
+	var pay := minutes * _level(job, employment).wage / 60
+	employment.unpaid += pay
+	employment.last_shift_start = start
+	var left_early := minutes + employment.shift_late < job.positions[employment.position].hours() * 60 - LEFT_EARLY_SLACK
 	var delta := 0.0
-	if result.left_early and result.minutes < shift_minutes - 30:
+	if left_early:
 		delta -= rules["left_early"]
 	else:
 		delta += rules["shift_done"]
@@ -24,8 +56,11 @@ static func record_shift(sim: Sim, person: Person, result: WorkResult) -> void:
 			delta += rules["good_mood"]
 		employment.level_shifts += 1
 	if employment.shifts_worked > 0:  # a first day is forgiven (and day one of a new game starts at 08:00)
-		delta -= floorf(result.late_minutes / 5.0) * rules["per_5_minutes_late"]
+		delta -= floorf(employment.shift_late / 5.0) * rules["per_5_minutes_late"]
 	employment.shifts_worked += 1
+	sim.emit_event(&"shift_settled", {"person_id": person.id, "job_id": job.id, "minutes": minutes,
+		"late_minutes": employment.shift_late, "left_early": left_early, "pay": pay})
+	Jobs.know_colleagues(sim, person, start)
 	_change(sim, person, delta)
 
 
@@ -47,12 +82,13 @@ static func pay(sim: Sim, person: Person) -> void:
 	sim.emit_event(&"wages_paid", {"person_id": person.id, "amount": amount})
 
 
-## Ends the job: unpaid wages are paid at once, the position opens up, and they remember it
+## Ends the job: an open shift is settled and unpaid wages are paid at once, the position opens up, and they remember it
 ## (&"fired" {person_id, job_id, reason}).
 static func fire(sim: Sim, person: Person, reason: String) -> void:
 	if person.job == null:
 		return
 	var job_id := person.job.job_id
+	close_shift(sim, person)
 	pay(sim, person)
 	person.job = null
 	Social.add_moodlet(sim, person, "fired")
@@ -61,9 +97,25 @@ static func fire(sim: Sim, person: Person, reason: String) -> void:
 	sim.emit_event(&"fired", {"person_id": person.id, "job_id": job_id, "reason": reason})
 
 
+## Leaving the job mid-shift: the minutes worked so far are paid, with no judgement.
+static func close_shift(sim: Sim, person: Person) -> void:
+	var employment := person.job
+	var job := sim.content.job(employment.job_id) if employment != null else null
+	if job == null or employment.shift_start < 0:
+		return
+	employment.unpaid += employment.shift_minutes * _level(job, employment).wage / 60
+	employment.shift_start = -1
+	employment.shift_minutes = 0
+
+
+## Moves performance by `delta`, then fires, warns (once, until performance rises above
+## "warning_clears_at") or promotes.
 static func _change(sim: Sim, person: Person, delta: float) -> void:
 	var rules := sim.content.economy.performance
 	var employment := person.job
+	var job := sim.content.job(employment.job_id) if employment != null else null
+	if job == null:
+		return
 	employment.performance = clampf(employment.performance + delta, 0.0, 100.0)
 	if employment.performance <= rules["fire_at"]:
 		fire(sim, person, "performance")
@@ -72,9 +124,8 @@ static func _change(sim: Sim, person: Person, delta: float) -> void:
 		if not employment.warned:
 			employment.warned = true
 			sim.emit_event(&"job_warning", {"person_id": person.id, "job_id": employment.job_id})
-	else:
+	elif employment.performance > rules["warning_clears_at"]:
 		employment.warned = false
-	var job := sim.content.job(employment.job_id)
 	if employment.performance >= rules["promote_at"] and employment.level_shifts >= int(rules["promote_after_shifts"]) and employment.level < job.levels.size() - 1:
 		employment.level += 1
 		employment.level_shifts = 0

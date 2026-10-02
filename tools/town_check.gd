@@ -52,7 +52,7 @@ func observe(sim: Sim, event: Dictionary) -> void:
 			shifts_started += 1
 			late_minutes += int(data["late_minutes"])
 			late_shifts += 1 if int(data["late_minutes"]) > 0 else 0
-		&"shift_ended":
+		&"shift_settled":
 			left_early += 1 if data["left_early"] else 0
 		&"shift_missed":
 			shifts_missed += 1

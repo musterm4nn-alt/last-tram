@@ -45,6 +45,26 @@ func test_broken_content_is_reported_not_crashed() -> void:
 	assert_true(all.contains("'cash' must be [min, max] with min <= max"), all)
 
 
+func test_career_rules_are_checked_by_meaning() -> void:
+	var expected := {
+		"level_above_100": "performance 'promote_at' must be 0..100",
+		"warning_order": "fire_at < warn_below < warning_clears_at <= promote_at",
+		"fire_above_warning": "fire_at < warn_below < warning_clears_at <= promote_at",
+		"clears_above_promotion": "fire_at < warn_below < warning_clears_at <= promote_at",
+		"fractional_shifts": "'promote_after_shifts' must be a whole number >= 1",
+		"zero_shifts": "'promote_after_shifts' must be a whole number >= 1",
+	}
+	for name: String in expected:
+		var reader := ContentReader.new()
+		var path := "res://tests/fixtures/economy_broken/%s.json" % name
+		EconomyLoader.read_performance(reader, reader.read_json(path), path)
+		var all := "\n".join(reader.errors)
+		assert_true(all.contains(expected[name]), "%s: %s" % [name, all])
+	var good := ContentReader.new()
+	EconomyLoader.read_performance(good, good.read_json("res://data/economy.json"), "economy.json")
+	assert_eq(good.errors, [] as Array[String], "the game's own rules are fine")
+
+
 func test_broken_objects_are_reported_not_crashed() -> void:
 	var db := ContentDB.new()
 	db.load_from(BROKEN_CONTENT)
