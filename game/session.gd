@@ -19,16 +19,11 @@ signal command_mode_changed(on: bool)
 const MAX_SPEED: int = 3
 ## Safety valve: if the machine can't keep up, drop time instead of freezing.
 const MAX_STEPS_PER_FRAME: int = 200
-## While the player does a time_skip action (sleeping), one frame runs the sim until it ends,
-## up to this many steps (one game day).
-const SKIP_MAX_STEPS: int = 24 * 60 * SimClock.STEPS_PER_GAME_MINUTE
 ## advance_minutes forwards events every this many game minutes (bounded memory).
 const ADVANCE_CHUNK_MINUTES: int = 60
 const SAVE_DIR: String = "user://saves"
 ## Where F9 bug reports go (tests pass their own folder).
 const BUG_REPORT_DIR: String = "user://bug_reports"
-## How many recent events a bug report's info.txt lists.
-const REPORT_EVENTS: int = 20
 const QUICKSAVE_PATH: String = "user://saves/quicksave.json"
 ## Retry a failed autosave after this many real seconds, without flooding notices.
 const AUTOSAVE_RETRY_SECONDS: float = 10.0
@@ -58,14 +53,15 @@ var _last_autosave_day: int = -1
 var _autosave_retry_left: float = 0.0
 ## The save the current stretch of play started from (at the last load or autosave), as
 ## JSON: a bug report replays command_log from here.
-var _replay_start: String = ""
+var replay_start: String = ""
 ## The player's level the view last followed (see _follow_player_level).
 var _followed_level: int = 0
-## True while a sleep is being skipped (see SKIP_MAX_STEPS).
-var skipping: bool = false
-## started_tick of the action whose skipping a critical need stopped (-1 = none), so the
-## same sleep does not start skipping again.
-var _skip_stopped_tick: int = -1
+## Skipping a sleep or a shift (TimeSkip; T-0078: spread over frames, Esc stops it).
+var time_skip: TimeSkip = TimeSkip.new()
+## True while time is being skipped.
+var skipping: bool:
+	get:
+		return time_skip.active
 
 
 func _ready() -> void:
@@ -144,14 +140,14 @@ func _process(delta: float) -> void:
 		return
 	_autosave_retry_left = maxf(0.0, _autosave_retry_left - delta)
 	steps_last_frame = 0
-	skipping = should_skip(sim, speed, _skip_stopped_tick)
+	time_skip.active = TimeSkip.should_skip(sim, speed, time_skip.stopped_tick)
 	if speed > 0:
 		var started := Time.get_ticks_usec()
-		var accelerated := skipping
-		var skipped_action: Action = sim.world.player().action_queue[0] if skipping else null
-		var limit := SKIP_MAX_STEPS if accelerated else MAX_STEPS_PER_FRAME
+		var accelerated := time_skip.active
+		var skipped_action: Action = sim.world.player().action_queue[0] if accelerated else null
+		var limit := TimeSkip.STEPS_PER_FRAME if accelerated else MAX_STEPS_PER_FRAME
 		if accelerated:
-			_accumulator = float(SKIP_MAX_STEPS)
+			_accumulator = float(limit)
 		else:
 			_accumulator += delta * SimClock.STEPS_PER_GAME_MINUTE * speed
 		while _accumulator >= 1.0 and steps_last_frame < limit:
@@ -160,8 +156,8 @@ func _process(delta: float) -> void:
 			steps_last_frame += 1
 			command_log.append_array(sim.take_applied_commands())
 			_forward_events()
-			if accelerated and (not skipping or not should_skip(sim, speed, _skip_stopped_tick) or sim.world.player().action_queue[0] != skipped_action):
-				skipping = false
+			if accelerated and (not time_skip.active or not TimeSkip.should_skip(sim, speed, time_skip.stopped_tick) or sim.world.player().action_queue[0] != skipped_action):
+				time_skip.active = false
 				_accumulator = 0.0
 				if not _woken_by_need(skipped_action):
 					notice.emit("Woke up at %s" % sim.clock.format())
@@ -177,9 +173,16 @@ func _process(delta: float) -> void:
 		autosave()
 
 
+## Esc during a skip: the player carries on at normal speed.
+func stop_skipping() -> void:
+	if time_skip.active:
+		time_skip.stop(sim)
+		notice.emit("Stopped skipping at %s" % sim.clock.format())
+
+
 ## True if a critical need ended the skip of `action` (that wake-up has its own notice).
 func _woken_by_need(action: Action) -> bool:
-	return action != null and _skip_stopped_tick == action.started_tick
+	return action != null and time_skip.stopped_tick == action.started_tick
 
 
 ## When the player's level changes (stairs), the view follows; a paged view stays put
@@ -194,7 +197,7 @@ func _follow_player_level() -> void:
 func _forward_events() -> void:
 	for event: Dictionary in sim.events.drain():
 		sim_event.emit(event)
-		if skipping and event["type"] == &"need_critical" and int(event["data"].get("person_id", -1)) == sim.world.player_id:
+		if time_skip.active and event["type"] == &"need_critical" and int(event["data"].get("person_id", -1)) == sim.world.player_id:
 			_stop_skipping(String(event["data"].get("need", "")))
 
 
@@ -214,27 +217,14 @@ func quickload() -> void:
 		notice.emit("No quicksave to load")
 
 
-## True when the player's front action is PERFORMING an interaction with time_skip, the
-## game is not paused, and skipping was not stopped for this action (stopped_tick).
+## TimeSkip.should_skip (kept here for callers that ask Session).
 static func should_skip(p_sim: Sim, p_speed: int, stopped_tick: int) -> bool:
-	if p_sim == null or p_speed <= 0:
-		return false
-	var player := p_sim.world.player()
-	if player == null or player.action_queue.is_empty():
-		return false
-	var action: Action = player.action_queue[0]
-	if action.state != Action.PERFORMING or action.started_tick == stopped_tick:
-		return false
-	var def := p_sim.content.interaction(action.interaction_id)
-	return def != null and def.time_skip
+	return TimeSkip.should_skip(p_sim, p_speed, stopped_tick)
 
 
 ## A critical need wakes the player: stop skipping for this sleep and say why.
 func _stop_skipping(need_id: String) -> void:
-	var player := sim.world.player()
-	if player != null and not player.action_queue.is_empty():
-		_skip_stopped_tick = player.action_queue[0].started_tick
-	skipping = false
+	time_skip.stop(sim)
 	var need_def := content.need(need_id)
 	notice.emit("Woke up: %s is low" % (need_def.name if need_def != null else need_id))
 
@@ -252,7 +242,7 @@ func autosave() -> void:
 	_autosave_retry_left = 0.0
 	_last_autosave_day = sim.clock.day()
 	# The next bug report starts from here (command_log already holds every applied command).
-	_replay_start = SaveCodec.to_json(sim)
+	replay_start = SaveCodec.to_json(sim)
 	command_log.clear()
 
 
@@ -278,13 +268,12 @@ func load_from(path: String) -> bool:
 func _after_load() -> void:
 	_accumulator = 0.0
 	_autosave_retry_left = 0.0
-	_skip_stopped_tick = -1
-	skipping = false
+	time_skip.reset()
 	alpha = 0.0
 	command_log.clear()
 	sim.take_applied_commands()
 	sim.events.drain()  # views rebuild from state on game_loaded, so skip creation events
-	_replay_start = SaveCodec.to_json(sim)
+	replay_start = SaveCodec.to_json(sim)
 	var player := sim.world.player()
 	viewed_level = player.level if player != null else 0
 	_followed_level = viewed_level
@@ -295,52 +284,6 @@ func _after_load() -> void:
 
 # --- Bug reports (F9) -------------------------------------------------------------------
 
-## Writes <base_dir>/<YYYY-MM-DD_HH-MM-SS>/ with start.json (where this stretch of play
-## started), commands.json (every command applied since), end.json (the game now),
-## screenshot.png (unless `screenshot` is null) and info.txt. Returns the folder's absolute
-## path, or "" if writing failed. `tools/replay.sh <folder>` replays it.
+## Writes an F9 bug report (BugReporter) under `base_dir`; its absolute path, or "".
 func write_bug_report(screenshot: Image, base_dir: String = BUG_REPORT_DIR) -> String:
-	if sim == null:
-		return ""
-	var stamp := Time.get_datetime_string_from_system(false, true).replace(" ", "_").replace(":", "-")
-	var folder := base_dir.path_join(stamp)
-	var suffix := 2
-	while DirAccess.dir_exists_absolute(folder):
-		folder = base_dir.path_join("%s_%d" % [stamp, suffix])
-		suffix += 1
-	if DirAccess.make_dir_recursive_absolute(folder) != OK:
-		return ""
-	var ok := _write_text(folder.path_join("start.json"), _replay_start)
-	ok = _write_text(folder.path_join("commands.json"), Ser.to_json(command_log)) and ok
-	ok = _write_text(folder.path_join("end.json"), SaveCodec.to_json(sim)) and ok
-	ok = _write_text(folder.path_join("info.txt"), _report_info()) and ok
-	if screenshot != null:
-		ok = screenshot.save_png(folder.path_join("screenshot.png")) == OK and ok
-	return ProjectSettings.globalize_path(folder) if ok else ""
-
-
-## Plain words for info.txt: when, where, who, and what happened last.
-func _report_info() -> String:
-	var lines := PackedStringArray()
-	lines.append("Last Tram bug report")
-	lines.append("Real time: %s" % Time.get_datetime_string_from_system(false, true))
-	lines.append("Game time: Day %d  %s" % [sim.clock.day() + 1, sim.clock.format()])
-	var player := sim.world.player()
-	if player != null:
-		lines.append("Player: %s at %s" % [player.full_name(), player.cell()])
-	lines.append("Speed: %s" % ("paused" if speed == 0 else "%dx" % speed))
-	lines.append("Commands since the start save: %d" % command_log.size())
-	lines.append("Recent events:")
-	var recent := sim.events.recent
-	for i: int in range(maxi(0, recent.size() - REPORT_EVENTS), recent.size()):
-		lines.append("  %d %s %s" % [recent[i]["tick"], recent[i]["type"], recent[i]["data"]])
-	return "\n".join(lines) + "\n"
-
-
-static func _write_text(path: String, text: String) -> bool:
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
-		return false
-	file.store_string(text)
-	file.close()
-	return true
+	return BugReporter.write(sim, replay_start, command_log, speed, screenshot, base_dir)

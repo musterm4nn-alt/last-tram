@@ -24,7 +24,7 @@ func before_each() -> void:
 	_old_content = Session.content
 	_old_saves = Session.saves
 	_old_speed = Session.speed
-	_old_replay = Session._replay_start
+	_old_replay = Session.replay_start
 	_old_log = Session.command_log.duplicate(true)
 	_old_day = Session._last_autosave_day
 	_old_retry = Session._autosave_retry_left
@@ -43,7 +43,7 @@ func after_each() -> void:
 	Session.content = _old_content
 	Session.saves = _old_saves
 	Session.speed = _old_speed
-	Session._replay_start = _old_replay
+	Session.replay_start = _old_replay
 	Session.command_log = _old_log
 	Session._last_autosave_day = _old_day
 	Session._autosave_retry_left = _old_retry
@@ -121,14 +121,14 @@ func test_failed_autosaves_keep_the_checkpoint_and_retry_after_recovery() -> voi
 	Session.sim.clock.tick = SimClock.ticks_for(1, 3)
 	Session._after_load()
 	Session._last_autosave_day = 0
-	var checkpoint := Session._replay_start
+	var checkpoint := Session.replay_start
 	Session.submit(SetMoveIntentCommand.new(Session.sim.world.player_id, Vector2.RIGHT))
 	Session._process(0.05)
 	var commands := Session.command_log.duplicate(true)
 	assert_eq(commands.size(), 1)
 	assert_eq(Session._last_autosave_day, 0)
 	assert_true(SaveSlots.autosave_due(Session.sim.clock.tick, Session._last_autosave_day))
-	assert_eq(Session._replay_start, checkpoint)
+	assert_eq(Session.replay_start, checkpoint)
 	assert_eq(Replay.check(JSON.parse_string(checkpoint), commands, SaveCodec.to_dict(Session.sim), content()), "")
 	assert_true(Session._autosave_retry_left > 0.0)
 	var notices: Array[String] = []
@@ -137,14 +137,14 @@ func test_failed_autosaves_keep_the_checkpoint_and_retry_after_recovery() -> voi
 	Session._process(0.05)
 	assert_true(notices.is_empty(), "no repeated failure notices during cooldown")
 	assert_eq(Session.command_log, commands)
-	assert_eq(Session._replay_start, checkpoint)
+	assert_eq(Session.replay_start, checkpoint)
 	DirAccess.remove_absolute(blocked)
 	Session._process(Session.AUTOSAVE_RETRY_SECONDS)
 	Session.notice.disconnect(listener)
 	assert_has(notices, "Autosaved")
 	assert_eq(Session._last_autosave_day, 1)
 	assert_true(FileAccess.file_exists(Session.saves.autosave_path(1)))
-	assert_eq(Session._replay_start, SaveCodec.to_json(Session.sim))
+	assert_eq(Session.replay_start, SaveCodec.to_json(Session.sim))
 	assert_true(Session.command_log.is_empty())
 	DirAccess.remove_absolute(Session.saves.autosave_path(1))
 	DirAccess.remove_absolute(blocked)
