@@ -200,3 +200,17 @@ func test_randomise_all_is_repeatable_and_always_valid() -> void:
 		assert_eq(model.errors(), PackedStringArray(), "seed %d" % seed_value)
 		assert_true(model.spec.age_years >= 18 and model.spec.age_years <= 80)
 		assert_true(model.spec.appearance.height_cm >= 150 and model.spec.appearance.height_cm <= 205)
+
+
+func test_wardrobe_model_offers_only_owned_clothes() -> void:
+	var model := CreatorModel.new(content(), CharacterSpec.default_player(content()))
+	model.owned = [WornItem.new("t_shirt", "black"), WornItem.new("shirt", "white"), WornItem.new("shirt", "navy"),
+		WornItem.new("jeans", "denim"), WornItem.new("trainers", "white")] as Array[WornItem]
+	model.only_owned = true
+	assert_eq(model.clothing_options("top"), PackedStringArray(["t_shirt", "shirt"]))
+	assert_eq(model.clothing_options("head"), PackedStringArray([""]), "nothing owned: only 'None'")
+	model.spec.outfit.put_on("top", "shirt", "white")
+	assert_eq(model.colour_options("top"), PackedStringArray(["white", "navy"]), "the owned colours, in catalog order")
+	model.next_clothing("top")
+	assert_eq(model.clothing("top"), "t_shirt")
+	assert_eq(model.spec.outfit.get_item("top").colour, "black", "an owned colour")

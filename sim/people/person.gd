@@ -59,6 +59,9 @@ var scenes_requested: PackedStringArray = PackedStringArray()
 ## Discovery ids whose clue the person knows, and the ones they uncovered (T-0067; sorted,
 ## kept to ids content still has by World.from_dict).
 var known_clues: PackedStringArray = PackedStringArray()
+## Clothes the person owns (T-0072; Wardrobe keeps it sorted) and saved outfits by name.
+var wardrobe: Array[WornItem] = []
+var outfits: Dictionary[String, Outfit] = {}
 ## Skill id -> XP (T-0071; Skills turns it into levels).
 var skills: Dictionary[String, float] = {}
 var discoveries: PackedStringArray = PackedStringArray()
@@ -133,6 +136,8 @@ func to_dict() -> Dictionary:
 		"age_years": age_years,
 		"appearance": appearance.to_dict(),
 		"outfit": outfit.to_dict(),
+		"wardrobe": wardrobe.map(func(w: WornItem) -> Dictionary: return w.to_dict()),
+		"outfits": _outfits_out(),
 		"personality": personality.to_dict(),
 		"wallet": wallet.to_dict(),
 		"job": job.to_dict() if job != null else null,
@@ -162,6 +167,16 @@ func to_dict() -> Dictionary:
 		"free_will": free_will,
 		"last_input_tick": last_input_tick,
 	}
+
+
+## Saved outfits sorted by name (stable save text).
+func _outfits_out() -> Dictionary:
+	var names: Array = outfits.keys()
+	names.sort()
+	var out: Dictionary = {}
+	for name: String in names:
+		out[name] = outfits[name].to_dict()
+	return out
 
 
 ## Skills sorted by id (stable save text).
@@ -196,6 +211,14 @@ static func from_dict(d: Dictionary) -> Person:
 	var outfit_data: Variant = d.get("outfit", {})
 	if outfit_data is Dictionary:
 		p.outfit = Outfit.from_dict(outfit_data)
+	for entry: Variant in d.get("wardrobe", []):
+		if entry is Dictionary:
+			p.wardrobe.append(WornItem.from_dict(entry))
+	var outfits_data: Variant = d.get("outfits", {})
+	if outfits_data is Dictionary:
+		for name: Variant in outfits_data:
+			if outfits_data[name] is Dictionary:
+				p.outfits[String(name)] = Outfit.from_dict(outfits_data[name])
 	var personality_data: Variant = d.get("personality", {})
 	if personality_data is Dictionary:
 		p.personality = Personality.from_dict(personality_data)

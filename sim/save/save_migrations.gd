@@ -52,11 +52,49 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v13_to_v14(d)
 			14:
 				d = _v14_to_v15(d)
+			15:
+				d = _v15_to_v16(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## Where the wardrobes stood when v16 was made (origin, rotation), one per home.
+const V16_WARDROBES: Array = [[[27, 7, 1], 0], [[36, 7, 1], 0], [[27, 7, 2], 0], [[36, 7, 2], 0], [[48, 7, 1], 0], [[48, 7, 2], 0], [[62, 10, 1], 1], [[69, 9, 1], 1], [[62, 10, 2], 1], [[69, 9, 2], 1], [[7, 24, 1], 0], [[11, 24, 1], 0], [[7, 24, 2], 0], [[11, 24, 2], 0], [[60, 7, 0], 0], [[48, 24, 0], 0]]
+
+
+## v16 (T-0072): everyone owns what they wear, saved as "Everyday", and every home gets its
+## wardrobe (saves with objects and none yet; ids from next_id).
+static func _v15_to_v16(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	var world: Dictionary = d["world"]
+	for person: Variant in world.get("people", []):
+		if not person is Dictionary:
+			continue
+		var outfit: Dictionary = person.get("outfit", {}) if person.get("outfit") is Dictionary else {}
+		var owned: Array = []
+		for slot: Variant in outfit:
+			if outfit[slot] is Dictionary:
+				owned.append((outfit[slot] as Dictionary).duplicate())
+		owned.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+			return String(a.get("item")) < String(b.get("item")) or (a.get("item") == b.get("item") and String(a.get("colour")) < String(b.get("colour"))))
+		person["wardrobe"] = owned
+		person["outfits"] = {"Everyday": outfit.duplicate(true)}
+	var objects: Variant = world.get("objects")
+	if not objects is Array or (objects as Array).is_empty():
+		return d
+	for obj: Variant in objects:
+		if obj is Dictionary and obj.get("def_id") == "wardrobe":
+			return d
+	var next := _int(world.get("next_id"), 1)
+	for spot: Array in V16_WARDROBES:
+		objects.append({"id": next, "def_id": "wardrobe", "origin": spot[0], "rotation": spot[1]})
+		next += 1
+	world["next_id"] = next
 	return d
 
 

@@ -89,6 +89,8 @@ static func career_notice(event: Dictionary, content: ContentDB) -> String:
 		&"skill_up":
 			var skill: SkillDef = content.skill(String(data.get("skill_id", ""))) if content != null else null
 			return "%s skill: level %d" % [skill.name if skill != null else "A", int(data.get("level", 0))]
+		&"outfit_refused":
+			return "Can't wear that: %s" % ("go to your wardrobe" if data.get("reason") == "not_at_wardrobe" else "you don't own it")
 		&"registered":
 			return "Registered as unemployed: benefit comes on Mondays"
 		&"job_application":

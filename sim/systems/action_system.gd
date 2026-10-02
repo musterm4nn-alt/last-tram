@@ -263,6 +263,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
 		if def.target == "place":
 			PlaceActions.finish(sim, person, action)
+		if not def.opens_screen.is_empty() and person.id == sim.world.player_id:
+			sim.emit_event(&"screen_requested", {"person_id": person.id, "screen": def.opens_screen})
 		if not def.teaches_clue.is_empty():
 			Discoveries.learn_clue(sim, person, def.teaches_clue, "read", action.target_id)
 		Presentations.on_finish(sim, person, action, def)

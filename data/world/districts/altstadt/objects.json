@@ -1341,6 +1341,150 @@
 				0
 			],
 			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				27,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				36,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				27,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				36,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				48,
+				7,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				48,
+				7,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				62,
+				10,
+				1
+			],
+			"rotation": 1
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				69,
+				9,
+				1
+			],
+			"rotation": 1
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				62,
+				10,
+				2
+			],
+			"rotation": 1
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				69,
+				9,
+				2
+			],
+			"rotation": 1
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				7,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				11,
+				24,
+				1
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				7,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				11,
+				24,
+				2
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				60,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "wardrobe",
+			"cell": [
+				48,
+				24,
+				0
+			],
+			"rotation": 0
 		}
 	]
 }

@@ -161,6 +161,9 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			pass
 		"rent_flat":
 			s.integer(command.get("lot_id"), path + ".lot_id")
+		"change_outfit":
+			s.dictionary(command.get("outfit"), path + ".outfit")
+			s.text(command.get("save_as", ""), path + ".save_as")
 		"set_gentle_work":
 			s.boolean(command.get("gentle"), path + ".gentle")
 		"set_tier_mode":
