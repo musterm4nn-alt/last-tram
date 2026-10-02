@@ -130,7 +130,12 @@ requirements T-0055, Späti and Imbiss T-0056, groceries T-0057; jobs T-0058, go
 T-0059, leaving on time T-0060, pay and performance T-0061; rent and benefit T-0062, the phone
 T-0063, applying T-0064, staffed counters T-0065, eviction T-0066; discoveries T-0067 to
 T-0070; skills T-0071; wardrobe T-0072, clothes shop and barber T-0073, laundry T-0074,
-backgrounds T-0075; M3 acceptance T-0076.
+backgrounds T-0075; M3 acceptance T-0076. After the October code reviews: hardening T-0077
+(before T-0065) and robustness and performance T-0078 (before T-0076).
+
+**Status (2 October 2026):** T-0054 to T-0064 are built (money, prices, shops, groceries, jobs,
+going to work, pay and careers, rent and benefit, the phone, applying), plus two rounds of
+fixes from agent playtests. Next: T-0077.
 
 ## ◆ Art direction gate
 

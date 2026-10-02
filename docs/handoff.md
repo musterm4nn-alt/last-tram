@@ -1,33 +1,69 @@
-# Handoff: building M3 (Making a Living)
+# Handoff: continuing M3 (Making a Living)
 
-Rewritten on 1 October 2026, when M3 was planned. For the next Claude Code session (the
-architect, Opus). Read it after CLAUDE.md and AGENTS.md, and keep it current as M3 goes on.
+Rewritten on 2 October 2026, when the previous session's context ran full. For the next
+Claude Code session (the architect and builder, Opus). Read this after CLAUDE.md and AGENTS.md.
 
 ## Where things stand
 
-- **M1** ✅ and **M2** ✅ are signed off by the owner (M2 on 1 October 2026: "didn't feel
-  bad"). `tools/check.sh`: 463 tests pass in about 40 s. `tools/simrun.sh --days=7
-  --check-m2` passes on seeds 1, 2 and 3.
-- **M3 is planned** (D29 in `docs/decisions.md`, the M3 section of `docs/roadmap.md`,
-  `docs/design/jobs-and-economy.md`): tickets T-0054 to T-0076. T-0054 (money), T-0055
-  (prices and `Requirements`) and T-0056 (Späti, Imbiss, ATM, Sunday closing) are `todo` and
-  fully specified. The rest are `draft`s: detail each one (exact interfaces, files, tests)
-  against the merged code before building it, and keep `depends_on` accurate.
-- Build in the order of D29 / the roadmap's ticket list. Every ticket keeps
-  `--check-m2` passing (the town must stay healthy while the economy arrives).
+- **M1 ✅, M2 ✅** (owner sign-offs). **M3 ▶**: T-0054 to T-0064 are built and merged:
+  money and the ledger, prices and the shared `Requirements` check, the Späti/Imbiss/ATM and
+  Sunday closing, groceries, jobs and positions, going to work (WorkSession, rabbit hole),
+  leaving for work (WorkSystem, D30), pay and careers (Careers, EconomySystem), rent, bills,
+  benefit and pensions (Housing), the phone (Bank, Jobs, Contacts with calls, Map; P key),
+  and applying, quitting and registering (Hiring). Save version 9. `tools/check.sh`: 560 tests
+  pass. `tools/simrun.sh --days=7 --check-m2` passes on seeds 1–6.
+- **Next: T-0077** (hardening after the code reviews; fully specified, `todo`, ready), then
+  T-0065 (staffed counters), and the rest of the drafts in D29 order. **T-0078**
+  (robustness and performance) must land before T-0076 (M3 acceptance). Drafts T-0065 to
+  T-0076 are detailed right before building each one, against the merged code.
+- 13 tickets are left in M3: T-0065 to T-0078.
+
+## Owner decisions still open or recent
+
+- **LICENSE:** the owner will decide later. Don't add one.
+- **Distinct job profiles** (2 Oct): yes, but switchable. T-0077 item 12 specifies it
+  (varied by default, "gentle" in the Esc menu).
+- The owner wants **agent playtests** for play steps: Muse Spark 1.3 (free, xhigh) in
+  OpenCode, run by Opus unattended (`docs/playtesting.md`, memory "agent-playtests"). Two
+  were done (shopping; a working week). Do one after T-0077 and after T-0065/T-0066. Ask the
+  owner for a **human** playtest of a working week before M3 is called done.
+- Process changes proposed after the reviews, waiting for the owner's approval: freeze
+  acceptance rules per milestone (written into T-0077 item 13), an independent adversarial
+  reviewer (a different model) for saves, money and time handling, milestone tags (in T-0077).
+
+## October reviews (summary, so you don't need the files)
+
+Nine external reviews (2 October) agreed: the architecture, determinism, saves and tests
+are strong. The criticism that held up became T-0077 and T-0078:
+- Shift bugs: split shifts counted twice, pre-shift cancel penalised, a mid-shift old save
+  marked missed, wage cents lost per segment (T-0077 A).
+- The town check was bent to pass: every shift counted as a meal and social contact, and all
+  jobs share one gentle profile (T-0077 B: lunch as a real meal, colleagues reported apart,
+  varied jobs with a gentle switch, frozen acceptance rules).
+- Hard-coded balance numbers, hygiene before critical hunger, colleagues counted without
+  attending, a repeating warning, stale queues, refused clicks counting as input (T-0077).
+- Stale README (still "M1 in progress"), stale architecture module plan, AGENTS.md vs
+  CLAUDE.md drift, old branches, no tags (T-0077 C).
+- Scale: free will scans and pathfinds too much; background tiers don't make it cheaper;
+  `session.gd` at 346/350 lines; time-skip runs 28,800 steps in one frame; lint blind spots
+  (`static var`, `JSON.parse`, `exp()` in `Conversations.acceptance`); dice draws depend on
+  option count; the main save-and-continue test runs in a tiny room (T-0078).
+- Rejected or already true: saves are written atomically; ages under 18 are rejected loudly
+  at load and in the creator (the clamp is only the last defence).
 
 ## How the owner wants us to work
 
-- **Opus builds tickets itself** (memory: build-tickets-myself). No OpenCode builders (Muse,
-  DeepSeek) and no subagents unless the owner asks. Still: a branch per ticket, tests,
+- **Opus builds tickets itself** (memory: build-tickets-myself). No OpenCode builders and no
+  subagents unless the owner asks; Muse in OpenCode only playtests. Still: a branch per ticket, tests,
   `tools/check.sh`, the ticket notes, then merge.
 - Talk in game terms; they don't read code. Show screenshots of visible changes.
 - They play on a **MacBook**: no Page Up/Down. R/F are the floor keys; keep keys Mac-friendly.
 - They launch the game with **"Last Tram" on the desktop** (`~/Desktop/Last Tram.command`).
   It imports first, then runs `/Users/xamxim/last-tram/tools/run.sh` (the main checkout).
 - **Playbook** (https://claude.ai/artifact/LPBmF4KMEeaBRh5zrJNEk8): after each merge, add or
-  tick that ticket's build stop (`ArtifactData`, collection `steps`). After planning, add
-  build/review stops and a play stop. Never tick "You" stops.
+  tick that ticket's build stop (`ArtifactData`, collection `steps`; orders are 1000+ for M2,
+  1100–1230 so far for M3). Record agent playtests as done "play" stops (`where`:
+  "OpenCode"). Never tick "You" stops (the owner's `play-m2`, `play-shops` are theirs).
 
 ## Mechanics of this setup
 
@@ -61,7 +97,32 @@ architect, Opus). Read it after CLAUDE.md and AGENTS.md, and keep it current as 
 Decisions D26 (exact floats in saves: read save text with `Ser.parse_json`), D27 (cost of 30
 people) and D28 (tiers v1) are in `docs/decisions.md`.
 
+## What M3 added so far (map)
+
+| Area | Where |
+|---|---|
+| Money, ledger, statement | `sim/economy/money.gd`, `wallet.gd`, `ledger.gd`, `data/economy.json` |
+| What a person may do now | `sim/actions/requirements.gd` (closed, private, cant_afford, no_food, fridge_full, not_your_job, not_your_shift) |
+| Shops, ATM, Sunday closing | `data/objects/shops.json`, `data/interactions/shops.json`, `Lot.closed_days` |
+| Groceries | `sim/economy/groceries.gd`, `Household.groceries`, errands in `Autonomy.errand` |
+| Jobs and work | `data/jobs.json`, `sim/jobs/` (`Jobs`, `Employment`, `WorkSession`, `RabbitHoleWork`, `WorkSessions`, `Careers`, `Hiring`), `data/objects/workplaces.json` (tram shelter, police desk), staff slot roles |
+| Weekly cycle | `sim/systems/work_system.gd`, `economy_system.gd`, `sim/economy/housing.gd` |
+| Home needs first, colleagues | `Routines.home_needs`, `AutonomySystem._see_to_home_needs`, `Jobs._know_colleagues` (D30) |
+| Phone | `game/ui/phone/` (Phone, BankApp, JobsApp, ContactsApp), `CallCommand`, remote interactions |
+| Reports | `tools/sim_runner.gd` lines: money, groceries, jobs, work, housing |
+
 ## Lessons that will bite again
+
+- **Workers' days are tight.** Any change to needs, jobs or free will can make someone go to
+  bed unwashed or hungry. Run `tools/simrun.sh --days=7 --check-m2` on seeds 1–6 and use the
+  probe pattern from the M3 work (a throwaway `out/*.gd` that prints a failing person's last
+  30 events) before tuning. Rules that made it work are in D30.
+- A free-will filter or floor that looks right can wreck the social life of the town or
+  double the cost; measure exceptions on several seeds (D30 lists two rejected ideas).
+- Headless `out/*.gd` scripts can't use `game/` classes (Hud, InteractionMenu,
+  PersonInspector): they reference the `Session` autoload.
+- Building in a second worktree while Muse playtests in the first works well
+  (`git worktree add --detach <scratchpad>/x main`, then import once).
 
 - **Tests on `SimFactory.new_game` now include ~27 residents with free will.** Filter events
   by `player_id`, turn free will off for test people, and never assume "the first fridge" is
