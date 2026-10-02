@@ -103,6 +103,7 @@ func test_idle_away_from_home_with_nothing_to_do_walks_home() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var player := sim.world.player()
 	_at(sim, 15)
+	player.job = null  # 15:00 on a weekday would be work time (T-0060)
 	player.pos = Vector2(30.5, 30.5)  # the Altmarkt
 	for need_id: String in player.needs:
 		player.needs[need_id] = 95.0
@@ -125,8 +126,11 @@ func test_out_in_the_sleep_window_heads_home_first() -> void:
 	player.needs["hunger"] = 20.0  # hungry, but it is bedtime and there is no food here
 	player.last_input_tick = sim.clock.tick - AutonomySystem.IDLE_MINUTES * SimClock.STEPS_PER_GAME_MINUTE
 	sim.run_minutes(1)
-	assert_false(player.path.is_empty(), "on the way home")
-	assert_true(player.action_queue.is_empty())
+	assert_false(player.path.is_empty() and player.action_queue.is_empty(), "on the way home")
+	# Since T-0060 a hungry person heads home to cook there (their own food), rather than just home.
+	if not player.action_queue.is_empty():
+		var target := sim.world.get_object(player.action_queue[0].target_id)
+		assert_true(target != null and Lots.lot_at(sim, target.origin).id == player.home_lot_id, "what they head for is at home")
 
 
 func test_the_town_sleeps_at_night_and_is_awake_in_the_afternoon() -> void:

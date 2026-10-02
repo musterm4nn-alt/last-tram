@@ -27,8 +27,8 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 				reader.error("%s: out_hours must be two different whole hours 0..24" % ctx)
 			routine.out_hours = Vector2i(out[0], out[1])
 		routine.weight = reader.read_int(d, "weight", ctx)
-		if routine.weight <= 0:
-			reader.error("%s: 'weight' must be > 0" % ctx)
+		if routine.weight < 0:
+			reader.error("%s: 'weight' must be >= 0" % ctx)
 		if routine.id.is_empty():
 			reader.error("%s: a routine has an empty 'id'" % path)
 			continue

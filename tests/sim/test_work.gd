@@ -99,7 +99,7 @@ func test_a_day_at_work_in_the_rabbit_hole() -> void:
 	assert_false(Conversations.available(sim, player), "nobody can talk to you at work")
 	sim.run_minutes(60)
 	var decay := content().need("energy").decay_per_hour
-	assert_near(float(player.needs["energy"]), energy - decay + content().job("office_clerk").need_rates["energy"], 0.2)
+	assert_near(float(player.needs["energy"]), energy - decay + content().job("office_clerk").need_rates.get("energy", 0.0), 0.2)
 	sim.run_minutes(7 * 60 + 3)
 	assert_true(Jobs.working(sim, player), "still at work at 16:58")
 	sim.run_minutes(3)

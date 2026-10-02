@@ -25,10 +25,10 @@
 			"duration_minutes": 15,
 			"need_rates": {},
 			"finish_needs": {
-				"hygiene": 70
+				"hygiene": 85
 			},
 			"advertise": {
-				"hygiene": 70
+				"hygiene": 85
 			}
 		},
 		{

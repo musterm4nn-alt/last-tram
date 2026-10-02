@@ -75,6 +75,7 @@ func _initialize() -> void:
 	print(_money_line(sim))
 	print(_groceries_line(sim, resident_actions))
 	print(_jobs_line(sim))
+	print(town.work_summary())
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
 		var ms_per_step := seconds * 1000.0 / steps

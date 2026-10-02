@@ -70,6 +70,37 @@ static func woken_by_hunger(sim: Sim, person: Person, def: InteractionDef) -> bo
 	return def.routine == "sleep" and hunger != null and float(person.needs.get("hunger", 100.0)) < hunger.critical_below
 
 
+## Hygiene below this sends people to wash at home before anything else (T-0060: workers
+## have fewer free hours, and the shower is at home).
+const WASH_BELOW: float = 45.0
+
+
+## Hunger below this sends people home to eat when they have food there (T-0060).
+const EAT_BELOW: float = 35.0
+
+
+## Any other need below this is seen to at home too (the TV, the sofa, the bed, a call).
+const LOW_BELOW: float = 30.0
+
+
+## The needs this person should see to at home now, most pressing kind first: "hygiene" below
+## WASH_BELOW, "hunger" below EAT_BELOW, then any other need below LOW_BELOW (lowest first).
+static func home_needs(sim: Sim, person: Person) -> PackedStringArray:
+	var out := PackedStringArray()
+	if float(person.needs.get("hygiene", 100.0)) < WASH_BELOW:
+		out.append("hygiene")
+	if float(person.needs.get("hunger", 100.0)) < EAT_BELOW:
+		out.append("hunger")
+	var low: Array[NeedDef] = []
+	for need_def: NeedDef in sim.content.needs:
+		if not out.has(need_def.id) and float(person.needs.get(need_def.id, 100.0)) < LOW_BELOW:
+			low.append(need_def)
+	low.sort_custom(func(a: NeedDef, b: NeedDef) -> bool: return float(person.needs[a.id]) < float(person.needs[b.id]))
+	for need_def: NeedDef in low:
+		out.append(need_def.id)
+	return out
+
+
 ## True while a "sleep" interaction should go on past a full need (inside the window).
 static func keeps_sleeping(sim: Sim, person: Person, def: InteractionDef) -> bool:
 	return def.routine == "sleep" and sleeping_time(sim, person)

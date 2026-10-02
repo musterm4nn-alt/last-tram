@@ -17,7 +17,7 @@ func test_a_day_in_town_keeps_everyone_fed_rested_and_apart() -> void:
 			match String(event["data"]["interaction_id"]):
 				"sleep", "nap":
 					slept[id] = true
-				"cook_meal", "grab_snack":
+				var food when TownCheck.EATING.has(food) or food == "work":  # lunch at work (T-0060)
 					ate[id] = true
 		var used: Dictionary[String, int] = {}
 		for person: Person in sim.world.people.values():

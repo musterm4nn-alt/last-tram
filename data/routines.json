@@ -1,9 +1,10 @@
 {
-	"_doc": "Daily rhythms (T-0036). sleep_hours: [start, end] in whole hours, wrapping past midnight when end < start. Inside the window sleep is attractive and sleepers stay in bed until it ends. out_hours: the evening window for going out (T-0052). weight: how often generated residents get the routine. default: the player's routine (and anyone without one).",
+	"_doc": "Daily rhythms (T-0036). sleep_hours: [start, end] in whole hours, wrapping past midnight when end < start. Inside the window sleep is attractive and sleepers stay in bed until it ends. out_hours: the evening window for going out (T-0052). weight: how often generated residents get the routine (0: only given to people whose job needs it, T-0060). default: the player's routine (and anyone without one).",
 	"default": "regular",
 	"routines": [
 		{ "id": "early_bird", "name": "Early bird", "sleep_hours": [22, 6], "out_hours": [17, 21], "weight": 30 },
 		{ "id": "regular", "name": "Regular", "sleep_hours": [23, 7], "out_hours": [19, 23], "weight": 45 },
-		{ "id": "night_owl", "name": "Night owl", "sleep_hours": [2, 10], "out_hours": [21, 2], "weight": 25 }
+		{ "id": "night_owl", "name": "Night owl", "sleep_hours": [2, 10], "out_hours": [21, 2], "weight": 25 },
+		{ "id": "early_shift", "name": "Early shift", "sleep_hours": [21, 5], "out_hours": [15, 19], "weight": 0 }
 	]
 }

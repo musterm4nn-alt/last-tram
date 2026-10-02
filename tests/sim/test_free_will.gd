@@ -38,6 +38,7 @@ func _object_id(sim: Sim, def_id: String) -> int:
 func test_a_hungry_idle_player_goes_and_eats() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var player := sim.world.player()
+	player.job = null  # about eating at home, not about work (T-0060)
 	_set_needs(player, {"hunger": 20.0})
 	var first := _run_choices(sim, 11)
 	assert_false(first.is_empty(), "free will should act within 11 minutes")
