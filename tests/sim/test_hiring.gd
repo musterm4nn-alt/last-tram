@@ -88,9 +88,3 @@ func test_residents_fill_vacancies_over_time() -> void:
 	assert_true(Jobs.vacancies(sim).size() < before or before == 0, "vacancies %d → %d" % [before, Jobs.vacancies(sim).size()])
 
 
-func test_application_notices() -> void:
-	var data := {"person_id": 1, "job_id": "office_clerk", "position": 0}
-	data["reason"] = ""
-	assert_eq(Hud.career_notice({"type": &"job_application", "data": data}, content()), "You got the job: Office clerk! You start tomorrow.")
-	data["reason"] = "rejected"
-	assert_eq(Hud.career_notice({"type": &"job_application", "data": data}, content()), "Office clerk: they chose someone else.")

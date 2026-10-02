@@ -27,13 +27,15 @@ var last_shift_start: int = -1
 var shift_start: int = -1
 var shift_minutes: int = 0
 var shift_late: int = 0
+## They had lunch during this shift (one lunch a shift).
+var shift_lunch: bool = false
 
 
 func to_dict() -> Dictionary:
 	return {"job_id": job_id, "position": position, "level": level, "performance": performance, "hired_day": hired_day,
 		"unpaid": unpaid, "level_shifts": level_shifts, "shifts_worked": shifts_worked, "shifts_missed": shifts_missed,
 		"warned": warned, "last_shift_start": last_shift_start, "shift_start": shift_start, "shift_minutes": shift_minutes,
-		"shift_late": shift_late}
+		"shift_late": shift_late, "shift_lunch": shift_lunch}
 
 
 static func from_dict(d: Dictionary) -> Employment:
@@ -52,4 +54,5 @@ static func from_dict(d: Dictionary) -> Employment:
 	e.shift_start = int(d.get("shift_start", -1))
 	e.shift_minutes = int(d.get("shift_minutes", 0))
 	e.shift_late = int(d.get("shift_late", 0))
+	e.shift_lunch = bool(d.get("shift_lunch", false))
 	return e

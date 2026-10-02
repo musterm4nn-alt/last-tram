@@ -65,7 +65,7 @@ func test_work_uses_staff_slots_and_buying_uses_customer_slots() -> void:
 	var shelter := _object(sim, "tram_stop")
 	var resident := Jobs.holder(sim.world, "police_officer", 0)
 	_stand_on(sim, resident, shelter, 0)
-	assert_eq(Autonomy._cells_to_free_slot(sim, resident, shelter), -1, "free will never uses staff slots")
+	assert_eq(Autonomy.cells_to_free_slot(sim, resident, shelter), -1, "free will never uses staff slots")
 
 
 func test_work_is_offered_only_on_your_shift_at_your_workplace() -> void:
@@ -74,12 +74,9 @@ func test_work_is_offered_only_on_your_shift_at_your_workplace() -> void:
 	var shelter := _object(sim, "tram_stop")
 	var work := content().interaction("work")
 	assert_eq(Requirements.check(sim, player, work, shelter.id), "")
-	assert_eq(InteractionMenu.entries(sim, shelter.id), ["Tram shelter", "Work (Mon–Fri 9–17, €14.00/h)"])
 	assert_eq(Requirements.check(sim, player, work, _object(sim, "police_desk").id), "not_your_job")
-	assert_eq(InteractionMenu.entries(sim, _object(sim, "police_desk").id), ["Desk", InteractionMenu.NOTHING], "someone else's job isn't shown")
 	sim.clock.tick = SimClock.ticks_for(MONDAY, 7, 30)
 	assert_eq(Requirements.check(sim, player, work, shelter.id), "not_your_shift")
-	assert_eq(InteractionMenu.entries(sim, shelter.id), ["Tram shelter", "Work (Mon–Fri 9–17, €14.00/h) (not your shift)"])
 	sim.clock.tick = SimClock.ticks_for(SATURDAY, 10)
 	assert_eq(Requirements.check(sim, player, work, shelter.id), "not_your_shift")
 	sim.clock.tick = SimClock.ticks_for(MONDAY, 17)

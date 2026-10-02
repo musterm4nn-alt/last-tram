@@ -31,6 +31,10 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 				reader.error("%s: unknown need '%s' in 'need_rates'" % [ctx, need_id])
 			elif rates[need_id] is float or rates[need_id] is int:
 				job.need_rates[String(need_id)] = float(rates[need_id])
+		if d.has("shift_moodlet"):
+			job.shift_moodlet = reader.read_str(d, "shift_moodlet", ctx)
+			if db.moodlet(job.shift_moodlet) == null:
+				reader.error("%s: unknown moodlet '%s' in 'shift_moodlet'" % [ctx, job.shift_moodlet])
 		_read_levels(reader, d, job, ctx)
 		_read_positions(reader, d, job, ctx)
 		if not JobDef.SESSIONS.has(job.session):

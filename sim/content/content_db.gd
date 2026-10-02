@@ -11,6 +11,9 @@ const FIRST_NAME_LISTS: PackedStringArray = ["feminine", "masculine", "neutral"]
 
 var terrains: Array[TerrainDef] = []
 var needs: Array[NeedDef] = []
+## When people see to needs at home (data/needs.json "home": wash_below, eat_below,
+## low_below; Routines.home_needs).
+var home_thresholds: Dictionary[String, float] = {}
 var districts: Dictionary[String, DistrictDef] = {}
 ## District ids in the order they are stamped into the world.
 var district_order: Array[String] = []

@@ -66,22 +66,33 @@ func test_input_holds_free_will_back_for_ten_minutes() -> void:
 	assert_false(_run_choices(sim, 2).is_empty(), "something by minute 11")
 
 
+const OPEN_ROOM: PackedStringArray = [
+	"#########",
+	"#@......#",
+	"#.......#",
+	"#.......#",
+	"#########",
+]
+
+
 func test_every_player_command_counts_as_input() -> void:
-	var commands: Array[Command] = [
-		SetMoveIntentCommand.new(0, Vector2.ZERO),
-		WalkToCommand.new(0, Vector3i(2, 1, 0)),
-		QueueInteractionCommand.new(0, "no_such_thing", 9999),
-		CancelActionCommand.new(0, 5),
-	]
-	for command: Command in commands:
-		var sim := SimFactory.from_rows(content(), ROOM)
+	for kind: String in ["set_move_intent", "walk_to", "queue_interaction", "cancel_action"]:
+		var sim := SimFactory.from_rows(content(), OPEN_ROOM)
 		var player := sim.world.player()
-		command.set("person_id", player.id)
+		var tv := _tv(sim)
 		sim.run_minutes(3)
 		var tick := sim.clock.tick
-		sim.submit(command)
+		match kind:
+			"set_move_intent":
+				sim.submit(SetMoveIntentCommand.new(player.id, Vector2.ZERO))
+			"walk_to":
+				sim.submit(WalkToCommand.new(player.id, Vector3i(5, 2, 0)))
+			"queue_interaction":
+				sim.submit(QueueInteractionCommand.new(player.id, "watch_tv", tv.id))
+			"cancel_action":
+				sim.submit(CancelActionCommand.new(player.id, 5))
 		sim.step()
-		assert_eq(player.last_input_tick, tick, "%s should record the input tick" % command.type_id())
+		assert_eq(player.last_input_tick, tick, "%s should record the input tick" % kind)
 	# Switching free will is a setting, not input: the tick stays at the spawn.
 	var sim2 := SimFactory.from_rows(content(), ROOM)
 	var spawned_at := sim2.world.player().last_input_tick
@@ -90,6 +101,61 @@ func test_every_player_command_counts_as_input() -> void:
 	sim2.submit(SetFreeWillCommand.new(sim2.world.player_id, false))
 	sim2.step()
 	assert_eq(sim2.world.player().last_input_tick, spawned_at)
+
+
+## A TV in OPEN_ROOM (objects on no lot are public).
+func _tv(sim: Sim) -> WorldObject:
+	var obj := WorldObject.new()
+	obj.id = sim.world.new_id()
+	obj.def_id = "tv"
+	obj.origin = Vector3i(6, 3, 0)
+	assert_true(sim.world.add_object(obj), "could not place the TV")
+	return obj
+
+
+func test_refused_commands_do_not_count_as_input() -> void:
+	var sim := SimFactory.from_rows(content(), OPEN_ROOM)
+	var player := sim.world.player()
+	var tv := _tv(sim)
+	var spawned_at := player.last_input_tick
+	sim.run_minutes(3)
+	sim.submit(QueueInteractionCommand.new(player.id, "no_such_thing", tv.id))
+	sim.submit(QueueInteractionCommand.new(player.id, "take_shower", tv.id))
+	sim.submit(WalkToCommand.new(player.id, Vector3i(0, 0, 0)))
+	sim.step()
+	assert_eq(player.last_input_tick, spawned_at, "unknown, not offered here, no way there: not input")
+	for i: int in Person.MAX_QUEUE:
+		var action := Action.new("watch_tv", tv.id)
+		action.id = sim.world.new_id()
+		player.action_queue.append(action)
+	sim.submit(QueueInteractionCommand.new(player.id, "watch_tv", tv.id))
+	sim.step()
+	assert_eq(player.last_input_tick, spawned_at, "a full queue: not input")
+
+
+func test_a_click_refused_by_requirements_does_not_hold_free_will_back() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	sim.clock.tick = SimClock.ticks_for(1, 12)
+	player.job = null
+	player.last_input_tick = sim.clock.tick - 30 * SimClock.STEPS_PER_GAME_MINUTE
+	var stamp := player.last_input_tick
+	var shelter: WorldObject = null
+	for obj: WorldObject in sim.world.objects.values():
+		if obj.def_id == "tram_stop":
+			shelter = obj
+	sim.submit(QueueInteractionCommand.new(player.id, "work", shelter.id))
+	sim.step()
+	assert_eq(_events_of(sim, &"action_refused").size(), 1, "no job: refused")
+	assert_eq(player.last_input_tick, stamp, "the refused click doesn't delay free will")
+
+
+func _events_of(sim: Sim, type: StringName) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for event: Dictionary in sim.events.drain():
+		if event["type"] == type and int(event["data"].get("person_id", -1)) == sim.world.player_id:
+			out.append(event["data"])
+	return out
 
 
 func test_a_content_player_does_nothing() -> void:

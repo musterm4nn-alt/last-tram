@@ -158,3 +158,24 @@ func test_the_free_will_button_shows_and_switches_the_setting() -> void:
 	menu.close()
 	menu.free()
 
+
+
+func test_the_work_button_switches_between_varied_and_gentle_jobs() -> void:
+	var sim := _sim_at(0, 8, 0)
+	Session.sim = sim
+	var menu := PauseMenu.new()
+	menu.open()
+	assert_eq(menu._work_button.text, "Work: Varied", "jobs are varied by default (T-0077)")
+	menu._work_button.pressed.emit()
+	assert_eq(menu._work_button.text, "Work: Gentle")
+	var pending := sim.pending_commands()
+	assert_eq(pending.size(), 1)
+	var command := pending[0] as SetGentleWorkCommand if pending.size() == 1 else null
+	assert_true(command != null and command.gentle, "expected SetGentleWorkCommand(true)")
+	sim.step()
+	assert_true(sim.world.work.gentle)
+	menu.close()
+	menu.open()
+	assert_eq(menu._work_button.text, "Work: Gentle", "the menu shows the saved setting")
+	menu.close()
+	menu.free()

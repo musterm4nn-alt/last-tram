@@ -109,6 +109,11 @@ everything is placeholder shapes on purpose. See [art.md](art.md).
 - Builders never touch `main`; Opus reviews everything before merging.
 - Everything is on GitHub (private), so any mistake can be rolled back.
 - Saves are versioned, so old saves keep working as the game grows.
+- **Acceptance rules are frozen per milestone** (T-0077). From the start of a milestone,
+  its acceptance criteria and `TownCheck`'s thresholds (`tools/town_check.gd`) change only
+  with the owner's approval, recorded in `docs/decisions.md`. When a check fails, fix the
+  game, not the check. (The October reviews found the town check had been bent to pass:
+  every shift counted as a meal and a conversation.)
 
 ## Useful commands (for agents, or you if you're curious)
 

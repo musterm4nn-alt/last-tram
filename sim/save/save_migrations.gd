@@ -42,11 +42,26 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v8_to_v9(d)
 			9:
 				d = _v9_to_v10(d)
+			10:
+				d = _v10_to_v11(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v11 (T-0077): the world's work setting (jobs are varied, the owner's default), and
+## whether the attended shift has had its lunch (a shift saved after lunchtime has).
+static func _v10_to_v11(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	d["world"]["work"] = {"gentle": false}
+	for person: Variant in d["world"].get("people", []):
+		if person is Dictionary and person.get("job") is Dictionary:
+			var job: Dictionary = person["job"]
+			job["shift_lunch"] = _int(job.get("shift_minutes"), 0) >= 180  # lunch_after_minutes when v11 was made
 	return d
 
 

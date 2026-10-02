@@ -1,5 +1,5 @@
 {
-	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay (hunger +6 is lunch and breaks: it cancels the hourly decay, so nobody starves at work). levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064).",
+	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay; each job has its own profile (T-0077: desk jobs restful but boring, standing jobs hard on comfort, manual jobs tiring but social, care work draining, bar work fun but exhausting). With the world's gentle work setting on, every job uses economy.json's gentle_profile instead. Hunger is not a rate: a shift with 4 hours of work includes lunch (economy.json work.lunch_*). shift_moodlet (optional): a moodlet given after each shift worked to the end, in varied mode. levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064).",
 	"jobs": [
 		{
 			"id": "spaeti_clerk",
@@ -10,9 +10,8 @@
 			"need_rates": {
 				"energy": -0.5,
 				"fun": 4.0,
-				"social": 4.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"social": 5.0,
+				"comfort": 6.0
 			},
 			"levels": [
 				{
@@ -77,8 +76,7 @@
 				"energy": -0.5,
 				"fun": 4.0,
 				"social": 4.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"comfort": 5.0
 			},
 			"levels": [
 				{
@@ -140,11 +138,10 @@
 			"session": "on_site",
 			"workplace_tag": "bar_counter",
 			"need_rates": {
-				"energy": -0.5,
-				"fun": 4.0,
-				"social": 4.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"energy": -1.0,
+				"fun": 7.0,
+				"social": 6.0,
+				"comfort": 5.5
 			},
 			"levels": [
 				{
@@ -187,10 +184,10 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "police_desk",
 			"need_rates": {
+				"energy": -0.5,
 				"fun": 4.0,
-				"social": 3.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"social": 4.0,
+				"comfort": 5.5
 			},
 			"levels": [
 				{
@@ -236,10 +233,10 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"fun": 4.0,
+				"energy": 0.5,
+				"fun": 2.5,
 				"social": 3.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"comfort": 7.0
 			},
 			"levels": [
 				{
@@ -279,11 +276,10 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -1.0,
+				"energy": -1.5,
 				"fun": 4.0,
-				"social": 3.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"social": 5.0,
+				"comfort": 6.0
 			},
 			"levels": [
 				{
@@ -319,12 +315,12 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -0.5,
-				"fun": 4.0,
-				"social": 4.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"energy": -1.0,
+				"fun": 3.5,
+				"social": 5.0,
+				"comfort": 5.5
 			},
+			"shift_moodlet": "helped_someone",
 			"levels": [
 				{
 					"title": "Care worker",
@@ -369,11 +365,10 @@
 			"session": "rabbit_hole",
 			"workplace_tag": "tram_stop",
 			"need_rates": {
-				"energy": -1.0,
+				"energy": -1.5,
 				"fun": 4.0,
-				"social": 3.0,
-				"comfort": 6.0,
-				"hunger": 6.0
+				"social": 5.0,
+				"comfort": 6.0
 			},
 			"levels": [
 				{

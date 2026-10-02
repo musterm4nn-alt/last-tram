@@ -1,5 +1,5 @@
 {
-	"_doc": "Home interactions for the M1 flat (T-0011). Same rules as basics.json.",
+	"_doc": "Home interactions for the M1 flat (T-0011). Same rules as basics.json; without \"advertise\", an interaction advertises its finish_needs (T-0077).",
 	"interactions": [
 		{
 			"id": "cook_meal", "uses_groceries": 2,
@@ -25,9 +25,6 @@
 			"duration_minutes": 15,
 			"need_rates": {},
 			"finish_needs": {
-				"hygiene": 85
-			},
-			"advertise": {
 				"hygiene": 85
 			}
 		},

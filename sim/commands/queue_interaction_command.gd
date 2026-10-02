@@ -4,7 +4,8 @@ extends Command
 ## for person-targeted interactions, on another person (T-0038). Ignored unless the person
 ## and the target exist, the target offers the interaction, and the queue has room. Refused,
 ## with &"action_refused" {person_id, interaction_id, target_id, reason}, when the person may
-## not do it now (Requirements: closed, not their home, can't afford...).
+## not do it now (Requirements: closed, not their home, can't afford...). Only an accepted
+## command counts as input (last_input_tick, T-0077): a refused click doesn't hold free will back.
 ## ActionSystem then walks the person to a free use slot (or next to the other person) and
 ## starts it there.
 
@@ -27,7 +28,6 @@ func apply(sim: Sim) -> void:
 	var person := sim.world.get_person(person_id)
 	if person == null:
 		return
-	person.last_input_tick = sim.clock.tick
 	var def := sim.content.interaction(interaction_id)
 	if def == null:
 		return
@@ -46,6 +46,7 @@ func apply(sim: Sim) -> void:
 	if not reason.is_empty():
 		sim.emit_event(&"action_refused", {"person_id": person_id, "interaction_id": interaction_id, "target_id": target_id, "reason": reason})
 		return
+	person.last_input_tick = sim.clock.tick
 	var action := Action.new(interaction_id, target_id)
 	action.id = sim.world.new_id()
 	person.action_queue.append(action)

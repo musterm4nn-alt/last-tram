@@ -1,6 +1,8 @@
 class_name TownCheck
 extends RefCounted
 ## M2 acceptance (T-0045): watches a headless run and says whether the town lives well.
+## Meals are the eating interactions and lunch at work (meal_eaten); social exchanges are
+## conversations only, and days with colleagues are reported apart (T-0077).
 ## Feed it every sim event (observe) and sample it once per game minute (sample); failures()
 ## lists what went wrong in plain words ([] = healthy). Used by `tools/simrun.sh --check-m2`
 ## and tests/sim/test_m2_town_lives.gd.
@@ -12,11 +14,17 @@ const MAX_LOW_SHARE: float = 0.02
 const NEED_FLOOR: float = 5.0
 ## Share of residents who must know someone outside their household (familiarity >= 20).
 const MIN_CONNECTED_SHARE: float = 0.5
+## Conversations are judged over a full week only (the owner, 2 October 2026, D31): on two
+## workdays a working loner may not have talked to anyone yet.
+const SOCIAL_MIN_DAYS: int = 7
 
 var meals: Dictionary[int, int] = {}
 var sleeps: Dictionary[int, int] = {}
 var sleeps_away: Dictionary[int, int] = {}
 var exchanges: Dictionary[int, int] = {}
+## Shifts after which someone met colleagues who worked that day (reported apart from social
+## exchanges; T-0077).
+var colleague_days: Dictionary[int, int] = {}
 var low: Dictionary[String, int] = {}
 var lowest: Dictionary[String, float] = {}
 var samples: int = 0
@@ -39,11 +47,6 @@ func observe(sim: Sim, event: Dictionary) -> void:
 			var interaction := String(data["interaction_id"])
 			if EATING.has(interaction):
 				meals[id] = meals.get(id, 0) + 1
-			elif interaction == "work":
-				# A finished shift includes lunch and colleagues (the job's hunger and social
-				# rates, T-0060), so it counts as a meal and as social contact.
-				meals[id] = meals.get(id, 0) + 1
-				exchanges[id] = exchanges.get(id, 0) + 1
 			elif interaction == "sleep":
 				sleeps[id] = sleeps.get(id, 0) + 1
 				if not Routines.at_home(sim, sim.world.get_person(id)):
@@ -52,8 +55,14 @@ func observe(sim: Sim, event: Dictionary) -> void:
 			shifts_started += 1
 			late_minutes += int(data["late_minutes"])
 			late_shifts += 1 if int(data["late_minutes"]) > 0 else 0
+		&"meal_eaten":  # lunch at work (T-0077)
+			var id := int(data["person_id"])
+			meals[id] = meals.get(id, 0) + 1
 		&"shift_settled":
 			left_early += 1 if data["left_early"] else 0
+			if int(data.get("colleagues", 0)) > 0:
+				var id := int(data["person_id"])
+				colleague_days[id] = colleague_days.get(id, 0) + 1
 		&"shift_missed":
 			shifts_missed += 1
 		&"promoted":
@@ -77,8 +86,8 @@ func sample(sim: Sim) -> void:
 
 
 ## What went wrong over `days` game days ([] when the town lived well): everyone eats at least
-## days − 1 times, sleeps at least days − 1 times, always at home, and takes part in at least
-## days / 2 social exchanges (loners exist); needs stay above NEED_FLOOR and below 30 at most MAX_LOW_SHARE of
+## days − 1 times, sleeps at least days − 1 times, always at home, and, over a week or more
+## (SOCIAL_MIN_DAYS), takes part in at least days / 2 social exchanges (loners exist); needs stay above NEED_FLOOR and below 30 at most MAX_LOW_SHARE of
 ## the time; and enough residents know someone outside their household (MIN_CONNECTED_SHARE
 ## after a week, proportionally less before).
 func failures(sim: Sim, days: int) -> PackedStringArray:
@@ -91,7 +100,7 @@ func failures(sim: Sim, days: int) -> PackedStringArray:
 			out.append("%s slept only %d times" % [name, sleeps.get(person.id, 0)])
 		if sleeps_away.get(person.id, 0) > 0:
 			out.append("%s slept away from home %d times" % [name, sleeps_away[person.id]])
-		if exchanges.get(person.id, 0) < days / 2:
+		if days >= SOCIAL_MIN_DAYS and exchanges.get(person.id, 0) < days / 2:
 			out.append("%s talked with people only %d times" % [name, exchanges.get(person.id, 0)])
 	var people := sim.world.people.size()
 	for need_id: String in lowest:
@@ -129,8 +138,8 @@ func summary(sim: Sim) -> PackedStringArray:
 	var total_exchanges := 0
 	for id: int in exchanges:
 		total_exchanges += exchanges[id]
-	out.append("meals %d, sleeps %d (away from home %d), social exchanges %d" % [
-		_sum(meals), _sum(sleeps), _sum(sleeps_away), total_exchanges / 2])
+	out.append("meals %d, sleeps %d (away from home %d), social exchanges %d, colleague days %d" % [
+		_sum(meals), _sum(sleeps), _sum(sleeps_away), total_exchanges / 2, _sum(colleague_days)])
 	return out
 
 

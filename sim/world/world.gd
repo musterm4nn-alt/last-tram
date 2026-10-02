@@ -17,6 +17,8 @@ var lots: Dictionary[int, Lot] = {}
 var households: Dictionary[int, Household] = {}
 ## The simulation fidelity dial (T-0042).
 var tiers: TierSettings = TierSettings.new()
+## Varied or gentle jobs (T-0077).
+var work: WorkSettings = WorkSettings.new()
 ## Money that entered and left people's hands, by reason (T-0054, D29).
 var ledger: Ledger = Ledger.new()
 
@@ -153,6 +155,7 @@ func to_dict() -> Dictionary:
 		"lots": lots_out,
 		"households": households_out,
 		"tiers": tiers.to_dict(),
+		"work": work.to_dict(),
 		"ledger": ledger.to_dict(),
 	}
 
@@ -200,6 +203,9 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 	var tiers_data: Variant = d.get("tiers", {})
 	if tiers_data is Dictionary:
 		world.tiers = TierSettings.from_dict(tiers_data)
+	var work_data: Variant = d.get("work", {})
+	if work_data is Dictionary:
+		world.work = WorkSettings.from_dict(work_data)
 	var ledger_data: Variant = d.get("ledger", {})
 	if ledger_data is Dictionary:
 		world.ledger = Ledger.from_dict(ledger_data)

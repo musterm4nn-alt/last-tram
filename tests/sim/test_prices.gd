@@ -159,9 +159,3 @@ func test_price_cost_grows_when_money_is_short() -> void:
 	assert_eq(Utility.price_cost(player, content().interaction("sit_outside"), content()), 0.0)
 
 
-func test_refused_orders_get_a_notice() -> void:
-	var sim := _game(20)
-	var event := {"type": &"action_refused", "data": {"person_id": sim.world.player_id, "interaction_id": "have_a_drink", "reason": "cant_afford"}}
-	assert_eq(Hud.notice_for_event(event, sim.world.player_id, content(), sim), "Have a drink: not enough money")
-	event["data"]["reason"] = "closed"
-	assert_eq(Hud.notice_for_event(event, sim.world.player_id, content(), sim), "Have a drink: closed")

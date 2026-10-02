@@ -61,7 +61,8 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.max_minutes = int(reader.read_num(d, "max_minutes", ctx))
 		def.need_rates = _read_needs(reader, d, "need_rates", ctx)
 		def.finish_needs = _read_needs(reader, d, "finish_needs", ctx)
-		def.advertise = _read_needs(reader, d, "advertise", ctx)
+		# Without "advertise", an interaction advertises what it gives when it finishes (T-0077).
+		def.advertise = _read_needs(reader, d, "advertise", ctx) if d.has("advertise") else def.finish_needs.duplicate()
 		if d.has("remote"):
 			def.remote = reader.read_bool(d, "remote", ctx)
 			if def.remote and def.target != "person":

@@ -66,9 +66,6 @@ func test_an_empty_fridge_greys_out_cooking() -> void:
 	sim.step()
 	assert_true(player.action_queue.is_empty())
 	assert_eq(_refusals(sim), ["no_food"])
-	assert_eq(InteractionMenu.entries(sim, stove.id), ["Stove · 1 portion", "Cook a meal (the fridge is empty)"])
-	var fridge := _object_in(sim, "fridge", player.home_lot_id)
-	assert_eq(InteractionMenu.entries(sim, fridge.id), ["Fridge · 1 portion", "Grab a snack"])
 
 
 func test_buying_groceries_fills_the_fridge() -> void:

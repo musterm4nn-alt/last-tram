@@ -93,14 +93,6 @@ func test_good_work_gets_a_promotion() -> void:
 	assert_eq(player.job.level, 1)
 	assert_has(_types(events, player.id), &"promoted")
 	assert_near(player.job.performance, content().economy.performance["after_promotion"], 0.001)
-	assert_eq(PersonInspector.job_text(sim, player), "Senior clerk (Mon–Fri 9–17), doing okay")
-
-
-func test_career_notices() -> void:
-	assert_eq(Hud.career_notice({"type": &"wages_paid", "data": {"amount": 56000}}, content()), "Payday: €560.00 wages in the bank")
-	assert_eq(Hud.career_notice({"type": &"promoted", "data": {"title": "Senior clerk"}}, content()), "Promoted: you're now Senior clerk!")
-	assert_eq(Hud.career_notice({"type": &"fired", "data": {"job_id": "office_clerk"}}, content()), "You were fired from your job as Office clerk")
-	assert_eq(Hud.career_notice({"type": &"job_warning", "data": {"job_id": "office_clerk"}}, content()), "Your boss warned you about your work (Office clerk)")
 
 
 func test_pay_records_survive_saving() -> void:

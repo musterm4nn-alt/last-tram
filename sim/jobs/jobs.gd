@@ -81,7 +81,9 @@ static func start_shift(sim: Sim, person: Person, action: Action) -> void:
 
 
 ## One personal minute of work (the session applies the job's needs). A minute that began
-## inside the shift's window counts towards the shift (T-0077); earlier ones don't.
+## inside the shift's window counts towards the shift (T-0077); earlier ones don't. Once a
+## shift they have lunch (have_lunch): after lunch_after_minutes, or sooner when hunger falls
+## below the home "eat_below" level (a hungry worker takes their break early).
 static func work_minute(sim: Sim, person: Person, action: Action) -> void:
 	var job := sim.content.job(person.job.job_id) if person.job != null else null
 	if job == null:
@@ -94,6 +96,18 @@ static func work_minute(sim: Sim, person: Person, action: Action) -> void:
 	if person.job.shift_start != window.x:  # a save from before T-0077 (or a lost start): attend now
 		Careers.attend(sim, person, window.x, maxi(0, (action.started_tick - window.x) / SimClock.STEPS_PER_GAME_MINUTE))
 	person.job.shift_minutes += 1
+	var hungry: bool = float(person.needs.get("hunger", 100.0)) < sim.content.home_thresholds.get("eat_below", 0.0)
+	if not person.job.shift_lunch and (hungry or person.job.shift_minutes >= sim.content.economy.lunch_after_minutes):
+		have_lunch(sim, person)
+
+
+## Lunch at work (T-0077): no action of its own; hunger rises by lunch_hunger like a meal,
+## and &"meal_eaten" {person_id, kind: "lunch"} goes out.
+static func have_lunch(sim: Sim, person: Person) -> void:
+	person.job.shift_lunch = true
+	var before := float(person.needs.get("hunger", 0.0))
+	person.needs["hunger"] = clampf(before + sim.content.economy.lunch_hunger, 0.0, 100.0)
+	sim.emit_event(&"meal_eaten", {"person_id": person.id, "kind": "lunch"})
 
 
 ## True once the shift the work action started in is over (or the person lost the job).
@@ -116,18 +130,17 @@ static func end_shift(sim: Sim, person: Person, action: Action, completed: bool)
 	return result
 
 
-## Colleagues (the same job, working the same day: a team, with handovers) get to know each
-## other a little each shift.
-const COLLEAGUE_DELTAS: Dictionary = {"familiarity": 10.0, "friendship": 3.0}
-
-
-## After the person's shift starting at `shift_start` is settled: they get to know the
-## colleagues who really worked that day (T-0077), not everyone on the rota.
-static func know_colleagues(sim: Sim, person: Person, shift_start: int) -> void:
+## After the person's shift starting at `shift_start` is settled, colleagues (the same job,
+## a team with handovers) who really worked that day (T-0077), not everyone on the rota, get
+## to know each other a little (economy.json work.colleague_deltas). Returns how many.
+static func know_colleagues(sim: Sim, person: Person, shift_start: int) -> int:
 	var day := shift_start / SimClock.ticks_for(1)
+	var met := 0
 	for other: Person in sim.world.people.values():
 		if other.id != person.id and other.job != null and other.job.job_id == person.job.job_id and worked_on(other.job, day):
-			Social.change(sim, person, other.id, COLLEAGUE_DELTAS)
+			Social.change(sim, person, other.id, sim.content.economy.colleague_deltas)
+			met += 1
+	return met
 
 
 ## True if the shift they worked last, or the one they are working now, started on `day`.
@@ -244,10 +257,26 @@ static func describe(content: ContentDB, person: Person) -> String:
 	return "%s (%s %d–%d)" % [title, days_text(shift), shift.from, shift.to]
 
 
+## How well a routine suits a position (T-0077): 0 when it doesn't fit (fits_routine), else 1
+## plus the hours of the routine's out window the shift leaves free (a 14–22 shift swallowed
+## an early bird's whole evening out, and they met almost nobody all week).
+static func routine_fit(content: ContentDB, job: JobDef, position: int, routine_id: String) -> int:
+	var routine := content.routine(routine_id)
+	if routine == null or not fits_routine(content, job, position, routine_id):
+		return 0
+	var shift := job.positions[position]
+	var fit := 1
+	for hour: int in 24:
+		if Routines.in_hours(routine.out_hours, hour) and not Routines.in_hours(Vector2i(shift.from, shift.to), hour):
+			fit += 1
+	return fit
+
+
 ## New games: the player gets the content's player_job (its first free position), then every
 ## position, in content order, is filled with a chance of start_filled by a jobless resident
-## under retirement age, preferring one whose routine fits (else they get the first routine,
-## by id, that fits). Draws come from the "jobs" stream.
+## under retirement age, preferring one whose routine suits it best (routine_fit). If a
+## routine would suit it better than the chosen person's, they get the first such routine,
+## by id. Draws come from the "jobs" stream.
 static func fill_at_start(sim: Sim) -> void:
 	var rng := sim.rng.stream("jobs")
 	var player := sim.world.player()
@@ -264,22 +293,28 @@ static func fill_at_start(sim: Sim) -> void:
 		for position: int in job.positions.size():
 			if holder(sim.world, job.id, position) != null or rng.randf() >= job.start_filled:
 				continue
-			var candidates: Array[Person] = []
-			var fitting: Array[Person] = []
+			var best := -1
+			var pool: Array[Person] = []
 			for id: int in ids:
 				var person: Person = sim.world.people[id]
 				if id == sim.world.player_id or person.job != null or person.age_years >= sim.content.economy.retirement_age:
 					continue
-				candidates.append(person)
-				if fits_routine(sim.content, job, position, Routines.routine_of(sim, person).id):
-					fitting.append(person)
-			var pool := fitting if not fitting.is_empty() else candidates
+				var fit := routine_fit(sim.content, job, position, Routines.routine_of(sim, person).id)
+				if fit > best:
+					best = fit
+					pool.clear()
+				if fit == best:
+					pool.append(person)
 			if pool.is_empty():
 				continue
 			var chosen: Person = pool[rng.randi_range(0, pool.size() - 1)]
-			if fitting.is_empty():
-				for routine_id: String in routine_ids:
-					if fits_routine(sim.content, job, position, routine_id):
-						chosen.routine_id = routine_id
-						break
+			var best_routine := ""
+			var best_fit := best
+			for routine_id: String in routine_ids:
+				var fit := routine_fit(sim.content, job, position, routine_id)
+				if fit > best_fit:
+					best_fit = fit
+					best_routine = routine_id
+			if not best_routine.is_empty():
+				chosen.routine_id = best_routine
 			hire(sim, chosen, job.id, position)
