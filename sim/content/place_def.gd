@@ -21,6 +21,9 @@ var close_hour: int = 24
 var closed_days: PackedInt32Array = PackedInt32Array()
 ## Weekly rent of a home, in euro cents (district.json "rent", T-0062); 0 for other places.
 var rent: int = 0
+## A secret place (T-0069): left off the map (and the HUD's place line) until the player
+## uncovers a discovery there.
+var hidden: bool = false
 
 
 func contains(cell: Vector3i) -> bool:

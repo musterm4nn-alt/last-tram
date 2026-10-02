@@ -122,3 +122,37 @@ func test_no_movement_or_running_while_the_map_is_open() -> void:
 	assert_true(player.running)
 	controller.free()
 	town_map.free()
+
+
+func test_hidden_places_appear_once_found() -> void:
+	var db := ContentDB.load_default()
+	var sim := SimFactory.new_game(db, 1)
+	var player := sim.world.player()
+	db.place("altmarkt").hidden = true
+	var names := func(found: PackedStringArray) -> Array:
+		return MapView.labels(db, 0, found).map(func(l: Dictionary) -> String: return l["name"])
+	assert_false(names.call(Discoveries.found_places(sim, player)).has("Altmarkt"), "a secret place is off the map")
+	player.pos = Vector2(30.5, 30.5)
+	assert_eq(Hud.place_text(sim, player), "Altstadt", "and the HUD doesn't name it")
+	Discoveries.uncover(sim, player, "fountain_coins")
+	var found := Discoveries.found_places(sim, player)
+	assert_eq(found, PackedStringArray(["altmarkt"]))
+	assert_true(names.call(found).has("Altmarkt"), "found: on the map")
+	var marked := MapView.labels(db, 0, found).filter(func(l: Dictionary) -> bool: return l["found"])
+	assert_eq(marked.size(), 1, "with a note mark")
+	assert_eq(Hud.place_text(sim, player), "Altmarkt")
+
+
+func test_notebook_lists_leads_and_finds() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	assert_eq(NotebookApp.lines(sim, player.id), PackedStringArray(["Leads", "No leads yet. Talk to people, read notices, look around.", "", "Finds", "Nothing yet."]))
+	Discoveries.learn_clue(sim, player, "fountain_coins", "talk")
+	assert_eq(NotebookApp.lines(sim, player.id)[1], "Altmarkt: " + content().discovery("fountain_coins").clue)
+	Discoveries.uncover(sim, player, "fountain_coins")
+	var lines := NotebookApp.lines(sim, player.id)
+	assert_eq(lines.slice(3), PackedStringArray(["Finds", "Coins in the fountain (Altmarkt)", "  Found €3.40", "  You fished €3.40 out of the fountain. Nobody saw."]))
+	var unlock := DiscoveryEffect.new()
+	unlock.kind = DiscoveryEffect.UNLOCK
+	unlock.interaction_id = "sit"
+	assert_eq(NotebookApp.effect_text(sim, unlock), "You can now: Sit down")

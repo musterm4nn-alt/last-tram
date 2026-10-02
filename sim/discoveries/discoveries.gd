@@ -136,3 +136,14 @@ static func _share(sim: Sim, speaker: Person, listener: Person) -> void:
 		var def := sim.content.discovery(id)
 		if def != null and def.share_trust >= 0 and trust >= def.share_trust and learn_clue(sim, listener, id, "talk", speaker.id):
 			return
+
+
+## The places of everything the person has uncovered, sorted (T-0069: the map shows them).
+static func found_places(sim: Sim, person: Person) -> PackedStringArray:
+	var out := PackedStringArray()
+	for id: String in person.discoveries if person != null else PackedStringArray():
+		var def := sim.content.discovery(id)
+		if def != null and not out.has(def.place_id):
+			out.append(def.place_id)
+	out.sort()
+	return out
