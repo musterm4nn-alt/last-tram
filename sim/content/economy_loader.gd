@@ -39,7 +39,22 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	economy.retirement_age = reader.read_int(root, "retirement_age", path)
 	if economy.retirement_age <= Person.MIN_AGE:
 		reader.error("%s: 'retirement_age' must be above %d" % [path, Person.MIN_AGE])
+	var payday := reader.read_obj(root, "payday", path)
+	economy.payday_weekday = reader.read_int(payday, "weekday", path + ": payday")
+	economy.payday_hour = reader.read_int(payday, "hour", path + ": payday")
+	if economy.payday_weekday < 0 or economy.payday_weekday > 6 or economy.payday_hour < 0 or economy.payday_hour > 23:
+		reader.error("%s: payday needs a weekday 0..6 and an hour 0..23" % path)
+	var rules := reader.read_obj(root, "performance", path)
+	for key: String in PERFORMANCE_KEYS:
+		economy.performance[key] = reader.read_num(rules, key, path + ": performance")
+		if economy.performance[key] < 0.0:
+			reader.error("%s: performance '%s' must be >= 0" % [path, key])
 	db.economy = economy
+
+
+## Every rule data/economy.json "performance" must give (T-0061).
+const PERFORMANCE_KEYS: PackedStringArray = ["shift_done", "good_mood", "per_5_minutes_late", "left_early", "missed",
+	"promote_at", "promote_after_shifts", "after_promotion", "warn_below", "fire_at"]
 
 
 ## A [min, max] amount range in cents (min <= max, both >= 0), or (0, 0) with an error.

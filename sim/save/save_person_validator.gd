@@ -30,6 +30,10 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 		for key: String in ["position", "level", "hired_day"]:
 			s.integer(job.get(key, 0), path + ".job." + key)
 		s.number(job.get("performance", 50.0), path + ".job.performance", 0.0, 100.0)
+		for key: String in ["unpaid", "level_shifts", "shifts_worked", "shifts_missed"]:
+			s.integer(job.get(key, 0), path + ".job." + key)
+		s.integer(job.get("last_shift_start", -1), path + ".job.last_shift_start", -1)
+		s.boolean(job.get("warned", false), path + ".job.warned")
 	var others: Dictionary[int, bool] = {}
 	for entry: Variant in s.list(p.get("relationships", []), path + ".relationships"):
 		var r := s.dictionary(entry, path + ".relationships[]")

@@ -36,7 +36,7 @@ func test_lines_show_who_they_are_and_how_they_see_you() -> void:
 	assert_eq(lines[5], "Money: %s" % Money.format(person.wallet.total()))
 	assert_true(person.wallet.total() > 0, "residents have starting money")
 	assert_eq(lines[6], "Job: %s" % PersonInspector.job_text(sim, person))
-	assert_eq(PersonInspector.job_text(sim, sim.world.player()), "Office clerk (Mon–Fri 9–17)")
+	assert_eq(PersonInspector.job_text(sim, sim.world.player()), "Office clerk (Mon–Fri 9–17), doing okay")
 	var someone := sim.world.player()
 	someone.job = null
 	assert_eq(PersonInspector.job_text(sim, someone), "Unemployed")

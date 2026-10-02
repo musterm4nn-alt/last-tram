@@ -22,6 +22,9 @@ func on_minute(sim: Sim) -> void:
 	for person: Person in sim.world.people.values():
 		if person.job == null:
 			continue
+		_notice_missed(sim, person)
+		if person.job == null:
+			continue  # fired just now
 		var shift := Jobs.next_shift(sim, person)
 		if shift.x < 0:
 			continue
@@ -35,6 +38,15 @@ func on_minute(sim: Sim) -> void:
 		if _on_the_way(sim, person) or not _goes_alone(sim, person) or _almost_done(sim, person):
 			continue
 		_go(sim, person)
+
+
+## A shift that ends this minute and that they never started counts as missed (T-0061).
+static func _notice_missed(sim: Sim, person: Person) -> void:
+	for day: int in [sim.clock.day() - 1, sim.clock.day()]:
+		var window := Jobs.shift_on(sim, person, day)
+		if window.y == sim.clock.tick and window.x >= SimClock.ticks_for(person.job.hired_day) and person.job.last_shift_start != window.x:
+			Careers.miss(sim, person)
+			return
 
 
 ## True if work is already queued or being done.

@@ -34,11 +34,24 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v4_to_v5(d)
 			5:
 				d = _v5_to_v6(d)
+			6:
+				d = _v6_to_v7(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v7 jobs keep pay and performance records (T-0061): nothing earned or missed yet.
+static func _v6_to_v7(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("people", []) is Array:
+		return d
+	for person: Variant in d["world"].get("people", []):
+		if person is Dictionary and person.get("job") is Dictionary:
+			var job: Dictionary = person["job"]
+			job.merge({"unpaid": 0, "level_shifts": 0, "shifts_worked": 0, "shifts_missed": 0, "warned": false, "last_shift_start": -1})
 	return d
 
 

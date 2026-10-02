@@ -63,6 +63,25 @@ const FAIL_REASONS: Dictionary = {
 }
 
 
+## Words for the player's pay and career events (T-0061); "" for anything else.
+static func career_notice(event: Dictionary, content: ContentDB) -> String:
+	var data: Dictionary = event.get("data", {})
+	var job: JobDef = content.job(String(data.get("job_id", ""))) if content != null else null
+	var job_name := job.name if job != null else "your job"
+	match event.get("type"):
+		&"wages_paid":
+			return "Payday: %s wages in the bank" % Money.format(int(data.get("amount", 0)))
+		&"shift_missed":
+			return "You missed your shift (%s)" % job_name
+		&"job_warning":
+			return "Your boss warned you about your work (%s)" % job_name
+		&"promoted":
+			return "Promoted: you're now %s!" % String(data.get("title", ""))
+		&"fired":
+			return "You were fired from your job as %s" % job_name
+	return ""
+
+
 ## The notice a sim event deserves for the player ("" for none). `content` names the
 ## interaction of a failed action (its id is used without it).
 static func notice_for_event(event: Dictionary, player_id: int, content: ContentDB = null, sim: Sim = null) -> String:
@@ -78,6 +97,9 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		var at: WorldObject = Jobs.workplace(sim, sim.world.get_person(player_id))
 		var where: ObjectDef = content.object_def(at.def_id) if at != null and content != null else null
 		return "Work at %02d:%02d: %s%s" % [start.hour(), start.minute(), job.name if job != null else "your job", " (%s)" % where.name if where != null else ""]
+	var career := career_notice(event, content)
+	if not career.is_empty():
+		return career
 	if event.get("type") == &"path_failed":
 		return "Can't get there"
 	var reason := String(data.get("reason", ""))
