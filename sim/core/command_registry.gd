@@ -32,6 +32,8 @@ static func create(type_id: String) -> Command:
 			return RegisterUnemployedCommand.new()
 		"rent_flat":
 			return RentFlatCommand.new()
+		"change_outfit":
+			return ChangeOutfitCommand.new()
 	return null
 
 

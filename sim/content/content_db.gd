@@ -64,6 +64,8 @@ var _place_grid: Dictionary[int, PackedInt32Array] = {}
 var _place_list: Array[PlaceDef] = []
 var _place_area: Vector2i = Vector2i.ZERO
 var _place_signature: int = -1
+## Derived: object def id -> true for objects free will may use (free_will_objects).
+var _free_will_objects: Dictionary[String, bool] = {}
 
 
 static func load_default() -> ContentDB:
@@ -219,5 +221,18 @@ func discovery(id: String) -> DiscoveryDef:
 
 
 ## The interaction with this id, or null.
+## Object def ids offering something free will may choose: an interaction that advertises a
+## need or is a cash errand. Built once; free will skips other objects without pathfinding to
+## them (wardrobes, notice boards...).
+func free_will_objects() -> Dictionary[String, bool]:
+	if _free_will_objects.is_empty():
+		for def: ObjectDef in objects.values():
+			for candidate: InteractionDef in interactions.values():
+				if (not candidate.advertise.is_empty() or candidate.cash_out > 0) and Array(candidate.object_tags).any(func(tag: String) -> bool: return def.tags.has(tag)):
+					_free_will_objects[def.id] = true
+					break
+	return _free_will_objects
+
+
 func interaction(id: String) -> InteractionDef:
 	return interactions.get(id)

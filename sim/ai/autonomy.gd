@@ -37,7 +37,7 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 	for id: int in ids:
 		var obj: WorldObject = sim.world.objects[id]
 		var near := obj.origin.z == here.z and maxi(absi(obj.origin.x - here.x), absi(obj.origin.y - here.y)) <= SEARCH_RADIUS
-		if not near and not far_defs.has(obj.def_id):
+		if (not near and not far_defs.has(obj.def_id)) or not sim.content.free_will_objects().has(obj.def_id):
 			continue
 		var lot := Lots.lot_at(sim, obj.origin)
 		if lot != null and not Lots.may_enter(sim, person, lot):

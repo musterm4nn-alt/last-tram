@@ -49,6 +49,9 @@ var adds_groceries: int = 0
 ## Sold over a counter (T-0065): only while someone works an on-site shift on the target's
 ## place (Requirements "not_staffed"). Object targets only.
 var staffed: bool = false
+## A screen the view opens for the player when it finishes (T-0072: "wardrobe"); the sim
+## only emits &"screen_requested" {person_id, screen}.
+var opens_screen: String = ""
 ## Practice (T-0071): skill id -> XP per hour while doing it.
 var skill_xp: Dictionary[String, float] = {}
 ## Its finish_needs grow with this skill (Skills.finish_factor; cooking).

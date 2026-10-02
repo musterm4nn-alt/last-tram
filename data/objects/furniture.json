@@ -275,6 +275,33 @@
 			],
 			"price": 90000,
 			"debug_color": "#4a4e69"
+		},
+		{
+			"id": "wardrobe",
+			"name": "Wardrobe",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"wardrobe"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 30000,
+			"debug_color": "#6b4f3a"
 		}
 	]
 }

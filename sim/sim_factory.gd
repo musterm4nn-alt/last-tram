@@ -52,6 +52,7 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 		person.benefit_registered = person.id != sim.world.player_id  # the player registers on the phone
 	Money.give_start(sim)
 	Groceries.give_start(sim)
+	Wardrobe.give_start(sim)
 	return sim
 
 

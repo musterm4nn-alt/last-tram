@@ -81,6 +81,14 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 		s.text(key, path + ".needs key")
 		s.number(needs[key], path + ".needs." + str(key), 0.0, 100.0)
 	_appearance(s.dictionary(p.get("appearance", {}), path + ".appearance"), s, path + ".appearance")
+	for entry: Variant in s.list(p.get("wardrobe", []), path + ".wardrobe"):
+		var owned := s.dictionary(entry, path + ".wardrobe[]")
+		s.text(owned.get("item", ""), path + ".wardrobe[].item")
+		s.text(owned.get("colour", ""), path + ".wardrobe[].colour")
+	var saved := s.dictionary(p.get("outfits", {}), path + ".outfits")
+	for name: Variant in saved:
+		s.text(name, path + ".outfits key")
+		s.dictionary(saved[name], path + ".outfits." + str(name))
 	var outfit := s.dictionary(p.get("outfit", {}), path + ".outfit")
 	for key: Variant in outfit:
 		s.text(key, path + ".outfit key")

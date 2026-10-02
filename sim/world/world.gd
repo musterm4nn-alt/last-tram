@@ -176,6 +176,8 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		for need_id: String in person.needs.keys():
 			if content.need(need_id) == null:
 				person.needs.erase(need_id)
+		# Clothes the content no longer has are dropped from the wardrobe.
+		person.wardrobe = person.wardrobe.filter(func(w: WornItem) -> bool: return content.clothing_def(w.clothing_id) != null)
 		# Skills the content no longer has are dropped.
 		for skill_id: String in person.skills.keys():
 			if content.skill(skill_id) == null:

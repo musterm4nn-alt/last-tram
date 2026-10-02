@@ -38,6 +38,7 @@ var _pause_menu: PauseMenu
 var _town_map: TownMap
 var _phone: Phone
 var _scene_popup: ScenePopup
+var _wardrobe: WardrobeScreen
 var _menu: MainMenu
 var _creator: CharacterCreator
 var _options: LaunchOptions
@@ -72,6 +73,8 @@ func _ready() -> void:
 	add_child(_phone)
 	_scene_popup = ScenePopup.new()
 	add_child(_scene_popup)
+	_wardrobe = WardrobeScreen.new()
+	add_child(_wardrobe)
 	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
 	# would inherit the camera's zoom).
 	_interaction_menu = InteractionMenu.new()
@@ -141,6 +144,11 @@ func _process(_delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _scene_popup.is_open:
 		return  # its button takes Enter and Space
+	if _wardrobe.is_open:
+		if event.is_action_pressed("menu"):
+			get_viewport().set_input_as_handled()
+			_wardrobe.close()
+		return
 	if _town_map.is_open and (event.is_action_pressed("menu") or event.is_action_pressed("map")):
 		get_viewport().set_input_as_handled()
 		_town_map.close()

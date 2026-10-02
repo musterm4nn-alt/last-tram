@@ -2,8 +2,14 @@
 	"_doc": "Home interactions for the M1 flat (T-0011). Same rules as basics.json; without \"advertise\", an interaction advertises its finish_needs (T-0077).",
 	"interactions": [
 		{
-			"id": "cook_meal", "uses_groceries": 2, "skill_xp": { "cooking": 60 }, "finish_skill": "cooking",
-			"name": "Cook a meal", "finish_moodlet": "good_meal",
+			"id": "cook_meal",
+			"uses_groceries": 2,
+			"skill_xp": {
+				"cooking": 60
+			},
+			"finish_skill": "cooking",
+			"name": "Cook a meal",
+			"finish_moodlet": "good_meal",
 			"object_tags": [
 				"stove"
 			],
@@ -18,7 +24,8 @@
 		},
 		{
 			"id": "take_shower",
-			"name": "Take a shower", "finish_moodlet": "fresh",
+			"name": "Take a shower",
+			"finish_moodlet": "fresh",
 			"object_tags": [
 				"shower"
 			],
@@ -62,7 +69,10 @@
 			}
 		},
 		{
-			"id": "browse_web", "skill_xp": { "logic": 20 },
+			"id": "browse_web",
+			"skill_xp": {
+				"logic": 20
+			},
 			"name": "Browse the web",
 			"object_tags": [
 				"computer"
@@ -90,6 +100,18 @@
 			"advertise": {
 				"social": 45
 			}
+		},
+		{
+			"id": "change_clothes",
+			"name": "Change clothes",
+			"opens_screen": "wardrobe",
+			"object_tags": [
+				"wardrobe"
+			],
+			"duration_minutes": 2,
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
 		}
 	]
 }

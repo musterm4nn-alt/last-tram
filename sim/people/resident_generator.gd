@@ -48,6 +48,7 @@ static func newcomers(sim: Sim, lot: Lot) -> Household:
 		var person := sim.world.get_person(member_id)
 		person.benefit_registered = true
 		Money.give_resident_start(sim, person, money)
+		Wardrobe.give_person_start(sim, person, sim.rng.stream("wardrobe"))
 	var range_ := sim.content.economy.start_groceries
 	household.groceries = sim.rng.stream("groceries").randi_range(range_.x, range_.y)
 	return household

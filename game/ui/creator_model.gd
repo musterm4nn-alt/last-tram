@@ -20,6 +20,9 @@ const LIST_FIELDS: Dictionary = {
 }
 
 var spec: CharacterSpec
+## The wardrobe (T-0072): when set, clothes come only from these owned items (item + colour).
+var owned: Array[WornItem] = []
+var only_owned: bool = false
 
 var _content: ContentDB
 
@@ -137,14 +140,14 @@ func toggle_feature(id: String) -> void:
 	spec.appearance.features = wanted
 
 
-## Starter items for a slot in file order. Optional slots start with "" (wear nothing);
+## Starter items (or, with only_owned, owned items) for a slot in file order. Optional slots start with "" (wear nothing);
 ## required slots (ClothingDef.REQUIRED_SLOTS) never offer "".
 func clothing_options(slot: String) -> PackedStringArray:
 	var out := PackedStringArray()
 	if not ClothingDef.REQUIRED_SLOTS.has(slot):
 		out.append("")
 	for item: ClothingDef in _content.clothing.values():
-		if item.slot == slot and item.starter:
+		if item.slot == slot and (_colours_for(item.id).size() > 0 if only_owned else item.starter):
 			out.append(item.id)
 	return out
 
@@ -167,8 +170,21 @@ func previous_clothing(slot: String) -> void:
 
 ## Colours of the item worn in `slot` ([] when nothing is worn).
 func colour_options(slot: String) -> PackedStringArray:
-	var def := _content.clothing_def(clothing(slot))
-	return def.colours if def != null else PackedStringArray()
+	return _colours_for(clothing(slot))
+
+
+## The colours an item can be worn in: its catalog colours, or with only_owned the ones owned.
+func _colours_for(item_id: String) -> PackedStringArray:
+	var def := _content.clothing_def(item_id)
+	if def == null:
+		return PackedStringArray()
+	if not only_owned:
+		return def.colours
+	var out := PackedStringArray()
+	for colour: String in def.colours:
+		if owned.any(func(w: WornItem) -> bool: return w.clothing_id == item_id and w.colour == colour):
+			out.append(colour)
+	return out
 
 
 ## Chooses a colour for the item worn in `slot` (ignored when it does not come in it).
@@ -244,8 +260,8 @@ func _step_clothing(slot: String, direction: int) -> void:
 	if chosen.is_empty():
 		spec.outfit.take_off(slot)
 		return
-	var def := _content.clothing_def(chosen)
-	spec.outfit.put_on(slot, chosen, def.colours[0] if def != null and not def.colours.is_empty() else "")
+	var colours := _colours_for(chosen)
+	spec.outfit.put_on(slot, chosen, colours[0] if not colours.is_empty() else "")
 
 
 ## The index one step from `at` in a list of `count` (wrapping). From an unknown value
