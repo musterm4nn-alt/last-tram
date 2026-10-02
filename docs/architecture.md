@@ -53,23 +53,43 @@ sim/                      pure simulation (no Nodes)
   content/                ContentDB, ContentReader, one *Loader per kind of content, *Def
                           classes (the only sim code allowed to read files)
   world/                  World (all entities), WorldGrid (cells, levels, terrain),
-                          WorldObject, Pathfinder (walking routes, `sim.nav`)
-  people/                 Person, Appearance, Outfit, CharacterSpec, Mood (later: personality,
-                          skills, memory...)
+                          WorldObject, Pathfinder (walking routes, `sim.nav`), Lot/Lots
+                          (access, opening hours), TierSettings, WorkSettings
+  people/                 Person, Household, ResidentGenerator, Appearance, Outfit,
+                          CharacterSpec, Personality, Mood, Names
   actions/                Action (one queued or running interaction, saved in the person's
-                          queue), Interactions (queries: what an object offers, slots)
-  systems/                SimSystem subclasses (ActionSystem, MovementSystem, NeedsSystem)
-  save/                   SaveCodec, SaveMigrations
+                          queue), Interactions (what an object offers, slots), Requirements
+                          (what a person may do now, and why not)
+  ai/                     free will: Autonomy (options and the pick), Utility (scores),
+                          Routines (daily rhythm, home needs)
+  social/                 Social (relationships, moodlets, memories), Conversations,
+                          Relationship, Memory, Moodlet
+  economy/                Money, Wallet, Ledger, Groceries, Housing (rent, bills, benefit)
+  jobs/                   Jobs (positions, shifts), Employment, Careers (pay, performance),
+                          Hiring, WorkSession/RabbitHoleWork/WorkSessions, WorkResult
+  systems/                SimSystem subclasses, in Sim.default_systems() order (below),
+                          plus SocialActions (talking to people, used by ActionSystem)
+  save/                   SaveCodec, SaveMigrations, SaveValidator/SavePersonValidator/
+                          SaveSchema, Replay
 game/                     Godot side
   session.gd              autoload "Session": owns the Sim, runs it, loads and saves
   main.tscn / main.gd     entry point; builds views and UI; command-line options
+  launch_options.gd       the command-line options (screenshots, tools)
+  save_slots.gd           save slots and autosave; save_file.gd writes atomically
   input/                  InputActions (bindings in code), PlayerController
-  view2d/                 WorldView2D, PeopleView2D, PersonView2D, CameraRig2D, placeholder tiles
-  ui/                     Hud, DebugOverlay
+  view2d/                 WorldView2D, ObjectsView2D, PeopleView2D, PersonView2D,
+                          CameraRig2D, PathMarker2D, placeholder tiles
+  dialogue/               speech-bubble text for the view
+  ui/                     Hud, NeedsPanel, InteractionMenu, ActionQueuePanel, PersonInspector,
+                          PauseMenu, MainMenu, CharacterCreator, MapView/TownMap,
+                          BubblesLayer, ScenePopup, DebugOverlay...
+    phone/                Phone and its apps (BankApp, JobsApp, ContactsApp)
 data/                     content JSON + district ASCII maps
-tests/                    runner, TestCase base, sim tests, lint tests, fixtures
-tools/                    check/test/run/simrun/screenshot/tickets scripts
-docs/                     vision, roadmap, architecture, design/, conventions, cookbook, workflow
+tests/                    runner, TestCase base, sim/ (behaviour), game/ (UI logic and
+                          wording), lint/ (architecture rules, docs), fixtures
+tools/                    check/test/run/simrun/screenshot/tickets scripts, TownCheck
+docs/                     vision, roadmap, architecture, decisions, design/, conventions,
+                          cookbook, workflow, playtesting, handoff
 tickets/                  one markdown file per ticket
 art/                      art sources and exports (after the art gate)
 ```
@@ -89,8 +109,8 @@ art/                      art sources and exports (after the art gate)
 
 ### State: World and entities
 
-- `World` owns everything that changes: `grid`, `people`, `objects`, and later `lots`,
-  `households`, `vehicles`...
+- `World` owns everything that changes: `grid`, `people`, `objects`, `lots`, `households`,
+  the `ledger` and the world settings (`tiers`, `work`); later `vehicles`...
 - **Entities reference each other by integer id**, never by object reference, in anything that
   is saved. Ids come from `World.new_id()` and are unique across all kinds of entity.
 - Derived caches (walkability, pathfinding graphs in `sim.nav`, spatial indexes) are allowed,
@@ -101,10 +121,11 @@ art/                      art sources and exports (after the art gate)
 
 - A `SimSystem` has `step(sim)` and `on_minute(sim)` and **no state of its own**. The order is
   defined in one place: `Sim.default_systems()`.
-- Today: tiers → actions → movement → needs → social → autonomy (see the comment on
-  `Sim.default_systems()`). M3 adds `WorkSystem` before autonomy (obligations go before free
-  will: leaving for a shift, missed shifts) and `EconomySystem` (the weekly cycle: benefit,
-  rent, wages). Crime and police come in M4.
+- Today: Tier → Action → Movement → Needs → Social → Work → Economy → Autonomy (see the
+  comment on `Sim.default_systems()`). `WorkSystem` goes before free will (obligations
+  first: leaving for a shift, settling shifts, missed shifts); `EconomySystem` runs the
+  weekly cycle (benefit, rent, wages); `AutonomySystem` goes last, after the minute's needs
+  have changed. Crime and police come in M4.
 
 ### Input: Commands
 
@@ -207,28 +228,14 @@ Each placeholder has a seam, so the real thing can replace it without touching t
 
 ## Module plan (where upcoming systems will live)
 
+Only what is still to come; the folder map above shows where built systems live.
+
 | Milestone | Module | Location |
 |---|---|---|
-| M1 | Object defs, world objects, spatial index | `sim/content/object_def.gd`, `sim/world/world_object.gd` |
-| M1 | Pathfinding (AStarGrid2D per level, derived cache) | `sim/world/pathfinder.gd` |
-| M1 | Needs, mood | `sim/people/needs.gd`, `sim/systems/needs_system.gd` |
-| M1 | Interactions and actions | `sim/content/interaction_def.gd`, `sim/actions/`, `sim/systems/action_system.gd` |
-| M1 | Autonomy (utility AI) | `sim/ai/`, `sim/systems/autonomy_system.gd` |
-| M1 | Identity, appearance, outfits, character specs | `sim/people/appearance.gd`, `outfit.gd`, `worn_item.gd`, `character_spec.gd`; `sim/content/appearance_catalog.gd`, `clothing_def.gd` |
-| M1 | Main menu, character creator, portrait | `game/launch_options.gd`, `game/ui/main_menu.gd`, `creator_model.gd`, `character_creator.gd`, `figure_preview.gd`, `character_portrait.gd`, `look_gallery.gd` |
-| M1 | Command mode, interaction menu, queue panel | `game/input/player_controller.gd`, `game/ui/interaction_menu.gd`, `action_queue_panel.gd`, `game/view2d/path_marker_2d.gd` |
-| M1 | Save slots, autosave, Esc menu | `game/save_slots.gd`, `game/ui/pause_menu.gd`, `save_list.gd` |
-| M1 | Running, minimap and town map | `sim/commands/set_running_command.gd`, `game/ui/map_view.gd`, `town_map.gd` |
-| M1 | Replays and F9 bug reports | `sim/save/replay.gd`, `tools/replay_files.gd`, `tools/replay.gd`, `game/session.gd` |
-| M2 | Lots, households, residents | `sim/world/lot.gd`, `sim/people/household.gd`, `sim/people/generator.gd` |
-| M2 | Relationships, memories | `sim/social/` |
-| M2 | Simulation tiers | `sim/systems/tier_system.gd` |
-| M2 | Scenes (presentation only) | `sim/content/scene_def.gd`, `data/scenes/`, `game/ui/scene_popup.gd` |
-| M3 | Money, ledger, groceries, rent, the weekly cycle | `sim/economy/` (`Wallet`, `Money`, `Ledger`, later `Lease`), `sim/systems/economy_system.gd`, `data/economy.json` |
-| M3 | Requirements (what a person may do now, and why not) | `sim/actions/requirements.gd` |
-| M3 | Jobs, positions, work sessions | `sim/content/job_def.gd`, `data/jobs.json`, `sim/jobs/` (`Employment`, `Jobs`, `WorkSession`, `RabbitHoleWork`, `OnSiteWork`), `sim/systems/work_system.gd` |
-| M3 | Phone | `game/ui/phone/` (one file per app) |
-| M3 | Discoveries | `sim/content/discovery_def.gd`, `data/discoveries/`, `sim/discoveries/` |
+| M3 | Staffed counters (on-site work) | `sim/jobs/on_site_work.gd` (`OnSiteWork`, registered in `WorkSessions`) |
+| M3 | Eviction, sleeping rough, moving | `sim/economy/housing.gd`, `sim/world/lots.gd` |
+| M3 | Discoveries | `sim/content/discovery_def.gd`, `data/discoveries/`, `sim/discoveries/`, the Notebook app in `game/ui/phone/` |
+| M3 | Skills, wardrobe, backgrounds | `sim/people/` (skills, owned clothes), `sim/content/` (backgrounds), `game/ui/` (creator) |
 | M4 | Health, crime, witnesses, police | `sim/crime/`, `sim/health/` |
 | M5 | Build mode rules | `sim/build/` (commands + validation) |
 | M5 | Content packs, settings | `sim/content/pack_loader.gd`, `game/settings.gd`, `game/ui/packs_screen.gd`, `examples/packs/` |
