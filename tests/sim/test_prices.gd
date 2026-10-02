@@ -140,8 +140,8 @@ func test_free_will_skips_what_it_cannot_afford() -> void:
 	resident.level = 0
 	var offers := func() -> PackedStringArray:
 		var ids := PackedStringArray()
-		for option: Dictionary in Autonomy.candidates(sim, resident):
-			ids.append(String(option["interaction_id"]))
+		for option: AutonomyOption in Autonomy.candidates(sim, resident):
+			ids.append(option.interaction_id)
 		return ids
 	assert_has(offers.call(), "have_a_drink")
 	Money.spend(sim, resident, resident.wallet.total(), "purchase")

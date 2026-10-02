@@ -11,6 +11,8 @@ const MIN_AGE: int = 18
 const MAX_QUEUE: int = 6
 ## Running speed as a multiple of walk_speed (see move_speed()).
 const RUN_FACTOR: float = 2.0
+## Fields to_dict() leaves out on purpose (the save-field coverage test checks the rest).
+const NOT_SAVED: PackedStringArray = ["prev_pos"]
 
 var id: int = 0
 var first_name: String = ""

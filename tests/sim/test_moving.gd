@@ -97,13 +97,13 @@ func test_homeless_sleep_rough() -> void:
 	sim.clock.tick = SimClock.ticks_for(1, 23)
 	person.needs["energy"] = 15.0
 	var options: Array = []
-	for option: Dictionary in Autonomy.candidates(sim, person):
-		options.append(option["interaction_id"])
+	for option: AutonomyOption in Autonomy.candidates(sim, person):
+		options.append(option.interaction_id)
 	assert_has(options, "sleep_rough")
 	assert_false(options.has("sleep"))
 	var resident := _members(sim, _household_after(sim, household))[0]
-	for option: Dictionary in Autonomy.candidates(sim, resident):
-		assert_ne(option["interaction_id"], "sleep_rough", "housed neighbours don't")
+	for option: AutonomyOption in Autonomy.candidates(sim, resident):
+		assert_ne(option.interaction_id, "sleep_rough", "housed neighbours don't")
 	# Sleeping rough is worse than a bed.
 	var sleep := content().interaction("sleep")
 	assert_true(rough.need_rates["energy"] < sleep.need_rates["energy"])

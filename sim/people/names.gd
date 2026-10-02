@@ -8,7 +8,7 @@ const MAX_LENGTH: int = 24
 
 ## Letters (any language, e.g. "Jürgen", "Łukasz"; combining accents allowed), spaces,
 ## hyphens and apostrophes; must start with a letter.
-static var _valid_name_regex: RegEx = RegEx.create_from_string("^\\p{L}[\\p{L}\\p{M} '\\-]*$")
+static var _valid_name_regex: RegEx = RegEx.create_from_string("^\\p{L}[\\p{L}\\p{M} '\\-]*$")  # lint-ok: a compiled pattern
 
 
 ## True when `text` is a usable name, e.g. "Anne-Marie", "O'Neill", "Nguyễn".

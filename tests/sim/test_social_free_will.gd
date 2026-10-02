@@ -11,12 +11,12 @@ func _pair() -> Array:
 	return [sim, sim.world.player(), other]
 
 
-func _best_social(sim: Sim, person: Person) -> Dictionary:
-	var best: Dictionary = {}
-	for option: Dictionary in Autonomy.candidates(sim, person):
-		if sim.world.get_person(int(option["object_id"])) == null:
+func _best_social(sim: Sim, person: Person) -> AutonomyOption:
+	var best: AutonomyOption = null
+	for option: AutonomyOption in Autonomy.candidates(sim, person):
+		if option.target_kind != AutonomyOption.PERSON:
 			continue
-		if best.is_empty() or float(option["score"]) > float(best["score"]):
+		if best == null or option.score > best.score:
 			best = option
 	return best
 
@@ -46,7 +46,7 @@ func test_content_people_leave_strangers_alone() -> void:
 	a.needs["social"] = 100.0
 	a.needs["fun"] = 100.0
 	var best := _best_social(sim, a)
-	assert_true(float(best["score"]) < Autonomy.MIN_SCORE, "best social option %s" % [best])
+	assert_true(best.score < Autonomy.MIN_SCORE, "best social option %s" % [best.to_dict()])
 
 
 func test_insults_need_dislike_or_a_hot_temper() -> void:

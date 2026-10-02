@@ -272,8 +272,8 @@ func test_people_out_of_cash_go_to_the_atm() -> void:
 	var player := sim.world.player()
 	player.job = null
 	Money.spend(sim, player, player.wallet.cash, "purchase")
-	var options := Autonomy.candidates(sim, player).map(func(o: Dictionary) -> String: return o["interaction_id"])
+	var options := Autonomy.candidates(sim, player).map(func(o: AutonomyOption) -> String: return o.interaction_id)
 	assert_true(options.has("withdraw_20") or options.has("withdraw_50"), "no cash: the ATM is an errand")
 	Money.withdraw(sim, player, 2000)
-	options = Autonomy.candidates(sim, player).map(func(o: Dictionary) -> String: return o["interaction_id"])
+	options = Autonomy.candidates(sim, player).map(func(o: AutonomyOption) -> String: return o.interaction_id)
 	assert_false(options.has("withdraw_20"), "cash in the pocket: no ATM trip")

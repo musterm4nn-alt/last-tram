@@ -5,20 +5,41 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  GODOT_VERSION: 4.7.1
+  # SHA-256 of Godot_v4.7.1-stable_linux.x86_64.zip (T-0078: a changed download fails the job).
+  GODOT_SHA256: c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Godot
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot-cache
+          key: godot-${{ env.GODOT_VERSION }}-${{ env.GODOT_SHA256 }}
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/godot.zip \
-            "https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
-          unzip -q /tmp/godot.zip -d /tmp/godot
+          mkdir -p ~/godot-cache
+          curl -fsSL -o ~/godot-cache/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+      - name: Install Godot (checksum verified)
+        run: |
+          set -euo pipefail
+          echo "${GODOT_SHA256}  $HOME/godot-cache/godot.zip" | sha256sum --check --strict
+          unzip -q -o ~/godot-cache/godot.zip -d /tmp/godot
           mkdir -p "$HOME/.local/bin"
-          mv /tmp/godot/Godot_v4.7.1-stable_linux.x86_64 "$HOME/.local/bin/godot"
+          mv "/tmp/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$HOME/.local/bin/godot"
           chmod +x "$HOME/.local/bin/godot"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check
-        run: tools/check.sh
+        run: |
+          set -o pipefail
+          tools/check.sh | tee check.log
+          # The suite must really have run and passed (T-0078).
+          grep -q "^LAST_TRAM_TESTS: PASSED" check.log

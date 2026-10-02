@@ -104,8 +104,8 @@ func _resident(sim: Sim, portions: int, hunger: float) -> Person:
 
 func _options(sim: Sim, person: Person) -> PackedStringArray:
 	var ids := PackedStringArray()
-	for option: Dictionary in Autonomy.candidates(sim, person):
-		ids.append(String(option["interaction_id"]))
+	for option: AutonomyOption in Autonomy.candidates(sim, person):
+		ids.append(option.interaction_id)
 	return ids
 
 

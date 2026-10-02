@@ -30,11 +30,11 @@ func _set_needs(person: Person, needs: Dictionary) -> void:
 		person.needs[need_id] = float(needs[need_id])
 
 
-func _option(options: Array[Dictionary], interaction_id: String) -> Dictionary:
-	for option: Dictionary in options:
-		if option["interaction_id"] == interaction_id:
+func _option(options: Array[AutonomyOption], interaction_id: String) -> AutonomyOption:
+	for option: AutonomyOption in options:
+		if option.interaction_id == interaction_id:
 			return option
-	return {}
+	return null
 
 
 func test_urgency_grows_steeply_as_a_need_empties() -> void:
@@ -65,29 +65,29 @@ func test_candidates_in_the_flat_score_food_by_need_and_distance() -> void:
 	var options := Autonomy.candidates(sim, player)
 	for interaction_id: String in ["grab_snack", "cook_meal"]:
 		var option := _option(options, interaction_id)
-		assert_false(option.is_empty(), "%s should be an option" % interaction_id)
-		if option.is_empty():
+		assert_true(option != null, "%s should be an option" % interaction_id)
+		if option == null:
 			continue
-		var obj := sim.world.get_object(int(option["object_id"]))
+		var obj := sim.world.get_object(option.target_id)
 		var path := sim.nav.find_path(player.cell(), obj.slot_cell(sim.content, 0))
-		assert_eq(int(option["cells"]), path.size())
+		assert_eq(option.cells, path.size())
 		var expected := Utility.need_score(player, sim.content.interaction(interaction_id), sim.content) - 0.1 * path.size()
-		assert_near(float(option["score"]), expected)
+		assert_near(option.score, expected)
 
 
 func test_objects_out_of_reach_give_no_options() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var street_fridge := _place(sim, "fridge", Vector3i(36, 22, 0))
 	var player := sim.world.player()
-	for option: Dictionary in Autonomy.candidates(sim, player):
-		assert_ne(int(option["object_id"]), street_fridge.id, "13+ cells away is out of reach")
+	for option: AutonomyOption in Autonomy.candidates(sim, player):
+		assert_ne(option.target_id, street_fridge.id, "13+ cells away is out of reach")
 
 
 func test_a_taken_or_blocked_slot_gives_no_option() -> void:
 	var sim := SimFactory.from_rows(content(), KITCHEN)
 	var fridge := _place(sim, "fridge", Vector3i(6, 1, 0))
 	var player := sim.world.player()
-	assert_false(_option(Autonomy.candidates(sim, player), "grab_snack").is_empty())
+	assert_true(_option(Autonomy.candidates(sim, player), "grab_snack") != null)
 	# Someone else is walking to the fridge's only slot.
 	var other := Person.new()
 	other.id = sim.world.new_id()
@@ -97,35 +97,32 @@ func test_a_taken_or_blocked_slot_gives_no_option() -> void:
 	action.slot_index = 0
 	other.action_queue.append(action)
 	sim.world.add_person(other)
-	assert_true(_option(Autonomy.candidates(sim, player), "grab_snack").is_empty(), "the slot is taken")
+	assert_true(_option(Autonomy.candidates(sim, player), "grab_snack") == null, "the slot is taken")
 	other.action_queue.clear()
 	# Something stands on the fridge's only slot.
 	_place(sim, "stove", fridge.slot_cell(sim.content, 0))
-	assert_true(_option(Autonomy.candidates(sim, player), "grab_snack").is_empty(), "the slot is blocked")
+	assert_true(_option(Autonomy.candidates(sim, player), "grab_snack") == null, "the slot is blocked")
 
 
 func test_choose_returns_nothing_when_everything_is_below_the_minimum() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3
-	var options: Array[Dictionary] = [
-		{"object_id": 1, "interaction_id": "a", "score": 1.0, "cells": 0},
-		{"object_id": 2, "interaction_id": "b", "score": -4.0, "cells": 0},
-	]
+	var options: Array[AutonomyOption] = [AutonomyOption.new(1, "a", 1.0, 0), AutonomyOption.new(2, "b", -4.0, 0)]
 	for i: int in 50:
-		assert_eq(Autonomy.choose(options, rng), {})
+		assert_eq(Autonomy.choose(options, rng), null)
 
 
 func test_choose_picks_among_the_best_three_mostly_the_best() -> void:
-	var options: Array[Dictionary] = []
+	var options: Array[AutonomyOption] = []
 	for score: float in [20.0, 5.0, 40.0, 4.0, 12.0]:
-		options.append({"object_id": 1, "interaction_id": "s%d" % int(score), "score": score, "cells": 0})
+		options.append(AutonomyOption.new(1, "s%d" % int(score), score, 0))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
 	var counts: Dictionary = {}
 	var sequence: Array[String] = []
 	for i: int in 1000:
 		var pick := Autonomy.choose(options, rng)
-		var id := String(pick["interaction_id"])
+		var id := pick.interaction_id
 		counts[id] = int(counts.get(id, 0)) + 1
 		sequence.append(id)
 	for id: String in counts:
@@ -135,7 +132,7 @@ func test_choose_picks_among_the_best_three_mostly_the_best() -> void:
 	var again := RandomNumberGenerator.new()
 	again.seed = 42
 	for i: int in 20:
-		assert_eq(String(Autonomy.choose(options, again)["interaction_id"]), sequence[i], "same seed, same picks")
+		assert_eq(Autonomy.choose(options, again).interaction_id, sequence[i], "same seed, same picks")
 
 
 func test_a_hungry_person_prefers_cooking_to_a_snack() -> void:
@@ -148,8 +145,8 @@ func test_a_hungry_person_prefers_cooking_to_a_snack() -> void:
 	var options := Autonomy.candidates(sim, player)
 	var cook := _option(options, "cook_meal")
 	var snack := _option(options, "grab_snack")
-	assert_eq(int(cook["cells"]), int(snack["cells"]), "the setup should be symmetric")
-	assert_true(float(cook["score"]) > float(snack["score"]), "cooking advertises more hunger")
+	assert_eq(cook.cells, snack.cells, "the setup should be symmetric")
+	assert_true(cook.score > snack.score, "cooking advertises more hunger")
 
 
 func test_with_only_a_fridge_a_hungry_person_grabs_a_snack() -> void:
@@ -159,4 +156,5 @@ func test_with_only_a_fridge_a_hungry_person_grabs_a_snack() -> void:
 	_set_needs(player, {"hunger": 30.0})
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1
-	assert_eq(String(Autonomy.choose(Autonomy.candidates(sim, player), rng).get("interaction_id", "")), "grab_snack")
+	var pick := Autonomy.choose(Autonomy.candidates(sim, player), rng)
+	assert_eq(pick.interaction_id if pick != null else "", "grab_snack")

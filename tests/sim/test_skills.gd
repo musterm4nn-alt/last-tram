@@ -125,7 +125,9 @@ func test_charisma_helps_conversations_and_interviews() -> void:
 	player.skills["charisma"] = _xp(5)
 	var charming := Conversations.acceptance(sim, player, other, chat)
 	var logit := func(p: float) -> float: return log(p / (1.0 - p))
-	assert_near(logit.call(charming) - logit.call(plain), 5 * content().skill_rules.charisma_per_level, 0.0001)
+	# The curve is a table since T-0078 (within 0.001 of 1 / (1 + e^-x)), so the logit comes back
+	# within a few hundredths.
+	assert_near(logit.call(charming) - logit.call(plain), 5 * content().skill_rules.charisma_per_level, 0.02)
 	assert_near(Conversations.acceptance(sim, player, other, insult), plain_insult, 0.0001, "charm doesn't make insults land")
 	var job := content().job("bartender")
 	player.skills.erase("charisma")

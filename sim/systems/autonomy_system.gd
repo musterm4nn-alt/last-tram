@@ -28,18 +28,18 @@ func on_minute(sim: Sim) -> void:
 		if Routines.sleeping_time(sim, person) and _head_home(sim, person):
 			continue
 		var choice := Autonomy.decide(sim, person, sim.rng.stream("autonomy"))
-		if choice.is_empty():
+		if choice == null:
 			if not _head_home(sim, person):
 				person.autonomy_retry_tick = sim.clock.tick + RETRY_MINUTES * SimClock.STEPS_PER_GAME_MINUTE
 			continue
-		var action := Action.new(String(choice["interaction_id"]), int(choice["object_id"]))
+		var action := Action.new(choice.interaction_id, choice.target_id)
 		action.id = sim.world.new_id()
 		person.action_queue.append(action)
 		sim.emit_event(&"autonomy_chose", {
 			"person_id": person.id,
-			"interaction_id": choice["interaction_id"],
-			"target_id": choice["object_id"],
-			"score": choice["score"],
+			"interaction_id": choice.interaction_id,
+			"target_id": choice.target_id,
+			"score": choice.score,
 		})
 
 
@@ -63,21 +63,21 @@ static func _see_to_home_needs(sim: Sim, person: Person) -> bool:
 ## snack; Autonomy.errand) as a free-will choice would; with `groceries_only`, only a grocery
 ## run. False when none is open and reachable.
 static func _eat_out(sim: Sim, person: Person, groceries_only: bool) -> bool:
-	var best: Dictionary = {}
-	for option: Dictionary in Autonomy.candidates(sim, person):
-		var def := sim.content.interaction(String(option["interaction_id"]))
+	var best: AutonomyOption = null
+	for option: AutonomyOption in Autonomy.candidates(sim, person):
+		var def := sim.content.interaction(option.interaction_id)
 		if def == null or not def.advertise.has("hunger") or not Autonomy.errand(sim, person, def):
 			continue
 		if groceries_only and def.adds_groceries <= 0:
 			continue
-		if best.is_empty() or float(option["score"]) > float(best["score"]):
+		if best == null or option.score > best.score:
 			best = option
-	if best.is_empty():
+	if best == null:
 		return false
-	var action := Action.new(String(best["interaction_id"]), int(best["object_id"]))
+	var action := Action.new(best.interaction_id, best.target_id)
 	action.id = sim.world.new_id()
 	person.action_queue.append(action)
-	sim.emit_event(&"autonomy_chose", {"person_id": person.id, "interaction_id": best["interaction_id"], "target_id": best["object_id"], "score": best["score"]})
+	sim.emit_event(&"autonomy_chose", {"person_id": person.id, "interaction_id": best.interaction_id, "target_id": best.target_id, "score": best.score})
 	return true
 
 
