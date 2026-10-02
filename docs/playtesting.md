@@ -51,3 +51,8 @@ playtest found in the ticket or commit, and tell the owner the highlights in gam
   when they open, both counters were labelled "Cou", and leaving a paid meal half-eaten said
   nothing (fixed together right after); the café gets almost no evening visitors (a known
   gap); money is too loose to bite until wages and rent arrive.
+- 2026-10-02, "Play: a working week" (T-0057..T-0062): pay, rent, groceries, warnings,
+  firing and promotion all worked; nobody in town missed a shift, starved or fell behind.
+  Fixed right after: lateness on someone's first shift is forgiven (day one starts at 08:00),
+  people with no cash go to the ATM, and "Work" shows its hours and wage. Noted for M4: needs
+  at zero have no consequence yet (health and hospital). The first week is rent-free by design.
