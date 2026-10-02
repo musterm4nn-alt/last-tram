@@ -56,17 +56,34 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	for amount: int in [economy.bills_week, economy.benefit_week, economy.housing_cap, economy.pension_week]:
 		if amount < 0:
 			reader.error("%s: weekly amounts must be >= 0" % path)
-	var rules := reader.read_obj(root, "performance", path)
-	for key: String in PERFORMANCE_KEYS:
-		economy.performance[key] = reader.read_num(rules, key, path + ": performance")
-		if economy.performance[key] < 0.0:
-			reader.error("%s: performance '%s' must be >= 0" % [path, key])
+	economy.performance = read_performance(reader, root, path)
 	db.economy = economy
 
 
-## Every rule data/economy.json "performance" must give (T-0061).
+## Every rule data/economy.json "performance" must give (T-0061, T-0077).
 const PERFORMANCE_KEYS: PackedStringArray = ["shift_done", "good_mood", "per_5_minutes_late", "left_early", "missed",
-	"promote_at", "promote_after_shifts", "after_promotion", "warn_below", "fire_at"]
+	"promote_at", "promote_after_shifts", "after_promotion", "warn_below", "warning_clears_at", "fire_at"]
+## The rules that are performance levels (0..100).
+const PERFORMANCE_LEVELS: PackedStringArray = ["promote_at", "after_promotion", "warn_below", "warning_clears_at", "fire_at"]
+
+
+## Reads `root`'s "performance" rules and checks they make sense together (T-0077): every
+## rule >= 0, the levels in 0..100, fire_at < warn_below < warning_clears_at <= promote_at,
+## and promote_after_shifts a whole number >= 1.
+static func read_performance(reader: ContentReader, root: Dictionary, path: String) -> Dictionary[String, float]:
+	var out: Dictionary[String, float] = {}
+	var rules := reader.read_obj(root, "performance", path)
+	for key: String in PERFORMANCE_KEYS:
+		out[key] = reader.read_num(rules, key, path + ": performance")
+		if out[key] < 0.0:
+			reader.error("%s: performance '%s' must be >= 0" % [path, key])
+		elif PERFORMANCE_LEVELS.has(key) and out[key] > 100.0:
+			reader.error("%s: performance '%s' must be 0..100" % [path, key])
+	if not (out["fire_at"] < out["warn_below"] and out["warn_below"] < out["warning_clears_at"] and out["warning_clears_at"] <= out["promote_at"]):
+		reader.error("%s: performance needs fire_at < warn_below < warning_clears_at <= promote_at" % path)
+	if out["promote_after_shifts"] < 1.0 or out["promote_after_shifts"] != floorf(out["promote_after_shifts"]):
+		reader.error("%s: performance 'promote_after_shifts' must be a whole number >= 1" % path)
+	return out
 
 
 ## A [min, max] amount range in cents (min <= max, both >= 0), or (0, 0) with an error.

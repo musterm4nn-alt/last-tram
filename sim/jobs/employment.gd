@@ -18,16 +18,22 @@ var unpaid: int = 0
 var level_shifts: int = 0
 var shifts_worked: int = 0
 var shifts_missed: int = 0
-## A warning was given and performance hasn't recovered since.
+## A warning was given and performance hasn't risen above "warning_clears_at" since.
 var warned: bool = false
-## Start tick of the last shift they turned up for (-1 = none), so a missed one is noticed.
+## Start tick of the last settled shift they worked in (-1 = none), so a missed one is noticed.
 var last_shift_start: int = -1
+## The shift being attended and not settled yet (T-0077): its start tick (-1 = none), the
+## minutes worked inside its window so far (over every segment), and how late they first came.
+var shift_start: int = -1
+var shift_minutes: int = 0
+var shift_late: int = 0
 
 
 func to_dict() -> Dictionary:
 	return {"job_id": job_id, "position": position, "level": level, "performance": performance, "hired_day": hired_day,
 		"unpaid": unpaid, "level_shifts": level_shifts, "shifts_worked": shifts_worked, "shifts_missed": shifts_missed,
-		"warned": warned, "last_shift_start": last_shift_start}
+		"warned": warned, "last_shift_start": last_shift_start, "shift_start": shift_start, "shift_minutes": shift_minutes,
+		"shift_late": shift_late}
 
 
 static func from_dict(d: Dictionary) -> Employment:
@@ -43,4 +49,7 @@ static func from_dict(d: Dictionary) -> Employment:
 	e.shifts_missed = int(d.get("shifts_missed", 0))
 	e.warned = bool(d.get("warned", false))
 	e.last_shift_start = int(d.get("last_shift_start", -1))
+	e.shift_start = int(d.get("shift_start", -1))
+	e.shift_minutes = int(d.get("shift_minutes", 0))
+	e.shift_late = int(d.get("shift_late", 0))
 	return e

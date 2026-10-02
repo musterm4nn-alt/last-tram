@@ -148,3 +148,44 @@ func test_colleagues_get_to_know_each_other() -> void:
 	sim.run_minutes(8 * 60 + 15)
 	var r := Social.relationship(player, colleague.id)
 	assert_true(r != null and r.familiarity >= Jobs.COLLEAGUE_DELTAS["familiarity"], "a shift together")
+
+
+func test_leaving_for_work_drops_an_npcs_plans_but_keeps_the_players() -> void:
+	var sim := _game(1, 12)
+	var officer := Jobs.holder(sim.world, "police_officer", 0)
+	var player := sim.world.player()
+	for person: Person in [officer, player]:
+		_put_home(sim, person)
+		for interaction_id: String in ["watch_tv", "take_shower", "grab_snack"]:
+			var action := Action.new(interaction_id, 0)
+			action.id = sim.world.new_id()
+			person.action_queue.append(action)
+		WorkSystem._go(sim, person)
+	var ids := func(person: Person) -> Array: return person.action_queue.map(func(a: Action) -> String: return a.interaction_id)
+	assert_eq(ids.call(officer), ["work"], "an NPC's later plans are stale after a shift")
+	assert_eq(ids.call(player), ["work", "take_shower", "grab_snack"], "the player's queue stays, minus the front")
+
+
+func test_only_colleagues_who_turned_up_count() -> void:
+	var sim := _game(0, 17, 5)
+	var player := sim.world.player()
+	var others: Array[Person] = []
+	for person: Person in sim.world.people.values():
+		if person.id != player.id and others.size() < 2:
+			others.append(person)
+	var there := others[0]
+	var absent := others[1]
+	var shift_start := SimClock.ticks_for(0, 9)
+	for person: Person in others:
+		person.job = Employment.new()
+		person.job.job_id = "office_clerk"
+		person.relationships.clear()
+	player.relationships.clear()
+	there.job.last_shift_start = shift_start
+	Jobs.know_colleagues(sim, player, shift_start)
+	assert_true(Social.relationship(player, there.id) != null, "worked the same day")
+	assert_true(Social.relationship(player, absent.id) == null, "on the rota but never came")
+	absent.job.shift_start = shift_start
+	absent.job.shift_minutes = 30
+	Jobs.know_colleagues(sim, player, shift_start)
+	assert_true(Social.relationship(player, absent.id) != null, "working it right now")

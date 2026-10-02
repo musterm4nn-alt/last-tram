@@ -1,0 +1,4 @@
+{
+	"_doc": "Broken on purpose (T-0077: the warning clears above the promotion level.)",
+	"performance": { "shift_done": 2.0, "good_mood": 1.0, "per_5_minutes_late": 1.0, "left_early": 10.0, "missed": 20.0, "promote_at": 80.0, "promote_after_shifts": 10, "after_promotion": 60.0, "warn_below": 25.0, "warning_clears_at": 90.0, "fire_at": 0.0 }
+}
