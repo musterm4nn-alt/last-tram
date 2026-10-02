@@ -111,8 +111,11 @@ static func _person_options(sim: Sim, person: Person) -> Array[Dictionary]:
 ## True for errands worth crossing town for (T-0057): a grocery run while the home stock is
 ## below restock_below, and food for sale (a price, advertises hunger) while hunger is below
 ## hungry_below and the home has fewer than 2 portions, and the ATM while the pocket holds
-## less than pocket_money (T-0064 playtest: pockets ran empty; data/economy.json).
+## less than pocket_money (T-0064 playtest: pockets ran empty; data/economy.json), and a bench
+## to sleep on for someone with no home (T-0066).
 static func errand(sim: Sim, person: Person, def: InteractionDef) -> bool:
+	if def.homeless_only:
+		return person.home_lot_id <= 0
 	if def.adds_groceries > 0:
 		return restock_needed(sim, person)
 	if def.cash_out > 0:

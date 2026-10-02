@@ -49,6 +49,8 @@ var adds_groceries: int = 0
 ## Sold over a counter (T-0065): only while someone works an on-site shift on the target's
 ## place (Requirements "not_staffed"). Object targets only.
 var staffed: bool = false
+## Only for people with no home (T-0066: sleeping rough); Requirements "has_home" otherwise.
+var homeless_only: bool = false
 ## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's
 ## WorkSession drives it. Work has no duration of its own.
 var work: bool = false

@@ -32,8 +32,29 @@ static func populate(sim: Sim, skip_lot_ids: Array[int]) -> void:
 		_move_in(sim, rng, lot, place)
 
 
+## Newcomers for an empty flat (T-0066): a household made as in a new town (draws from the
+## "generation" stream), with start money ("money"), groceries ("groceries") and benefit
+## registration. Null (and nothing made) when nobody fits in the flat.
+static func newcomers(sim: Sim, lot: Lot) -> Household:
+	var place := sim.content.place(lot.place_id)
+	if place == null:
+		return null
+	var household := _move_in(sim, sim.rng.stream("generation"), lot, place)
+	if household.member_ids.is_empty():
+		sim.world.households.erase(household.id)
+		return null
+	var money := sim.rng.stream("money")
+	for member_id: int in household.member_ids:
+		var person := sim.world.get_person(member_id)
+		person.benefit_registered = true
+		Money.give_resident_start(sim, person, money)
+	var range_ := sim.content.economy.start_groceries
+	household.groceries = sim.rng.stream("groceries").randi_range(range_.x, range_.y)
+	return household
+
+
 ## A household for `lot`: picks its kind and size, then creates and places its members.
-static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: PlaceDef) -> void:
+static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: PlaceDef) -> Household:
 	var household := Household.new()
 	household.id = sim.world.new_id()
 	household.kind = _pick_kind(rng)
@@ -68,6 +89,7 @@ static func _move_in(sim: Sim, rng: RandomNumberGenerator, lot: Lot, place: Plac
 			for b: int in household.member_ids:
 				if a != b:
 					Social.set_values(sim.world.get_person(a), b, BONDS[household.kind], sim.clock.tick)
+	return household
 
 
 ## How many people can sleep in `place`: the walkable use slots of its objects tagged "bed".

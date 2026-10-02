@@ -30,6 +30,8 @@ static func create(type_id: String) -> Command:
 			return QuitJobCommand.new()
 		"register_unemployed":
 			return RegisterUnemployedCommand.new()
+		"rent_flat":
+			return RentFlatCommand.new()
 	return null
 
 

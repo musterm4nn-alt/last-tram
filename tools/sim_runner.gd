@@ -150,7 +150,8 @@ func _housing_line(sim: Sim) -> String:
 			behind += 1
 			owed += lot.arrears
 			weeks = maxi(weeks, lot.weeks_behind)
-	return "housing: %d households behind on rent (owing %s in all), most weeks behind %d" % [behind, Money.format(owed), weeks]
+	return "housing: %d households behind on rent (owing %s in all), most weeks behind %d, %d homeless households, %d empty flats" % [
+		behind, Money.format(owed), weeks, Moving.homeless(sim).size(), Moving.empty_homes(sim).size()]
 
 
 ## "jobs: 17 of 21 working-age residents employed, 6 retired, 4 vacancies".

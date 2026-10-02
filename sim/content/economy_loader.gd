@@ -70,6 +70,11 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			reader.error("%s: 'gentle_profile' rate for '%s' must be a number" % [path, need_id])
 		else:
 			economy.gentle_profile[need_id] = float(gentle[need_id])
+	var housing := reader.read_obj(root, "housing", path)
+	for key: String in ["evict_after_weeks", "move_in_weeks", "move_in_hour", "vacant_days"]:
+		economy.set(key, reader.read_int(housing, key, path + ": housing"))
+	if economy.evict_after_weeks < 1 or economy.move_in_weeks < 1 or economy.vacant_days < 1 or economy.move_in_hour < 0 or economy.move_in_hour > 23:
+		reader.error("%s: housing needs evict_after_weeks, move_in_weeks and vacant_days >= 1 and move_in_hour 0..23" % path)
 	db.economy = economy
 
 

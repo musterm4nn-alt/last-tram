@@ -78,13 +78,21 @@ static func give_start(sim: Sim) -> void:
 	ids.sort()
 	for id: int in ids:
 		var person: Person = sim.world.people[id]
-		var cash := economy.player_start_cash
-		var bank := economy.player_start_bank
-		if id != sim.world.player_id:
-			cash = rng.randi_range(economy.resident_cash.x / 100, economy.resident_cash.y / 100) * 100
-			bank = rng.randi_range(economy.resident_bank.x / 100, economy.resident_bank.y / 100) * 100
-		earn(sim, person, cash, "start", CASH)
-		earn(sim, person, bank, "start", BANK)
+		if id == sim.world.player_id:
+			earn(sim, person, economy.player_start_cash, "start", CASH)
+			earn(sim, person, economy.player_start_bank, "start", BANK)
+		else:
+			give_resident_start(sim, person, rng)
+
+
+## A resident's starting cash and bank, drawn in whole euros from `rng` (new towns, and
+## newcomers moving into an empty flat, T-0066).
+static func give_resident_start(sim: Sim, person: Person, rng: RandomNumberGenerator) -> void:
+	var economy := sim.content.economy
+	var cash := rng.randi_range(economy.resident_cash.x / 100, economy.resident_cash.y / 100) * 100
+	var bank := rng.randi_range(economy.resident_bank.x / 100, economy.resident_bank.y / 100) * 100
+	earn(sim, person, cash, "start", CASH)
+	earn(sim, person, bank, "start", BANK)
 
 
 ## "€12.50", "€1,234.05", "−€3.00" (with a real minus sign).

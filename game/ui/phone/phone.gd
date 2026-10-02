@@ -1,11 +1,11 @@
 class_name Phone
 extends CanvasLayer
 ## The player's phone (P, T-0063): a panel at the bottom right with apps: Bank, Jobs (apply,
-## quit, register; T-0064), Contacts (with calls) and Map. The game keeps running while it is open. Reads sim state; calls go through
+## quit, register; T-0064), Housing (rent an empty flat; T-0066), Contacts (with calls) and Map. The game keeps running while it is open. Reads sim state; calls go through
 ## CallCommand.
 
 const WIDTH: float = 320.0
-const APPS: PackedStringArray = ["Bank", "Jobs", "Contacts", "Map"]
+const APPS: PackedStringArray = ["Bank", "Jobs", "Housing", "Contacts", "Map"]
 
 ## True while the phone is shown.
 var is_open: bool = false
@@ -119,6 +119,17 @@ func _rebuild() -> void:
 			for vacancy: Dictionary in vacancies:
 				_label(JobsApp.vacancy_text(Session.sim, vacancy))
 				_button("Apply", func() -> void: Session.submit(ApplyForJobCommand.new(player_id, vacancy["job_id"], vacancy["position"])))
+		"Housing":
+			for text: String in HousingApp.home_lines(Session.sim, player_id):
+				_label(text)
+			_label("")
+			_label("Empty flats:")
+			var flats := Moving.empty_homes(Session.sim)
+			if flats.is_empty():
+				_label("None right now.")
+			for lot: Lot in flats:
+				_label(HousingApp.flat_text(Session.sim, lot))
+				_button("Rent this flat", func() -> void: Session.submit(RentFlatCommand.new(player_id, lot.id)))
 		"Contacts":
 			var known := ContactsApp.contacts(Session.sim, player_id)
 			if known.is_empty():

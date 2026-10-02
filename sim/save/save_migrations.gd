@@ -46,11 +46,23 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v10_to_v11(d)
 			11:
 				d = _v11_to_v12(d)
+			12:
+				d = _v12_to_v13(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v13 (T-0066): no flat has been left empty yet.
+static func _v12_to_v13(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("lots", []) is Array:
+		return d
+	for lot: Variant in d["world"].get("lots", []):
+		if lot is Dictionary:
+			lot["vacant_since_day"] = -1
 	return d
 
 
