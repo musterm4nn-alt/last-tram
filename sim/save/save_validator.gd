@@ -83,6 +83,7 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 		s.integer(lot.get("close_hour", 24), "world.lots[].close_hour", 0, 24)
 		s.integer(lot.get("arrears", 0), "world.lots[].arrears")
 		s.integer(lot.get("weeks_behind", 0), "world.lots[].weeks_behind")
+		s.integer(lot.get("vacant_since_day", -1), "world.lots[].vacant_since_day", -1)
 		for day: Variant in s.list(lot.get("closed_days", []), "world.lots[].closed_days"):
 			s.integer(day, "world.lots[].closed_days[]", 0, 6)
 	var ledger := s.dictionary(world.get("ledger", {}), "world.ledger")
@@ -156,6 +157,8 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			s.integer(command.get("position"), path + ".position")
 		"quit_job", "register_unemployed":
 			pass
+		"rent_flat":
+			s.integer(command.get("lot_id"), path + ".lot_id")
 		"set_gentle_work":
 			s.boolean(command.get("gentle"), path + ".gentle")
 		"set_tier_mode":

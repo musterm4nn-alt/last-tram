@@ -79,3 +79,23 @@ func test_an_empty_fridge_greys_out_cooking_in_the_menu() -> void:
 	Groceries.home_household(sim, player).groceries = 1
 	assert_eq(InteractionMenu.entries(sim, _object(sim, "stove", player.home_lot_id).id), ["Stove · 1 portion", "Cook a meal (the fridge is empty)"])
 	assert_eq(InteractionMenu.entries(sim, _object(sim, "fridge", player.home_lot_id).id), ["Fridge · 1 portion", "Grab a snack"])
+
+
+func test_housing_app_lines() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	assert_eq(HousingApp.home_lines(sim, player.id)[0], "Your home: Haus 12, ground floor")
+	var lot: Lot = sim.world.lots[player.home_lot_id]
+	lot.arrears = 19000
+	lot.weeks_behind = 1
+	assert_has(HousingApp.home_lines(sim, player.id), "Owed: €190.00 (1 weeks behind; evicted at 3)")
+	lot.weeks_behind = 3
+	Moving.evict_overdue(sim)
+	assert_eq(HousingApp.home_lines(sim, player.id), PackedStringArray(["No home. You sleep rough on a bench."]))
+	assert_eq(HousingApp.flat_text(sim, lot), "Haus 12, ground floor · €190.00/week · 1 bed · move in €380.00")
+	var evicted := {"type": &"evicted", "data": {"household_id": player.household_id, "lot_id": lot.id}}
+	assert_eq(Hud.notice_for_event(evicted, player.id, content(), sim), "Evicted: you lost your home at Haus 12, ground floor. Find a flat on the phone.")
+	var refused := {"type": &"rent_flat_refused", "data": {"person_id": player.id, "lot_id": lot.id, "reason": "cant_afford"}}
+	assert_eq(Hud.notice_for_event(refused, player.id, content(), sim), "Haus 12, ground floor: not enough money in the bank")
+	var someone_else := {"type": &"moved_in", "data": {"household_id": -5, "lot_id": lot.id}}
+	assert_eq(Hud.notice_for_event(someone_else, player.id, content(), sim), "")

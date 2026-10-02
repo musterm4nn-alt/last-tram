@@ -52,3 +52,9 @@ var lunch_after_minutes: int = 240
 var lunch_hunger: float = 60.0
 ## The need rates every job uses while World.work.gentle is on (T-0077).
 var gentle_profile: Dictionary[String, float] = {}
+## Housing (T-0066): rent days behind before eviction, weeks of rent paid up front to move in,
+## the hour flats are let each day, and the days a flat stays empty before newcomers come.
+var evict_after_weeks: int = 3
+var move_in_weeks: int = 2
+var move_in_hour: int = 10
+var vacant_days: int = 7

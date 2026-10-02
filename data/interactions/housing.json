@@ -1,0 +1,6 @@
+{
+	"_doc": "Without a home (T-0066). homeless_only: offered only to people with no home (Requirements \"has_home\", hidden from menus); free will looks for it anywhere in town. Same format as basics.json.",
+	"interactions": [
+		{ "id": "sleep_rough", "name": "Sleep rough", "homeless_only": true, "finish_moodlet": "slept_rough", "object_tags": ["bench"], "until_need": "energy", "min_minutes": 60, "max_minutes": 600, "routine": "sleep", "need_rates": { "energy": 11.0, "comfort": -4.0, "hunger": 3.0, "hygiene": -2.0, "fun": 2.0, "social": 2.0 }, "finish_needs": {}, "advertise": { "energy": 60 } }
+	]
+}

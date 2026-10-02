@@ -14,18 +14,21 @@ const TEXT: Dictionary = {
 	"fridge_full": "the fridge is full",
 	"not_your_shift": "not your shift",
 	"not_staffed": "nobody's serving",
+	"has_home": "you have a home",
 }
 ## Reasons the menu doesn't show at all (the option isn't for this person).
-const HIDDEN: PackedStringArray = ["not_your_job"]
+const HIDDEN: PackedStringArray = ["not_your_job", "has_home"]
 
 
-## Checked in order: the target object's lot is closed (opening hours) or someone else's home,
+## Checked in order: a homeless-only interaction for someone with a home (T-0066); the target object's lot is closed (opening hours) or someone else's home,
 ## or nobody serves a staffed interaction there (T-0065); then the price, the bank balance a withdrawal needs, and groceries (food in the fridge to
 ## cook with, a home with room in the fridge for a bag). Objects on no lot (test rooms) pass
 ## the lot and food rules.
 static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
 	if def.work:
 		return _work(sim, person, sim.world.get_object(target_id))
+	if def.homeless_only and person.home_lot_id > 0:
+		return "has_home"
 	if def.target == "object":
 		var obj := sim.world.get_object(target_id)
 		var lot := Lots.lot_at(sim, obj.origin) if obj != null else null

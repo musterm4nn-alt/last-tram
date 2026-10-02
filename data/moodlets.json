@@ -17,6 +17,8 @@
 		{ "id": "promoted", "name": "Promoted", "value": 15, "duration_hours": 24 },
 		{ "id": "fired", "name": "Fired", "value": -25, "duration_hours": 48 },
 		{ "id": "payday", "name": "Payday", "value": 5, "duration_hours": 6 },
-		{ "id": "helped_someone", "name": "Helped someone", "value": 8, "duration_hours": 6 }
+		{ "id": "helped_someone", "name": "Helped someone", "value": 8, "duration_hours": 6 },
+		{ "id": "evicted", "name": "Evicted", "value": -40, "duration_hours": 72 },
+		{ "id": "slept_rough", "name": "Slept rough", "value": -10, "duration_hours": 8 }
 	]
 }

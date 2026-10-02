@@ -115,10 +115,15 @@ runs low. A personal inventory (a beer in your pocket, stolen goods, tools) come
 - Every home lot has a **lease**: weekly rent from `district.json` and the household living
   there. Each member pays an equal share from the bank. Whatever isn't paid becomes
   **arrears**.
-- Unpaid rent → a reminder → a warning → **eviction** after three weeks behind. The household
-  leaves the flat. Evicted people sleep rough (park benches, the promenade) with an "evicted"
-  moodlet, and recover through jobs, benefit and friends: anyone homeless who can pay two
-  weeks' rent moves into an empty flat. Newcomers move into flats that stay empty.
+- Unpaid rent → a reminder → a warning → **eviction** after three weeks behind (T-0066,
+  `Moving`, economy.json "housing"). The household leaves the flat, the arrears are written
+  off and the fridge stays behind. Evicted people sleep rough on park benches (`sleep_rough`,
+  only for people with no home, worse than a bed) with an "evicted" moodlet, and recover
+  through jobs, benefit and friends: every day at 10:00 an empty flat goes to a homeless
+  household that can pay two weeks' rent up front. Newcomers (generated like a new town's
+  residents, with money and groceries) move into flats empty for a week. The player rents a
+  flat in the phone's Housing app (`RentFlatCommand`); moving out of a flat with arrears is
+  refused.
 - Buying property: M5.
 
 ## Health checks (sim report and `--check-m3`)

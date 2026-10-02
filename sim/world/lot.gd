@@ -23,6 +23,8 @@ var closed_days: PackedInt32Array = PackedInt32Array()
 ## (T-0062; homes only).
 var arrears: int = 0
 var weeks_behind: int = 0
+## Homes: the day it was left empty (eviction or moving out), or -1 (T-0066; Moving.daily).
+var vacant_since_day: int = -1
 
 
 ## A lot for `place`, with the place's access and hours.
@@ -47,6 +49,7 @@ func to_dict() -> Dictionary:
 		"closed_days": Array(closed_days),
 		"arrears": arrears,
 		"weeks_behind": weeks_behind,
+		"vacant_since_day": vacant_since_day,
 	}
 
 
@@ -59,6 +62,7 @@ static func from_dict(d: Dictionary) -> Lot:
 	lot.close_hour = int(d.get("close_hour", 24))
 	lot.arrears = int(d.get("arrears", 0))
 	lot.weeks_behind = int(d.get("weeks_behind", 0))
+	lot.vacant_since_day = int(d.get("vacant_since_day", -1))
 	for day: Variant in d.get("closed_days", []):
 		lot.closed_days.append(int(day))
 	return lot

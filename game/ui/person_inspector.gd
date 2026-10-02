@@ -116,7 +116,7 @@ static func job_text(sim: Sim, person: Person) -> String:
 static func home_text(sim: Sim, person: Person) -> String:
 	var lot: Lot = sim.world.lots.get(person.home_lot_id)
 	var place := sim.content.place(lot.place_id) if lot != null else null
-	var text := place.name if place != null else "nowhere"
+	var text := place.name if place != null else "no home"
 	var household: Household = sim.world.households.get(person.household_id)
 	if household != null:
 		var others := PackedStringArray()
