@@ -71,6 +71,9 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.staffed = reader.read_bool(d, "staffed", ctx)
 			if def.staffed and def.target != "object":
 				reader.error("%s: only object-targeted interactions can be staffed" % ctx)
+		for key: String in ["requires_discovery", "teaches_clue"]:
+			if d.has(key):
+				def.set(key, reader.read_str(d, key, ctx))
 		if d.has("homeless_only"):
 			def.homeless_only = reader.read_bool(d, "homeless_only", ctx)
 		if d.has("work"):

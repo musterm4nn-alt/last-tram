@@ -1,12 +1,12 @@
 ---
 id: T-0067
 title: Discoveries - data and sim plumbing
-status: draft
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0055]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -21,29 +21,35 @@ uncovered. Each person remembers which clues they know and what they've found; a
 `docs/design/discoveries.md` (Clues and discoveries, Data, Effects, Tests), D29 (no `item`
 effect in M3), the cookbook's "Add a new kind of content" and "Change the save format".
 
-## Design (draft: detailed when its dependencies are merged)
-- `data/discoveries/*.json` → `DiscoveryDef` (`DiscoveryLoader`): `id`, `name`, `clue`,
-  `place_id`, `from`/`to` (game minutes; wrap past midnight), `level`, `clue_required`,
-  `share_trust` (−1 = never shared), `effects` [{`kind`: note | money | moodlet | contact |
-  unlock_interaction, plus its value}], optional `scene` (a presentation).
-- `Person.known_clues` and `Person.discoveries` (`PackedStringArray`, kept sorted); the
-  world-once set `World.looted_discoveries`. `from_dict` drops ids content no longer has.
-  A save version bump, migration and fixture.
-- `Discoveries` (`sim/discoveries/discoveries.gd`, static): `learn_clue(sim, person, id,
-  source, source_id)`, `uncover(sim, person, id)` (applies the effects: money through
-  `Money.earn(…, "found", CASH, id)` only once per world, a moodlet, a contact, a note, an
-  unlocked interaction; writes a memory; emits `clue_learned` / `discovery_uncovered`).
-- `InteractionDef.requires_discovery`; `Requirements` adds `unknown_secret` (hidden from the
-  menu).
-- One test discovery in the data (the real Altstadt content is T-0070).
+## Specification (as built)
+- `data/discoveries/*.json` → `DiscoveryDef` + `DiscoveryEffect` (`DiscoveryLoader`, after
+  jobs): `id`, `name`, `clue`, `place_id`, `from`/`to` ("HH:MM"), `level` (must be the
+  place's), `clue_required`, `share_trust` (−1 or 0..100), `effects` (note {text}, money
+  {cents}, moodlet {moodlet}, contact {place_id}, unlock_interaction {interaction}), `scene`.
+  `check_links`: interactions' `requires_discovery`/`teaches_clue` name real discoveries; an
+  unlock names an interaction that requires that discovery; a clue-only discovery is shared
+  or taught.
+- `Person.known_clues`, `Person.discoveries`, `World.looted_discoveries` (sorted; unknown ids
+  dropped on load). Save v14, migration, fixture `v14_basic.json`.
+- `Discoveries`: `eligible`, `learn_clue`, `uncover` (effects, memory of kind = the id,
+  scene for the player, events), `people_of`. `InteractionDef.requires_discovery` /
+  `teaches_clue`; `Requirements` `unknown_secret` (hidden).
+- One discovery in the data: `fountain_coins` (Altmarkt, 22:00–04:00, €3.40 once).
 
-## Acceptance (sketch)
-- Validation (place ids, time windows, effect kinds, `requires_discovery` ids, every
-  `clue_required` discovery has a clue source); learn and uncover with their effects, memory
-  and events; money only once across two people; the save round trip and the old-save
-  migration.
+## Acceptance criteria
+- [x] Validation → `test_broken_discoveries_are_reported`, `test_discovery_content_loads`.
+- [x] Learn and uncover with effects, memory and events → `test_learn_and_uncover`,
+  `test_eligibility_and_effects`.
+- [x] Money once across two people → `test_money_only_once_per_world`.
+- [x] Secret interactions hidden until found → `test_secret_interactions_need_the_discovery`.
+- [x] Save round trip, dropped ids, migration → `test_discoveries_survive_saves`; fixtures load.
 
 ## Implementation notes
+Built and self-reviewed by Opus in a cloud session (2 October 2026). Nothing in the game
+uses discoveries yet (searching comes with T-0068), so play is unchanged. Contact effects
+raise familiarity to 30 with everyone who lives or works at the place (the phone lists people
+from 30). A missing `data/discoveries/` folder means no discoveries, so content packs and the
+broken-content fixtures don't need one. Tests: `tests/sim/test_discoveries.gd` (7).
 
 ## Questions
 

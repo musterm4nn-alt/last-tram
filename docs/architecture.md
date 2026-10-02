@@ -66,6 +66,7 @@ sim/                      pure simulation (no Nodes)
                           Relationship, Memory, Moodlet
   economy/                Money, Wallet, Ledger, Groceries, Housing (rent, bills, benefit),
                           Moving (eviction, renting empty flats, newcomers)
+  discoveries/            Discoveries (learning clues, uncovering secrets; T-0067)
   jobs/                   Jobs (positions, shifts), Employment, Careers (pay, performance),
                           Hiring, WorkSession/RabbitHoleWork/OnSiteWork/WorkSessions,
                           WorkResult, Staffing (who serves a shop now; derived, not saved)
@@ -234,7 +235,7 @@ Only what is still to come; the folder map above shows where built systems live.
 
 | Milestone | Module | Location |
 |---|---|---|
-| M3 | Discoveries | `sim/content/discovery_def.gd`, `data/discoveries/`, `sim/discoveries/`, the Notebook app in `game/ui/phone/` |
+| M3 | Discoveries: searching, the Notebook | `sim/discoveries/` (search, sharing), the Notebook app in `game/ui/phone/` |
 | M3 | Skills, wardrobe, backgrounds | `sim/people/` (skills, owned clothes), `sim/content/` (backgrounds), `game/ui/` (creator) |
 | M4 | Health, crime, witnesses, police | `sim/crime/`, `sim/health/` |
 | M5 | Build mode rules | `sim/build/` (commands + validation) |

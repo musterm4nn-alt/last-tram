@@ -1,0 +1,12 @@
+{
+	"_doc": "Deliberately broken discoveries (T-0067). Do not fix.",
+	"discoveries": [
+		{ "id": "bad_place", "name": "x", "clue": "x", "place_id": "nowhere_at_all", "from": "10:00", "to": "12:00", "level": 0, "clue_required": false, "share_trust": 10, "effects": [] },
+		{ "id": "bad_time", "name": "x", "clue": "x", "place_id": "altmarkt", "from": "25:00", "to": "12:00", "level": 0, "clue_required": false, "share_trust": 10, "effects": [] },
+		{ "id": "bad_level", "name": "x", "clue": "x", "place_id": "altmarkt", "from": "10:00", "to": "12:00", "level": 2, "clue_required": false, "share_trust": 10, "effects": [] },
+		{ "id": "bad_effect", "name": "x", "clue": "x", "place_id": "altmarkt", "from": "10:00", "to": "12:00", "level": 0, "clue_required": false, "share_trust": 10, "effects": [{ "kind": "item", "item": "crowbar" }] },
+		{ "id": "bad_money", "name": "x", "clue": "x", "place_id": "altmarkt", "from": "10:00", "to": "12:00", "level": 0, "clue_required": false, "share_trust": 10, "effects": [{ "kind": "money", "cents": 0 }] },
+		{ "id": "bad_unlock", "name": "x", "clue": "x", "place_id": "altmarkt", "from": "10:00", "to": "12:00", "level": 0, "clue_required": false, "share_trust": 10, "effects": [{ "kind": "unlock_interaction", "interaction": "sleep" }] },
+		{ "id": "unreachable", "name": "x", "clue": "x", "place_id": "altmarkt", "from": "10:00", "to": "12:00", "level": 0, "clue_required": true, "share_trust": -1, "effects": [] }
+	]
+}

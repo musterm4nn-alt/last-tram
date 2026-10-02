@@ -92,6 +92,8 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 		for reason: Variant in totals:
 			s.text(reason, "world.ledger.%s key" % key)
 			s.integer(totals[reason], "world.ledger.%s.%s" % [key, str(reason)])
+	for id: Variant in s.list(world.get("looted_discoveries", []), "world.looted_discoveries"):
+		s.text(id, "world.looted_discoveries[]")
 	var tiers := s.dictionary(world.get("tiers", {}), "world.tiers")
 	if not String(tiers.get("mode", TierSettings.TIERED)) in [TierSettings.TIERED, TierSettings.FULL]:
 		s.reject("world.tiers.mode", "unknown tier mode")

@@ -48,11 +48,25 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v11_to_v12(d)
 			12:
 				d = _v12_to_v13(d)
+			13:
+				d = _v13_to_v14(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v14 (T-0067): nobody knows a clue or has found anything, and no reward has been taken.
+static func _v13_to_v14(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	d["world"]["looted_discoveries"] = []
+	for person: Variant in d["world"].get("people", []):
+		if person is Dictionary:
+			person["known_clues"] = []
+			person["discoveries"] = []
 	return d
 
 

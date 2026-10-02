@@ -19,6 +19,8 @@ var households: Dictionary[int, Household] = {}
 var tiers: TierSettings = TierSettings.new()
 ## Varied or gentle jobs (T-0077).
 var work: WorkSettings = WorkSettings.new()
+## Discoveries whose once-per-world rewards (money) have been taken (T-0067; sorted).
+var looted_discoveries: PackedStringArray = PackedStringArray()
 ## Money that entered and left people's hands, by reason (T-0054, D29).
 var ledger: Ledger = Ledger.new()
 
@@ -156,6 +158,7 @@ func to_dict() -> Dictionary:
 		"households": households_out,
 		"tiers": tiers.to_dict(),
 		"work": work.to_dict(),
+		"looted_discoveries": Array(looted_discoveries),
 		"ledger": ledger.to_dict(),
 	}
 
@@ -173,6 +176,13 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		for need_id: String in person.needs.keys():
 			if content.need(need_id) == null:
 				person.needs.erase(need_id)
+		# Clues and finds of discoveries the content no longer has are dropped.
+		for key: String in ["known_clues", "discoveries"]:
+			var kept := PackedStringArray()
+			for id: String in person.get(key):
+				if content.discovery(id) != null:
+					kept.append(id)
+			person.set(key, kept)
 		# Jobs the content no longer has (or a position it lost) are dropped.
 		if person.job != null:
 			var job_def := content.job(person.job.job_id)
@@ -203,6 +213,9 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 	var tiers_data: Variant = d.get("tiers", {})
 	if tiers_data is Dictionary:
 		world.tiers = TierSettings.from_dict(tiers_data)
+	for id: Variant in d.get("looted_discoveries", []):
+		if content.discovery(String(id)) != null:
+			world.looted_discoveries.append(String(id))
 	var work_data: Variant = d.get("work", {})
 	if work_data is Dictionary:
 		world.work = WorkSettings.from_dict(work_data)
