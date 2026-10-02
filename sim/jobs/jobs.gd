@@ -49,8 +49,8 @@ static func shift_on(sim: Sim, person: Person, day: int) -> Vector2i:
 	if job == null or person.job.position >= job.positions.size():
 		return none
 	var shift := job.positions[person.job.position]
-	if not shift.days.has(day % SimClock.DAYS_PER_WEEK):
-		return none
+	if not shift.days.has(day % SimClock.DAYS_PER_WEEK) or day < person.job.hired_day:
+		return none  # a day off, or before they start
 	var start := SimClock.ticks_for(day, shift.from)
 	return Vector2i(start, start + SimClock.ticks_for(0, shift.hours()))
 

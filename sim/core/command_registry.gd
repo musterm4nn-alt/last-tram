@@ -22,6 +22,12 @@ static func create(type_id: String) -> Command:
 			return SetTierModeCommand.new()
 		"call":
 			return CallCommand.new()
+		"apply_for_job":
+			return ApplyForJobCommand.new()
+		"quit_job":
+			return QuitJobCommand.new()
+		"register_unemployed":
+			return RegisterUnemployedCommand.new()
 	return null
 
 

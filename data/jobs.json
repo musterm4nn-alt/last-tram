@@ -1,5 +1,5 @@
 {
-	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay (hunger +6 is lunch and breaks: it cancels the hourly decay, so nobody starves at work). levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated.",
+	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay (hunger +6 is lunch and breaks: it cancels the hourly decay, so nobody starves at work). levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064).",
 	"jobs": [
 		{
 			"id": "spaeti_clerk",
@@ -64,7 +64,8 @@
 					"to": 2
 				}
 			],
-			"start_filled": 1.0
+			"start_filled": 1.0,
+			"formality": 0.0
 		},
 		{
 			"id": "imbiss_cook",
@@ -129,7 +130,8 @@
 					"to": 23
 				}
 			],
-			"start_filled": 1.0
+			"start_filled": 1.0,
+			"formality": 0.0
 		},
 		{
 			"id": "bartender",
@@ -175,7 +177,8 @@
 					"to": 2
 				}
 			],
-			"start_filled": 1.0
+			"start_filled": 1.0,
+			"formality": 0.0
 		},
 		{
 			"id": "police_officer",
@@ -223,7 +226,8 @@
 					"to": 22
 				}
 			],
-			"start_filled": 1.0
+			"start_filled": 1.0,
+			"formality": 1.0
 		},
 		{
 			"id": "office_clerk",
@@ -265,7 +269,8 @@
 					"count": 3
 				}
 			],
-			"start_filled": 0.7
+			"start_filled": 0.7,
+			"formality": 1.0
 		},
 		{
 			"id": "warehouse_worker",
@@ -304,7 +309,8 @@
 					"count": 2
 				}
 			],
-			"start_filled": 0.7
+			"start_filled": 0.7,
+			"formality": 0.0
 		},
 		{
 			"id": "care_worker",
@@ -353,7 +359,8 @@
 					"to": 22
 				}
 			],
-			"start_filled": 0.7
+			"start_filled": 0.7,
+			"formality": 0.0
 		},
 		{
 			"id": "builder",
@@ -392,7 +399,8 @@
 					"count": 2
 				}
 			],
-			"start_filled": 0.7
+			"start_filled": 0.7,
+			"formality": 0.0
 		}
 	]
 }

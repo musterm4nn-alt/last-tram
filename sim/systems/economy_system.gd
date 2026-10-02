@@ -5,12 +5,18 @@ extends SimSystem
 ## shifts go into the bank. No state.
 
 
+## Jobless residents apply for vacancies on Monday at this hour (T-0064).
+const APPLY_HOUR: int = 9
+
+
 func on_minute(sim: Sim) -> void:
 	var economy := sim.content.economy
 	if sim.clock.weekday() == 0 and sim.clock.minute_of_day() == economy.benefit_hour * 60:
 		Housing.pay_benefits(sim)
 	if sim.clock.weekday() == 0 and sim.clock.minute_of_day() == economy.rent_hour * 60:
 		Housing.collect_rent(sim)
+	if sim.clock.weekday() == 0 and sim.clock.minute_of_day() == APPLY_HOUR * 60:
+		Hiring.residents_apply(sim)
 	if sim.clock.weekday() == economy.payday_weekday and sim.clock.minute_of_day() == economy.payday_hour * 60:
 		var ids: Array = sim.world.people.keys()
 		ids.sort()

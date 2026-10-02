@@ -23,6 +23,8 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		job.session = reader.read_str(d, "session", ctx)
 		job.workplace_tag = reader.read_str(d, "workplace_tag", ctx)
 		job.start_filled = reader.read_num(d, "start_filled", ctx)
+		if d.has("formality"):
+			job.formality = reader.read_num(d, "formality", ctx)
 		var rates := reader.read_obj(d, "need_rates", ctx)
 		for need_id: Variant in rates:
 			if db.need(String(need_id)) == null:

@@ -39,6 +39,8 @@ var job: Employment = null
 ## Registered as unemployed, so benefit is paid while they have no job (T-0062). Residents are
 ## registered from the start; the player registers on the phone (T-0064).
 var benefit_registered: bool = false
+## The day they last applied for a job (-1 = never): one application a day (T-0064).
+var applied_day: int = -1
 ## Id of the Lot the person lives in (0 = none). Private lots let only their residents in.
 var home_lot_id: int = 0
 ## Id of the person's Household (0 = none).
@@ -129,6 +131,7 @@ func to_dict() -> Dictionary:
 		"wallet": wallet.to_dict(),
 		"job": job.to_dict() if job != null else null,
 		"benefit_registered": benefit_registered,
+		"applied_day": applied_day,
 		"home_lot_id": home_lot_id,
 		"household_id": household_id,
 		"autonomy_retry_tick": autonomy_retry_tick,
@@ -183,6 +186,7 @@ static func from_dict(d: Dictionary) -> Person:
 	if d.get("job") is Dictionary:
 		p.job = Employment.from_dict(d["job"])
 	p.benefit_registered = bool(d.get("benefit_registered", false))
+	p.applied_day = int(d.get("applied_day", -1))
 	p.home_lot_id = int(d.get("home_lot_id", 0))
 	p.household_id = int(d.get("household_id", 0))
 	p.autonomy_retry_tick = int(d.get("autonomy_retry_tick", 0))

@@ -79,6 +79,20 @@ static func career_notice(event: Dictionary, content: ContentDB) -> String:
 			return "Promoted: you're now %s!" % String(data.get("title", ""))
 		&"fired":
 			return "You were fired from your job as %s" % job_name
+		&"quit_job":
+			return "You quit your job as %s" % job_name
+		&"registered":
+			return "Registered as unemployed: benefit comes on Mondays"
+		&"job_application":
+			match String(data.get("reason", "")):
+				"":
+					return "You got the job: %s! You start tomorrow." % job_name
+				"rejected":
+					return "%s: they chose someone else." % job_name
+				"already_applied":
+					return "One application a day. Try again tomorrow."
+				"taken":
+					return "%s: that position has just been filled." % job_name
 	return ""
 
 
