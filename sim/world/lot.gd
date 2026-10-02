@@ -19,6 +19,10 @@ var open_hour: int = 0
 var close_hour: int = 24
 ## Weekdays an "hours" lot stays shut all day (0 = Monday … 6 = Sunday; T-0056).
 var closed_days: PackedInt32Array = PackedInt32Array()
+## Rent owed and not yet paid, in cents, and how many rent days in a row left some unpaid
+## (T-0062; homes only).
+var arrears: int = 0
+var weeks_behind: int = 0
 
 
 ## A lot for `place`, with the place's access and hours.
@@ -41,6 +45,8 @@ func to_dict() -> Dictionary:
 		"open_hour": open_hour,
 		"close_hour": close_hour,
 		"closed_days": Array(closed_days),
+		"arrears": arrears,
+		"weeks_behind": weeks_behind,
 	}
 
 
@@ -51,6 +57,8 @@ static func from_dict(d: Dictionary) -> Lot:
 	lot.access = String(d["access"])
 	lot.open_hour = int(d.get("open_hour", 0))
 	lot.close_hour = int(d.get("close_hour", 24))
+	lot.arrears = int(d.get("arrears", 0))
+	lot.weeks_behind = int(d.get("weeks_behind", 0))
 	for day: Variant in d.get("closed_days", []):
 		lot.closed_days.append(int(day))
 	return lot

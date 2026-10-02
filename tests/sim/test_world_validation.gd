@@ -23,7 +23,7 @@ func _write(filename: String, text: String) -> void:
 
 func _district() -> Dictionary:
 	return {"id": "review", "name": "Review", "origin": [0, 0], "levels": {"0": "level_0.txt"},
-		"player_spawn": [1, 1, 0], "places": [{"id": "room", "name": "Room", "kind": "home", "level": 0, "rect": [0, 0, 6, 5]}]}
+		"player_spawn": [1, 1, 0], "places": [{"id": "room", "name": "Room", "kind": "home", "level": 0, "rect": [0, 0, 6, 5], "rent": 10000}]}
 
 
 func _load(data: Variant) -> ContentReader:
@@ -81,13 +81,24 @@ func test_object_coordinates_and_rotation_reject_fractional_values() -> void:
 func test_closed_days_need_hours_and_known_day_names() -> void:
 	var public := _district()
 	public["places"][0]["kind"] = "public"
+	public["places"][0].erase("rent")
 	public["places"][0]["closed"] = ["sun"]
 	assert_true("\n".join(_load(public).errors).contains("\"closed\" only applies to access \"hours\""))
 	var shop := _district()
 	shop["places"][0]["kind"] = "shop"
+	shop["places"][0].erase("rent")  # only homes have rent (T-0062)
 	shop["places"][0]["hours"] = [8, 18]
 	shop["places"][0]["closed"] = ["sun", "funday"]
 	var all := "\n".join(_load(shop).errors)
 	assert_true(all.contains("unknown day 'funday'"), all)
 	shop["places"][0]["closed"] = ["sat", "sun"]
 	assert_true(_load(shop).errors.is_empty())
+
+
+func test_homes_need_rent_and_only_homes_have_it() -> void:
+	var data := _district()
+	data["places"][0].erase("rent")
+	assert_true("\n".join(_load(data).errors).contains("'rent'"), "a home without rent is reported")
+	var shop := _district()
+	shop["places"][0]["kind"] = "public"
+	assert_true("\n".join(_load(shop).errors).contains("only homes have \"rent\""))

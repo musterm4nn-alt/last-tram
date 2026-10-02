@@ -83,6 +83,12 @@ static func load_district(db: ContentDB, reader: ContentReader, dir: String, dis
 		else:
 			reader.error("%s: rect must be [x, y, width, height] (local)" % ctx)
 		_read_access(reader, pd, place, ctx)
+		if place.kind == "home":
+			place.rent = reader.read_int(pd, "rent", ctx)
+			if place.rent <= 0:
+				reader.error("%s: a home's \"rent\" must be > 0 (euro cents per week)" % ctx)
+		elif pd.has("rent"):
+			reader.error("%s: only homes have \"rent\"" % ctx)
 		district.places.append(place)
 	load_objects(db, reader, district, dir)
 	return district

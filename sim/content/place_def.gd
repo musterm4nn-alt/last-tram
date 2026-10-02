@@ -19,6 +19,8 @@ var close_hour: int = 24
 ## Weekdays it stays shut ("hours" access only; 0 = Monday … 6 = Sunday, like
 ## SimClock.weekday()). district.json "closed": ["sun"] (T-0056).
 var closed_days: PackedInt32Array = PackedInt32Array()
+## Weekly rent of a home, in euro cents (district.json "rent", T-0062); 0 for other places.
+var rent: int = 0
 
 
 func contains(cell: Vector3i) -> bool:

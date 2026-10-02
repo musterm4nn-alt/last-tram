@@ -36,11 +36,25 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v5_to_v6(d)
 			6:
 				d = _v6_to_v7(d)
+			7:
+				d = _v7_to_v8(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v8 (T-0062): residents are registered for benefit (the player isn't), and home lots owe
+## nothing yet.
+static func _v7_to_v8(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("people", []) is Array:
+		return d
+	var world: Dictionary = d["world"]
+	for person: Variant in world.get("people", []):
+		if person is Dictionary:
+			person["benefit_registered"] = person.get("id") != world.get("player_id")
 	return d
 
 

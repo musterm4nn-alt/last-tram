@@ -82,12 +82,26 @@ static func career_notice(event: Dictionary, content: ContentDB) -> String:
 	return ""
 
 
+## Words for the player's household's rent (T-0062): "Rent: €58.00 unpaid (1 week behind)".
+static func rent_notice(event: Dictionary, sim: Sim) -> String:
+	if sim == null or event.get("type") != &"rent_unpaid":
+		return ""
+	var data: Dictionary = event.get("data", {})
+	var player := sim.world.player()
+	if player == null or int(data.get("household_id", -1)) != player.household_id:
+		return ""
+	var weeks := int(data.get("weeks_behind", 0))
+	return "Rent: %s unpaid (%d week%s behind)" % [Money.format(int(data.get("owed", 0))), weeks, "" if weeks == 1 else "s"]
+
+
 ## The notice a sim event deserves for the player ("" for none). `content` names the
 ## interaction of a failed action (its id is used without it).
 static func notice_for_event(event: Dictionary, player_id: int, content: ContentDB = null, sim: Sim = null) -> String:
 	var data: Dictionary = event.get("data", {})
 	if event.get("type") == &"social_exchange":
 		return social_notice(data, player_id, content, sim)
+	if event.get("type") == &"rent_unpaid":
+		return rent_notice(event, sim)
 	if int(data.get("person_id", -1)) != player_id:
 		return ""
 	if event.get("type") == &"work_reminder" and sim != null:

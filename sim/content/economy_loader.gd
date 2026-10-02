@@ -44,6 +44,18 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	economy.payday_hour = reader.read_int(payday, "hour", path + ": payday")
 	if economy.payday_weekday < 0 or economy.payday_weekday > 6 or economy.payday_hour < 0 or economy.payday_hour > 23:
 		reader.error("%s: payday needs a weekday 0..6 and an hour 0..23" % path)
+	var week := reader.read_obj(root, "week", path)
+	economy.benefit_hour = reader.read_int(week, "benefit_hour", path + ": week")
+	economy.rent_hour = reader.read_int(week, "rent_hour", path + ": week")
+	if economy.benefit_hour < 0 or economy.rent_hour > 23 or economy.benefit_hour >= economy.rent_hour:
+		reader.error("%s: week needs benefit_hour before rent_hour, both 0..23" % path)
+	economy.bills_week = reader.read_int(root, "bills_week", path)
+	economy.benefit_week = reader.read_int(root, "benefit_week", path)
+	economy.housing_cap = reader.read_int(root, "housing_cap", path)
+	economy.pension_week = reader.read_int(root, "pension_week", path)
+	for amount: int in [economy.bills_week, economy.benefit_week, economy.housing_cap, economy.pension_week]:
+		if amount < 0:
+			reader.error("%s: weekly amounts must be >= 0" % path)
 	var rules := reader.read_obj(root, "performance", path)
 	for key: String in PERFORMANCE_KEYS:
 		economy.performance[key] = reader.read_num(rules, key, path + ": performance")

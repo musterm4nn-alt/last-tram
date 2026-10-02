@@ -27,5 +27,13 @@ var retirement_age: int = 67
 ## Pay and performance (T-0061): wages are paid on payday (weekday 0 = Monday, whole hour).
 var payday_weekday: int = 4
 var payday_hour: int = 18
+## The Monday cycle (T-0062): hours for benefit and pensions, then rent and bills.
+var benefit_hour: int = 6
+var rent_hour: int = 8
+## Weekly amounts in cents.
+var bills_week: int = 0
+var benefit_week: int = 0
+var housing_cap: int = 0
+var pension_week: int = 0
 ## Performance rules by name (see data/economy.json "performance").
 var performance: Dictionary[String, float] = {}
