@@ -17,12 +17,14 @@ func _first(sim: Sim, def_id: String) -> WorldObject:
 	return null
 
 
-## A new game at Monday `hour`; the player without free will stands on the object's slot.
+## A new game at Monday `hour` with the shop staff on shift serving (T-0065); the player
+## without free will stands on the object's slot.
 func _at(obj_def: String, hour: int, home_only: bool = true) -> Sim:
 	var sim := SimFactory.new_game(content(), 1)
 	sim.clock.tick = SimClock.ticks_for(0, hour)
 	for person: Person in sim.world.people.values():
 		person.last_input_tick = sim.clock.tick
+	ShopStaff.serve_now(sim)
 	var player := sim.world.player()
 	player.free_will = false
 	var obj := _object_in(sim, obj_def, player.home_lot_id) if home_only else _first(sim, obj_def)
@@ -110,6 +112,7 @@ func _options(sim: Sim, person: Person) -> PackedStringArray:
 func test_low_stock_sends_people_shopping() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	sim.clock.tick = SimClock.ticks_for(0, 12)
+	ShopStaff.serve_now(sim)
 	var person := _resident(sim, 2, 90.0)
 	assert_has(_options(sim, person), "buy_groceries", "a low fridge: shopping from upstairs, across town")
 	Groceries.home_household(sim, person).groceries = 12
@@ -119,6 +122,7 @@ func test_low_stock_sends_people_shopping() -> void:
 func test_hungry_people_with_empty_fridges_eat_out() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	sim.clock.tick = SimClock.ticks_for(0, 12)
+	ShopStaff.serve_now(sim)
 	var person := _resident(sim, 0, 30.0)
 	var options := _options(sim, person)
 	assert_has(options, "eat_doener")

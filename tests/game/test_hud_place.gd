@@ -1,5 +1,5 @@
 extends TestCase
-## T-0032: the HUD's place line says when a business is closed.
+## T-0032: the HUD's place line says when a business is closed (and, T-0065, unstaffed).
 
 
 func test_place_line_says_closed_outside_opening_hours() -> void:
@@ -8,6 +8,7 @@ func test_place_line_says_closed_outside_opening_hours() -> void:
 	assert_eq(Hud.place_text(sim, player), "Haus 12, ground floor")
 	player.pos = Vector2(4.5, 26.5)
 	sim.clock.tick = SimClock.ticks_for(0, 12)
+	ShopStaff.serve_now(sim)
 	assert_eq(Hud.place_text(sim, player), "Späti Kaya")
 	sim.clock.tick = SimClock.ticks_for(0, 5)
 	assert_eq(Hud.place_text(sim, player), "Späti Kaya (closed, opens 08:00)")
@@ -28,6 +29,7 @@ func test_place_line_says_closed_on_sunday() -> void:
 	sim.clock.tick = SimClock.ticks_for(6, 12)
 	assert_eq(Hud.place_text(sim, player), "Café Wolke (closed, opens tomorrow 08:00)")
 	sim.clock.tick = SimClock.ticks_for(7, 12)
+	ShopStaff.serve_now(sim)
 	assert_eq(Hud.place_text(sim, player), "Café Wolke")
 
 
@@ -60,3 +62,26 @@ func test_leaving_a_paid_meal_gets_a_notice() -> void:
 			counter = obj
 	var refused := {"type": &"action_refused", "data": {"person_id": player_id, "interaction_id": "eat_doener", "target_id": counter.id, "reason": "closed"}}
 	assert_eq(Hud.notice_for_event(refused, player_id, content(), sim), "Eat a Döner: closed, opens 11:00")
+
+
+func test_place_text_nobody_serving() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	player.pos = Vector2(4.5, 26.5)
+	sim.clock.tick = SimClock.ticks_for(0, 12)
+	assert_eq(Hud.place_text(sim, player), "Späti Kaya (nobody serving)", "open, and the clerk isn't in yet")
+	var clerk := Jobs.holder(sim.world, "spaeti_clerk", 0)
+	var counter: WorldObject = null
+	for obj: WorldObject in sim.world.objects.values():
+		if obj.def_id == "spaeti_counter":
+			counter = obj
+	var action := Action.new("work", counter.id)
+	action.state = Action.PERFORMING
+	action.started_tick = sim.clock.tick
+	clerk.action_queue.clear()
+	clerk.action_queue.append(action)
+	assert_eq(Hud.place_text(sim, player), "Späti Kaya", "the clerk is serving")
+	sim.clock.tick = SimClock.ticks_for(0, 5)
+	assert_eq(Hud.place_text(sim, player), "Späti Kaya (closed, opens 08:00)", "closed says closed")
+	player.pos = Vector2(30.5, 30.5)
+	assert_eq(Hud.place_text(sim, player), "Altmarkt", "nobody serves the square")

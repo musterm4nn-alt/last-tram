@@ -52,6 +52,7 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	var player_job := db.economy.player_job
 	if not player_job.is_empty() and not db.jobs.has(player_job):
 		reader.error("economy.json: 'player_job' '%s' is not a job in %s" % [player_job, path])
+	check_staffed(db, reader)
 
 
 static func _read_levels(reader: ContentReader, d: Dictionary, job: JobDef, ctx: String) -> void:
@@ -104,4 +105,35 @@ static func _workplace_placed(db: ContentDB, job: JobDef) -> bool:
 			var def := db.object_def(placement.def_id)
 			if def != null and def.tags.has(job.workplace_tag) and place.contains(placement.cell):
 				return true
+	return false
+
+
+## Every placed object that offers a staffed interaction (T-0065) must stand on a place with
+## an on-site job, or nobody could ever serve there.
+static func check_staffed(db: ContentDB, reader: ContentReader) -> void:
+	for district_id: String in db.district_order:
+		for placement: ObjectPlacement in db.districts[district_id].objects:
+			var def := db.object_def(placement.def_id)
+			if def == null:
+				continue
+			for interaction: InteractionDef in db.interactions.values():
+				if not interaction.staffed or not _offers(def, interaction):
+					continue
+				var place := db.place_at(placement.cell)
+				if place == null or not _has_on_site_job(db, place.id):
+					reader.error("%s: '%s' at %s offers staffed '%s', but no on-site job works there" % [
+						district_id, def.id, placement.cell, interaction.id])
+
+
+static func _offers(def: ObjectDef, interaction: InteractionDef) -> bool:
+	for tag: String in interaction.object_tags:
+		if def.tags.has(tag):
+			return true
+	return false
+
+
+static func _has_on_site_job(db: ContentDB, place_id: String) -> bool:
+	for job: JobDef in db.jobs.values():
+		if job.session == JobDef.ON_SITE and job.place_id == place_id:
+			return true
 	return false

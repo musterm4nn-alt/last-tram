@@ -12,7 +12,8 @@ extends SceneTree
 ##          demote radius is 10 cells more), --gentle-work (every job uses the gentle need
 ##          profile instead of its own, T-0077), --check-m2 (M2 acceptance, T-0045: fails the run
 ##          unless the town lives well, see TownCheck, and the cost stays within
-##          BUDGET_MS_PER_STEP).
+##          BUDGET_MS_PER_STEP), --check-staffing (T-0065: fails the run unless every shop
+##          had someone serving for TownCheck.MIN_STAFFED_SHARE of its open time).
 
 ## The M2 cost budget: milliseconds of sim work per step, with ~30 people.
 const BUDGET_MS_PER_STEP: float = 0.25
@@ -80,6 +81,16 @@ func _initialize() -> void:
 	print(_jobs_line(sim))
 	print(town.work_summary())
 	print(_housing_line(sim))
+	print(town.staffing_summary(sim))
+	if args.has("check-staffing"):
+		var unstaffed := town.staffing_failures(sim)
+		for problem: String in unstaffed:
+			print("STAFFING CHECK: " + problem)
+		print("STAFFING CHECK: %s" % ("PASSED" if unstaffed.is_empty() else "FAILED"))
+		if not unstaffed.is_empty():
+			print("LAST_TRAM_SIMRUN: FAILED")
+			quit(1)
+			return
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
 		var ms_per_step := seconds * 1000.0 / steps

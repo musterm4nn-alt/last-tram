@@ -51,6 +51,7 @@ func test_in_the_evening_the_kneipe_is_an_option_from_home() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var player := sim.world.player()
 	_at(sim, 20)
+	ShopStaff.serve_now(sim)
 	assert_true(_offers(sim, player, "bar_counter"), "20:00: the Kneipe is open and it is going-out time")
 	_at(sim, 14)
 	assert_false(_offers(sim, player, "bar_counter"), "14:00: not going-out time, and the Kneipe is far")
@@ -63,6 +64,8 @@ func test_a_closed_place_offers_nothing() -> void:
 	assert_false(_offers(sim, player, "cafe_table"), "Café Wolke closes at 19:00")
 	player.routine_id = "early_bird"  # out from 17:00
 	_at(sim, 17)
+	assert_false(_offers(sim, player, "cafe_table"), "open, but the barista isn't in (T-0065)")
+	ShopStaff.serve_now(sim)
 	assert_true(_offers(sim, player, "cafe_table"))
 
 

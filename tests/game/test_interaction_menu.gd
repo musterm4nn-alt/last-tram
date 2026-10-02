@@ -123,6 +123,8 @@ func test_menu_shows_prices_and_reasons() -> void:
 		if obj.def_id == "bar_counter":
 			counter = obj
 	sim.clock.tick = SimClock.ticks_for(0, 20)
+	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar", "Have a drink · €4.00 (nobody's serving)"])
+	ShopStaff.serve_now(sim)
 	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar", "Have a drink · €4.00"])
 	sim.clock.tick = SimClock.ticks_for(0, 10)
 	assert_eq(InteractionMenu.entries(sim, counter.id), ["Bar", "Have a drink · €4.00 (closed, opens 17:00)"])

@@ -131,6 +131,7 @@ func test_critical_needs_come_before_routine_ones() -> void:
 
 func test_an_empty_fridge_sends_people_to_the_shops() -> void:
 	var sim := _game(1, 12)
+	ShopStaff.serve_now(sim)
 	var player := sim.world.player()
 	player.job = null
 	Groceries.home_household(sim, player).groceries = 0

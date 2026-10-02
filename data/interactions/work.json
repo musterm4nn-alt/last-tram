@@ -1,6 +1,6 @@
 {
 	"_doc": "Working a shift (T-0059, D29): offered by workplace objects to people whose job works there, from an hour before their shift until it ends. It uses staff slots, lasts until the shift ends (no duration), and the job's WorkSession drives it (needs, hiding). time_skip: the game skips ahead while the player works.",
 	"interactions": [
-		{ "id": "work", "name": "Work", "work": true, "time_skip": true, "object_tags": ["tram_stop", "police_desk", "spaeti_counter", "imbiss_counter", "bar_counter"], "need_rates": {}, "finish_needs": {}, "advertise": {} }
+		{ "id": "work", "name": "Work", "work": true, "time_skip": true, "object_tags": ["tram_stop", "police_desk", "spaeti_counter", "imbiss_counter", "bar_counter", "cafe_counter"], "need_rates": {}, "finish_needs": {}, "advertise": {} }
 	]
 }

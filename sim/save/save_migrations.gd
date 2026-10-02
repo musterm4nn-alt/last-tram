@@ -44,11 +44,31 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v9_to_v10(d)
 			10:
 				d = _v10_to_v11(d)
+			11:
+				d = _v11_to_v12(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v12 (T-0065): Café Wolke gets its counter (the barista's workplace), as in new towns.
+## Saves that already have one, or have no objects (test rooms), are left alone.
+static func _v11_to_v12(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("objects") is Array:
+		return d
+	var world: Dictionary = d["world"]
+	var objects: Array = world["objects"]
+	if objects.is_empty():
+		return d
+	for obj: Variant in objects:
+		if obj is Dictionary and obj.get("def_id") == "cafe_counter":
+			return d
+	var id := _int(world.get("next_id"), 1)
+	objects.append({"id": id, "def_id": "cafe_counter", "origin": [21, 13, 0], "rotation": 2})
+	world["next_id"] = id + 1
 	return d
 
 

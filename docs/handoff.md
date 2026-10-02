@@ -45,6 +45,15 @@ What differs from the owner's Mac:
 
 ## Where things stand
 
+**Update, 2 October 2026 (cloud session):** **T-0065 is done** (staffed counters: visible
+shopkeepers, a barista and counter at Café Wolke, "nobody's serving", `--check-staffing`; save
+version 12; 605 tests). Its screenshot is still to take on the Mac
+(`tools/screenshot.sh out/t0065.png`, see the ticket). One gentle-mode town (seed 5) fails the
+"talks with people" rule on a lone early-shift worker, as `main` already did on seed 11: the
+owner chose to merge and fix it in **T-0079** (draft, before T-0076). Next: T-0066, then
+T-0078 and T-0079. Playbook stops to add/tick: `t0065-build`, `t0065-review` (done), and new
+stops for T-0079 once it is `todo`.
+
 - **M1 ✅, M2 ✅** (owner sign-offs). **M3 ▶**: T-0054 to T-0064 are built and merged:
   money and the ledger, prices and the shared `Requirements` check, the Späti/Imbiss/ATM and
   Sunday closing, groceries, jobs and positions, going to work (WorkSession, rabbit hole),

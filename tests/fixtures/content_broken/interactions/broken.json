@@ -77,6 +77,16 @@
 			"need_rates": {},
 			"finish_needs": {},
 			"advertise": {}
+		},
+		{
+			"id": "staffed_person",
+			"name": "Staffed person",
+			"target": "person",
+			"staffed": true,
+			"duration_minutes": 5,
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
 		}
 	]
 }

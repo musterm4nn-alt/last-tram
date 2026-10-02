@@ -80,6 +80,7 @@ func test_quitting_pays_out_and_registering_brings_benefit() -> void:
 
 func test_residents_fill_vacancies_over_time() -> void:
 	var sim := SimFactory.new_game(content(), 1)
+	Jobs.holder(sim.world, "police_officer", 0).job = null  # this town has no jobless resident since T-0065
 	var before := Jobs.vacancies(sim).size()
 	sim.clock.tick = SimClock.ticks_for(7, 8, 59)
 	for week: int in 3:

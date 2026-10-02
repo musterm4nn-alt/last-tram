@@ -63,8 +63,9 @@ func test_benefit_covers_an_unemployed_residents_rent() -> void:
 	var sim := _game()
 	var someone: Person = null
 	for person: Person in sim.world.people.values():
-		if person.id != sim.world.player_id and person.job == null and person.age_years < 67 and Groceries.home_household(sim, person) != null:
+		if person.id != sim.world.player_id and person.age_years < 67 and Groceries.home_household(sim, person) != null:
 			someone = person
+			someone.job = null  # every working-age resident of this town has a job since T-0065
 			break
 	assert_true(someone != null and someone.benefit_registered)
 	var share := Housing.rent_share(sim, someone)
