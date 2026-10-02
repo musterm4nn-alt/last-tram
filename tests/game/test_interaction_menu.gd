@@ -142,3 +142,19 @@ func test_menu_shows_prices_and_reasons() -> void:
 	menu.prepare(counter.id)
 	assert_true(menu.is_item_disabled(1))
 	menu.free()
+
+
+func test_the_place_menu_offers_a_look_around() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	player.pos = Vector2(30.5, 30.5)
+	var lot := Lots.by_place(sim.world, "altmarkt")
+	assert_eq(PlayerController.place_target(sim, player), lot.id, "E with nothing in reach looks around")
+	assert_eq(InteractionMenu.entries(sim, lot.id), ["Altmarkt", "Have a look around"])
+	assert_eq(InteractionMenu.entries(sim, Lots.by_place(sim.world, "kneipe_anker").id), ["Kneipe Zum Anker", "Nothing to do here"], "only where you stand")
+	var heard := {"type": &"clue_learned", "data": {"person_id": player.id, "discovery_id": "fountain_coins", "source": "talk", "source_id": 3}}
+	assert_eq(Hud.notice_for_event(heard, player.id, content(), sim), "You heard something about Altmarkt.")
+	var found := {"type": &"discovery_uncovered", "data": {"person_id": player.id, "discovery_id": "fountain_coins", "place_id": "altmarkt"}}
+	assert_eq(Hud.notice_for_event(found, player.id, content(), sim), "You found something: Coins in the fountain.")
+	var nothing := {"type": &"searched", "data": {"person_id": player.id, "place_id": "altmarkt", "result": "nothing", "discovery_id": ""}}
+	assert_eq(Hud.notice_for_event(nothing, player.id, content(), sim), "Nothing here.")

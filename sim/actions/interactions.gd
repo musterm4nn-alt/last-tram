@@ -33,6 +33,19 @@ static func offered_by_person(sim: Sim, actor_id: int, target_id: int) -> Array[
 	return out
 
 
+## Place interactions (T-0068) for `person` on the lot `lot_id`: offered only while they stand
+## on it. In content order.
+static func offered_by_place(sim: Sim, person: Person, lot_id: int) -> Array[InteractionDef]:
+	var out: Array[InteractionDef] = []
+	var here := Lots.lot_at(sim, person.cell()) if person != null else null
+	if here == null or here.id != lot_id:
+		return out
+	for candidate: InteractionDef in sim.content.interactions.values():
+		if candidate.target == "place":
+			out.append(candidate)
+	return out
+
+
 ## Index of the use slot `person` stands on for this object, or -1. With `def`, only slots
 ## that fit it (slot_fits). Compares full cells (including level), so standing under the slot
 ## is not enough.

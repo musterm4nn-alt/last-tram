@@ -1,0 +1,6 @@
+{
+	"_doc": "Finding the town's secrets (T-0068, docs/design/discoveries.md). search is a place interaction (target \"place\"): done where you stand, on that place's lot; when it finishes it uncovers a secret you have the clue for (right place and time), or teaches the clue of one that doesn't need it, or finds nothing. teaches_clue: doing it teaches that discovery's clue (notice boards, T-0070). Free will doesn't search (empty advertise).",
+	"interactions": [
+		{ "id": "search", "name": "Have a look around", "target": "place", "duration_minutes": 30, "need_rates": { "fun": 4.0 }, "finish_needs": { "comfort": 3 }, "advertise": {} }
+	]
+}

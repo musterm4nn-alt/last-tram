@@ -33,6 +33,12 @@ static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int)
 		return "has_home"
 	if not def.requires_discovery.is_empty() and not person.discoveries.has(def.requires_discovery):
 		return "unknown_secret"
+	if def.target == "place":
+		var place_lot: Lot = sim.world.lots.get(target_id)
+		if place_lot == null:
+			return "no_place"
+		if not Lots.may_enter(sim, person, place_lot):
+			return "private" if place_lot.access == Lot.PRIVATE else "closed"
 	if def.target == "object":
 		var obj := sim.world.get_object(target_id)
 		var lot := Lots.lot_at(sim, obj.origin) if obj != null else null

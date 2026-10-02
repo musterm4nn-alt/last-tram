@@ -90,3 +90,49 @@ static func people_of(sim: Sim, place_id: String) -> Array[Person]:
 		if (lot != null and person.home_lot_id == lot.id) or (job != null and job.place_id == place_id):
 			out.append(person)
 	return out
+
+
+## A search at `place_id` finishes (T-0068; no rng): uncover a discovery the person has the
+## clue for and that is eligible now; else learn the clue of one here that doesn't need it
+## (any time; the clue says when); else nothing. Discoveries are tried in id order. Emits
+## &"searched" {person_id, place_id, result: "found" | "clue" | "nothing", discovery_id}.
+static func search(sim: Sim, person: Person, place_id: String) -> String:
+	var ids: Array = sim.content.discoveries.keys()
+	ids.sort()
+	var result := "nothing"
+	var found_id := ""
+	for id: String in ids:
+		if person.known_clues.has(id) and eligible(sim, person, sim.content.discoveries[id], place_id):
+			uncover(sim, person, id)
+			result = "found"
+			found_id = id
+			break
+	if found_id.is_empty():
+		for id: String in ids:
+			var def: DiscoveryDef = sim.content.discoveries[id]
+			if not def.clue_required and def.place_id == place_id and def.level == person.level \
+					and learn_clue(sim, person, id, "search", 0):
+				result = "clue"
+				found_id = id
+				break
+	sim.emit_event(&"searched", {"person_id": person.id, "place_id": place_id, "result": result, "discovery_id": found_id})
+	return result
+
+
+## After a good friendly talk (T-0068), each tells the other one clue (the first by id) they
+## know or have found and the other doesn't, if their trust in the listener reaches the
+## discovery's share_trust (never for -1).
+static func share_clues(sim: Sim, a: Person, b: Person) -> void:
+	_share(sim, a, b)
+	_share(sim, b, a)
+
+
+static func _share(sim: Sim, speaker: Person, listener: Person) -> void:
+	var view := Social.relationship(speaker, listener.id)
+	var trust := view.trust if view != null else 0.0
+	var told := Array(speaker.known_clues) + Array(speaker.discoveries)
+	told.sort()
+	for id: String in told:
+		var def := sim.content.discovery(id)
+		if def != null and def.share_trust >= 0 and trust >= def.share_trust and learn_clue(sim, listener, id, "talk", speaker.id):
+			return

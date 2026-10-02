@@ -83,6 +83,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			menu.open_for(someone, get_viewport().get_mouse_position())
 		elif not here.is_empty() and menu != null:
 			menu.open_for(here[0], get_viewport().get_mouse_position())
+		elif Vector3i(cell.x, cell.y, Session.viewed_level) == player.cell() and place_target(Session.sim, player) > 0 and menu != null:
+			menu.open_for(place_target(Session.sim, player), get_viewport().get_mouse_position())
 		else:
 			Session.submit(walk_command(player, world_px, Session.viewed_level))
 	elif event.is_action_pressed("level_up") or event.is_action_pressed("level_down"):
@@ -91,6 +93,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif not Session.command_mode and event.is_action_pressed("interact"):
 		get_viewport().set_input_as_handled()
 		var object_id := nearest_target(Session.sim, player)
+		if object_id <= 0:
+			object_id = place_target(Session.sim, player)  # nothing in reach: the place itself
 		if object_id > 0 and menu != null:
 			menu.open_for(object_id, get_viewport().get_canvas_transform() * (player.pos * ViewConfig.TILE_PX))
 		else:
@@ -142,6 +146,13 @@ static func person_at(sim: Sim, point: Vector2, level: int, except_id: int) -> i
 			best_distance = distance
 			best = person.id
 	return best
+
+
+## The lot under the person when it offers place interactions (searching), else 0: what E
+## opens with nothing in reach, and a click on yourself in command mode (T-0068).
+static func place_target(sim: Sim, person: Person) -> int:
+	var lot := Lots.lot_at(sim, person.cell())
+	return lot.id if lot != null and not Interactions.offered_by_place(sim, person, lot.id).is_empty() else 0
 
 
 ## What E would use: the best-scoring object or person in reach (people use the same reach

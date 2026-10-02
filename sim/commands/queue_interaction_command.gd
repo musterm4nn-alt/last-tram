@@ -33,8 +33,11 @@ func apply(sim: Sim) -> void:
 		return
 	if person.action_queue.size() >= Person.MAX_QUEUE:
 		return
-	var options := Interactions.offered_by_person(sim, person_id, target_id) if def.target == "person" \
-		else Interactions.offered_by(sim, target_id)
+	var options := Interactions.offered_by(sim, target_id)
+	if def.target == "person":
+		options = Interactions.offered_by_person(sim, person_id, target_id)
+	elif def.target == "place":
+		options = Interactions.offered_by_place(sim, person, target_id)
 	var offered := false
 	for candidate: InteractionDef in options:
 		if candidate.id == interaction_id:
