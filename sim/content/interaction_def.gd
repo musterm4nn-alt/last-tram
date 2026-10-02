@@ -46,6 +46,9 @@ var cash_out: int = 0
 var uses_groceries: int = 0
 ## Grocery portions added to the actor's household when it finishes (buying groceries).
 var adds_groceries: int = 0
+## Sold over a counter (T-0065): only while someone works an on-site shift on the target's
+## place (Requirements "not_staffed"). Object targets only.
+var staffed: bool = false
 ## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's
 ## WorkSession drives it. Work has no duration of its own.
 var work: bool = false

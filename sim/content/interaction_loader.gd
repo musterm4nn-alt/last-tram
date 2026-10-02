@@ -67,6 +67,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.remote = reader.read_bool(d, "remote", ctx)
 			if def.remote and def.target != "person":
 				reader.error("%s: only person-targeted interactions can be remote" % ctx)
+		if d.has("staffed"):
+			def.staffed = reader.read_bool(d, "staffed", ctx)
+			if def.staffed and def.target != "object":
+				reader.error("%s: only object-targeted interactions can be staffed" % ctx)
 		if d.has("work"):
 			def.work = reader.read_bool(d, "work", ctx)
 		if d.has("time_skip"):

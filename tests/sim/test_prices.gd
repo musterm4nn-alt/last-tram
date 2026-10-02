@@ -13,7 +13,8 @@ func _object(sim: Sim, def_id: String) -> WorldObject:
 	return null
 
 
-## A new game at `hour` on Monday, the player without free will standing at `pos`.
+## A new game at `hour` on Monday with the shop staff on shift serving (T-0065), the player
+## without free will standing at `pos`.
 func _game(hour: int, pos: Vector2 = BAR_SLOT) -> Sim:
 	var sim := SimFactory.new_game(content(), 1)
 	sim.clock.tick = SimClock.ticks_for(0, hour)
@@ -21,6 +22,7 @@ func _game(hour: int, pos: Vector2 = BAR_SLOT) -> Sim:
 	player.free_will = false
 	player.pos = pos
 	player.level = 0
+	ShopStaff.serve_now(sim)
 	sim.events.drain()
 	return sim
 
@@ -130,7 +132,7 @@ func test_free_will_skips_what_it_cannot_afford() -> void:
 	var sim := _game(20)
 	var resident: Person = null
 	for person: Person in sim.world.people.values():
-		if person.id != sim.world.player_id:
+		if person.id != sim.world.player_id and not Jobs.working(sim, person):
 			resident = person
 			break
 	resident.routine_id = "regular"

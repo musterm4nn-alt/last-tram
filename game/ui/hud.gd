@@ -42,7 +42,8 @@ static func money_text(person: Person) -> String:
 
 
 ## Where `person` is: the place's name, plus " (closed, opens 17:00)" while its lot is closed for
-## opening hours; "Altstadt" outside every place.
+## opening hours, or " (nobody serving)" while it is open with nobody behind the counter
+## (T-0065); "Altstadt" outside every place.
 static func place_text(sim: Sim, person: Person) -> String:
 	var place: PlaceDef = sim.content.place_at(person.cell()) if person != null else null
 	if place == null:
@@ -50,6 +51,8 @@ static func place_text(sim: Sim, person: Person) -> String:
 	var lot := Lots.by_place(sim.world, place.id)
 	if lot != null and not Lots.is_open(lot, sim.clock):
 		return "%s (closed, %s)" % [place.name, Lots.opening_text(lot, sim.clock)]
+	if Staffing.unserved(sim, lot):
+		return "%s (nobody serving)" % place.name
 	return place.name
 
 

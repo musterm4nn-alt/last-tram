@@ -1,5 +1,5 @@
 {
-	"_doc": "Shop furniture (T-0056): the Späti and Imbiss counters and the ATM. Same format as furniture.json. Customers use the slots in front of a counter; the staff slot behind it (role \"staff\") is where people work (T-0059).",
+	"_doc": "Shop furniture (T-0056): the Späti and Imbiss counters, the ATM, and the café counter (T-0065: two staff slots, placed turned round). Same format as furniture.json. Customers use the slots in front of a counter; the staff slot behind it (role \"staff\") is where people work (T-0059).",
 	"objects": [
 		{
 			"id": "spaeti_counter",
@@ -116,6 +116,75 @@
 			],
 			"price": 250000,
 			"debug_color": "#b5651d"
+		},
+		{
+			"id": "cafe_counter",
+			"name": "Café counter",
+			"size": [
+				3,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"cafe_counter"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						2,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				},
+				{
+					"offset": [
+						1,
+						-1
+					],
+					"facing": [
+						0,
+						1
+					],
+					"role": "staff"
+				},
+				{
+					"offset": [
+						0,
+						-1
+					],
+					"facing": [
+						0,
+						1
+					],
+					"role": "staff"
+				}
+			],
+			"price": 200000,
+			"debug_color": "#8a5a3c"
 		},
 		{
 			"id": "atm",

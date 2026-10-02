@@ -61,8 +61,9 @@ get a weekly pension instead of working.
 - Stock is infinite. Real stock and deliveries come later (a crime hook: robbing the
   delivery van).
 - M3 venues in the Altstadt: Späti Kaya (snacks, beer, groceries), Imbiss Anadolu (Döner,
-  fries), Café Wolke (coffee), Kneipe Zum Anker (drinks), Waschsalon Blitz (laundry), a
-  second-hand clothes shop and a barber (T-0073), and an ATM on the Altmarkt.
+  fries), Café Wolke (coffee, with a barista from T-0065), Kneipe Zum Anker (drinks),
+  Waschsalon Blitz (laundry), a second-hand clothes shop and a barber (T-0073), and an ATM
+  on the Altmarkt.
 
 ## Groceries
 
@@ -87,8 +88,10 @@ runs low. A personal inventory (a beer in your pocket, stolen goods, tools) come
   ```
   - `RabbitHoleWork` (default): the person goes into the building (the Polizeiposten) or
     takes the tram from the stop (jobs outside the Altstadt) and is hidden for the shift.
-  - `OnSiteWork`: the person stands behind a counter (the Späti, the Imbiss, the bar), and
-    customers can buy there while they do.
+  - `OnSiteWork` (T-0065): the person stands, visible, behind a counter (the Späti, the
+    Imbiss, the bar, the café), and customers can buy there while they do. Interactions
+    marked `staffed` need someone serving on the place; the café and pub tables are served
+    through their lot.
   - `PlayableWork` (later): per job, for example a barista minigame. A registry maps the
     session type to an implementation.
 - **Work is an action**: a `work` interaction on the workplace object that lasts until the

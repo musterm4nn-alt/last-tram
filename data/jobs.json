@@ -1,5 +1,5 @@
 {
-	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (behind a counter, T-0065). need_rates: per hour while working, on top of decay; each job has its own profile (T-0077: desk jobs restful but boring, standing jobs hard on comfort, manual jobs tiring but social, care work draining, bar work fun but exhausting). With the world's gentle work setting on, every job uses economy.json's gentle_profile instead. Hunger is not a rate: a shift with 4 hours of work includes lunch (economy.json work.lunch_*). shift_moodlet (optional): a moodlet given after each shift worked to the end, in varied mode. levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064).",
+	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (visible behind a counter, which sells only while someone works there; T-0065). need_rates: per hour while working, on top of decay; each job has its own profile (T-0077: desk jobs restful but boring, standing jobs hard on comfort, manual jobs tiring but social, care work draining, bar work fun but exhausting). With the world's gentle work setting on, every job uses economy.json's gentle_profile instead. Hunger is not a rate: a shift with 4 hours of work includes lunch (economy.json work.lunch_*). shift_moodlet (optional): a moodlet given after each shift worked to the end, in varied mode. levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064).",
 	"jobs": [
 		{
 			"id": "spaeti_clerk",
@@ -172,6 +172,57 @@
 					],
 					"from": 17,
 					"to": 2
+				}
+			],
+			"start_filled": 1.0,
+			"formality": 0.0
+		},
+		{
+			"id": "barista",
+			"name": "Barista",
+			"place_id": "cafe_wolke",
+			"session": "on_site",
+			"workplace_tag": "cafe_counter",
+			"need_rates": {
+				"energy": -0.5,
+				"fun": 5.0,
+				"social": 6.0,
+				"comfort": 5.5
+			},
+			"levels": [
+				{
+					"title": "Barista",
+					"wage": 1150
+				},
+				{
+					"title": "Head barista",
+					"wage": 1300
+				}
+			],
+			"positions": [
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri",
+						"sat"
+					],
+					"from": 8,
+					"to": 14
+				},
+				{
+					"days": [
+						"mon",
+						"tue",
+						"wed",
+						"thu",
+						"fri",
+						"sat"
+					],
+					"from": 14,
+					"to": 19
 				}
 			],
 			"start_filled": 1.0,

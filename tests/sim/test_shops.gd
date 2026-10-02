@@ -14,8 +14,8 @@ func _object(sim: Sim, def_id: String) -> WorldObject:
 	return null
 
 
-## A new game at `day` (0 = Monday) and `hour`, the player without free will on `slot` of
-## the first `def_id` object.
+## A new game at `day` (0 = Monday) and `hour` with the shop staff on shift serving (T-0065),
+## the player without free will on `slot` of the first `def_id` object.
 func _at(def_id: String, day: int, hour: int, slot: int = 0) -> Sim:
 	var sim := SimFactory.new_game(content(), 1)
 	sim.clock.tick = SimClock.ticks_for(day, hour)
@@ -26,6 +26,7 @@ func _at(def_id: String, day: int, hour: int, slot: int = 0) -> Sim:
 	var cell := _object(sim, def_id).slot_cell(content(), slot)
 	player.pos = Vector2(cell.x + 0.5, cell.y + 0.5)
 	player.level = cell.z
+	ShopStaff.serve_now(sim)
 	sim.events.drain()
 	return sim
 

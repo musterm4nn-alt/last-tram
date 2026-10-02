@@ -1226,6 +1226,15 @@
 			"rotation": 0
 		},
 		{
+			"def": "cafe_counter",
+			"cell": [
+				21,
+				13,
+				0
+			],
+			"rotation": 2
+		},
+		{
 			"def": "bench",
 			"cell": [
 				25,

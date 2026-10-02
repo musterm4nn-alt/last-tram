@@ -5,7 +5,8 @@ extends RefCounted
 ## conversations only, and days with colleagues are reported apart (T-0077).
 ## Feed it every sim event (observe) and sample it once per game minute (sample); failures()
 ## lists what went wrong in plain words ([] = healthy). Used by `tools/simrun.sh --check-m2`
-## and tests/sim/test_m2_town_lives.gd.
+## and tests/sim/test_m2_town_lives.gd. It also measures how much of their open time the shops
+## had someone serving (T-0065; `--check-staffing`, a check of its own outside M2's rules).
 
 const EATING: PackedStringArray = ["cook_meal", "grab_snack", "eat_doener", "eat_fries", "buy_snack"]
 ## Share of person-minutes any need may spend below 30.
@@ -17,6 +18,8 @@ const MIN_CONNECTED_SHARE: float = 0.5
 ## Conversations are judged over a full week only (the owner, 2 October 2026, D31): on two
 ## workdays a working loner may not have talked to anyone yet.
 const SOCIAL_MIN_DAYS: int = 7
+## Share of its open minutes each staffed place must have someone serving (T-0065).
+const MIN_STAFFED_SHARE: float = 0.9
 
 var meals: Dictionary[int, int] = {}
 var sleeps: Dictionary[int, int] = {}
@@ -37,6 +40,9 @@ var left_early: int = 0
 var shifts_missed: int = 0
 var promotions: int = 0
 var firings: int = 0
+## Staffed places (T-0065): place id -> minutes open, and minutes open with someone serving.
+var open_minutes: Dictionary[String, int] = {}
+var staffed_minutes: Dictionary[String, int] = {}
 
 
 func observe(sim: Sim, event: Dictionary) -> void:
@@ -77,6 +83,13 @@ func observe(sim: Sim, event: Dictionary) -> void:
 
 func sample(sim: Sim) -> void:
 	samples += 1
+	for place_id: String in Staffing.places(sim.content):
+		var lot := Lots.by_place(sim.world, place_id)
+		if lot == null or not Lots.is_open(lot, sim.clock):
+			continue
+		open_minutes[place_id] = open_minutes.get(place_id, 0) + 1
+		if Staffing.serving(sim, place_id):
+			staffed_minutes[place_id] = staffed_minutes.get(place_id, 0) + 1
 	for person: Person in sim.world.people.values():
 		for need_id: String in person.needs:
 			var value: float = person.needs[need_id]
@@ -130,6 +143,29 @@ func failures(sim: Sim, days: int) -> PackedStringArray:
 func work_summary() -> String:
 	return "work: shifts started %d (late %d, average lateness %.1f min), left early %d, missed %d, promotions %d, firings %d" % [
 		shifts_started, late_shifts, float(late_minutes) / maxf(1.0, shifts_started), left_early, shifts_missed, promotions, firings]
+
+
+## The share (0..1) of the place's sampled open minutes with someone serving; 1 if never open.
+func staffed_share(place_id: String) -> float:
+	var open: int = open_minutes.get(place_id, 0)
+	return float(staffed_minutes.get(place_id, 0)) / open if open > 0 else 1.0
+
+
+## "staffed: Café Wolke 96%, Imbiss Anadolu 99%, ..." (share of open time someone served).
+func staffing_summary(sim: Sim) -> String:
+	var parts := PackedStringArray()
+	for place_id: String in Staffing.places(sim.content):
+		parts.append("%s %.0f%%" % [sim.content.place(place_id).name, staffed_share(place_id) * 100.0])
+	return "staffed: " + ", ".join(parts)
+
+
+## Places that had someone serving less than MIN_STAFFED_SHARE of their open time.
+func staffing_failures(sim: Sim) -> PackedStringArray:
+	var out := PackedStringArray()
+	for place_id: String in Staffing.places(sim.content):
+		if staffed_share(place_id) < MIN_STAFFED_SHARE:
+			out.append("%s was staffed only %.0f%% of its open time" % [sim.content.place(place_id).name, staffed_share(place_id) * 100.0])
+	return out
 
 
 ## Plain-words numbers for the report.
