@@ -58,6 +58,10 @@ static func options(sim: Sim, target_id: int) -> Array[InteractionDef]:
 ## `person` may not do it now (Requirements; T-0055).
 static func label(sim: Sim, person: Person, def: InteractionDef, target_id: int) -> String:
 	var text := def.name
+	if def.work and person != null and person.job != null:
+		var job := sim.content.job(person.job.job_id)
+		var shift := job.positions[person.job.position]
+		text += " (%s %d–%d, %s/h)" % [Jobs.days_text(shift), shift.from, shift.to, Money.format(job.levels[clampi(person.job.level, 0, job.levels.size() - 1)].wage)]
 	if def.price > 0:
 		text += " · %s" % Money.format(def.price)
 	var reason := Requirements.check(sim, person, def, target_id) if person != null else ""

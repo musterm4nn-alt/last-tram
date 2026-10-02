@@ -58,7 +58,8 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 				"score": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
 					+ Routines.score_bonus(sim, person, def) - Utility.price_cost(person, def, sim.content)
 					- TRAVEL_COST_PER_CELL * cells
-					+ (sim.content.economy.restock_bonus if def.adds_groceries > 0 else 0.0),
+					+ (sim.content.economy.restock_bonus if def.adds_groceries > 0 else 0.0)
+					+ (CASH_ERRAND_SCORE if def.cash_out > 0 and errand(sim, person, def) else 0.0),
 				"cells": cells,
 			})
 	out.append_array(_person_options(sim, person))
@@ -113,6 +114,8 @@ static func _person_options(sim: Sim, person: Person) -> Array[Dictionary]:
 static func errand(sim: Sim, person: Person, def: InteractionDef) -> bool:
 	if def.adds_groceries > 0:
 		return _restock_needed(sim, person)
+	if def.cash_out > 0:
+		return person.wallet.cash < POCKET_MONEY and person.wallet.bank >= def.cash_out + POCKET_MONEY
 	if def.price <= 0 or not def.advertise.has("hunger"):
 		return false
 	if float(person.needs.get("hunger", 100.0)) >= sim.content.economy.hungry_below:
@@ -148,6 +151,13 @@ static func _outing_objects(sim: Sim) -> Dictionary:
 				out[def.id] = true
 				break
 	return out
+
+
+## With less cash than this (and enough in the bank), a trip to the ATM is an errand
+## (T-0064 playtest: pockets ran empty, and M4 pickpockets need something to find).
+const POCKET_MONEY: int = 1000
+## The score a cash errand gets (an ATM advertises no need).
+const CASH_ERRAND_SCORE: float = 4.0
 
 
 ## Adds rng.randf() × NOISE to each score (in list order), drops options below MIN_SCORE,

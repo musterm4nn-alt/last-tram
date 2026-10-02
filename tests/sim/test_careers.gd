@@ -53,6 +53,7 @@ func test_a_shift_earns_its_wage_and_payday_pays_it() -> void:
 func test_lateness_and_leaving_early_cost_performance() -> void:
 	var sim := _game(0, 9, 30)
 	var player := sim.world.player()
+	player.job.shifts_worked = 3  # not their first day (that one is forgiven)
 	sim.submit(QueueInteractionCommand.new(player.id, "work", _at_shelter(sim, player).id))
 	sim.run_minutes(60)
 	sim.submit(SetMoveIntentCommand.new(player.id, Vector2.DOWN))
@@ -111,3 +112,24 @@ func test_pay_records_survive_saving() -> void:
 	if old != null:
 		assert_eq(old.world.player().job.unpaid, 0)
 		assert_eq(old.world.player().job.last_shift_start, -1)
+
+
+func test_the_first_shift_forgives_lateness() -> void:
+	var sim := _game(0, 9, 40)
+	var player := sim.world.player()
+	sim.submit(QueueInteractionCommand.new(player.id, "work", _at_shelter(sim, player).id))
+	sim.run_minutes(8 * 60)
+	assert_eq(player.job.shifts_worked, 1)
+	assert_true(player.job.performance >= 50.0 + content().economy.performance["shift_done"], "40 minutes late on day one: no penalty")
+
+
+func test_people_out_of_cash_go_to_the_atm() -> void:
+	var sim := _game(1, 12)
+	var player := sim.world.player()
+	player.job = null
+	Money.spend(sim, player, player.wallet.cash, "purchase")
+	var options := Autonomy.candidates(sim, player).map(func(o: Dictionary) -> String: return o["interaction_id"])
+	assert_true(options.has("withdraw_20") or options.has("withdraw_50"), "no cash: the ATM is an errand")
+	Money.withdraw(sim, player, 2000)
+	options = Autonomy.candidates(sim, player).map(func(o: Dictionary) -> String: return o["interaction_id"])
+	assert_false(options.has("withdraw_20"), "cash in the pocket: no ATM trip")
