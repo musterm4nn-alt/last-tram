@@ -1,7 +1,47 @@
 # Handoff: continuing M3 (Making a Living)
 
-Rewritten on 2 October 2026, when the previous session's context ran full. For the next
-Claude Code session (the architect and builder, Opus). Read this after CLAUDE.md and AGENTS.md.
+Rewritten on 2 October 2026, when the previous session's context ran full; updated the same
+day after T-0077, when the owner moved the work to a Claude Code **cloud** session for a
+while. For the next Claude Code session (the architect and builder, Opus). Read this after
+CLAUDE.md and AGENTS.md. In the cloud, start with "Working in a cloud session" below.
+
+## Working in a cloud session (read first in the cloud)
+
+**The task there:** detail **T-0065** (staffed counters, still a `draft`) against the merged
+code, set it to `todo`, then build it: branch `t/0065-staffed-counters`, tests,
+`tools/check.sh`, the ticket's notes, merge into `main` and push. If there is time, carry on
+with **T-0066** (eviction and moving) the same way. Follow D29 order; T-0078 must land before
+T-0076. Skip the agent playtest the next stop asks for (it needs OpenCode on the owner's Mac):
+leave a note for it in the ticket instead.
+
+What differs from the owner's Mac:
+- **Godot.** The SessionStart hook (`tools/cloud_session_start.sh`) runs `tools/setup.sh`
+  when `godot` is on the PATH. If it says Godot is missing, install 4.7.1 the way CI does
+  (`.github/workflows/check.yml`: the `Godot_v4.7.1-stable_linux.x86_64.zip` release into
+  `~/.local/bin/godot`), then run `tools/setup.sh`. The pre-commit hook needs it.
+- **Git.** There is one clone, no worktrees: branch from `main`, then
+  `git checkout main && git merge --no-ff t/NNNN-slug && git push`, and delete the branch
+  locally and on GitHub. Ignore the `git -C /Users/xamxim/last-tram` lines below.
+- **No screenshots or game window.** `tools/screenshot.sh` and `tools/run.sh` need a display.
+  For visible changes, write in the ticket notes which screenshot to take
+  (`tools/screenshot.sh out/tNNNN.png ...`) and list it in your final message; the owner (or
+  the next session on the Mac) takes it and looks before calling the ticket done.
+- **The Playbook** (`ArtifactData`) may not be reachable. If it isn't, list in your final
+  message which stops to tick or add (ids `t<nnnn>-build`), so the Mac session can do it.
+- **No local memory.** The Mac session's memory notes don't travel. What matters from them:
+  the owner wants Opus to write the code itself (no OpenCode builders, no subagents unless
+  asked). Headless experiments go in a throwaway `out/x.gd` run with
+  `godot --headless --path . --script res://out/x.gd`: call `quit.call_deferred(0)` first
+  in `_initialize()`, never mention `Session` or `game/` classes there (they don't compile
+  outside the game), and never write to `user://`. Check that a probe printed something:
+  a compile error prints `SCRIPT ERROR` and nothing else.
+- **Speed.** On the Mac the suite takes about 3 minutes and a 7-day `simrun` about 45 s.
+  Run the six seeds one after another (`simrun.sh` shares `out/simrun.log`), or call
+  `godot --headless --path . --script res://tools/sim_runner.gd -- --days=7 --check-m2
+  --seed=N` directly to run several in parallel.
+- **Before handing back:** everything merged and pushed, the ticket notes complete, and a
+  short message for the owner in game terms. Back on the Mac, `main` in
+  `/Users/xamxim/last-tram` needs `git pull --ff-only` before the desktop icon runs the new build.
 
 ## Where things stand
 
