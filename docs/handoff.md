@@ -10,26 +10,33 @@ Claude Code session (the architect and builder, Opus). Read this after CLAUDE.md
   Sunday closing, groceries, jobs and positions, going to work (WorkSession, rabbit hole),
   leaving for work (WorkSystem, D30), pay and careers (Careers, EconomySystem), rent, bills,
   benefit and pensions (Housing), the phone (Bank, Jobs, Contacts with calls, Map; P key),
-  and applying, quitting and registering (Hiring). Save version 9. `tools/check.sh`: 560 tests
-  pass. `tools/simrun.sh --days=7 --check-m2` passes on seeds 1–6.
-- **Next: T-0077** (hardening after the code reviews; fully specified, `todo`, ready), then
-  T-0065 (staffed counters), and the rest of the drafts in D29 order. **T-0078**
+  and applying, quitting and registering (Hiring). **T-0077** (hardening after the reviews)
+  is done: shifts settled once, critical needs first, lunch as a meal, varied/gentle jobs,
+  an honest town check, docs (D31). Save version 11. `tools/check.sh`: 593 tests pass.
+  `tools/simrun.sh --days=7 --check-m2` passes on seeds 1–6 in both modes (add
+  `--gentle-work` for gentle jobs).
+- **Next: T-0065** (staffed counters), and the rest of the drafts in D29 order. **T-0078**
   (robustness and performance) must land before T-0076 (M3 acceptance). Drafts T-0065 to
-  T-0076 are detailed right before building each one, against the merged code.
-- 13 tickets are left in M3: T-0065 to T-0078.
+  T-0076 are detailed right before building each one, against the merged code. Do an agent
+  playtest of a working week first (T-0077 changed how jobs feel).
+- 12 tickets are left in M3: T-0065 to T-0076 and T-0078.
 
 ## Owner decisions still open or recent
 
 - **LICENSE:** the owner will decide later. Don't add one.
-- **Distinct job profiles** (2 Oct): yes, but switchable. T-0077 item 12 specifies it
-  (varied by default, "gentle" in the Esc menu).
+- **Distinct job profiles** (2 Oct): yes, but switchable. Built in T-0077 (varied by
+  default, "Work: Gentle" in the Esc menu). The profiles had to stay mild (D31).
+- **Conversations are judged over a full week** (2 Oct, approved by the owner as a change to
+  a frozen acceptance rule): the suite's two-day town check no longer applies the
+  "talks with people" rule (D31).
 - The owner wants **agent playtests** for play steps: Muse Spark 1.3 (free, xhigh) in
   OpenCode, run by Opus unattended (`docs/playtesting.md`, memory "agent-playtests"). Two
   were done (shopping; a working week). Do one after T-0077 and after T-0065/T-0066. Ask the
   owner for a **human** playtest of a working week before M3 is called done.
-- Process changes proposed after the reviews, waiting for the owner's approval: freeze
-  acceptance rules per milestone (written into T-0077 item 13), an independent adversarial
-  reviewer (a different model) for saves, money and time handling, milestone tags (in T-0077).
+- Process changes after the reviews: acceptance rules are frozen per milestone
+  (`docs/workflow.md`) and milestones are tagged (`m0`–`m2`; tag `m3` at its sign-off).
+  Still waiting for the owner: an independent adversarial reviewer (a different model) for
+  saves, money and time handling.
 
 ## October reviews (summary, so you don't need the files)
 
@@ -113,6 +120,10 @@ people) and D28 (tiers v1) are in `docs/decisions.md`.
 
 ## Lessons that will bite again
 
+- **The honest town check is a knife edge for lone workers** (T-0077). A few people who
+  live alone and work long shifts sit right at "3 conversations a week". Global levers move
+  it a lot: talk-while-out 1.0 gave five times the conversations. New towns give workers
+  the routine that leaves the most evening out (`Jobs.routine_fit`); check both modes.
 - **Workers' days are tight.** Any change to needs, jobs or free will can make someone go to
   bed unwashed or hungry. Run `tools/simrun.sh --days=7 --check-m2` on seeds 1–6 and use the
   probe pattern from the M3 work (a throwaway `out/*.gd` that prints a failing person's last

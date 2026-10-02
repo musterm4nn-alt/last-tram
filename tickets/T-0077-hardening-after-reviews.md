@@ -1,7 +1,7 @@
 ---
 id: T-0077
 title: Hardening after the October reviews - shifts, needs, honest checks, docs
-status: in-progress
+status: done
 milestone: M3
 size: L
 owner: builder
@@ -116,23 +116,23 @@ Save version bump with migration and fixture for the new `Employment` fields.
 later), new features.
 
 ## Acceptance criteria
-- [ ] Split-shift test: work 09:00–12:00, leave, return 12:05–17:00 → one settled shift, pay
+- [x] Split-shift test: work 09:00–12:00, leave, return 12:05–17:00 → one settled shift, pay
   for 475 minutes, one lateness judgement, `shifts_worked` +1 (`test_careers.gd`).
-- [ ] Early-cancel test: Work at 08:10, cancel 08:15, work the whole shift → no penalty.
-- [ ] Segment-invariant pay test with a wage not divisible by 60.
-- [ ] Mid-shift old-save test: wages, no `shift_missed`.
-- [ ] Warning hysteresis test; broken-economy fixture tests for the career rules.
-- [ ] Queue test for leaving for work; colleague test with an absent colleague.
-- [ ] `home_needs` ordering test with a critical need.
-- [ ] Data-moved constants load and are validated (`test_content.gd` broken fixtures).
-- [ ] Lunch: a shift emits `meal_eaten`; `TownCheck` meal and colleague counts are
+- [x] Early-cancel test: Work at 08:10, cancel 08:15, work the whole shift → no penalty.
+- [x] Segment-invariant pay test with a wage not divisible by 60.
+- [x] Mid-shift old-save test: wages, no `shift_missed`.
+- [x] Warning hysteresis test; broken-economy fixture tests for the career rules.
+- [x] Queue test for leaving for work; colleague test with an absent colleague.
+- [x] `home_needs` ordering test with a critical need.
+- [x] Data-moved constants load and are validated (`test_content.gd` broken fixtures).
+- [x] Lunch: a shift emits `meal_eaten`; `TownCheck` meal and colleague counts are
   separate; `test_m2_town_lives.gd` still passes with the honest check.
-- [ ] Gentle/varied switch: command, save round trip, Esc menu button (game test),
+- [x] Gentle/varied switch: command, save round trip, Esc menu button (game test),
   screenshot `out/t0077-menu.png`; `tools/simrun.sh --days=7 --check-m2` PASSED for seeds 1–3
   in **both** modes (numbers in the notes, incl. ms/step).
-- [ ] Refused commands don't stamp input (test).
-- [ ] README lint test; docs updated; milestone tags pushed; stale branches gone.
-- [ ] `tools/check.sh` passes; nothing weakened (any changed test explained in the notes).
+- [x] Refused commands don't stamp input (test).
+- [x] README lint test; docs updated; milestone tags pushed; stale branches gone.
+- [x] `tools/check.sh` passes; nothing weakened (any changed test explained in the notes).
 
 ## Implementation notes
 
@@ -251,6 +251,27 @@ Built by Opus in three branches, as the ticket allows: `t/0077a-shifts` (A),
   1000 exchanges a week on seed 1; cost is about 5% higher than after A (0.152 on seed 1).
 - Screenshot `out/t0077-menu.png`: the Esc menu with "Work: Varied" under "Full lives".
 - `tools/check.sh`: 591 tests pass.
+
+### C. Docs tell the truth (`t/0077c-docs`)
+- **Item 16:** `README.md`: status "M0, M1 and M2 are done. **M3 · Making a Living** is in
+  progress", how to run (incl. the desktop icon), both key lists exactly as the HUD shows
+  them, links to the Playbook and `docs/playtesting.md`, and who builds now.
+  `tests/lint/test_docs.gd` fails when the status doesn't name the roadmap's ▶ row, or when
+  the key lists differ from `Hud.hint_text`.
+- **Item 17:** `AGENTS.md` says it is the one source of shared rules; the builder is
+  described generically (currently Opus; OpenCode only when the owner asks); Muse is the
+  playtester. `CLAUDE.md` no longer repeats the roles, says the architect builds for now,
+  and has the worktree merge and the playbook's current build stops.
+- **Item 18:** `docs/architecture.md`: the folder map lists `sim/ai/`, `sim/social/`,
+  `sim/economy/`, `sim/jobs/`, `game/ui/phone/` and the rest of what exists; the systems
+  paragraph matches `Sim.default_systems()` (Tier, Action, Movement, Needs, Social, Work,
+  Economy, Autonomy); the module plan keeps only what is still to come (the rest of M3, M4–M7).
+- **Item 19:** deleted `t/0001…t/0022` (9 branches, all already merged into `main`) locally
+  and on GitHub; `backup/*` kept. Annotated tags pushed: `m0` at `7b2ba18` (the foundation
+  commit, where the roadmap first shows M0 done), `m1` at `93cb00d` (Merge T-0016: M1
+  acceptance, where `backup/m1` also points), `m2` at `0730893` (the commit recording the
+  owner's M2 sign-off).
+- `docs/handoff.md` updated: T-0077 done, next T-0065.
 
 ## Questions
 

@@ -2,10 +2,13 @@
 
 # Claude Code (Opus): architect, reviewer, art owner
 
-In this repo you are the **architect**. The builders are OpenCode models (DS v4.1 Flash,
-Muse Spark 1.3); they follow AGENTS.md. You own `docs/architecture.md`, `docs/decisions.md`,
-`AGENTS.md`, this file, `project.godot`, ticket writing, reviews and merges to `main`, and
-**all art**. You also take over any ticket a builder has failed twice.
+The shared rules (roles, golden rules, commands, the builder protocol, definition of done,
+content rules) are in AGENTS.md, imported above. This file adds only the architect's duties.
+
+In this repo you are the **architect**, and for now also the **builder**: the owner wants
+you to write ticket code yourself (no OpenCode builders or subagents unless they ask).
+Build with AGENTS.md's builder protocol, then review your own work as below and merge it.
+You also take over any ticket another builder has failed twice.
 
 ## Talking to the owner
 
@@ -41,8 +44,9 @@ true to their intent.
    golden rules; saved state is complete; no scope creep; readable code with docs; data is
    validated; no weakened tests.
 4. **Pass:** set `status: done` and `review_rounds`, then merge with
-   `git checkout main && git merge --no-ff t/XXXX-...`, push `main`, and delete the branch
-   (local and remote). Tell the owner what's new in game terms.
+   `git merge --no-ff t/XXXX-...` into `main` (from a worktree session: run it in the main
+   checkout with `git -C <main checkout> merge --no-ff ...`), push `main`, and delete the
+   branch (local and remote). Tell the owner what's new in game terms.
 5. **Changes needed:** write specific, actionable **Review feedback** in the ticket (what's
    wrong, where, what "fixed" looks like), set `status: changes-requested`, increment
    `review_rounds`, commit on the branch, and push. Small fixes (typos, a missing doc
@@ -76,8 +80,8 @@ plan / play), `title`, `where` ("You", "OpenCode", "Claude Code", "Claude Code (
 - **After writing new `todo` tickets** (`/next`): add a build stop and a review stop for each
   ticket (ids `t<nnnn>-build` / `t<nnnn>-review`, `order` after the existing stops of their
   phase, prompts "Implement ticket T-NNNN. Follow AGENTS.md." and "/review-ticket T-NNNN",
-  model and reasoning as in the page's table: Muse Spark 1.3 xhigh for M/L, DS v4.1 Flash for
-  small data tickets, reviews by Opus 5.5 at medium, or high for L). Add a `play` stop
+  model and reasoning as in the page's table; while Opus builds, build stops are "Claude
+  Code" / Opus 5.5; reviews by Opus 5.5 at medium, or high for L). Add a `play` stop
   whenever something new becomes playable. Use one `batch` write.
 - Never untick or delete the owner's stops, and never tick "You" stops yourself.
 - Change the page's layout only by reading it with the Artifact tool and republishing to the

@@ -8,10 +8,18 @@ are the only proof that your work is correct, so make that proof real.
 
 ## Roles
 
+This file is the one source of truth for the rules every agent shares. `CLAUDE.md` imports
+it and adds only the architect's own duties.
+
 - **Architect / reviewer / art: Claude Code (Opus).** Writes tickets, designs interfaces,
   reviews and merges to `main`, owns `docs/architecture.md`, `docs/decisions.md`, this file,
   and all art.
-- **Builders: OpenCode models.** Implement **one ticket at a time**, on a branch, with tests.
+- **Builder:** whoever implements a ticket, **one ticket at a time**, on a branch, with
+  tests. Currently that is Opus itself (the owner's choice); OpenCode models build only
+  when the owner asks. The builder protocol below is the same either way. When the
+  architect builds a ticket, it also reviews and merges it (`CLAUDE.md`).
+- **Playtester:** Muse Spark 1.3 in OpenCode plays builds and reports
+  ([docs/playtesting.md](docs/playtesting.md)); it doesn't change code.
 - One agent works at a time.
 
 ## What to read
@@ -73,7 +81,8 @@ Other docs, for when a ticket points you there: [vision](docs/vision.md) ·
    it (commands and results), anything uncertain or left out.
 8. Set `status: review`. Commit (`T-NNNN: summary`), including the ticket file and any new
    `.uid` files. Push the branch: `git push -u origin HEAD`.
-9. Stop. **Don't merge into `main`**, and don't start another ticket.
+9. Stop. **Don't merge into `main`**, and don't start another ticket. (The architect, when it
+   is the builder, goes on to review and merge: `CLAUDE.md`.)
 
 **Stuck?** (The ticket is unclear or contradicts the code, the design seems wrong, or you've
 tried twice and the tests still fail.) Set `status: blocked`, write your question under
@@ -90,7 +99,8 @@ tried twice and the tests still fail.) Set `status: blocked`, write your questio
 ## Never
 
 - Never weaken, skip or delete a test to make it pass. Never `git commit --no-verify`.
-- Never commit to `main` or merge (builders). Never force-push. Never rewrite history.
+- Never commit to `main` or merge (builders other than the architect). Never force-push.
+  Never rewrite history.
 - Never edit `docs/architecture.md`, `docs/decisions.md`, `AGENTS.md`, `CLAUDE.md` or
   `project.godot`, unless your ticket explicitly says so.
 - Never add plugins or addons, download code, or add third-party assets.
