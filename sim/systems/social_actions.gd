@@ -12,7 +12,7 @@ static func step_queued(sim: Sim, person: Person, action: Action) -> void:
 	var target := sim.world.get_person(action.target_id)
 	if not Conversations.available(sim, target):
 		ActionSystem.fail(sim, person, action, "target_busy")
-	elif Conversations.adjacent(person, target):
+	elif Conversations.adjacent(person, target) or _remote(sim, action):
 		start(sim, person, action, target)
 	else:
 		_route(sim, person, action, target)
@@ -45,7 +45,13 @@ static func step_performing(sim: Sim, person: Person, action: Action) -> void:
 ## True while the target exists, is available and still stands next to the actor.
 static func still_with_target(sim: Sim, person: Person, action: Action) -> bool:
 	var target := sim.world.get_person(action.target_id)
-	return Conversations.available(sim, target) and Conversations.adjacent(person, target)
+	return Conversations.available(sim, target) and (_remote(sim, action) or Conversations.adjacent(person, target))
+
+
+## True for remote interactions (phone calls): no walking, no standing together.
+static func _remote(sim: Sim, action: Action) -> bool:
+	var def := sim.content.interaction(action.interaction_id)
+	return def != null and def.remote
 
 
 ## Starts performing next to `target`: both face each other (the target only when idle).
@@ -54,9 +60,10 @@ static func start(sim: Sim, person: Person, action: Action, target: Person) -> v
 	action.state = Action.PERFORMING
 	action.slot_index = 0
 	action.started_tick = sim.clock.tick
-	Conversations.face(person, target)
-	if target.action_queue.is_empty():
-		Conversations.face(target, person)
+	if not _remote(sim, action):
+		Conversations.face(person, target)
+		if target.action_queue.is_empty():
+			Conversations.face(target, person)
 	sim.emit_event(&"action_started", {"person_id": person.id, "interaction_id": action.interaction_id, "target_id": action.target_id})
 
 

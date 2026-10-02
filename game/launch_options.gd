@@ -37,6 +37,8 @@ var command_mode: bool = false
 var scene: String = ""
 ## Show the person inspector for the first resident after the quick start (--inspect).
 var inspect: bool = false
+## Open the phone on this app after the quick start (--phone=Bank; "home" = the app list).
+var phone: String = ""
 ## Floor to show after the quick start (--level=1); NO_LEVEL = the player's.
 var level: int = NO_LEVEL
 ## Walk the player to this cell at the start (--walk-to=X,Y); NO_CELL = none.
@@ -97,6 +99,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.level = value.to_int()
 			"inspect":
 				out.inspect = true
+			"phone":
+				out.phone = value
 			"scene":
 				out.scene = value
 			"walk-to":

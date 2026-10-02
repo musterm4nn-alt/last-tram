@@ -1,29 +1,352 @@
 {
 	"_doc": "Things people do to each other (T-0038): target \"person\", 1-3 minutes next to them. social.kind (friendly, mean, romantic) and base set how easily it lands (Conversations.acceptance); success/fail say what changes: actor = the actor's view of the target, target = the target's view of the actor, moodlets, the target's one-off need gains, and the memory both keep. Everyone in the game is an adult; romance fades to black (M6).",
 	"interactions": [
-		{ "id": "chat", "name": "Chat", "target": "person", "duration_minutes": 2, "need_rates": { "social": 90.0 }, "finish_needs": {}, "advertise": { "social": 15 },
-			"social": { "kind": "friendly", "base": 1.5,
-				"success": { "actor": { "familiarity": 7, "friendship": 2 }, "target": { "familiarity": 7, "friendship": 2 }, "actor_moodlet": "", "target_moodlet": "good_talk", "target_needs": { "social": 3 }, "memory": "chatted", "valence": 10 },
-				"fail": { "actor": { "familiarity": 2 }, "target": { "familiarity": 2, "friendship": -1 }, "actor_moodlet": "awkward", "target_moodlet": "", "target_needs": {}, "memory": "awkward_chat", "valence": -5 } } },
-		{ "id": "joke", "name": "Tell a joke", "target": "person", "duration_minutes": 2, "need_rates": { "social": 75.0, "fun": 60.0 }, "finish_needs": {}, "advertise": { "social": 12, "fun": 12 },
-			"social": { "kind": "friendly", "base": 0.5,
-				"success": { "actor": { "familiarity": 6, "friendship": 4 }, "target": { "familiarity": 6, "friendship": 4 }, "actor_moodlet": "had_a_laugh", "target_moodlet": "had_a_laugh", "target_needs": { "social": 3, "fun": 4 }, "memory": "laughed_with", "valence": 20 },
-				"fail": { "actor": { "familiarity": 1 }, "target": { "familiarity": 1, "friendship": -2 }, "actor_moodlet": "awkward", "target_moodlet": "", "target_needs": {}, "memory": "bad_joke", "valence": -10 } } },
-		{ "id": "compliment", "name": "Compliment", "target": "person", "duration_minutes": 1, "need_rates": { "social": 90.0 }, "finish_needs": {}, "advertise": { "social": 8 },
-			"social": { "kind": "friendly", "base": 1.0,
-				"success": { "actor": { "familiarity": 5, "friendship": 2 }, "target": { "familiarity": 5, "friendship": 3, "romance": 1 }, "actor_moodlet": "", "target_moodlet": "flattered", "target_needs": { "social": 2 }, "memory": "complimented", "valence": 15 },
-				"fail": { "actor": { "familiarity": 1 }, "target": { "familiarity": 1, "trust": -2 }, "actor_moodlet": "awkward", "target_moodlet": "", "target_needs": {}, "memory": "fake_compliment", "valence": -5 } } },
-		{ "id": "insult", "name": "Insult", "target": "person", "duration_minutes": 1, "need_rates": { "fun": 30.0 }, "finish_needs": {}, "advertise": { "fun": 4 },
-			"social": { "kind": "mean", "base": 1.5,
-				"success": { "actor": { "familiarity": 2, "friendship": -4 }, "target": { "familiarity": 2, "friendship": -10, "fear": 2 }, "actor_moodlet": "", "target_moodlet": "insulted", "target_needs": {}, "memory": "insulted", "valence": -40 },
-				"fail": { "actor": { "familiarity": 1, "friendship": -2 }, "target": { "familiarity": 1, "friendship": -4 }, "actor_moodlet": "awkward", "target_moodlet": "", "target_needs": {}, "memory": "shrugged_off_insult", "valence": -15 } } },
-		{ "id": "argue", "name": "Argue", "target": "person", "duration_minutes": 3, "need_rates": { "social": 30.0 }, "finish_needs": {}, "advertise": { "social": 4 },
-			"social": { "kind": "mean", "base": 0.5,
-				"success": { "actor": { "familiarity": 3, "friendship": -5, "trust": -2 }, "target": { "familiarity": 3, "friendship": -8, "trust": -4 }, "actor_moodlet": "", "target_moodlet": "argued", "target_needs": {}, "memory": "argued", "valence": -30 },
-				"fail": { "actor": { "familiarity": 3, "friendship": -6 }, "target": { "familiarity": 3, "friendship": -3 }, "actor_moodlet": "argued", "target_moodlet": "", "target_needs": {}, "memory": "lost_argument", "valence": -25 } } },
-		{ "id": "flirt", "name": "Flirt", "target": "person", "duration_minutes": 2, "need_rates": { "social": 90.0, "fun": 30.0 }, "finish_needs": {}, "advertise": { "social": 10, "fun": 6 },
-			"social": { "kind": "romantic", "base": -0.5,
-				"success": { "actor": { "familiarity": 3, "romance": 5, "friendship": 1 }, "target": { "familiarity": 3, "romance": 5, "friendship": 1 }, "actor_moodlet": "flattered", "target_moodlet": "flattered", "target_needs": { "social": 3 }, "memory": "flirted", "valence": 25 },
-				"fail": { "actor": { "familiarity": 2 }, "target": { "familiarity": 2, "friendship": -2, "romance": -2 }, "actor_moodlet": "rejected", "target_moodlet": "awkward", "target_needs": {}, "memory": "rejected_flirt", "valence": -20 } } }
+		{
+			"id": "chat",
+			"name": "Chat",
+			"target": "person",
+			"duration_minutes": 2,
+			"need_rates": {
+				"social": 90.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 15
+			},
+			"social": {
+				"kind": "friendly",
+				"base": 1.5,
+				"success": {
+					"actor": {
+						"familiarity": 7,
+						"friendship": 2
+					},
+					"target": {
+						"familiarity": 7,
+						"friendship": 2
+					},
+					"actor_moodlet": "",
+					"target_moodlet": "good_talk",
+					"target_needs": {
+						"social": 3
+					},
+					"memory": "chatted",
+					"valence": 10
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 2
+					},
+					"target": {
+						"familiarity": 2,
+						"friendship": -1
+					},
+					"actor_moodlet": "awkward",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "awkward_chat",
+					"valence": -5
+				}
+			}
+		},
+		{
+			"id": "joke",
+			"name": "Tell a joke",
+			"target": "person",
+			"duration_minutes": 2,
+			"need_rates": {
+				"social": 75.0,
+				"fun": 60.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 12,
+				"fun": 12
+			},
+			"social": {
+				"kind": "friendly",
+				"base": 0.5,
+				"success": {
+					"actor": {
+						"familiarity": 6,
+						"friendship": 4
+					},
+					"target": {
+						"familiarity": 6,
+						"friendship": 4
+					},
+					"actor_moodlet": "had_a_laugh",
+					"target_moodlet": "had_a_laugh",
+					"target_needs": {
+						"social": 3,
+						"fun": 4
+					},
+					"memory": "laughed_with",
+					"valence": 20
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 1
+					},
+					"target": {
+						"familiarity": 1,
+						"friendship": -2
+					},
+					"actor_moodlet": "awkward",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "bad_joke",
+					"valence": -10
+				}
+			}
+		},
+		{
+			"id": "compliment",
+			"name": "Compliment",
+			"target": "person",
+			"duration_minutes": 1,
+			"need_rates": {
+				"social": 90.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 8
+			},
+			"social": {
+				"kind": "friendly",
+				"base": 1.0,
+				"success": {
+					"actor": {
+						"familiarity": 5,
+						"friendship": 2
+					},
+					"target": {
+						"familiarity": 5,
+						"friendship": 3,
+						"romance": 1
+					},
+					"actor_moodlet": "",
+					"target_moodlet": "flattered",
+					"target_needs": {
+						"social": 2
+					},
+					"memory": "complimented",
+					"valence": 15
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 1
+					},
+					"target": {
+						"familiarity": 1,
+						"trust": -2
+					},
+					"actor_moodlet": "awkward",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "fake_compliment",
+					"valence": -5
+				}
+			}
+		},
+		{
+			"id": "insult",
+			"name": "Insult",
+			"target": "person",
+			"duration_minutes": 1,
+			"need_rates": {
+				"fun": 30.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"fun": 4
+			},
+			"social": {
+				"kind": "mean",
+				"base": 1.5,
+				"success": {
+					"actor": {
+						"familiarity": 2,
+						"friendship": -4
+					},
+					"target": {
+						"familiarity": 2,
+						"friendship": -10,
+						"fear": 2
+					},
+					"actor_moodlet": "",
+					"target_moodlet": "insulted",
+					"target_needs": {},
+					"memory": "insulted",
+					"valence": -40
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 1,
+						"friendship": -2
+					},
+					"target": {
+						"familiarity": 1,
+						"friendship": -4
+					},
+					"actor_moodlet": "awkward",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "shrugged_off_insult",
+					"valence": -15
+				}
+			}
+		},
+		{
+			"id": "argue",
+			"name": "Argue",
+			"target": "person",
+			"duration_minutes": 3,
+			"need_rates": {
+				"social": 30.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 4
+			},
+			"social": {
+				"kind": "mean",
+				"base": 0.5,
+				"success": {
+					"actor": {
+						"familiarity": 3,
+						"friendship": -5,
+						"trust": -2
+					},
+					"target": {
+						"familiarity": 3,
+						"friendship": -8,
+						"trust": -4
+					},
+					"actor_moodlet": "",
+					"target_moodlet": "argued",
+					"target_needs": {},
+					"memory": "argued",
+					"valence": -30
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 3,
+						"friendship": -6
+					},
+					"target": {
+						"familiarity": 3,
+						"friendship": -3
+					},
+					"actor_moodlet": "argued",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "lost_argument",
+					"valence": -25
+				}
+			}
+		},
+		{
+			"id": "flirt",
+			"name": "Flirt",
+			"target": "person",
+			"duration_minutes": 2,
+			"need_rates": {
+				"social": 90.0,
+				"fun": 30.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 10,
+				"fun": 6
+			},
+			"social": {
+				"kind": "romantic",
+				"base": -0.5,
+				"success": {
+					"actor": {
+						"familiarity": 3,
+						"romance": 5,
+						"friendship": 1
+					},
+					"target": {
+						"familiarity": 3,
+						"romance": 5,
+						"friendship": 1
+					},
+					"actor_moodlet": "flattered",
+					"target_moodlet": "flattered",
+					"target_needs": {
+						"social": 3
+					},
+					"memory": "flirted",
+					"valence": 25
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 2
+					},
+					"target": {
+						"familiarity": 2,
+						"friendship": -2,
+						"romance": -2
+					},
+					"actor_moodlet": "rejected",
+					"target_moodlet": "awkward",
+					"target_needs": {},
+					"memory": "rejected_flirt",
+					"valence": -20
+				}
+			}
+		},
+		{
+			"id": "phone_call",
+			"name": "Phone call",
+			"target": "person",
+			"duration_minutes": 20,
+			"need_rates": {
+				"social": 45.0
+			},
+			"finish_needs": {},
+			"advertise": {
+				"social": 20
+			},
+			"social": {
+				"kind": "friendly",
+				"base": 1.5,
+				"success": {
+					"actor": {
+						"familiarity": 7,
+						"friendship": 2
+					},
+					"target": {
+						"familiarity": 7,
+						"friendship": 2
+					},
+					"actor_moodlet": "",
+					"target_moodlet": "good_talk",
+					"target_needs": {
+						"social": 15
+					},
+					"memory": "phoned",
+					"valence": 10
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 2
+					},
+					"target": {
+						"familiarity": 2,
+						"friendship": -1
+					},
+					"actor_moodlet": "awkward",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "awkward_call",
+					"valence": -5
+				}
+			},
+			"remote": true
+		}
 	]
 }

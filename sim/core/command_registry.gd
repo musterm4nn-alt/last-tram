@@ -20,6 +20,8 @@ static func create(type_id: String) -> Command:
 			return SetRunningCommand.new()
 		"set_tier_mode":
 			return SetTierModeCommand.new()
+		"call":
+			return CallCommand.new()
 	return null
 
 

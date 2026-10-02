@@ -22,6 +22,7 @@ extends Node2D
 ##   --screen=map        open the full map (M) after the quick start
 ##   --level=N           show floor N after the quick start (if the world has it)
 ##   --inspect           open the person inspector on the first resident
+##   --phone=APP         open the phone on an app after the quick start (Bank, Contacts, home)
 ##   --scene=ID          show that scene (as the player) after the quick start
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
@@ -35,6 +36,7 @@ var _hud: Hud
 var _debug_overlay: DebugOverlay
 var _pause_menu: PauseMenu
 var _town_map: TownMap
+var _phone: Phone
 var _scene_popup: ScenePopup
 var _menu: MainMenu
 var _creator: CharacterCreator
@@ -65,6 +67,9 @@ func _ready() -> void:
 	add_child(_pause_menu)
 	_town_map = TownMap.new()
 	add_child(_town_map)
+	_phone = Phone.new()
+	_phone.town_map = _town_map
+	add_child(_phone)
 	_scene_popup = ScenePopup.new()
 	add_child(_scene_popup)
 	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
@@ -140,6 +145,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		_town_map.close()
 		return
+	if _phone.is_open and event.is_action_pressed("menu"):
+		get_viewport().set_input_as_handled()
+		_phone.close()
+		return
 	if event.is_action_pressed("menu") and _can_toggle_pause_menu():
 		get_viewport().set_input_as_handled()
 		if _pause_menu.is_open:
@@ -155,6 +164,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("map") and _can_toggle_pause_menu():
 		get_viewport().set_input_as_handled()
 		_town_map.open()
+	elif event.is_action_pressed("phone") and Session.sim != null:
+		get_viewport().set_input_as_handled()
+		_phone.toggle()
 	elif event.is_action_pressed("pause"):
 		Session.toggle_pause()
 	elif event.is_action_pressed("speed_1"):
@@ -205,6 +217,10 @@ func _start_quick() -> void:
 		Session.view_level(_options.level)
 	if not _options.scene.is_empty():
 		_scene_popup.request({"scene_id": _options.scene, "actor_id": Session.sim.world.player_id, "target_id": 0, "place_id": ""})
+	if not _options.phone.is_empty():
+		_phone.open()
+		if _options.phone != "home":
+			_phone.show_app(_options.phone)
 	if _options.inspect:
 		var ids: Array = Session.sim.world.people.keys()
 		ids.sort()
