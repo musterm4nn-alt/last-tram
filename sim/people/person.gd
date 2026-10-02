@@ -59,6 +59,8 @@ var scenes_requested: PackedStringArray = PackedStringArray()
 ## Discovery ids whose clue the person knows, and the ones they uncovered (T-0067; sorted,
 ## kept to ids content still has by World.from_dict).
 var known_clues: PackedStringArray = PackedStringArray()
+## Skill id -> XP (T-0071; Skills turns it into levels).
+var skills: Dictionary[String, float] = {}
 var discoveries: PackedStringArray = PackedStringArray()
 ## RoutineDef id ("" = the content's default routine).
 var routine_id: String = ""
@@ -143,6 +145,7 @@ func to_dict() -> Dictionary:
 		"background": background,
 		"scenes_requested": Array(scenes_requested),
 		"known_clues": Array(known_clues),
+		"skills": _skills_out(),
 		"discoveries": Array(discoveries),
 		"relationships": _relationships_out(),
 		"memories": memories.map(func(m: Memory) -> Dictionary: return m.to_dict()),
@@ -159,6 +162,16 @@ func to_dict() -> Dictionary:
 		"free_will": free_will,
 		"last_input_tick": last_input_tick,
 	}
+
+
+## Skills sorted by id (stable save text).
+func _skills_out() -> Dictionary:
+	var ids: Array = skills.keys()
+	ids.sort()
+	var out: Dictionary = {}
+	for id: String in ids:
+		out[id] = skills[id]
+	return out
 
 
 ## Relationships as a list sorted by the other person's id (stable save text).
@@ -200,6 +213,10 @@ static func from_dict(d: Dictionary) -> Person:
 	p.background = bool(d.get("background", false))
 	for scene_id: Variant in d.get("scenes_requested", []):
 		p.scenes_requested.append(String(scene_id))
+	var skills_data: Variant = d.get("skills", {})
+	if skills_data is Dictionary:
+		for id: Variant in skills_data:
+			p.skills[String(id)] = float(skills_data[id])
 	for id: Variant in d.get("known_clues", []):
 		p.known_clues.append(String(id))
 	for id: Variant in d.get("discoveries", []):

@@ -27,3 +27,5 @@ var positions: Array[ShiftDef] = []
 var start_filled: float = 1.0
 ## How dressed-up the job is (clothing formality -2..3); interviews favour a matching outfit.
 var formality: float = 0.0
+## The skill the job uses and trains (T-0071): XP at work, performance and interviews.
+var skill: String = ""

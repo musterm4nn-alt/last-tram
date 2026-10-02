@@ -176,6 +176,10 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		for need_id: String in person.needs.keys():
 			if content.need(need_id) == null:
 				person.needs.erase(need_id)
+		# Skills the content no longer has are dropped.
+		for skill_id: String in person.skills.keys():
+			if content.skill(skill_id) == null:
+				person.skills.erase(skill_id)
 		# Clues and finds of discoveries the content no longer has are dropped.
 		for key: String in ["known_clues", "discoveries"]:
 			var kept := PackedStringArray()

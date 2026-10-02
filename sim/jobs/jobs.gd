@@ -96,6 +96,7 @@ static func work_minute(sim: Sim, person: Person, action: Action) -> void:
 	if person.job.shift_start != window.x:  # a save from before T-0077 (or a lost start): attend now
 		Careers.attend(sim, person, window.x, maxi(0, (action.started_tick - window.x) / SimClock.STEPS_PER_GAME_MINUTE))
 	person.job.shift_minutes += 1
+	Skills.gain(sim, person, job.skill, sim.content.skill_rules.work_xp_per_hour / 60.0)
 	var hungry: bool = float(person.needs.get("hunger", 100.0)) < sim.content.home_thresholds.get("eat_below", 0.0)
 	if not person.job.shift_lunch and (hungry or person.job.shift_minutes >= sim.content.economy.lunch_after_minutes):
 		have_lunch(sim, person)

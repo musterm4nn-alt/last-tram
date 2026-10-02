@@ -1,5 +1,5 @@
 {
-	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (visible behind a counter, which sells only while someone works there; T-0065). need_rates: per hour while working, on top of decay; each job has its own profile (T-0077: desk jobs restful but boring, standing jobs hard on comfort, manual jobs tiring but social, care work draining, bar work fun but exhausting). With the world's gentle work setting on, every job uses economy.json's gentle_profile instead. Hunger is not a rate: a shift with 4 hours of work includes lunch (economy.json work.lunch_*). shift_moodlet (optional): a moodlet given after each shift worked to the end, in varied mode. levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064).",
+	"_doc": "Jobs (T-0058, D29). place_id: the employer's place; workplace_tag: the object people work at, which must stand on that place (city jobs: the tram shelter at the Altmarkt stop). session: rabbit_hole (hidden while working) or on_site (visible behind a counter, which sells only while someone works there; T-0065). need_rates: per hour while working, on top of decay; each job has its own profile (T-0077: desk jobs restful but boring, standing jobs hard on comfort, manual jobs tiring but social, care work draining, bar work fun but exhausting). With the world's gentle work setting on, every job uses economy.json's gentle_profile instead. Hunger is not a rate: a shift with 4 hours of work includes lunch (economy.json work.lunch_*). shift_moodlet (optional): a moodlet given after each shift worked to the end, in varied mode. levels: the career track, wage in euro cents per hour after tax. positions: one shift pattern each (days mon..sun, from/to whole hours, to < from = past midnight; count = that many identical positions). start_filled: the chance each position is filled when a new town is generated. formality: how dressed-up the job is (clothing formality), for interviews (T-0064). skill (T-0071): the skill the job trains (XP while working) and uses (performance, interviews); a level's requires: skill levels needed to be promoted to it.",
 	"jobs": [
 		{
 			"id": "spaeti_clerk",
@@ -20,7 +20,10 @@
 				},
 				{
 					"title": "Späti manager",
-					"wage": 1300
+					"wage": 1300,
+					"requires": {
+						"charisma": 2
+					}
 				}
 			],
 			"positions": [
@@ -64,7 +67,8 @@
 				}
 			],
 			"start_filled": 1.0,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "charisma"
 		},
 		{
 			"id": "imbiss_cook",
@@ -85,7 +89,10 @@
 				},
 				{
 					"title": "Head cook",
-					"wage": 1400
+					"wage": 1400,
+					"requires": {
+						"cooking": 2
+					}
 				}
 			],
 			"positions": [
@@ -129,7 +136,8 @@
 				}
 			],
 			"start_filled": 1.0,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "cooking"
 		},
 		{
 			"id": "bartender",
@@ -150,7 +158,10 @@
 				},
 				{
 					"title": "Head bartender",
-					"wage": 1450
+					"wage": 1450,
+					"requires": {
+						"charisma": 2
+					}
 				}
 			],
 			"positions": [
@@ -175,7 +186,8 @@
 				}
 			],
 			"start_filled": 1.0,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "charisma"
 		},
 		{
 			"id": "barista",
@@ -196,7 +208,10 @@
 				},
 				{
 					"title": "Head barista",
-					"wage": 1300
+					"wage": 1300,
+					"requires": {
+						"cooking": 2
+					}
 				}
 			],
 			"positions": [
@@ -226,7 +241,8 @@
 				}
 			],
 			"start_filled": 1.0,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "cooking"
 		},
 		{
 			"id": "police_officer",
@@ -247,7 +263,10 @@
 				},
 				{
 					"title": "Sergeant",
-					"wage": 2300
+					"wage": 2300,
+					"requires": {
+						"fitness": 2
+					}
 				}
 			],
 			"positions": [
@@ -275,7 +294,8 @@
 				}
 			],
 			"start_filled": 1.0,
-			"formality": 1.0
+			"formality": 1.0,
+			"skill": "fitness"
 		},
 		{
 			"id": "office_clerk",
@@ -296,11 +316,17 @@
 				},
 				{
 					"title": "Senior clerk",
-					"wage": 1700
+					"wage": 1700,
+					"requires": {
+						"logic": 2
+					}
 				},
 				{
 					"title": "Team lead",
-					"wage": 2100
+					"wage": 2100,
+					"requires": {
+						"logic": 4
+					}
 				}
 			],
 			"positions": [
@@ -318,7 +344,8 @@
 				}
 			],
 			"start_filled": 0.7,
-			"formality": 1.0
+			"formality": 1.0,
+			"skill": "logic"
 		},
 		{
 			"id": "warehouse_worker",
@@ -339,7 +366,10 @@
 				},
 				{
 					"title": "Forklift driver",
-					"wage": 1500
+					"wage": 1500,
+					"requires": {
+						"fitness": 2
+					}
 				}
 			],
 			"positions": [
@@ -357,7 +387,8 @@
 				}
 			],
 			"start_filled": 0.7,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "fitness"
 		},
 		{
 			"id": "care_worker",
@@ -379,7 +410,10 @@
 				},
 				{
 					"title": "Senior carer",
-					"wage": 1800
+					"wage": 1800,
+					"requires": {
+						"charisma": 2
+					}
 				}
 			],
 			"positions": [
@@ -407,7 +441,8 @@
 				}
 			],
 			"start_filled": 0.7,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "charisma"
 		},
 		{
 			"id": "builder",
@@ -428,7 +463,10 @@
 				},
 				{
 					"title": "Foreman",
-					"wage": 1900
+					"wage": 1900,
+					"requires": {
+						"handiness": 2
+					}
 				}
 			],
 			"positions": [
@@ -446,7 +484,8 @@
 				}
 			],
 			"start_filled": 0.7,
-			"formality": 0.0
+			"formality": 0.0,
+			"skill": "handiness"
 		}
 	]
 }

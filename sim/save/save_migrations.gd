@@ -50,11 +50,23 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v12_to_v13(d)
 			13:
 				d = _v13_to_v14(d)
+			14:
+				d = _v14_to_v15(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v15 (T-0071): nobody has practised anything yet.
+static func _v14_to_v15(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	for person: Variant in d["world"].get("people", []):
+		if person is Dictionary:
+			person["skills"] = {}
 	return d
 
 

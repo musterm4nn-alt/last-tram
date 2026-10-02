@@ -23,6 +23,9 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 	s.boolean(p.get("background", false), path + ".background")
 	for scene_id: Variant in s.list(p.get("scenes_requested", []), path + ".scenes_requested"):
 		s.text(scene_id, path + ".scenes_requested[]")
+	var skills := s.dictionary(p.get("skills", {}), path + ".skills")
+	for id: Variant in skills:
+		s.number(skills[id], path + ".skills." + str(id), 0.0)
 	for key: String in ["known_clues", "discoveries"]:
 		for id: Variant in s.list(p.get(key, []), path + "." + key):
 			s.text(id, path + "." + key + "[]")

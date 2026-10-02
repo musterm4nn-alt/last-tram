@@ -71,6 +71,9 @@ static func lines(sim: Sim, id: int, viewer_id: int) -> PackedStringArray:
 	out.append("Lives: %s" % home_text(sim, person))
 	out.append("Money: %s" % Money.format(person.wallet.total()))
 	out.append("Job: %s" % job_text(sim, person))
+	var skills := Skills.text(sim.content, person)
+	if not skills.is_empty():
+		out.append("Skills: %s" % skills)
 	if id == viewer_id:
 		return out
 	out.append("")

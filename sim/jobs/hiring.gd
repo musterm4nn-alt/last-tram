@@ -8,12 +8,13 @@ const BASE_CHANCE: float = 0.45
 
 
 ## The chance (0.05..0.95) that `person` gets the job at an interview: better washed, in a
-## better mood, and dressed like the job (its formality) helps.
+## better mood, dressed like the job (its formality) and skilled in its skill (T-0071) helps.
 static func chance(sim: Sim, person: Person, job: JobDef) -> float:
 	var x := BASE_CHANCE
 	x += (float(person.needs.get("hygiene", 50.0)) - 50.0) / 200.0
 	x += Mood.compute(person, sim.content) / 200.0
 	x -= 0.1 * absf(outfit_formality(sim.content, person) - job.formality)
+	x += Skills.level(sim.content, person, job.skill) * sim.content.skill_rules.interview_per_level
 	return clampf(x, 0.05, 0.95)
 
 

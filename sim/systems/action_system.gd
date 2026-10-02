@@ -247,13 +247,15 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 	for need_id: String in def.need_rates:
 		var before: float = float(person.needs.get(need_id, 0.0))
 		person.needs[need_id] = clampf(before + float(def.need_rates[need_id]) / 60.0, 0.0, 100.0)
+	Skills.practise(sim, person, def)
 	if def.work:
 		Jobs.work_minute(sim, person, action)
 	action.minutes_done += 1
 	if _has_ended(sim, person, def, action):
+		var factor := Skills.finish_factor(sim.content, person, def)
 		for need_id: String in def.finish_needs:
 			var before: float = float(person.needs.get(need_id, 0.0))
-			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]), 0.0, 100.0)
+			person.needs[need_id] = clampf(before + float(def.finish_needs[need_id]) * factor, 0.0, 100.0)
 		person.action_queue.remove_at(0)
 		if def.work:
 			Jobs.end_shift(sim, person, action, true)

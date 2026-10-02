@@ -53,7 +53,7 @@ static func settle(sim: Sim, person: Person) -> void:
 	if left_early:
 		delta -= rules["left_early"]
 	else:
-		delta += rules["shift_done"]
+		delta += rules["shift_done"] + Skills.level(sim.content, person, job.skill) * sim.content.skill_rules.performance_per_level
 		if Mood.compute(person, sim.content) > 0.0:
 			delta += rules["good_mood"]
 		employment.level_shifts += 1
@@ -113,7 +113,7 @@ static func close_shift(sim: Sim, person: Person) -> void:
 
 
 ## Moves performance by `delta`, then fires, warns (once, until performance rises above
-## "warning_clears_at") or promotes.
+## "warning_clears_at") or promotes (with the skills the next level requires, T-0071).
 static func _change(sim: Sim, person: Person, delta: float) -> void:
 	var rules := sim.content.economy.performance
 	var employment := person.job
@@ -130,7 +130,8 @@ static func _change(sim: Sim, person: Person, delta: float) -> void:
 			sim.emit_event(&"job_warning", {"person_id": person.id, "job_id": employment.job_id})
 	elif employment.performance > rules["warning_clears_at"]:
 		employment.warned = false
-	if employment.performance >= rules["promote_at"] and employment.level_shifts >= int(rules["promote_after_shifts"]) and employment.level < job.levels.size() - 1:
+	if employment.performance >= rules["promote_at"] and employment.level_shifts >= int(rules["promote_after_shifts"]) and employment.level < job.levels.size() - 1 \
+			and skilled_for(sim.content, person, job.levels[employment.level + 1]):
 		employment.level += 1
 		employment.level_shifts = 0
 		employment.performance = rules["after_promotion"]
@@ -138,6 +139,14 @@ static func _change(sim: Sim, person: Person, delta: float) -> void:
 		var none: Array[int] = []
 		Social.remember(sim, person, "promoted", none, 50, 70.0)
 		sim.emit_event(&"promoted", {"person_id": person.id, "job_id": job.id, "title": job.levels[employment.level].title})
+
+
+## True if the person has every skill level `level` requires (T-0071).
+static func skilled_for(content: ContentDB, person: Person, level: JobLevel) -> bool:
+	for skill_id: String in level.requires:
+		if Skills.level(content, person, skill_id) < int(level.requires[skill_id]):
+			return false
+	return true
 
 
 static func _level(job: JobDef, employment: Employment) -> JobLevel:

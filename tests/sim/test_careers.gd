@@ -89,6 +89,7 @@ func test_good_work_gets_a_promotion() -> void:
 	var player := sim.world.player()
 	player.job.performance = 79.0
 	player.job.level_shifts = int(content().economy.performance["promote_after_shifts"]) - 1
+	player.skills["logic"] = 2 * content().skill_rules.xp_per_level  # Senior clerk needs logic 2 (T-0071)
 	var events := _work_day(sim, 0)
 	assert_eq(player.job.level, 1)
 	assert_has(_types(events, player.id), &"promoted")
