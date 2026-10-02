@@ -42,10 +42,8 @@ static func problems(sim: Sim, person: Person, outfit: Outfit) -> PackedStringAr
 ## True when the person stands on the use slot of a wardrobe in their own home.
 static func at_wardrobe(sim: Sim, person: Person) -> bool:
 	var here := person.cell()
-	for obj: WorldObject in sim.world.objects.values():
-		var def := sim.content.object_def(obj.def_id)
-		if def == null or not def.tags.has("wardrobe"):
-			continue
+	for id: int in sim.world.objects_tagged("wardrobe"):
+		var obj: WorldObject = sim.world.objects[id]
 		var lot := Lots.lot_at(sim, obj.origin)
 		if lot == null or lot.id != person.home_lot_id:
 			continue

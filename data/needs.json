@@ -1,6 +1,6 @@
 {
-	"_doc": "Needs 0-100 (100 = fully satisfied). They decay per game hour and are refilled by interactions (T-0006). Order here is the display order. Saves store ids, so order does not matter for saves. home (T-0060, T-0077): before free will, a person sees to needs at home: first any need below its critical_below (lowest first), then hygiene below wash_below, hunger below eat_below, then any other need below low_below (lowest first).",
-	"home": { "wash_below": 45.0, "eat_below": 35.0, "low_below": 30.0 },
+	"_doc": "Needs 0-100 (100 = fully satisfied). They decay per game hour and are refilled by interactions (T-0006). Order here is the display order. Saves store ids, so order does not matter for saves. home (T-0060, T-0077): before free will, a person sees to needs at home: first any need below its critical_below (lowest first), then hygiene below wash_below, hunger below eat_below (or below eat_before_bed in their sleep window, so nobody goes to bed hungry; T-0078), then any other need below low_below (lowest first).",
+	"home": { "wash_below": 45.0, "eat_below": 35.0, "eat_before_bed": 55.0, "low_below": 30.0 },
 	"needs": [
 		{ "id": "hunger", "name": "Hunger", "decay_per_hour": 6.0, "start": 80.0, "urgency_weight": 1.2, "critical_below": 15.0 },
 		{ "id": "energy", "name": "Energy", "decay_per_hour": 4.5, "start": 80.0, "urgency_weight": 1.0, "critical_below": 15.0 },

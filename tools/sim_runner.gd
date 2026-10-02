@@ -13,7 +13,10 @@ extends SceneTree
 ##          profile instead of its own, T-0077), --check-m2 (M2 acceptance, T-0045: fails the run
 ##          unless the town lives well, see TownCheck, and the cost stays within
 ##          BUDGET_MS_PER_STEP), --check-staffing (T-0065: fails the run unless every shop
-##          had someone serving for TownCheck.MIN_STAFFED_SHARE of its open time).
+##          had someone serving for TownCheck.MIN_STAFFED_SHARE of its open time),
+##          --profile (T-0078: time per system, in ms per step), --extra-residents=N (a stress
+##          test: N more adults move into the existing homes, round-robin; beds run short, so
+##          only use it to measure cost).
 
 ## The M2 cost budget: milliseconds of sim work per step, with ~30 people.
 const BUDGET_MS_PER_STEP: float = 0.25
@@ -37,6 +40,14 @@ func _initialize() -> void:
 		sim.world.tiers.demote_radius = sim.world.tiers.active_radius + 10.0
 	if args.has("gentle-work"):
 		sim.world.work.gentle = true
+	if args.has("extra-residents"):
+		_add_residents(sim, int(args["extra-residents"]))
+	var profiled: Array[ProfiledSystem] = []
+	if args.has("profile"):
+		for i: int in sim.systems.size():
+			var wrapped := ProfiledSystem.new(sim.systems[i])
+			profiled.append(wrapped)
+			sim.systems[i] = wrapped
 	if args.has("no-free-will"):
 		sim.submit(SetFreeWillCommand.new(sim.world.player_id, false))
 	var minutes := int(args.get("minutes", "0")) + int(args.get("days", "0")) * SimClock.MINUTES_PER_DAY
@@ -67,6 +78,8 @@ func _initialize() -> void:
 	var steps := minutes * SimClock.STEPS_PER_GAME_MINUTE
 	print("Done: %d steps in %.2f s (%.4f ms per step)" % [
 		steps, seconds, seconds * 1000.0 / steps])
+	for wrapped: ProfiledSystem in profiled:
+		print("profile %-15s %.4f ms per step" % [wrapped.name, wrapped.usec / 1000.0 / steps])
 	_report_need_stats(sim, need_stats, minutes)
 	_report_action_counts(action_counts)
 	var residents := sim.world.people.size() - 1
@@ -105,6 +118,29 @@ func _initialize() -> void:
 			return
 	print("LAST_TRAM_SIMRUN: OK")
 	quit(0)
+
+
+## Stress test (T-0078): `count` more adults join existing households, round-robin by id,
+## spawned in their homes with a job draw like new towns (money and wardrobes too).
+func _add_residents(sim: Sim, count: int) -> void:
+	var rng := sim.rng.stream("stress")
+	var households: Array = sim.world.households.keys()
+	households.sort()
+	households.erase(sim.world.player().household_id)
+	for i: int in count:
+		var household: Household = sim.world.households[households[i % households.size()]]
+		var lot: Lot = sim.world.lots.get(household.home_lot_id)
+		var cells := Lots.free_cells(sim, sim.content.place(lot.place_id)) if lot != null else []
+		if cells.is_empty():
+			continue
+		var person := SimFactory.spawn_person(sim, cells[rng.randi_range(0, cells.size() - 1)], CharacterSpec.random(sim.content, rng))
+		person.household_id = household.id
+		person.home_lot_id = household.home_lot_id
+		person.benefit_registered = true
+		household.member_ids.append(person.id)
+		Money.give_resident_start(sim, person, rng)
+		Wardrobe.give_person_start(sim, person, rng)
+	print("stress: %d people" % sim.world.people.size())
 
 
 func _report(sim: Sim) -> void:

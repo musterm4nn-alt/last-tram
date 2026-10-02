@@ -66,6 +66,11 @@ var _place_area: Vector2i = Vector2i.ZERO
 var _place_signature: int = -1
 ## Derived: object def id -> true for objects free will may use (free_will_objects).
 var _free_will_objects: Dictionary[String, bool] = {}
+## Derived (T-0078): object def id -> the interactions it offers, in content order; and
+## interaction id -> the object def ids offering it. Rebuilt when the counts change.
+var _offered_by_def: Dictionary[String, Array] = {}
+var _defs_offering: Dictionary[String, Array] = {}
+var _offer_signature: int = -1
 
 
 static func load_default() -> ContentDB:
@@ -221,6 +226,38 @@ func discovery(id: String) -> DiscoveryDef:
 
 
 ## The interaction with this id, or null.
+## The interactions objects of `def_id` offer (their tags), in content order. Built once.
+func interactions_for_def(def_id: String) -> Array:
+	_index_offers()
+	return _offered_by_def.get(def_id, [])
+
+
+## The object def ids offering interaction `interaction_id`. Built once.
+func defs_offering(interaction_id: String) -> Array:
+	_index_offers()
+	return _defs_offering.get(interaction_id, [])
+
+
+func _index_offers() -> void:
+	var signature := objects.size() * 100003 + interactions.size()
+	if signature == _offer_signature:
+		return
+	_offer_signature = signature
+	_offered_by_def.clear()
+	_defs_offering.clear()
+	for def: ObjectDef in objects.values():
+		var offered: Array = []
+		for candidate: InteractionDef in interactions.values():
+			for tag: String in candidate.object_tags:
+				if def.tags.has(tag):
+					offered.append(candidate)
+					if not _defs_offering.has(candidate.id):
+						_defs_offering[candidate.id] = []
+					_defs_offering[candidate.id].append(def.id)
+					break
+		_offered_by_def[def.id] = offered
+
+
 ## Object def ids offering something free will may choose: an interaction that advertises a
 ## need or is a cash errand. Built once; free will skips other objects without pathfinding to
 ## them (wardrobes, notice boards...).

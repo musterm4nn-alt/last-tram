@@ -205,3 +205,17 @@ func test_only_colleagues_who_turned_up_count() -> void:
 	absent.job.shift_minutes = 30
 	Jobs.know_colleagues(sim, player, shift_start)
 	assert_true(Social.relationship(player, absent.id) != null, "working it right now")
+
+
+func test_supper_before_bed() -> void:
+	var sim := _game(1, 12)
+	var player := sim.world.player()
+	for need_def: NeedDef in content().needs:
+		player.needs[need_def.id] = 100.0
+	player.needs["hunger"] = 50.0
+	assert_eq(Routines.home_needs(sim, player), PackedStringArray(), "midday: 50 is fine")
+	sim.clock.tick = SimClock.ticks_for(1, 23)
+	assert_true(Routines.sleeping_time(sim, player))
+	assert_eq(Routines.home_needs(sim, player), PackedStringArray(["hunger"]), "bedtime: eat first, don't wake up starving")
+	player.needs["hunger"] = 60.0
+	assert_eq(Routines.home_needs(sim, player), PackedStringArray())

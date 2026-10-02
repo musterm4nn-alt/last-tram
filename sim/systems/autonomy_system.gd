@@ -27,7 +27,7 @@ func on_minute(sim: Sim) -> void:
 			continue
 		if Routines.sleeping_time(sim, person) and _head_home(sim, person):
 			continue
-		var choice := Autonomy.choose(Autonomy.candidates(sim, person), sim.rng.stream("autonomy"))
+		var choice := Autonomy.decide(sim, person, sim.rng.stream("autonomy"))
 		if choice.is_empty():
 			if not _head_home(sim, person):
 				person.autonomy_retry_tick = sim.clock.tick + RETRY_MINUTES * SimClock.STEPS_PER_GAME_MINUTE
@@ -85,19 +85,25 @@ static func _eat_out(sim: Sim, person: Person, groceries_only: bool) -> bool:
 ## person's home that they may use now, with a free slot) and emits &"autonomy_chose" as a
 ## free-will choice would; false when there is none.
 static func _go_home_for(sim: Sim, person: Person, need_id: String) -> bool:
+	# The best gain wins, the first object (by id) on ties: try them in that order and take the
+	# first that is allowed and reachable, so only the winner's walk is worked out (T-0078).
+	var offers: Array[Array] = []
+	for id: int in sim.world.objects_on_lot(person.home_lot_id):
+		var offered := Interactions.offered_by(sim, id)
+		for index: int in offered.size():
+			var gain := float(offered[index].advertise.get(need_id, 0.0))
+			if gain > 0.0:
+				offers.append([gain, id, index, offered[index]])
+	offers.sort_custom(func(a: Array, b: Array) -> bool:
+		return a[0] > b[0] or (a[0] == b[0] and (a[1] < b[1] or (a[1] == b[1] and a[2] < b[2]))))
 	var best_def: InteractionDef = null
 	var best_object := 0
-	for obj: WorldObject in sim.world.objects.values():
-		var lot := Lots.lot_at(sim, obj.origin)
-		if lot == null or lot.id != person.home_lot_id:
-			continue
-		for def: InteractionDef in Interactions.offered_by(sim, obj.id):
-			var gain := float(def.advertise.get(need_id, 0.0))
-			if gain <= 0.0 or (best_def != null and gain <= float(best_def.advertise[need_id])):
-				continue
-			if Requirements.check(sim, person, def, obj.id).is_empty() and Autonomy.cells_to_free_slot(sim, person, obj, true) >= 0:
-				best_def = def
-				best_object = obj.id
+	for offer: Array in offers:
+		var obj: WorldObject = sim.world.objects[offer[1]]
+		if Requirements.check(sim, person, offer[3], obj.id).is_empty() and Autonomy.cells_to_free_slot(sim, person, obj, true) >= 0:
+			best_def = offer[3]
+			best_object = obj.id
+			break
 	if best_def == null:
 		return false
 	var action := Action.new(best_def.id, best_object)

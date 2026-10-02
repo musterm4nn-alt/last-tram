@@ -51,7 +51,7 @@ func test_broken_content_is_reported_not_crashed() -> void:
 
 func test_moved_balance_numbers_load_from_data() -> void:
 	var db := content()
-	assert_eq(db.home_thresholds, {"wash_below": 45.0, "eat_below": 35.0, "low_below": 30.0} as Dictionary[String, float])
+	assert_eq(db.home_thresholds, {"wash_below": 45.0, "eat_below": 35.0, "eat_before_bed": 55.0, "low_below": 30.0} as Dictionary[String, float])
 	assert_eq(db.economy.leave_margin, 10)
 	assert_eq(db.economy.work_retry_minutes, 5)
 	assert_eq(db.economy.look_ahead_hours, 3)

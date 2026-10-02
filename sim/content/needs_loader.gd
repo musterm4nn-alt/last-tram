@@ -4,7 +4,7 @@ extends RefCounted
 ## so each content domain lives in a small file).
 
 ## The thresholds of the "home" block (Routines.home_needs, T-0077).
-const HOME_KEYS: PackedStringArray = ["wash_below", "eat_below", "low_below"]
+const HOME_KEYS: PackedStringArray = ["wash_below", "eat_below", "eat_before_bed", "low_below"]
 
 
 ## Read `path` and fill `db.needs` plus the need lookup table, and `db.home_thresholds`.

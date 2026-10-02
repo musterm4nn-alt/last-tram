@@ -258,3 +258,24 @@ bugs in shifts and a town check bent to pass. Decided:
   two of the week-long runs fail.
 - Balance numbers that were constants (home thresholds, leaving for work, pocket money,
   colleague changes, lunch) are in `data/needs.json` "home" and `data/economy.json`.
+
+**D32 · Free will at scale: same choices, fewer walks (T-0078 A).** Measured first
+(`tools/simrun.sh --profile --extra-residents=N`): at 28 people the biggest cost was
+WorkSystem recomputing every worker's walk to work each minute for hours, and in big towns
+free will's per-option work (who holds a slot, which objects stand in your home, A* per
+slot). Rules that came out of it:
+- **Noise per option is a hash**, not a draw per option: one draw per decision (a salt),
+  then `Autonomy.noise(salt, target, interaction)`, plus the final pick. Adding an unrelated
+  object no longer reshuffles everyone's dice. (Every town re-rolled once with this change.)
+- **`Autonomy.decide` = `choose(candidates())`, exactly** (a test checks it on a whole town):
+  options are tried by an upper bound (score without the walk, minus the straight-line
+  distance, plus noise) and walks are worked out only while an option could still make the
+  best three. `candidates()` stays the full list for tests and errands.
+- **Derived indexes** in `World` and `ContentDB` (rebuilt from state, never saved): objects by
+  tag and by lot, interactions per object def, def ids per interaction, taken slots per
+  decision. `Pathfinder.path_length` counts a route without building it.
+- **Supper before bed**: in their sleep window people eat first when hunger is below
+  `eat_before_bed` (55; `data/needs.json`). With the new dice a worker who skipped supper
+  woke up starving and the two-day check failed: the game was wrong, not the check.
+Result on the cloud machine (about 2.5× slower than the Mac): 28 people 0.259 → 0.139 ms per
+step, 148 people 1.755 → 1.328 ms (about 0.53 ms on the Mac, the target was 0.5).
