@@ -1,6 +1,10 @@
 {
 	"_doc": "Finding the town's secrets (T-0068, docs/design/discoveries.md). search is a place interaction (target \"place\"): done where you stand, on that place's lot; when it finishes it uncovers a secret you have the clue for (right place and time), or teaches the clue of one that doesn't need it, or finds nothing. teaches_clue: doing it teaches that discovery's clue (notice boards, T-0070). Free will doesn't search (empty advertise).",
 	"interactions": [
+		{ "id": "read_timetable", "name": "Read the timetable case", "teaches_clue": "tram_notices", "object_tags": ["notice_case"], "duration_minutes": 5, "need_rates": { "fun": 6.0 }, "finish_needs": {}, "advertise": {} },
+		{ "id": "read_service_board", "name": "Read the service board", "teaches_clue": "st_nikolai_vestry", "object_tags": ["service_board"], "duration_minutes": 5, "need_rates": { "fun": 6.0 }, "finish_needs": {}, "advertise": {} },
+		{ "id": "rest_quietly", "name": "Rest in the quiet", "requires_discovery": "st_nikolai_vestry", "finish_moodlet": "quiet_moment", "object_tags": ["vestry_chair"], "duration_minutes": 30, "need_rates": { "comfort": 30.0, "fun": 4.0, "energy": 4.0 }, "finish_needs": {}, "advertise": { "comfort": 25 } },
+		{ "id": "sleep_in_the_alcove", "name": "Sleep in the alcove", "target": "place", "places": ["uferweg_alcove"], "requires_discovery": "promenade_alcove", "routine": "sleep", "time_skip": true, "until_need": "energy", "min_minutes": 60, "max_minutes": 600, "need_rates": { "energy": 13.0, "comfort": -1.0, "hunger": 3.0, "hygiene": -1.0, "fun": 2.0, "social": 2.0 }, "finish_needs": {}, "advertise": { "energy": 60 } },
 		{ "id": "search", "name": "Have a look around", "target": "place", "duration_minutes": 30, "need_rates": { "fun": 4.0 }, "finish_needs": { "comfort": 3 }, "advertise": {} }
 	]
 }

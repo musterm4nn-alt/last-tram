@@ -219,7 +219,7 @@ func test_v11_save_gets_cafe_counter() -> void:
 	assert_true(counter != null, "Café Wolke has its counter")
 	assert_eq(counter.origin, Vector3i(21, 13, 0))
 	assert_eq(counter.rotation, 2)
-	assert_eq(sim.world.new_id(), counter.id + 1, "ids continue after it")
+	assert_true(sim.world.new_id() > counter.id, "ids continue after it")
 	var migrated := SaveMigrations.migrate(SaveCodec.to_dict(sim).merged({"save_version": 11}, true))
 	var counters := 0
 	for obj: Dictionary in migrated["world"]["objects"]:

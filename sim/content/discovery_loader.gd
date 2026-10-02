@@ -38,6 +38,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.level = reader.read_int(d, "level", ctx)
 		def.clue_required = reader.read_bool(d, "clue_required", ctx)
 		def.share_trust = reader.read_int(d, "share_trust", ctx)
+		if d.has("known_at_start"):
+			def.known_at_start = reader.read_str(d, "known_at_start", ctx)
+			if db.place(def.known_at_start) == null:
+				reader.error("%s: unknown place '%s' in 'known_at_start'" % [ctx, def.known_at_start])
 		if d.has("scene"):
 			def.scene_id = reader.read_str(d, "scene", ctx)
 			if not db.scenes.has(def.scene_id):
@@ -94,6 +98,8 @@ static func _effect(db: ContentDB, reader: ContentReader, entry: Variant, ctx: S
 				reader.error("%s: unknown contact place '%s'" % [ctx, effect.place_id])
 		DiscoveryEffect.UNLOCK:
 			effect.interaction_id = reader.read_str(d, "interaction", ctx)
+		DiscoveryEffect.CLUE:
+			effect.discovery_id = reader.read_str(d, "discovery", ctx)
 		_:
 			reader.error("%s: unknown effect kind '%s' (one of %s)" % [ctx, effect.kind, ", ".join(DiscoveryEffect.KINDS)])
 			return null
@@ -102,7 +108,8 @@ static func _effect(db: ContentDB, reader: ContentReader, entry: Variant, ctx: S
 
 ## Cross-checks once everything is loaded: interactions name real discoveries; an unlock
 ## effect names an interaction that requires that discovery; a discovery that needs its clue
-## has a way to learn it (someone shares it, or an interaction teaches it).
+## has a way to learn it (someone shares it, an interaction teaches it, another discovery
+## leads to it, or people know it from the start).
 static func check_links(db: ContentDB, reader: ContentReader) -> void:
 	var taught: Dictionary[String, bool] = {}
 	for interaction: InteractionDef in db.interactions.values():
@@ -112,12 +119,20 @@ static func check_links(db: ContentDB, reader: ContentReader) -> void:
 				reader.error("interaction '%s': unknown discovery '%s' in '%s'" % [interaction.id, id, key])
 		if not interaction.teaches_clue.is_empty():
 			taught[interaction.teaches_clue] = true
+		for place_id: String in interaction.places:
+			if db.place(place_id) == null:
+				reader.error("interaction '%s': unknown place '%s' in 'places'" % [interaction.id, place_id])
 	for def: DiscoveryDef in db.discoveries.values():
+		var leads_here := false
+		for other: DiscoveryDef in db.discoveries.values():
+			leads_here = leads_here or other.effects.any(func(e: DiscoveryEffect) -> bool: return e.kind == DiscoveryEffect.CLUE and e.discovery_id == def.id)
 		for effect: DiscoveryEffect in def.effects:
+			if effect.kind == DiscoveryEffect.CLUE and not db.discoveries.has(effect.discovery_id):
+				reader.error("discovery '%s': unknown discovery '%s' in a clue effect" % [def.id, effect.discovery_id])
 			if effect.kind != DiscoveryEffect.UNLOCK:
 				continue
 			var interaction := db.interaction(effect.interaction_id)
 			if interaction == null or interaction.requires_discovery != def.id:
 				reader.error("discovery '%s': unlock_interaction '%s' must be an interaction with requires_discovery '%s'" % [def.id, effect.interaction_id, def.id])
-		if def.clue_required and def.share_trust < 0 and not taught.has(def.id):
+		if def.clue_required and def.share_trust < 0 and not taught.has(def.id) and not leads_here and def.known_at_start.is_empty():
 			reader.error("discovery '%s': needs its clue, but nobody shares it and nothing teaches it" % def.id)

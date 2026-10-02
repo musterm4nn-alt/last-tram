@@ -72,6 +72,8 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.staffed = reader.read_bool(d, "staffed", ctx)
 			if def.staffed and def.target != "object":
 				reader.error("%s: only object-targeted interactions can be staffed" % ctx)
+		if d.has("places"):
+			def.places = reader.read_str_array(d, "places", ctx)  # checked against the world in DiscoveryLoader.check_links
 		for key: String in ["requires_discovery", "teaches_clue"]:
 			if d.has(key):
 				def.set(key, reader.read_str(d, key, ctx))

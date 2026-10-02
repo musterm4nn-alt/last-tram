@@ -9,6 +9,14 @@
 			"The Anker is loud tonight. Someone has put the same song on the jukebox three times, and nobody minds.",
 			"{actor} leans on the bar a little longer than planned. The barman refills {actor.their} glass without asking."
 		] },
+		{ "id": "the_cellar_door", "adult": false, "pages": [
+			"Behind the bar, past the crates of empties, there's a low door with a padlock that looks newer than everything else in the Anker.",
+			"A thin line of light shows under it. Somebody is down there, and {actor} decides not to knock. Not tonight."
+		] },
+		{ "id": "coins_at_night", "adult": false, "pages": [
+			"The Altmarkt is empty. The fountain gurgles, and the coins at the bottom catch the light of the last tram.",
+			"{actor} rolls up a sleeve. The water is colder than expected."
+		] },
 		{ "id": "coffee_at_wolke", "adult": false, "pages": [
 			"Café Wolke smells of burnt milk and cinnamon. Outside, the tram bell rings twice.",
 			"For a moment {actor} forgets about everything else."

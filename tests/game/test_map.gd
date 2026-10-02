@@ -63,9 +63,9 @@ func test_every_place_on_the_level_gets_a_label_at_its_centre() -> void:
 	var count := 0
 	for district_id: String in content().district_order:
 		for place: PlaceDef in content().districts[district_id].places:
-			if place.level == 0:
+			if place.level == 0 and not place.hidden:
 				count += 1
-	assert_eq(labels.size(), count)
+	assert_eq(labels.size(), count, "every place but the secret ones (T-0069)")
 	var altmarkt: Dictionary = {}
 	for label: Dictionary in labels:
 		if label["name"] == "Altmarkt":

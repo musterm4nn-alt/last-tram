@@ -49,6 +49,8 @@ var adds_groceries: int = 0
 ## Sold over a counter (T-0065): only while someone works an on-site shift on the target's
 ## place (Requirements "not_staffed"). Object targets only.
 var staffed: bool = false
+## Place interactions (T-0070): only on these places ([] = everywhere).
+var places: PackedStringArray = PackedStringArray()
 ## Offered only to people who uncovered this discovery (T-0067; Requirements "unknown_secret").
 var requires_discovery: String = ""
 ## Doing it teaches this discovery's clue (T-0068: notice boards and the like).

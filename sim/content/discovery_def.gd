@@ -20,6 +20,8 @@ var clue_required: bool = true
 ## Trust a person needs in someone to share the clue with them; -1: nobody shares it.
 var share_trust: int = -1
 var effects: Array[DiscoveryEffect] = []
+## Optional: the place whose residents or staff know the clue in a new town (T-0070).
+var known_at_start: String = ""
 ## Optional scene requested for the player on uncovering it (like a presentation).
 var scene_id: String = ""
 

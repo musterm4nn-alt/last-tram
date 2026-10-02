@@ -1314,6 +1314,33 @@
 				0
 			],
 			"rotation": 0
+		},
+		{
+			"def": "notice_case",
+			"cell": [
+				34,
+				22,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "service_board",
+			"cell": [
+				3,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "vestry_chair",
+			"cell": [
+				14,
+				7,
+				0
+			],
+			"rotation": 0
 		}
 	]
 }

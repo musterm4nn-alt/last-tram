@@ -1,5 +1,5 @@
 {
-	"_doc": "Altstadt, the first district: canal, Hauptstrasse with the tram, Altmarkt square, the player's flat in Haus 12. Coordinates in this file are LOCAL to the district (0,0 = top-left of level_0.txt). Places are checked in list order, so put small places before big ones that overlap them. Each place becomes a lot: optional \"access\" is \"public\", \"private\" or \"hours\" (with \"hours\": [open, close], close < open = past midnight); homes default to private, shops, cafes, bars and restaurants must give hours, the rest are public. Homes need \"rent\": euro cents per week (T-0062). Optional \"closed\": [\"sun\", ...] keeps an \"hours\" place shut on those days (T-0056).",
+	"_doc": "Altstadt, the first district: canal, Hauptstrasse with the tram, Altmarkt square, the player's flat in Haus 12. Coordinates in this file are LOCAL to the district (0,0 = top-left of level_0.txt). Places are checked in list order, so put small places before big ones that overlap them. Each place becomes a lot: optional \"access\" is \"public\", \"private\" or \"hours\" (with \"hours\": [open, close], close < open = past midnight); homes default to private, shops, cafes, bars and restaurants must give hours, the rest are public. Homes need \"rent\": euro cents per week (T-0062). Optional \"closed\": [\"sun\", ...] keeps an \"hours\" place shut on those days (T-0056). Optional \"hidden\": true keeps a secret place off the map until the player finds a discovery there (T-0069).",
 	"id": "altstadt",
 	"name": "Altstadt",
 	"origin": [0, 0],
@@ -33,6 +33,7 @@
 		{ "id": "haus_14_2_left", "name": "Haus 14, 2nd floor left", "kind": "home", "level": 2, "rect": [2, 24, 7, 6], "rent": 10500 },
 		{ "id": "haus_14_2_right", "name": "Haus 14, 2nd floor right", "kind": "home", "level": 2, "rect": [10, 24, 7, 6], "rent": 10500 },
 		{ "id": "tram_stop_altmarkt", "name": "Tram stop Altmarkt", "kind": "transit", "level": 0, "rect": [26, 22, 8, 1] },
+		{ "id": "st_nikolai_vestry", "name": "The vestry", "kind": "public", "level": 0, "rect": [12, 7, 4, 3], "hidden": true },
 		{ "id": "church_st_nikolai", "name": "St. Nikolai", "kind": "church", "level": 0, "rect": [1, 6, 16, 10] },
 		{ "id": "cafe_wolke", "name": "Café Wolke", "kind": "cafe", "level": 0, "rect": [20, 6, 11, 10], "access": "hours", "hours": [8, 19], "closed": ["sun"] },
 		{ "id": "waschsalon_blitz", "name": "Waschsalon Blitz", "kind": "shop", "level": 0, "rect": [31, 6, 11, 10], "access": "hours", "hours": [7, 22], "closed": ["sun"] },
@@ -44,6 +45,7 @@
 		{ "id": "altmarkt", "name": "Altmarkt", "kind": "public", "level": 0, "rect": [18, 23, 28, 12] },
 		{ "id": "home_player", "name": "Haus 12, ground floor", "kind": "home", "level": 0, "rect": [47, 23, 14, 12], "rent": 19000 },
 		{ "id": "polizeiposten", "name": "Polizeiposten Altstadt", "kind": "police", "level": 0, "rect": [62, 23, 9, 8] },
+		{ "id": "uferweg_alcove", "name": "The alcove under the bridge", "kind": "public", "level": 0, "rect": [33, 5, 3, 1], "hidden": true },
 		{ "id": "uferweg", "name": "Uferweg (canal)", "kind": "public", "level": 0, "rect": [0, 0, 72, 6] },
 		{ "id": "hauptstrasse", "name": "Hauptstraße", "kind": "street", "level": 0, "rect": [0, 16, 72, 7] },
 		{ "id": "kirchgasse", "name": "Kirchgasse", "kind": "street", "level": 0, "rect": [0, 35, 72, 4] },
