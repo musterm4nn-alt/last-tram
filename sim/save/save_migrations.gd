@@ -38,11 +38,23 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v6_to_v7(d)
 			7:
 				d = _v7_to_v8(d)
+			8:
+				d = _v8_to_v9(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v9 (T-0064): nobody has applied for a job yet.
+static func _v8_to_v9(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("people", []) is Array:
+		return d
+	for person: Variant in d["world"].get("people", []):
+		if person is Dictionary:
+			person["applied_day"] = -1
 	return d
 
 

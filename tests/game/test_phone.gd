@@ -84,3 +84,13 @@ func test_calls_are_not_in_the_person_menu() -> void:
 	var other: int = sim.world.people.keys().filter(func(id: int) -> bool: return id != sim.world.player_id)[0]
 	for def: InteractionDef in Interactions.offered_by_person(sim, sim.world.player_id, other):
 		assert_false(def.remote, def.id)
+
+
+func test_jobs_app_lines() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	assert_eq(JobsApp.job_lines(sim, player.id)[0], "Your job: Office clerk (Mon–Fri 9–17)")
+	Hiring.quit(sim, player)
+	assert_eq(JobsApp.job_lines(sim, player.id), PackedStringArray(["No job.", "Not registered for benefit."]))
+	var vacancy := Jobs.vacancies(sim)[0]
+	assert_true(JobsApp.vacancy_text(sim, vacancy).contains("/h"))

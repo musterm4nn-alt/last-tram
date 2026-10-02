@@ -23,3 +23,5 @@ var levels: Array[JobLevel] = []
 var positions: Array[ShiftDef] = []
 ## Chance (0..1) each position is filled when a new town is generated.
 var start_filled: float = 1.0
+## How dressed-up the job is (clothing formality -2..3); interviews favour a matching outfit.
+var formality: float = 0.0

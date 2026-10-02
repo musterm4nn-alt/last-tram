@@ -1,12 +1,12 @@
 ---
 id: T-0064
 title: Applying for jobs, quitting, and residents filling vacancies
-status: draft
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0063]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -41,6 +41,17 @@ Monday too, so vacancies fill and you have competition.
   applications fill most vacancies. Screenshot of the Jobs app.
 
 ## Implementation notes
+- Built from the draft: `Hiring` (`sim/jobs/hiring.gd`: the interview from hygiene, mood and
+  how the outfit's formality fits the job's new `formality`; apply/quit/register; residents
+  apply on Monday 09:00), `ApplyForJobCommand`, `QuitJobCommand`, `RegisterUnemployedCommand`
+  (registered and validated), `Person.applied_day` (one application a day; save v9,
+  `v9_basic.json`). Hired people start tomorrow (`Jobs.shift_on` skips days before
+  `hired_day`). The phone's Jobs app (`JobsApp`): your job and performance, Quit, Register,
+  open positions with Apply. HUD notices for applications, quitting and registering.
+- Verified: `tools/check.sh` 558 passed, 0 failed (`test_hiring.gd`, 6 tests; a Jobs app
+  test). `tools/simrun.sh --days=14 --check-m2` PASSED on seeds 1–2: 19 of 20/21 working-age
+  residents employed after two weeks (vacancies refill), 4 promotions, no firings.
+  Screenshot `out/t0064.png`: the Jobs app.
 
 ## Questions
 

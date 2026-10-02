@@ -1,11 +1,11 @@
 class_name Phone
 extends CanvasLayer
-## The player's phone (P, T-0063): a panel at the bottom right with apps: Bank, Contacts (with
-## calls) and Map. The game keeps running while it is open. Reads sim state; calls go through
+## The player's phone (P, T-0063): a panel at the bottom right with apps: Bank, Jobs (apply,
+## quit, register; T-0064), Contacts (with calls) and Map. The game keeps running while it is open. Reads sim state; calls go through
 ## CallCommand.
 
 const WIDTH: float = 320.0
-const APPS: PackedStringArray = ["Bank", "Contacts", "Map"]
+const APPS: PackedStringArray = ["Bank", "Jobs", "Contacts", "Map"]
 
 ## True while the phone is shown.
 var is_open: bool = false
@@ -103,6 +103,22 @@ func _rebuild() -> void:
 		"Bank":
 			for text: String in BankApp.lines(Session.sim, player_id):
 				_label(text)
+		"Jobs":
+			var player := Session.sim.world.player()
+			for text: String in JobsApp.job_lines(Session.sim, player_id):
+				_label(text)
+			if player.job != null:
+				_button("Quit this job", func() -> void: Session.submit(QuitJobCommand.new(player_id)))
+			elif not player.benefit_registered:
+				_button("Register as unemployed", func() -> void: Session.submit(RegisterUnemployedCommand.new(player_id)))
+			_label("")
+			_label("Open positions:")
+			var vacancies := Jobs.vacancies(Session.sim)
+			if vacancies.is_empty():
+				_label("None right now. Try again next week.")
+			for vacancy: Dictionary in vacancies:
+				_label(JobsApp.vacancy_text(Session.sim, vacancy))
+				_button("Apply", func() -> void: Session.submit(ApplyForJobCommand.new(player_id, vacancy["job_id"], vacancy["position"])))
 		"Contacts":
 			var known := ContactsApp.contacts(Session.sim, player_id)
 			if known.is_empty():
