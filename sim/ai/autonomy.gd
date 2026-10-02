@@ -22,18 +22,20 @@ const TOP_N: int = 3
 const SEARCH_RADIUS: int = 12
 
 
-## Every option the person could take now, in object id order, then content order, then the
-## social options: [{"object_id": int, "interaction_id": String, "score": float, "cells": int}].
+## Every option the person could take now (AutonomyOption), in object id order, then content
+## order, then the social options.
 ## `cells` is the path length to the object's nearest free, walkable slot (0 when the person
 ## stands on one); objects with no reachable free slot give no options.
-static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
-	var out: Array[Dictionary] = []
+static func candidates(sim: Sim, person: Person) -> Array[AutonomyOption]:
+	var out: Array[AutonomyOption] = []
 	var cells_of: Dictionary = {}
 	for entry: Dictionary in _unwalked(sim, person):
 		var cells := _cells(sim, person, entry, cells_of)
 		if cells >= 0:
-			out.append({"object_id": entry["object_id"], "interaction_id": entry["interaction_id"],
-				"score": float(entry["base"]) - TRAVEL_COST_PER_CELL * cells, "cells": cells})
+			var option := AutonomyOption.new(int(entry["object_id"]), String(entry["interaction_id"]),
+				float(entry["base"]) - TRAVEL_COST_PER_CELL * cells, cells, AutonomyOption.PERSON if entry["person"] else AutonomyOption.OBJECT)
+			option.order = out.size()
+			out.append(option)
 	return out
 
 
@@ -42,7 +44,7 @@ static func candidates(sim: Sim, person: Person) -> Array[Dictionary]:
 ## score without the walk, minus the walk's lower bound (straight-line distance), plus its
 ## noise, is an upper bound; options are tried best bound first, and once the TOP_N-th best
 ## real score beats every remaining bound, the rest are skipped.
-static func decide(sim: Sim, person: Person, rng: RandomNumberGenerator) -> Dictionary:
+static func decide(sim: Sim, person: Person, rng: RandomNumberGenerator) -> AutonomyOption:
 	var salt := rng.randi()
 	var pending := _unwalked(sim, person)
 	for entry: Dictionary in pending:
@@ -50,12 +52,12 @@ static func decide(sim: Sim, person: Person, rng: RandomNumberGenerator) -> Dict
 		entry["bound_score"] = float(entry["base"]) - TRAVEL_COST_PER_CELL * int(entry["bound"]) + float(entry["noise"])
 	pending.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return float(a["bound_score"]) > float(b["bound_score"]) or (float(a["bound_score"]) == float(b["bound_score"]) and int(a["order"]) < int(b["order"])))
-	var kept: Array[Dictionary] = []
+	var kept: Array[AutonomyOption] = []
 	var cells_of: Dictionary = {}
 	for entry: Dictionary in pending:
 		if float(entry["bound_score"]) < MIN_SCORE:
 			break
-		if kept.size() >= TOP_N and float(entry["bound_score"]) < float(kept[TOP_N - 1]["score"]):
+		if kept.size() >= TOP_N and float(entry["bound_score"]) < kept[TOP_N - 1].score:
 			break
 		var cells := _cells(sim, person, entry, cells_of)
 		if cells < 0:
@@ -63,7 +65,10 @@ static func decide(sim: Sim, person: Person, rng: RandomNumberGenerator) -> Dict
 		var noisy := float(entry["base"]) - TRAVEL_COST_PER_CELL * cells + float(entry["noise"])
 		if noisy < MIN_SCORE:
 			continue
-		kept.append({"object_id": entry["object_id"], "interaction_id": entry["interaction_id"], "score": noisy, "cells": cells, "_order": entry["order"]})
+		var option := AutonomyOption.new(int(entry["object_id"]), String(entry["interaction_id"]), noisy, cells,
+			AutonomyOption.PERSON if entry["person"] else AutonomyOption.OBJECT)
+		option.order = int(entry["order"])
+		kept.append(option)
 		kept.sort_custom(_better)
 		kept = kept.slice(0, TOP_N)
 	return _pick(kept, rng)
@@ -232,35 +237,34 @@ static func _outing_objects(sim: Sim) -> Dictionary:
 ## Adds each option's noise (noise(): 0..NOISE, from one rng draw per pick and the option
 ## itself, so an unrelated new option doesn't change the others'; T-0078), drops options below
 ## MIN_SCORE, keeps the TOP_N best (ties: earlier in the list), and picks one with probability
-## proportional to its noisy score. Returns {} when nothing is left. Uses `rng` only.
-static func choose(options: Array[Dictionary], rng: RandomNumberGenerator) -> Dictionary:
+## proportional to its noisy score. Returns null when nothing is left. Uses `rng` only.
+static func choose(options: Array[AutonomyOption], rng: RandomNumberGenerator) -> AutonomyOption:
 	var salt := rng.randi()
-	var kept: Array[Dictionary] = []
+	var kept: Array[AutonomyOption] = []
 	for index: int in options.size():
-		var option := options[index].duplicate()
-		option["score"] = float(option["score"]) + noise(salt, int(option["object_id"]), String(option["interaction_id"]))
-		option["_order"] = index
-		if float(option["score"]) >= MIN_SCORE:
+		var option := options[index].copy()
+		option.score += noise(salt, option.target_id, option.interaction_id)
+		option.order = index
+		if option.score >= MIN_SCORE:
 			kept.append(option)
 	kept.sort_custom(_better)
 	return _pick(kept.slice(0, TOP_N), rng)
 
 
-## One of `kept` (the best first), with probability proportional to its score; {} for none.
-static func _pick(kept: Array[Dictionary], rng: RandomNumberGenerator) -> Dictionary:
+## One of `kept` (the best first), with probability proportional to its score; null for none.
+static func _pick(kept: Array[AutonomyOption], rng: RandomNumberGenerator) -> AutonomyOption:
 	if kept.is_empty():
-		return {}
+		return null
 	var total := 0.0
-	for option: Dictionary in kept:
-		total += float(option["score"])
+	for option: AutonomyOption in kept:
+		total += option.score
 	var pick := rng.randf() * total
-	var chosen: Dictionary = kept[kept.size() - 1]
-	for option: Dictionary in kept:
-		pick -= float(option["score"])
+	var chosen: AutonomyOption = kept[kept.size() - 1]
+	for option: AutonomyOption in kept:
+		pick -= option.score
 		if pick <= 0.0:
 			chosen = option
 			break
-	chosen.erase("_order")
 	return chosen
 
 
@@ -277,10 +281,10 @@ static func noise(salt: int, target_id: int, interaction_id: String) -> float:
 
 
 ## Sort order for choose(): higher score first, then earlier in the list.
-static func _better(a: Dictionary, b: Dictionary) -> bool:
-	if float(a["score"]) != float(b["score"]):
-		return float(a["score"]) > float(b["score"])
-	return int(a["_order"]) < int(b["_order"])
+static func _better(a: AutonomyOption, b: AutonomyOption) -> bool:
+	if a.score != b.score:
+		return a.score > b.score
+	return a.order < b.order
 
 
 ## Path length to the object's nearest free, walkable customer slot (free will never works): 0 when the person stands on one,

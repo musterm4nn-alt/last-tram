@@ -103,8 +103,8 @@ func test_free_will_ignores_a_fridge_in_someone_elses_flat() -> void:
 
 
 func _offers(sim: Sim, person: Person, object_id: int) -> bool:
-	for option: Dictionary in Autonomy.candidates(sim, person):
-		if option["object_id"] == object_id:
+	for option: AutonomyOption in Autonomy.candidates(sim, person):
+		if option.target_id == object_id:
 			return true
 	return false
 

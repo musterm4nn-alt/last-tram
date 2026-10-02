@@ -19,7 +19,7 @@ func stream(stream_name: String) -> RandomNumberGenerator:
 	var r: RandomNumberGenerator = _streams.get(stream_name)
 	if r == null:
 		r = RandomNumberGenerator.new()
-		r.seed = hash("%d:%s" % [master_seed, stream_name])
+		r.seed = hash("%d:%s" % [master_seed, stream_name])  # lint-ok: a string's hash is the same everywhere
 		_streams[stream_name] = r
 	return r
 

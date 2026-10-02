@@ -158,8 +158,8 @@ func test_free_will_skips_unstaffed_counter() -> void:
 	player.needs["hunger"] = 20.0
 	var offered := func() -> Array:
 		var ids: Array = []
-		for option: Dictionary in Autonomy.candidates(sim, player):
-			ids.append(option["interaction_id"])
+		for option: AutonomyOption in Autonomy.candidates(sim, player):
+			ids.append(option.interaction_id)
 		return ids
 	assert_false(offered.call().has("eat_doener"), "nobody at the Imbiss")
 	_serve(sim, "imbiss_cook", 0, "imbiss_counter")

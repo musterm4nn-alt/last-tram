@@ -105,8 +105,8 @@ static func check(start: Dictionary, commands: Array, end: Dictionary, content: 
 ## The first difference between `sim` and the save dictionary `end`, both round-tripped
 ## through JSON so numbers compare the same way; "pending_commands" is ignored.
 static func compare(sim: Sim, end: Dictionary) -> String:
-	var replayed: Dictionary = Ser.restore_floats(JSON.parse_string(Ser.to_json(SaveCodec.to_dict(sim))))
-	var expected: Dictionary = Ser.restore_floats(JSON.parse_string(Ser.to_json(end)))
+	var replayed: Dictionary = _round_trip(SaveCodec.to_dict(sim))
+	var expected: Dictionary = _round_trip(end)
 	replayed.erase("pending_commands")
 	expected.erase("pending_commands")
 	return first_difference(expected, replayed)
@@ -124,3 +124,11 @@ static func _show(value: Variant) -> String:
 	if value is String:
 		return "\"%s\"" % value
 	return JSON.stringify(value, "", true, true)
+
+
+## `data` written with Ser.to_json and read back with Ser.parse_json ({} if it doesn't parse).
+static func _round_trip(data: Dictionary) -> Dictionary:
+	var json := JSON.new()
+	if Ser.parse_json(json, Ser.to_json(data)) != OK or not json.data is Dictionary:
+		return {}
+	return json.data

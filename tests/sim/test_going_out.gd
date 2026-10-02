@@ -14,8 +14,8 @@ func _idle(sim: Sim, person: Person) -> void:
 
 
 func _offers(sim: Sim, person: Person, def_id: String) -> bool:
-	for option: Dictionary in Autonomy.candidates(sim, person):
-		if sim.world.get_object(int(option["object_id"])).def_id == def_id:
+	for option: AutonomyOption in Autonomy.candidates(sim, person):
+		if sim.world.get_object(option.target_id).def_id == def_id:
 			return true
 	return false
 

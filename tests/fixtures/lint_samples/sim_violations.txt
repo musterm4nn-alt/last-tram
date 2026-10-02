@@ -1,0 +1,19 @@
+	var tree := get_tree()
+	add_child(node)
+	if Input.is_action_pressed("x"):
+	var now := Time.get_ticks_msec()
+	var args := OS.get_cmdline_args()
+	var fps := Engine.get_frames_per_second()
+	var roll := randf()
+	await something
+signal changed
+	Session.submit(command)
+	load("res://game/main.tscn")
+	var image := load("icon.png")
+static var cache: Dictionary = {}
+	var id := get_instance_id()
+	var key := hash(person)
+	var data: Variant = JSON.parse_string(text)
+	var worker := Thread.new()
+	print("debug")
+	var chance := 1.0 / (1.0 + exp(-x))

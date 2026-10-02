@@ -16,10 +16,10 @@ func test_decide_equals_choose_over_all_candidates() -> void:
 			b.seed = a.seed
 			var full := Autonomy.choose(Autonomy.candidates(sim, person), a)
 			var fast := Autonomy.decide(sim, person, b)
-			assert_eq(fast, full, "%s at %d" % [person.full_name(), sim.clock.tick])
+			assert_eq(fast.to_dict() if fast != null else {}, full.to_dict() if full != null else {}, "%s at %d" % [person.full_name(), sim.clock.tick])
 			assert_eq(a.state, b.state, "the same draws")
 			checked += 1
-			picked += 0 if full.is_empty() else 1
+			picked += 0 if full == null else 1
 	assert_true(checked > 100 and picked > 10, "a real sample (%d checks, %d picks)" % [checked, picked])
 
 
@@ -45,11 +45,10 @@ func test_noise_ignores_other_options() -> void:
 	assert_eq(Autonomy.noise(salt, 40, "cook_meal"), first, "the same option, the same noise")
 	assert_true(first >= 0.0 and first < Autonomy.NOISE)
 	assert_ne(Autonomy.noise(salt, 41, "cook_meal"), first)
-	var few: Array[Dictionary] = [{"object_id": 40, "interaction_id": "cook_meal", "score": 10.0, "cells": 0}]
-	var more: Array[Dictionary] = few.duplicate(true)
-	more.append({"object_id": 999, "interaction_id": "sit", "score": -2.0, "cells": 50})  # too far to be worth it
+	var few: Array[AutonomyOption] = [AutonomyOption.new(40, "cook_meal", 10.0, 0)]
+	var more: Array[AutonomyOption] = [AutonomyOption.new(40, "cook_meal", 10.0, 0), AutonomyOption.new(999, "sit", -2.0, 50)]  # too far to be worth it
 	var a := RandomNumberGenerator.new()
 	var b := RandomNumberGenerator.new()
 	a.seed = 3
 	b.seed = 3
-	assert_eq(Autonomy.choose(few, a)["interaction_id"], Autonomy.choose(more, b)["interaction_id"], "a far bench doesn't reshuffle the pick")
+	assert_eq(Autonomy.choose(few, a).interaction_id, Autonomy.choose(more, b).interaction_id, "a far bench doesn't reshuffle the pick")

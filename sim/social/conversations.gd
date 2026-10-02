@@ -6,6 +6,22 @@ extends RefCounted
 
 ## How long someone keeps walking after a person who moves away, in game minutes.
 const ROUTE_LIMIT_MINUTES: int = 10
+## The logistic curve 1 / (1 + e^-x) at x = -8, -7.75, ... 8 (T-0078: a table instead of
+## exp(), whose last bits can differ between machines and break replays; linear
+## interpolation between points is within 0.001 of the curve).
+const LOGISTIC_TABLE: Array[float] = [
+	0.000335, 0.000431, 0.000553, 0.000710, 0.000911, 0.001170, 0.001501, 0.001927,
+	0.002473, 0.003173, 0.004070, 0.005220, 0.006693, 0.008577, 0.010987, 0.014064,
+	0.017986, 0.022977, 0.029312, 0.037327, 0.047426, 0.060087, 0.075858, 0.095349,
+	0.119203, 0.148047, 0.182426, 0.222700, 0.268941, 0.320821, 0.377541, 0.437823,
+	0.500000, 0.562177, 0.622459, 0.679179, 0.731059, 0.777300, 0.817574, 0.851953,
+	0.880797, 0.904651, 0.924142, 0.939913, 0.952574, 0.962673, 0.970688, 0.977023,
+	0.982014, 0.985936, 0.989013, 0.991423, 0.993307, 0.994780, 0.995930, 0.996827,
+	0.997527, 0.998073, 0.998499, 0.998830, 0.999089, 0.999290, 0.999447, 0.999569,
+	0.999665,
+]
+const LOGISTIC_MIN: float = -8.0
+const LOGISTIC_STEP: float = 0.25
 ## Salience of a new social memory: |valence| plus this.
 const MEMORY_SALIENCE: float = 20.0
 
@@ -73,7 +89,19 @@ static func acceptance(sim: Sim, actor: Person, target: Person, def: Interaction
 	for need_id: String in target.needs:
 		lowest = minf(lowest, target.needs[need_id])
 	x -= maxf(0.0, 30.0 - lowest) / 15.0
-	return 1.0 / (1.0 + exp(-x))
+	return logistic(x)
+
+
+## The logistic curve from LOGISTIC_TABLE: linear between points, flat beyond ±8.
+static func logistic(x: float) -> float:
+	var at := (x - LOGISTIC_MIN) / LOGISTIC_STEP
+	if at <= 0.0:
+		return LOGISTIC_TABLE[0]
+	var last := LOGISTIC_TABLE.size() - 1
+	if at >= last:
+		return LOGISTIC_TABLE[last]
+	var i := int(at)
+	return lerpf(LOGISTIC_TABLE[i], LOGISTIC_TABLE[i + 1], at - i)
 
 
 ## Rolls the outcome of `def` (stream "social"), applies it to both people and emits

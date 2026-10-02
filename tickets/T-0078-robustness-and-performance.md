@@ -1,7 +1,7 @@
 ---
 id: T-0078
 title: Robustness and performance - free will at scale, session split, safer determinism
-status: in-progress
+status: done
 milestone: M3
 size: L
 owner: builder
@@ -92,19 +92,38 @@ at 30 people no slower than before T-0077.
 **Out of scope:** new gameplay, art, the LICENSE.
 
 ## Acceptance criteria
-- [ ] Profile numbers before and after at 30/90/150 people in the notes; the target met or
+- [x] Profile numbers before and after at 30/90/150 people in the notes; the target met or
   the gap explained.
-- [ ] Each optimisation has a test that the behaviour is unchanged (candidates equal on
+- [x] Each optimisation has a test that the behaviour is unchanged (candidates equal on
   sample worlds, or documented differences); `--check-m2` PASSED on seeds 1–3.
-- [ ] Session split with all game tests passing; skip overlay screenshot
+- [ ] (screenshot only, on the Mac) Session split with all game tests passing; skip overlay screenshot
   `out/t0078-skip.png`; Esc stops a skip (game test).
-- [ ] Full-town save-and-continue test; new lint rules with a sample violation each in a
+- [x] Full-town save-and-continue test; new lint rules with a sample violation each in a
   lint fixture; acceptance curve without `exp`; stable-noise test (adding an unrelated object
   far away doesn't change a person's next choice).
-- [ ] `AutonomyOption`, save-field coverage test, CI cache and checksum.
-- [ ] `tools/check.sh` passes; nothing weakened.
+- [x] `AutonomyOption`, save-field coverage test, CI cache and checksum.
+- [x] `tools/check.sh` passes; nothing weakened.
 
 ## Implementation notes
+**Part C (determinism), merged 2 October 2026.** `tests/sim/test_determinism.gd`: the full
+town (seeds 1–3, seed 3 from Friday 14:00 so payday falls inside; seed 1 crosses the 9:00
+shift starts) runs 6 hours, is saved 7 steps into a minute, loaded, and both run 6 more hours
+with no difference (`Replay.first_difference`; about 9 s); the logistic table matches the
+curve within 0.01 on [-10, 10]; every field of 13 saved classes is in `to_dict()` or in a
+`NOT_SAVED` list (only `Person.prev_pos`). Purity lint (`tests/lint/test_sim_purity.gd`):
+new rules for `static var`, object identity, `hash()`, `JSON.parse*`, threads, `print`,
+and `exp/pow/log/sin/cos/tan/asin/acos/atan`; `# lint-ok: <why>` waives the static var
+and hash rules (two stateless sessions, a compiled regex, the stream seed's string hash);
+`tests/fixtures/lint_samples/sim_violations.txt` holds one violation per rule and every rule
+must catch its own. That sample showed the "res://game/" and "png/tscn" rules never fired
+(string contents were blanked): they now look inside strings. `Conversations.logistic` is
+a 65-point table (no `exp`); `Replay.compare` reads JSON through `Ser.parse_json`.
+`AutonomyOption` (target_id, target_kind, interaction_id, score, cells, order) replaces the
+option dictionaries everywhere. Item 14: `Replay.check` already names the first differing
+path ("REPLAY MISMATCH: …"), tested by `test_a_changed_command_is_found`; it doesn't name a
+tick (only the end is compared). CI caches the Godot zip, checks its SHA-256 and fails
+without a `LAST_TRAM_TESTS: PASSED` line. `tools/check.sh`: 661 passed.
+
 **Part B (session and time-skip), merged 2 October 2026.** `game/session.gd` is 289 lines
 (was 346): F9 reports moved to `game/bug_reporter.gd` (`BugReporter`, static) and skipping
 to `game/time_skip.gd` (`TimeSkip`: `active`, `stopped_tick`, `should_skip`, `stop`). The
