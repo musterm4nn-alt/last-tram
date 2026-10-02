@@ -30,6 +30,12 @@ var _lot_by_place: Dictionary[String, int] = {}
 var _lots_indexed: int = -1
 ## Derived footprint index: cell -> object ids covering it (rebuilt on load).
 var _objects_by_cell: Dictionary = {}
+## Derived: object tag -> ids of objects with it, in id order (objects_tagged; cleared when
+## objects change).
+var _objects_by_tag: Dictionary[String, Array] = {}
+## Derived: lot id -> ids of the objects standing on it, in id order (objects_on_lot).
+var _objects_by_lot: Dictionary[int, Array] = {}
+var _objects_by_lot_built: bool = false
 
 
 func _init(p_content: ContentDB, p_grid: WorldGrid) -> void:
@@ -102,6 +108,8 @@ func add_object(obj: WorldObject) -> bool:
 		if not _objects_by_cell.has(cell):
 			_objects_by_cell[cell] = []
 		(_objects_by_cell[cell] as Array).append(obj.id)
+	_objects_by_tag.clear()
+	_objects_by_lot_built = false
 	return true
 
 
@@ -119,6 +127,41 @@ func remove_object(id: int) -> void:
 			if (_objects_by_cell[cell] as Array).is_empty():
 				_objects_by_cell.erase(cell)
 	objects.erase(id)
+	_objects_by_tag.clear()
+	_objects_by_lot_built = false
+
+
+## Ids of the objects whose def has `tag`, in id order (T-0078: an index, so lookups such as a
+## job's workplace don't scan every object).
+func objects_tagged(tag: String) -> Array:
+	if _objects_by_tag.is_empty():
+		var ids: Array = objects.keys()
+		ids.sort()
+		for id: int in ids:
+			var def := content.object_def(objects[id].def_id)
+			for def_tag: String in def.tags if def != null else PackedStringArray():
+				if not _objects_by_tag.has(def_tag):
+					_objects_by_tag[def_tag] = []
+				_objects_by_tag[def_tag].append(id)
+	return _objects_by_tag.get(tag, [])
+
+
+## Ids of the objects whose origin is on lot `lot_id`, in id order (T-0078: an index, so a
+## person's home objects aren't found by scanning the town). Rebuilt when objects or lots change.
+func objects_on_lot(lot_id: int) -> Array:
+	if not _objects_by_lot_built or _objects_by_lot.get(-1, [0])[0] != lots.size():
+		_objects_by_lot.clear()
+		_objects_by_lot[-1] = [lots.size()]
+		var ids: Array = objects.keys()
+		ids.sort()
+		for id: int in ids:
+			var place := content.place_at(objects[id].origin)
+			var on := lot_id_for_place(place.id) if place != null else 0
+			if not _objects_by_lot.has(on):
+				_objects_by_lot[on] = []
+			_objects_by_lot[on].append(id)
+		_objects_by_lot_built = true
+	return _objects_by_lot.get(lot_id, []) if lot_id > 0 else []
 
 
 ## The object with this id, or null.

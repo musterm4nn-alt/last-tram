@@ -72,8 +72,8 @@ static func woken_by_hunger(sim: Sim, person: Person, def: InteractionDef) -> bo
 
 ## The needs this person should see to at home now, most pressing first (T-0060, T-0077;
 ## thresholds in data/needs.json "home"): any need below its critical_below (lowest first),
-## then "hygiene" below wash_below, "hunger" below eat_below, then any other need below
-## low_below (lowest first).
+## then "hygiene" below wash_below, "hunger" below eat_below (eat_before_bed in the sleep
+## window: supper before bed, T-0078), then any other need below low_below (lowest first).
 static func home_needs(sim: Sim, person: Person) -> PackedStringArray:
 	var limits := sim.content.home_thresholds
 	var critical: Array[NeedDef] = []
@@ -81,7 +81,8 @@ static func home_needs(sim: Sim, person: Person) -> PackedStringArray:
 		if _need(person, need_def.id) < need_def.critical_below:
 			critical.append(need_def)
 	var out := _lowest_first(person, critical)
-	for pair: Array in [["hygiene", "wash_below"], ["hunger", "eat_below"]]:
+	var eat := "eat_before_bed" if sleeping_time(sim, person) else "eat_below"
+	for pair: Array in [["hygiene", "wash_below"], ["hunger", eat]]:
 		if not out.has(pair[0]) and _need(person, pair[0]) < limits.get(pair[1], 0.0):
 			out.append(pair[0])
 	var low: Array[NeedDef] = []

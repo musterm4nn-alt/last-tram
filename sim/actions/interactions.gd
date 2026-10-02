@@ -10,14 +10,7 @@ static func offered_by(sim: Sim, object_id: int) -> Array[InteractionDef]:
 	var obj := sim.world.get_object(object_id)
 	if obj == null:
 		return out
-	var def := sim.content.object_def(obj.def_id)
-	if def == null:
-		return out
-	for candidate: InteractionDef in sim.content.interactions.values():
-		for tag: String in candidate.object_tags:
-			if tag in def.tags:
-				out.append(candidate)
-				break
+	out.assign(sim.content.interactions_for_def(obj.def_id))
 	return out
 
 
@@ -68,6 +61,30 @@ static func slot_fits(sim: Sim, object_id: int, slot_index: int, def: Interactio
 	if object_def == null or slot_index < 0 or slot_index >= object_def.use_slots.size():
 		return false
 	return (object_def.use_slots[slot_index].role == "staff") == def.work
+
+
+## Every use slot someone is walking to or using now (T-0078: built once per free-will
+## decision instead of scanning everyone per slot): object_id × 1024 + slot -> [person ids].
+static func taken_slots(sim: Sim) -> Dictionary:
+	var out: Dictionary = {}
+	for person: Person in sim.world.people.values():
+		if person.action_queue.is_empty():
+			continue
+		var front: Action = person.action_queue[0]
+		if front.state == Action.ROUTING or front.state == Action.PERFORMING:
+			var key := front.target_id * 1024 + front.slot_index
+			if not out.has(key):
+				out[key] = []
+			out[key].append(person.id)
+	return out
+
+
+## slot_taken over a taken_slots() index.
+static func taken_in(taken: Dictionary, object_id: int, slot_index: int, except_person_id: int) -> bool:
+	for id: int in taken.get(object_id * 1024 + slot_index, []):
+		if id != except_person_id:
+			return true
+	return false
 
 
 ## True if another person's front action is routing to or performing on this slot.

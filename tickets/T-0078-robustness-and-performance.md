@@ -1,12 +1,12 @@
 ---
 id: T-0078
 title: Robustness and performance - free will at scale, session split, safer determinism
-status: todo
+status: in-progress
 milestone: M3
 size: L
 owner: builder
 depends_on: [T-0077]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -105,6 +105,30 @@ at 30 people no slower than before T-0077.
 - [ ] `tools/check.sh` passes; nothing weakened.
 
 ## Implementation notes
+**Part A (measure and speed), merged 2 October 2026** (D32). `tools/simrun.sh --profile` prints
+ms per step per system (`tools/profiled_system.gd`); `--extra-residents=N` adds N adults to
+existing homes (cost only: beds run short). Numbers on the cloud machine (about 2.5× slower
+than the Mac), one day, seed 1:
+
+| people | before | after | biggest after |
+|---|---|---|---|
+| 28 | 0.259 ms/step (WorkSystem 0.104, Actions 0.074, free will 0.047) | 0.139 | Actions 0.067 |
+| 88 | 0.828 | — | — |
+| 148 | 1.755 (free will 1.19) | 1.328 (free will 0.87) | free will |
+
+Done in A: items 2 (interactions per def, defs per interaction, free-will object set), 3 in
+part (objects by tag and by lot instead of a bucket grid; candidates still scan ids within
+the radius), 4 (exact pruning, `Autonomy.decide`, instead of a top-K guess), 6 in part
+(workplaces by tag, home objects by lot; `Jobs.holder` still scans people), 8 in part
+(`Pathfinder.path_length`; stairs-only segment cache keys), 13 (stable noise). WorkSystem now
+checks "already at work or on the way" before working out the walk. Not done in A: 5
+(background tier cadence), 7 (paths popped from the back), the per-level nav rebuild.
+Behaviour: `test_decide_equals_choose_over_all_candidates`, `test_path_length_matches_find_path`,
+`test_noise_ignores_other_options` (`tests/sim/test_free_will_speed.gd`); the dice change
+re-rolled the towns, and a real flaw showed (no supper before bed); fixed with
+`eat_before_bed` (`test_supper_before_bed`). `--check-m2 --check-staffing` pass on seeds 1–6
+in both work modes; 0.125–0.16 ms per step on this machine.
+
 
 ## Questions
 

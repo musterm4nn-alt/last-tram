@@ -47,6 +47,22 @@ func find_path(from: Vector3i, to: Vector3i) -> Array[Vector3i]:
 	return _route_across_levels(from, to)
 
 
+## How many cells find_path(from, to) would return (T-0078: the same route, without building
+## it): -1 when unreachable (or from == to, or a cell isn't walkable, like find_path's empty
+## result). Free will only needs the length.
+func path_length(from: Vector3i, to: Vector3i) -> int:
+	if from == to or not _world.grid.is_walkable(from) or not _world.grid.is_walkable(to):
+		return -1
+	if from.z == to.z:
+		var astar := _grid_for(from.z)
+		if astar != null:
+			var cells := astar.get_id_path(Vector2i(from.x, from.y), Vector2i(to.x, to.y))
+			if cells.size() > 1:
+				return cells.size() - 1
+	var route := _route_across_levels(from, to)
+	return route.size() if not route.is_empty() else -1
+
+
 ## True if a person at `from` could walk to `to`. Standing on a walkable cell
 ## counts as reaching it, even though find_path returns no steps for from == to.
 func is_reachable(from: Vector3i, to: Vector3i) -> bool:
@@ -61,8 +77,9 @@ func _segment(a: Vector3i, b: Vector3i) -> Dictionary:
 	if _segments_revision != _world.grid.revision:
 		_segments.clear()
 		_segments_revision = _world.grid.revision
-	var key := "%s|%s" % [a, b]
-	if _segments.has(key):
+	var cached := _is_stairs(a) and _is_stairs(b)
+	var key := "%s|%s" % [a, b] if cached else ""
+	if cached and _segments.has(key):
 		return _segments[key]
 	var path: Array[Vector3i] = []
 	var cost := INF
@@ -75,7 +92,7 @@ func _segment(a: Vector3i, b: Vector3i) -> Dictionary:
 				cost += Vector2(cells[i] - cells[i - 1]).length() * astar.get_point_weight_scale(cells[i])
 				path.append(Vector3i(cells[i].x, cells[i].y, a.z))
 	var result := {"cost": cost, "path": path}
-	if _is_stairs(a) and _is_stairs(b):
+	if cached:
 		_segments[key] = result
 	return result
 

@@ -173,10 +173,10 @@ static func workplace(sim: Sim, person: Person, free_slot: bool = true) -> World
 	var here := person.cell()
 	var best: WorldObject = null
 	var best_distance := 0
-	for obj: WorldObject in sim.world.objects.values():
-		var def := sim.content.object_def(obj.def_id)
+	for id: int in sim.world.objects_tagged(job.workplace_tag):
+		var obj: WorldObject = sim.world.objects[id]
 		var place := sim.content.place_at(obj.origin)
-		if def == null or not def.tags.has(job.workplace_tag) or place == null or place.id != job.place_id:
+		if place == null or place.id != job.place_id:
 			continue
 		var free := not free_slot
 		for slot: int in obj.slot_count(sim.content) if free_slot else 0:

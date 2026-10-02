@@ -26,12 +26,12 @@ func on_minute(sim: Sim) -> void:
 			continue
 		if person.id == sim.world.player_id and now == shift.x - REMINDER_MINUTES * minute:
 			sim.emit_event(&"work_reminder", {"person_id": person.id, "job_id": person.job.job_id, "start_tick": shift.x})
-		if now < shift.x - economy.look_ahead_hours * 60 * minute:
-			continue  # far from the next shift: nothing to work out yet
+		if now < shift.x - economy.look_ahead_hours * 60 * minute or _on_the_way(sim, person):
+			continue  # far from the next shift, or already there or going: nothing to work out
 		var leave := shift.x - (Jobs.travel_minutes(sim, person) + economy.leave_margin) * minute
 		if now < leave or ((now - leave) / minute) % economy.work_retry_minutes != 0:
 			continue
-		if _on_the_way(sim, person) or not _goes_alone(sim, person) or _almost_done(sim, person):
+		if not _goes_alone(sim, person) or _almost_done(sim, person):
 			continue
 		_go(sim, person)
 
