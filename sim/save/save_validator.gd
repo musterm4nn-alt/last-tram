@@ -148,6 +148,8 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			s.boolean(command.get("enabled"), path + ".enabled")
 		"set_running":
 			s.boolean(command.get("running"), path + ".running")
+		"call":
+			s.integer(command.get("other_id"), path + ".other_id")
 		"set_tier_mode":
 			if not s.text(command.get("mode"), path + ".mode") in [TierSettings.TIERED, TierSettings.FULL]:
 				s.reject(path + ".mode", "unknown tier mode")

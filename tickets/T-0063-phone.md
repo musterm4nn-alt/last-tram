@@ -1,12 +1,12 @@
 ---
 id: T-0063
 title: The phone - bank, contacts and map
-status: draft
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0062]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -43,6 +43,15 @@ from T-0054 (`detail`).
   both, and a busy contact doesn't answer. Screenshots of the bank and contacts apps.
 
 ## Implementation notes
+- Built from the draft: `game/ui/phone/` (`Phone`, `BankApp`, `ContactsApp`), P toggles it
+  (Esc closes it), Map opens the town map; the HUD hint lists "P phone"; `--phone=APP` for
+  screenshots. Calls: `InteractionDef.remote` (no walking, no standing together, never in
+  the person menu or free will), the `phone_call` interaction (a friendly exchange, 20 min,
+  bubble lines and memories `phoned`/`awkward_call`), and `CallCommand` (registered and
+  validated). Nobody answers when asleep, at work or walking ("they're busy").
+- Verified: `tools/check.sh` 551 passed, 0 failed (`tests/game/test_phone.gd`, 6 tests).
+  Screenshot `out/t0063.png`: the Bank app with cash, bank, the weekly rent and the
+  statement.
 
 ## Questions
 

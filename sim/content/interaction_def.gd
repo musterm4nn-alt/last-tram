@@ -49,3 +49,6 @@ var adds_groceries: int = 0
 ## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's
 ## WorkSession drives it. Work has no duration of its own.
 var work: bool = false
+## A person-targeted interaction done from afar (a phone call, T-0063): no walking, no need to
+## stand together; only through its command, never from the person menu or free will.
+var remote: bool = false

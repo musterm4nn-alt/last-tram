@@ -2,6 +2,7 @@
 	"_doc": "Systemic dialogue (T-0040): short lines shown in speech bubbles for social exchanges, by interaction and outcome, with {topic} replaced by one of the topics; thought lines for urgent needs; and (T-0041) how the person inspector words a memory about you, by memory kind. View only: these never change the game. Keep them short (they sit over a head).",
 	"topics": ["the rent", "the tram", "the weather", "football", "the Späti", "work", "the noise upstairs", "Café Wolke", "the landlord", "last night", "the canal", "the Kneipe", "the neighbours", "prices", "the police post"],
 	"lines": {
+		"phone_call": { "success": ["...on the phone about {topic}", "...laughs into the phone", "...catches up on the phone"], "fail": ["...\"Sorry, bad line...\"", "...\"Can I call you back?\""] },
 		"chat": { "success": ["...talks about {topic}", "...complains about {topic}", "...asks about {topic}", "...has news about {topic}"], "fail": ["...mumbles about {topic}", "...awkward silence"] },
 		"joke": { "success": ["...jokes about {topic}", "...does an impression", "...tells a joke about {topic}"], "fail": ["...a bad joke about {topic}", "...nobody laughs"] },
 		"compliment": { "success": ["...nice jacket!", "...you look great", "...compliments their taste"], "fail": ["...that sounded fake"] },
@@ -9,6 +10,6 @@
 		"argue": { "success": ["...argues about {topic}", "...won't let {topic} go"], "fail": ["...loses an argument about {topic}"] },
 		"flirt": { "success": ["...winks", "...gets a smile back", "...flirts a little"], "fail": ["...tries a line, no luck"] }
 	},
-	"memories": { "chatted": "had a nice chat with you", "awkward_chat": "had an awkward chat with you", "laughed_with": "laughed at your joke", "bad_joke": "heard a bad joke from you", "complimented": "got a compliment from you", "fake_compliment": "thinks you were being fake", "insulted": "was insulted by you", "shrugged_off_insult": "shrugged off your insult", "argued": "argued with you", "lost_argument": "won an argument against you", "flirted": "flirted with you", "rejected_flirt": "turned down your flirting" },
+	"memories": { "chatted": "had a nice chat with you", "awkward_chat": "had an awkward chat with you", "laughed_with": "laughed at your joke", "bad_joke": "heard a bad joke from you", "complimented": "got a compliment from you", "fake_compliment": "thinks you were being fake", "insulted": "was insulted by you", "shrugged_off_insult": "shrugged off your insult", "argued": "argued with you", "lost_argument": "won an argument against you", "flirted": "flirted with you", "rejected_flirt": "turned down your flirting", "phoned": "had a good phone call with you", "awkward_call": "had an awkward call with you", "promoted": "got promoted", "fired": "got fired" },
 	"needs": { "hunger": "Hungry...", "energy": "So tired...", "hygiene": "I need a shower", "fun": "Bored...", "social": "Lonely...", "comfort": "My feet hurt" }
 }

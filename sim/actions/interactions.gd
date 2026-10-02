@@ -28,7 +28,7 @@ static func offered_by_person(sim: Sim, actor_id: int, target_id: int) -> Array[
 	if actor_id == target_id or sim.world.get_person(target_id) == null:
 		return out
 	for candidate: InteractionDef in sim.content.interactions.values():
-		if candidate.target == "person":
+		if candidate.target == "person" and not candidate.remote:
 			out.append(candidate)
 	return out
 

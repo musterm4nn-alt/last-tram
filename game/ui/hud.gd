@@ -22,8 +22,8 @@ var inspector: PersonInspector
 ## The key hints for the bottom line, by control mode.
 static func hint_text(command_mode: bool) -> String:
 	if command_mode:
-		return "Click an object to use it, the ground to walk   Shift run   WASD / right-drag pan   R/F floors   Tab direct mode   M map   Space pause   1-3 speed   Wheel zoom   Esc menu   F9 report a bug"
-	return "WASD move   Shift run   E use   R/F stairs   Tab command mode   M map   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug"
+		return "Click an object to use it, the ground to walk   Shift run   WASD / right-drag pan   R/F floors   Tab direct mode   M map   P phone   Space pause   1-3 speed   Wheel zoom   Esc menu   F9 report a bug"
+	return "WASD move   Shift run   E use   R/F stairs   Tab command mode   M map   P phone   Space pause   1-3 speed   Wheel zoom   F5 save   F8 load   Esc menu   F9 report a bug"
 
 
 ## The command-mode label: "Command mode", plus " · floor N" while viewing another floor

@@ -62,6 +62,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		def.need_rates = _read_needs(reader, d, "need_rates", ctx)
 		def.finish_needs = _read_needs(reader, d, "finish_needs", ctx)
 		def.advertise = _read_needs(reader, d, "advertise", ctx)
+		if d.has("remote"):
+			def.remote = reader.read_bool(d, "remote", ctx)
+			if def.remote and def.target != "person":
+				reader.error("%s: only person-targeted interactions can be remote" % ctx)
 		if d.has("work"):
 			def.work = reader.read_bool(d, "work", ctx)
 		if d.has("time_skip"):
