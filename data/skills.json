@@ -1,0 +1,19 @@
+{
+	"_doc": "Skills (T-0071, docs/design/people.md). Levels 0..max_level, one level per xp_per_level XP. XP comes from practice: interactions' skill_xp (per hour), and work (work_xp_per_hour in the job's skill). effects: finish_bonus_per_level scales an interaction's finish_needs for its finish_skill (cooking: better meals); charisma_per_level adds to the logit of social success; performance_per_level adds to performance after each shift worked to the end (the job's skill); interview_per_level adds to the interview chance (the job's skill).",
+	"max_level": 10,
+	"xp_per_level": 200,
+	"work_xp_per_hour": 15,
+	"effects": {
+		"finish_bonus_per_level": 0.05,
+		"charisma_per_level": 0.08,
+		"performance_per_level": 0.2,
+		"interview_per_level": 0.02
+	},
+	"skills": [
+		{ "id": "cooking", "name": "Cooking" },
+		{ "id": "charisma", "name": "Charisma" },
+		{ "id": "fitness", "name": "Fitness" },
+		{ "id": "logic", "name": "Logic" },
+		{ "id": "handiness", "name": "Handiness" }
+	]
+}

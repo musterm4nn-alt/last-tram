@@ -63,6 +63,13 @@ Discrete **traits** come later (night owl, neat, romantic, paranoid, gossip...).
 Levels 0–10 grown by XP from actions: cooking, fitness, charisma, logic, handiness, fighting,
 stealth. Later: driving and street smarts. Skills gate interactions and change outcomes.
 
+Built in M3 (T-0071, `data/skills.json`, `Skills`): cooking, charisma, fitness, logic and
+handiness. XP comes from interactions' `skill_xp` (cooking at the stove, charisma in friendly
+talk, logic on the computer) and from work (each job trains its `skill`). A level makes
+meals fill more (`finish_skill`), friendly and romantic moves land more often (charisma),
+shifts count more towards performance and interviews go better (the job's skill), and
+promotions can require levels (`requires` on a job level). Fighting and stealth come with M4.
+
 ## Health and body (M4)
 
 Health 0–100, injuries (with healing time), intoxication (alcohol, drugs; wears off),

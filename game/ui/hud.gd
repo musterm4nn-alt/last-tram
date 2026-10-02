@@ -86,6 +86,9 @@ static func career_notice(event: Dictionary, content: ContentDB) -> String:
 			return "You were fired from your job as %s" % job_name
 		&"quit_job":
 			return "You quit your job as %s" % job_name
+		&"skill_up":
+			var skill: SkillDef = content.skill(String(data.get("skill_id", ""))) if content != null else null
+			return "%s skill: level %d" % [skill.name if skill != null else "A", int(data.get("level", 0))]
 		&"registered":
 			return "Registered as unemployed: benefit comes on Mondays"
 		&"job_application":

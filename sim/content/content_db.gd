@@ -33,6 +33,9 @@ var routines: Dictionary[String, RoutineDef] = {}
 var default_routine: String = ""
 ## Jobs by id (data/jobs.json, T-0058).
 var jobs: Dictionary[String, JobDef] = {}
+## Skills by id, and their rules (data/skills.json, T-0071).
+var skills: Dictionary[String, SkillDef] = {}
+var skill_rules: SkillRules = SkillRules.new()
 ## The town's secrets (T-0067), by id.
 var discoveries: Dictionary[String, DiscoveryDef] = {}
 ## Money tuning (data/economy.json, D29).
@@ -76,6 +79,7 @@ func load_from(root: String) -> void:
 	TerrainLoader.load(self, reader, root.path_join("terrain.json"))
 	NeedsLoader.load(self, reader, root.path_join("needs.json"))
 	EconomyLoader.load(self, reader, root.path_join("economy.json"))
+	SkillLoader.load(self, reader, root.path_join("skills.json"))
 	NamesLoader.load(self, reader, root.path_join("names").path_join("names.json"))
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
@@ -204,6 +208,10 @@ func routine(id: String) -> RoutineDef:
 ## The job with this id, or null.
 func job(id: String) -> JobDef:
 	return jobs.get(id)
+
+
+func skill(id: String) -> SkillDef:
+	return skills.get(id)
 
 
 func discovery(id: String) -> DiscoveryDef:

@@ -72,6 +72,11 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.staffed = reader.read_bool(d, "staffed", ctx)
 			if def.staffed and def.target != "object":
 				reader.error("%s: only object-targeted interactions can be staffed" % ctx)
+		def.skill_xp = SkillLoader.read_amounts(db, reader, d, "skill_xp", ctx)
+		if d.has("finish_skill"):
+			def.finish_skill = reader.read_str(d, "finish_skill", ctx)
+			if db.skill(def.finish_skill) == null:
+				reader.error("%s: unknown skill '%s' in 'finish_skill'" % [ctx, def.finish_skill])
 		if d.has("places"):
 			def.places = reader.read_str_array(d, "places", ctx)  # checked against the world in DiscoveryLoader.check_links
 		for key: String in ["requires_discovery", "teaches_clue"]:

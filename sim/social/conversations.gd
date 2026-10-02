@@ -58,6 +58,8 @@ static func acceptance(sim: Sim, actor: Person, target: Person, def: Interaction
 	var familiarity := view.familiarity if view != null else 0.0
 	var romance := view.romance if view != null else 0.0
 	var x := social.base + (Mood.compute(target, sim.content) - 20.0) / 40.0
+	if social.kind != "mean":  # a charming actor lands friendly and romantic moves more often (T-0071)
+		x += Skills.level(sim.content, actor, "charisma") * sim.content.skill_rules.charisma_per_level
 	match social.kind:
 		"friendly":
 			x += friendship / 25.0 + familiarity / 100.0

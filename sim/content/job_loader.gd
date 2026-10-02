@@ -35,7 +35,11 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			job.shift_moodlet = reader.read_str(d, "shift_moodlet", ctx)
 			if db.moodlet(job.shift_moodlet) == null:
 				reader.error("%s: unknown moodlet '%s' in 'shift_moodlet'" % [ctx, job.shift_moodlet])
-		_read_levels(reader, d, job, ctx)
+		_read_levels(db, reader, d, job, ctx)
+		if d.has("skill"):
+			job.skill = reader.read_str(d, "skill", ctx)
+			if db.skill(job.skill) == null:
+				reader.error("%s: unknown skill '%s'" % [ctx, job.skill])
 		_read_positions(reader, d, job, ctx)
 		if not JobDef.SESSIONS.has(job.session):
 			reader.error("%s: 'session' must be one of %s" % [ctx, ", ".join(JobDef.SESSIONS)])
@@ -55,7 +59,7 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	check_staffed(db, reader)
 
 
-static func _read_levels(reader: ContentReader, d: Dictionary, job: JobDef, ctx: String) -> void:
+static func _read_levels(db: ContentDB, reader: ContentReader, d: Dictionary, job: JobDef, ctx: String) -> void:
 	for entry: Variant in reader.read_arr(d, "levels", ctx):
 		if not entry is Dictionary:
 			reader.error("%s: every level must be an object" % ctx)
@@ -63,6 +67,7 @@ static func _read_levels(reader: ContentReader, d: Dictionary, job: JobDef, ctx:
 		var level := JobLevel.new()
 		level.title = reader.read_str(entry, "title", ctx + " level")
 		level.wage = reader.read_int(entry, "wage", ctx + " level")
+		level.requires = SkillLoader.read_amounts(db, reader, entry, "requires", ctx + " level")
 		if level.wage <= 0:
 			reader.error("%s: level '%s' needs a wage > 0" % [ctx, level.title])
 		job.levels.append(level)
