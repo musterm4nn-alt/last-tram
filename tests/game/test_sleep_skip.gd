@@ -1,6 +1,7 @@
 extends TestCase
-## T-0013 / T-0050: a sleep is skipped to its end in one frame, and a critical need
-## wakes them (and stops the skip for that sleep).
+## T-0013 / T-0050 / T-0078: a sleep is skipped to its end, at most TimeSkip.STEPS_PER_FRAME
+## steps per frame; a critical need wakes them (and stops the skip for that sleep), and so
+## does Esc (stop_skipping).
 
 const ROOM: PackedStringArray = [
 	"########",
@@ -21,7 +22,7 @@ func before_each() -> void:
 	_old_content = Session.content
 	_old_sim = Session.sim
 	_old_speed = Session.speed
-	_old_stopped = Session._skip_stopped_tick
+	_old_stopped = Session.time_skip.stopped_tick
 	_old_level = Session.viewed_level
 
 
@@ -29,8 +30,8 @@ func after_each() -> void:
 	Session.content = _old_content
 	Session.sim = _old_sim
 	Session.speed = _old_speed
-	Session._skip_stopped_tick = _old_stopped
-	Session.skipping = false
+	Session.time_skip.stopped_tick = _old_stopped
+	Session.time_skip.active = false
 	Session.viewed_level = _old_level
 
 
@@ -55,7 +56,7 @@ func _sleeper(interaction_id: String, needs: Dictionary) -> Sim:
 	Session.sim = sim
 	Session._after_load()
 	Session.speed = 1
-	Session._skip_stopped_tick = -1
+	Session.time_skip.stopped_tick = -1
 	Session._accumulator = 0.0
 	return sim
 
@@ -83,21 +84,41 @@ func test_should_skip_only_while_sleeping_unpaused() -> void:
 	assert_false(Session.should_skip(tv_sim, 1, -1), "watching TV does not skip")
 
 
-func test_one_frame_skips_the_whole_sleep() -> void:
-	var sim := _sleeper("sleep", {"energy": 95.0})
+func test_a_skip_runs_over_frames_to_the_end_of_the_sleep() -> void:
+	var sim := _sleeper("sleep", {"energy": 40.0})
 	var started := sim.world.player().action_queue[0].started_tick
 	var notices: Array[String] = []
 	var listener := func(text: String) -> void: notices.append(text)
 	Session.notice.connect(listener)
 	Session._process(0.05)
+	assert_eq(Session.steps_last_frame, TimeSkip.STEPS_PER_FRAME, "one game hour per frame")
+	assert_true(Session.skipping, "still skipping")
+	assert_false(sim.world.player().action_queue.is_empty())
+	var frames := 1
+	while not sim.world.player().action_queue.is_empty() and frames < 30:
+		Session._process(0.05)
+		frames += 1
 	Session.notice.disconnect(listener)
-	assert_true(sim.world.player().action_queue.is_empty(), "the sleep ended in one frame")
-	assert_true(Session.steps_last_frame > SimClock.STEPS_PER_GAME_MINUTE * 50, "many steps in one frame")
-	assert_true(sim.clock.tick >= started + SimClock.STEPS_PER_GAME_MINUTE * 60, "slept its 60 minutes")
+	assert_true(sim.world.player().action_queue.is_empty(), "the sleep ended")
+	assert_true(frames > 2 and frames < 30, "over a few frames (%d)" % frames)
+	assert_true(sim.clock.tick >= started + SimClock.STEPS_PER_GAME_MINUTE * 60, "slept at least its 60 minutes")
 	assert_false(Session.skipping)
 	assert_eq(notices, ["Woke up at %s" % sim.clock.format()] as Array[String])
 	Session._process(0.05)
 	assert_eq(Session.steps_last_frame, 1, "back to 1x")
+
+
+func test_esc_stops_a_skip() -> void:
+	var sim := _sleeper("sleep", {"energy": 40.0})
+	Session._process(0.05)
+	assert_true(Session.skipping)
+	Session.stop_skipping()
+	assert_false(Session.skipping)
+	Session._accumulator = 0.0
+	Session._process(0.05)
+	assert_eq(Session.steps_last_frame, 1, "normal speed again")
+	assert_false(sim.world.player().action_queue.is_empty(), "still asleep, just not skipping")
+	assert_false(Session.skipping, "not again for this sleep")
 
 
 func test_a_critical_need_wakes_the_player() -> void:
@@ -157,5 +178,14 @@ func test_replacing_sleep_with_another_sleep_discards_the_old_budget() -> void:
 	assert_ne(sim.world.player().action_queue[0].id, previous.id)
 	assert_false(Session.skipping)
 	Session._process(0.05)
-	assert_true(Session.steps_last_frame > SimClock.STEPS_PER_GAME_MINUTE * 60, "the new sleep skips on its own next frame")
+	assert_eq(Session.steps_last_frame, TimeSkip.STEPS_PER_FRAME, "the new sleep skips on its own next frame")
+	for frame: int in 30:
+		if sim.world.player().action_queue.is_empty():
+			break
+		Session._process(0.05)
 	assert_true(sim.world.player().action_queue.is_empty())
+
+
+func test_the_overlay_says_skipping() -> void:
+	var sim := _sleeper("sleep", {"energy": 40.0})
+	assert_eq(SkipOverlay.text(sim), "Skipping… %s (Esc to stop)" % sim.clock.format())

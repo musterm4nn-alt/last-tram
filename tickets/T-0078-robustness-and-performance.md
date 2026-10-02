@@ -105,6 +105,18 @@ at 30 people no slower than before T-0077.
 - [ ] `tools/check.sh` passes; nothing weakened.
 
 ## Implementation notes
+**Part B (session and time-skip), merged 2 October 2026.** `game/session.gd` is 289 lines
+(was 346): F9 reports moved to `game/bug_reporter.gd` (`BugReporter`, static) and skipping
+to `game/time_skip.gd` (`TimeSkip`: `active`, `stopped_tick`, `should_skip`, `stop`). The
+autosave stays in Session (small). A skip now runs at most `TimeSkip.STEPS_PER_FRAME` (1,200
+steps, one game hour) per frame until the action ends; `SkipOverlay` shows "Skipping… 03:40
+(Esc to stop)"; Esc calls `Session.stop_skipping()` (the player keeps sleeping at normal
+speed). `--advance` (CLI) stays instant. Tests: `tests/game/test_sleep_skip.gd`
+(`test_a_skip_runs_over_frames_to_the_end_of_the_sleep`, `test_esc_stops_a_skip`,
+`test_the_overlay_says_skipping`; the other skip tests unchanged apart from the renamed
+fields); `test_save_failures.gd` uses `Session.replay_start`. The overlay screenshot
+(`out/t0078-skip.png`) is to take on the Mac (no display here).
+
 **Part A (measure and speed), merged 2 October 2026** (D32). `tools/simrun.sh --profile` prints
 ms per step per system (`tools/profiled_system.gd`); `--extra-residents=N` adds N adults to
 existing homes (cost only: beds run short). Numbers on the cloud machine (about 2.5× slower
