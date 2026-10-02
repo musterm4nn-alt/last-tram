@@ -10,7 +10,7 @@ extends RefCounted
 ##   SAVE_VERSION, add a migration step in SaveMigrations, and add a fixture save to
 ##   tests/fixtures/saves/ made with the new version.
 
-const SAVE_VERSION: int = 6
+const SAVE_VERSION: int = 7
 const MAX_SAVE_BYTES: int = 67108864
 
 

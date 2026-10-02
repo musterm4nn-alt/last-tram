@@ -25,6 +25,10 @@ var shifts_started: int = 0
 var late_shifts: int = 0
 var late_minutes: int = 0
 var left_early: int = 0
+## Pay and careers (T-0061).
+var shifts_missed: int = 0
+var promotions: int = 0
+var firings: int = 0
 
 
 func observe(sim: Sim, event: Dictionary) -> void:
@@ -50,6 +54,12 @@ func observe(sim: Sim, event: Dictionary) -> void:
 			late_shifts += 1 if int(data["late_minutes"]) > 0 else 0
 		&"shift_ended":
 			left_early += 1 if data["left_early"] else 0
+		&"shift_missed":
+			shifts_missed += 1
+		&"promoted":
+			promotions += 1
+		&"fired":
+			firings += 1
 		&"social_exchange":
 			for key: String in ["actor_id", "target_id"]:
 				var id := int(data[key])
@@ -109,8 +119,8 @@ func failures(sim: Sim, days: int) -> PackedStringArray:
 
 ## "work: shifts started N (late M, average lateness X min), left early K".
 func work_summary() -> String:
-	return "work: shifts started %d (late %d, average lateness %.1f min), left early %d" % [
-		shifts_started, late_shifts, float(late_minutes) / maxf(1.0, shifts_started), left_early]
+	return "work: shifts started %d (late %d, average lateness %.1f min), left early %d, missed %d, promotions %d, firings %d" % [
+		shifts_started, late_shifts, float(late_minutes) / maxf(1.0, shifts_started), left_early, shifts_missed, promotions, firings]
 
 
 ## Plain-words numbers for the report.

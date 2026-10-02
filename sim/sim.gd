@@ -45,6 +45,7 @@ static func default_systems() -> Array[SimSystem]:
 		NeedsSystem.new(),
 		SocialSystem.new(),
 		WorkSystem.new(),
+		EconomySystem.new(),
 		AutonomySystem.new(),
 	]
 

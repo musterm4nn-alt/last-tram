@@ -74,6 +74,7 @@ static func start_shift(sim: Sim, person: Person, action: Action) -> void:
 		return
 	WorkSessions.for_job(job).begin(sim, person, action)
 	var window := shift_window(sim, person, action.started_tick)
+	person.job.last_shift_start = window.x
 	var late := maxi(0, (action.started_tick - window.x) / SimClock.STEPS_PER_GAME_MINUTE) if window.x >= 0 else 0
 	sim.emit_event(&"shift_started", {"person_id": person.id, "job_id": job.id, "late_minutes": late})
 
@@ -101,6 +102,8 @@ static func end_shift(sim: Sim, person: Person, action: Action, completed: bool)
 		"late_minutes": result.late_minutes, "left_early": result.left_early})
 	if completed:
 		_know_colleagues(sim, person, action)
+	if job != null:
+		Careers.record_shift(sim, person, result)
 	return result
 
 

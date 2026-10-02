@@ -1,12 +1,12 @@
 ---
 id: T-0061
 title: Payday, performance, promotion and getting fired
-status: draft
+status: done
 milestone: M3
 size: M
 owner: builder
 depends_on: [T-0060]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -43,6 +43,17 @@ T-0060 (`WorkResult`, `WorkSystem`).
   passes.
 
 ## Implementation notes
+- Built from this draft directly (detailed while building): `Careers` (`sim/jobs/careers.gd`:
+  `record_shift`, `miss`, `pay`, `fire`, promotion and warnings), `EconomySystem` (payday,
+  Friday 18:00 by `economy.json`), `Employment` gains `unpaid`, `level_shifts`,
+  `shifts_worked`, `shifts_missed`, `warned`, `last_shift_start` (save v7, `_v6_to_v7`,
+  validator, `v7_basic.json`). `WorkSystem` notices a missed shift at its end. Rules are in
+  `economy.json` "performance"; moodlets `promoted`, `fired`, `payday`; memories `promoted`,
+  `fired`. HUD notices (`Hud.career_notice`); the inspector adds "doing well/okay/struggling".
+- Verified: `tools/check.sh` 539 passed, 0 failed (`test_careers.gd`, 6 tests: exact pay,
+  payday, lateness and leaving early, three missed shifts → warning → fired, promotion, save).
+  `tools/simrun.sh --days=7 --check-m2` PASSED on seeds 1–3; wages paid €7,006/€6,176/€4,936
+  in the week; nobody missed a shift or was fired; the ledger balances.
 
 ## Questions
 

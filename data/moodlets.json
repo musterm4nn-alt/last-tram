@@ -13,6 +13,9 @@
 		{ "id": "insulted", "name": "Insulted", "value": -15, "duration_hours": 8 },
 		{ "id": "argued", "name": "Had an argument", "value": -12, "duration_hours": 6 },
 		{ "id": "awkward", "name": "Awkward moment", "value": -5, "duration_hours": 2 },
-		{ "id": "rejected", "name": "Rejected", "value": -10, "duration_hours": 6 }
+		{ "id": "rejected", "name": "Rejected", "value": -10, "duration_hours": 6 },
+		{ "id": "promoted", "name": "Promoted", "value": 15, "duration_hours": 24 },
+		{ "id": "fired", "name": "Fired", "value": -25, "duration_hours": 48 },
+		{ "id": "payday", "name": "Payday", "value": 5, "duration_hours": 6 }
 	]
 }

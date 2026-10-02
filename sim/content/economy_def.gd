@@ -24,3 +24,8 @@ var hungry_below: float = 0.0
 ## Jobs (T-0058): the job a new game's player starts in ("" = none), and the age people retire.
 var player_job: String = ""
 var retirement_age: int = 67
+## Pay and performance (T-0061): wages are paid on payday (weekday 0 = Monday, whole hour).
+var payday_weekday: int = 4
+var payday_hour: int = 18
+## Performance rules by name (see data/economy.json "performance").
+var performance: Dictionary[String, float] = {}

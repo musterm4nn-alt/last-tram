@@ -108,7 +108,7 @@ static func doing(sim: Sim, person: Person) -> String:
 static func job_text(sim: Sim, person: Person) -> String:
 	var described := Jobs.describe(sim.content, person)
 	if not described.is_empty():
-		return described
+		return "%s, %s" % [described, Careers.performance_text(person.job)]
 	return "Retired" if person.age_years >= sim.content.economy.retirement_age else "Unemployed"
 
 
