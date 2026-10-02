@@ -1,0 +1,20 @@
+{
+	"_doc": "The Altstadt's secrets (T-0067, docs/design/discoveries.md). from/to: \"HH:MM\" window it can be uncovered in (to before from wraps past midnight; equal = all day). level: the place's floor. clue_required: false lets a search at the place find the clue. share_trust: trust needed to share the clue in a conversation, -1 = never shared. effects: note {text}, money {cents} (once per world), moodlet {moodlet}, contact {place_id}: you get to know its residents or staff, unlock_interaction {interaction}: one whose requires_discovery is this. scene: optional, shown to the player on finding it. Content rules (AGENTS.md) apply to every line.",
+	"discoveries": [
+		{
+			"id": "fountain_coins",
+			"name": "Coins in the fountain",
+			"clue": "People toss coins into the Altmarkt fountain. Late at night nobody's watching.",
+			"place_id": "altmarkt",
+			"from": "22:00",
+			"to": "04:00",
+			"level": 0,
+			"clue_required": false,
+			"share_trust": 20,
+			"effects": [
+				{ "kind": "money", "cents": 340 },
+				{ "kind": "note", "text": "You fished €3.40 out of the fountain. Nobody saw." }
+			]
+		}
+	]
+}

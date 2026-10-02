@@ -33,6 +33,8 @@ var routines: Dictionary[String, RoutineDef] = {}
 var default_routine: String = ""
 ## Jobs by id (data/jobs.json, T-0058).
 var jobs: Dictionary[String, JobDef] = {}
+## The town's secrets (T-0067), by id.
+var discoveries: Dictionary[String, DiscoveryDef] = {}
 ## Money tuning (data/economy.json, D29).
 var economy: EconomyDef = EconomyDef.new()
 var errors: PackedStringArray = []
@@ -85,6 +87,7 @@ func load_from(root: String) -> void:
 	DialogueLoader.load(self, reader, root.path_join("dialogue"))
 	WorldLoader.load(self, reader, root.path_join("world"))
 	JobLoader.load(self, reader, root.path_join("jobs.json"))
+	DiscoveryLoader.load(self, reader, root.path_join("discoveries"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
 		errors.append(problem)
@@ -201,6 +204,10 @@ func routine(id: String) -> RoutineDef:
 ## The job with this id, or null.
 func job(id: String) -> JobDef:
 	return jobs.get(id)
+
+
+func discovery(id: String) -> DiscoveryDef:
+	return discoveries.get(id)
 
 
 ## The interaction with this id, or null.

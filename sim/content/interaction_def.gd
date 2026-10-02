@@ -49,6 +49,10 @@ var adds_groceries: int = 0
 ## Sold over a counter (T-0065): only while someone works an on-site shift on the target's
 ## place (Requirements "not_staffed"). Object targets only.
 var staffed: bool = false
+## Offered only to people who uncovered this discovery (T-0067; Requirements "unknown_secret").
+var requires_discovery: String = ""
+## Doing it teaches this discovery's clue (T-0068: notice boards and the like).
+var teaches_clue: String = ""
 ## Only for people with no home (T-0066: sleeping rough); Requirements "has_home" otherwise.
 var homeless_only: bool = false
 ## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's
