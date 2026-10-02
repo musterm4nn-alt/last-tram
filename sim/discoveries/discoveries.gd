@@ -73,6 +73,8 @@ static func _apply(sim: Sim, person: Person, def: DiscoveryDef, effect: Discover
 				var familiarity := known.familiarity if known != null else 0.0
 				if familiarity < CONTACT_FAMILIARITY:
 					Social.change(sim, person, other.id, {"familiarity": CONTACT_FAMILIARITY - familiarity})
+		DiscoveryEffect.CLUE:
+			learn_clue(sim, person, effect.discovery_id, "found", 0)
 		# NOTE and UNLOCK change nothing here: the notebook shows notes, and Requirements
 		# reads Person.discoveries for interactions that require one.
 
@@ -147,3 +149,18 @@ static func found_places(sim: Sim, person: Person) -> PackedStringArray:
 			out.append(def.place_id)
 	out.sort()
 	return out
+
+
+## New towns (T-0070): the residents or staff of each discovery's known_at_start place know
+## its clue from the start (no events). In id order.
+static func seed_clues(sim: Sim) -> void:
+	var ids: Array = sim.content.discoveries.keys()
+	ids.sort()
+	for id: String in ids:
+		var def: DiscoveryDef = sim.content.discoveries[id]
+		if def.known_at_start.is_empty():
+			continue
+		for person: Person in people_of(sim, def.known_at_start):
+			if not person.known_clues.has(id):
+				person.known_clues.append(id)
+				person.known_clues.sort()

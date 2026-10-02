@@ -67,6 +67,10 @@ economy ledger stays honest. All effects are integers or enums — validated at 
 | `moodlet` | a one-off moodlet, `data/moodlets.json` |
 | `contact` | adds a phone contact (the M3 phone, T-0063) |
 | `unlock_interaction` | an interaction that lists `requires_discovery` becomes offerable to this person |
+| `clue` | a lead to another discovery: you learn its clue (T-0070: the tram notices lead to Haus 9) |
+
+A discovery can also name a place in `known_at_start`: in a new town its residents or staff
+know the clue, so locals have something to tell (T-0070).
 
 Later effects — enabling a door object or shortcut, opening a hidden lot with its own
 access rules, changing a price or service — arrive with M4/M5 world editing; they are the

@@ -1,5 +1,5 @@
 {
-	"_doc": "The Altstadt's secrets (T-0067, docs/design/discoveries.md). from/to: \"HH:MM\" window it can be uncovered in (to before from wraps past midnight; equal = all day). level: the place's floor. clue_required: false lets a search at the place find the clue. share_trust: trust needed to share the clue in a conversation, -1 = never shared. effects: note {text}, money {cents} (once per world), moodlet {moodlet}, contact {place_id}: you get to know its residents or staff, unlock_interaction {interaction}: one whose requires_discovery is this. scene: optional, shown to the player on finding it. Content rules (AGENTS.md) apply to every line.",
+	"_doc": "The Altstadt's secrets (T-0067, T-0070; docs/design/discoveries.md). from/to: \"HH:MM\" window it can be uncovered in (to before from wraps past midnight; equal = all day). level: the place's floor. clue_required: false lets a search at the place find the clue. share_trust: trust needed to share the clue in a conversation, -1 = never shared. known_at_start: a place whose residents or staff know the clue in a new town. effects: note {text}, money {cents} (once per world), moodlet {moodlet}, contact {place_id}: you get to know its residents or staff, unlock_interaction {interaction}: one whose requires_discovery is this, clue {discovery}: a lead to another secret. scene: optional, shown to the player on finding it. Content rules (AGENTS.md) apply to every line.",
 	"discoveries": [
 		{
 			"id": "fountain_coins",
@@ -11,9 +11,119 @@
 			"level": 0,
 			"clue_required": false,
 			"share_trust": 20,
+			"scene": "coins_at_night",
 			"effects": [
 				{ "kind": "money", "cents": 340 },
 				{ "kind": "note", "text": "You fished €3.40 out of the fountain. Nobody saw." }
+			]
+		},
+		{
+			"id": "tram_notices",
+			"name": "The note in the timetable case",
+			"clue": "Somebody keeps pinning things between the timetables at the tram stop. Have a proper look.",
+			"place_id": "tram_stop_altmarkt",
+			"from": "00:00",
+			"to": "00:00",
+			"level": 0,
+			"clue_required": true,
+			"share_trust": -1,
+			"effects": [
+				{ "kind": "note", "text": "Between the timetables: \"Room in Haus 9, cash only, ask upstairs in the evening.\"" },
+				{ "kind": "clue", "discovery": "sublet_haus9" }
+			]
+		},
+		{
+			"id": "sublet_haus9",
+			"name": "The sublet in Haus 9",
+			"clue": "Someone in Haus 9 lets a room off the books. You'd meet them on the stairs in the evening.",
+			"place_id": "haus_9_stairs_1",
+			"from": "18:00",
+			"to": "22:00",
+			"level": 1,
+			"clue_required": true,
+			"share_trust": 30,
+			"known_at_start": "haus_9_2_flat",
+			"effects": [
+				{ "kind": "contact", "place_id": "haus_9_2_flat" },
+				{ "kind": "note", "text": "The people on the 2nd floor of Haus 9 sublet a room, off the lease. They keep to themselves." }
+			]
+		},
+		{
+			"id": "kneipe_cellar",
+			"name": "The door behind the bar",
+			"clue": "The bartenders at the Anker go down to the cellar more often than the beer needs.",
+			"place_id": "kneipe_anker",
+			"from": "17:00",
+			"to": "02:00",
+			"level": 0,
+			"clue_required": true,
+			"share_trust": 40,
+			"known_at_start": "kneipe_anker",
+			"scene": "the_cellar_door",
+			"effects": [
+				{ "kind": "note", "text": "Behind the bar there's a padlocked cellar door. The light is on late at night." }
+			]
+		},
+		{
+			"id": "spati_workbench",
+			"name": "Kaya's workbench",
+			"clue": "The Späti people fix things for the neighbours, somewhere out the back in the Hinterhof.",
+			"place_id": "hinterhof",
+			"from": "08:00",
+			"to": "18:00",
+			"level": 0,
+			"clue_required": true,
+			"share_trust": 50,
+			"known_at_start": "spaeti_kaya",
+			"effects": [
+				{ "kind": "contact", "place_id": "spaeti_kaya" },
+				{ "kind": "note", "text": "Under a tarp in the Hinterhof: a workbench, tools, half-fixed radios and a bike frame." }
+			]
+		},
+		{
+			"id": "waschsalon_backroom",
+			"name": "The Waschsalon's back room",
+			"clue": "They say the back room of the Waschsalon has a door to the yard that doesn't quite lock. Best seen just before closing.",
+			"place_id": "waschsalon_blitz",
+			"from": "20:00",
+			"to": "22:00",
+			"level": 0,
+			"clue_required": true,
+			"share_trust": 15,
+			"known_at_start": "haus_3",
+			"effects": [
+				{ "kind": "note", "text": "The back door of the Waschsalon sticks, and it doesn't quite lock." }
+			]
+		},
+		{
+			"id": "st_nikolai_vestry",
+			"name": "The vestry",
+			"clue": "The service board at St. Nikolai mentions a vestry. In the daytime nobody minds if you sit there.",
+			"place_id": "st_nikolai_vestry",
+			"from": "09:00",
+			"to": "17:00",
+			"level": 0,
+			"clue_required": true,
+			"share_trust": 20,
+			"effects": [
+				{ "kind": "unlock_interaction", "interaction": "rest_quietly" },
+				{ "kind": "moodlet", "moodlet": "quiet_moment" },
+				{ "kind": "note", "text": "A small room off the nave: an old chair, a warm radiator, nobody asks questions." }
+			]
+		},
+		{
+			"id": "promenade_alcove",
+			"name": "The alcove under the bridge",
+			"clue": "Under the bridge steps on the Uferweg there's a dry corner, out of the wind. At night it's yours.",
+			"place_id": "uferweg_alcove",
+			"from": "22:00",
+			"to": "05:00",
+			"level": 0,
+			"clue_required": false,
+			"share_trust": -1,
+			"effects": [
+				{ "kind": "unlock_interaction", "interaction": "sleep_in_the_alcove" },
+				{ "kind": "note", "text": "A dry alcove under the bridge steps. If you ever need a place to sleep, it's here." }
 			]
 		}
 	]

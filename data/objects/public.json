@@ -1,9 +1,12 @@
 {
-	"_doc": "Furniture in public places (T-0052): the Kneipe's bar counter and tables, café tables, benches. Same format as furniture.json.",
+	"_doc": "Furniture in public places (T-0052): the Kneipe's bar counter and tables, café tables, benches. Same format as furniture.json. The timetable case, the service board and the vestry chair belong to the discoveries (T-0070).",
 	"objects": [
 		{ "id": "bar_counter", "name": "Bar", "size": [4, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["bar", "bar_counter"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }, { "offset": [2, 1], "facing": [0, -1] }, { "offset": [3, 1], "facing": [0, -1] }, { "offset": [1, -1], "facing": [0, 1], "role": "staff" }, { "offset": [2, -1], "facing": [0, 1], "role": "staff" }], "price": 250000, "debug_color": "#8e5b3c" },
 		{ "id": "pub_table", "name": "Pub table", "size": [2, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["bar"], "use_slots": [{ "offset": [0, -1], "facing": [0, 1] }, { "offset": [1, -1], "facing": [0, 1] }, { "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }], "price": 40000, "debug_color": "#a0714f" },
 		{ "id": "cafe_table", "name": "Café table", "size": [1, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["cafe_table"], "use_slots": [{ "offset": [-1, 0], "facing": [1, 0] }, { "offset": [1, 0], "facing": [-1, 0] }], "price": 15000, "debug_color": "#d4a373" },
+		{ "id": "notice_case", "name": "Timetable case", "size": [1, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["notice_case"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }], "price": 20000, "debug_color": "#c2c7cc" },
+		{ "id": "service_board", "name": "Service board", "size": [1, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["service_board"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }], "price": 10000, "debug_color": "#7a5c3e" },
+		{ "id": "vestry_chair", "name": "Old chair", "size": [1, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["vestry_chair"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }], "price": 5000, "debug_color": "#5c4a3a" },
 		{ "id": "bench", "name": "Bench", "size": [2, 1], "blocks_movement": true, "blocks_sight": false, "tags": ["bench", "seat"], "use_slots": [{ "offset": [0, 1], "facing": [0, -1] }, { "offset": [1, 1], "facing": [0, -1] }], "price": 30000, "debug_color": "#6d5d4b" }
 	]
 }

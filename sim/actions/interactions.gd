@@ -41,7 +41,7 @@ static func offered_by_place(sim: Sim, person: Person, lot_id: int) -> Array[Int
 	if here == null or here.id != lot_id:
 		return out
 	for candidate: InteractionDef in sim.content.interactions.values():
-		if candidate.target == "place":
+		if candidate.target == "place" and (candidate.places.is_empty() or candidate.places.has(here.place_id)):
 			out.append(candidate)
 	return out
 

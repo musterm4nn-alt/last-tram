@@ -8,8 +8,10 @@ const MONEY: String = "money"
 const MOODLET: String = "moodlet"
 const CONTACT: String = "contact"
 const UNLOCK: String = "unlock_interaction"
+## A lead to another discovery (T-0070): you learn its clue.
+const CLUE: String = "clue"
 ## Every kind content may use. "item" waits for M4's inventory (D29).
-const KINDS: PackedStringArray = [NOTE, MONEY, MOODLET, CONTACT, UNLOCK]
+const KINDS: PackedStringArray = [NOTE, MONEY, MOODLET, CONTACT, UNLOCK, CLUE]
 
 ## One of KINDS.
 var kind: String = NOTE
@@ -21,5 +23,7 @@ var cents: int = 0
 var moodlet_id: String = ""
 ## contact: the place whose residents (a home) or staff (a workplace) you now know.
 var place_id: String = ""
+## clue: the discovery whose clue you learn.
+var discovery_id: String = ""
 ## unlock_interaction: the interaction (with requires_discovery = this discovery) it opens.
 var interaction_id: String = ""

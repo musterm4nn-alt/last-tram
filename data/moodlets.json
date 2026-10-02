@@ -19,6 +19,7 @@
 		{ "id": "payday", "name": "Payday", "value": 5, "duration_hours": 6 },
 		{ "id": "helped_someone", "name": "Helped someone", "value": 8, "duration_hours": 6 },
 		{ "id": "evicted", "name": "Evicted", "value": -40, "duration_hours": 72 },
-		{ "id": "slept_rough", "name": "Slept rough", "value": -10, "duration_hours": 8 }
+		{ "id": "slept_rough", "name": "Slept rough", "value": -10, "duration_hours": 8 },
+		{ "id": "quiet_moment", "name": "A quiet moment", "value": 8, "duration_hours": 4 }
 	]
 }
