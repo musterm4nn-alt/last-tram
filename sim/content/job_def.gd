@@ -18,6 +18,8 @@ var session: String = RABBIT_HOLE
 var workplace_tag: String = ""
 ## Per-hour need changes while working, on top of normal decay.
 var need_rates: Dictionary[String, float] = {}
+## A moodlet given after each shift worked to the end, in varied mode ("" = none; T-0077).
+var shift_moodlet: String = ""
 var levels: Array[JobLevel] = []
 ## The positions, with "count" already expanded.
 var positions: Array[ShiftDef] = []

@@ -54,7 +54,7 @@ static func _see_to_home_needs(sim: Sim, person: Person) -> bool:
 			return true
 		if need_id == "hunger" and _eat_out(sim, person, false):
 			return true
-	if Autonomy._restock_needed(sim, person) and _eat_out(sim, person, true):
+	if Autonomy.restock_needed(sim, person) and _eat_out(sim, person, true):
 		return true  # the fridge is running low: a grocery run while the Späti is open
 	return false
 
@@ -95,7 +95,7 @@ static func _go_home_for(sim: Sim, person: Person, need_id: String) -> bool:
 			var gain := float(def.advertise.get(need_id, 0.0))
 			if gain <= 0.0 or (best_def != null and gain <= float(best_def.advertise[need_id])):
 				continue
-			if Requirements.check(sim, person, def, obj.id).is_empty() and Autonomy._cells_to_free_slot(sim, person, obj, true) >= 0:
+			if Requirements.check(sim, person, def, obj.id).is_empty() and Autonomy.cells_to_free_slot(sim, person, obj, true) >= 0:
 				best_def = def
 				best_object = obj.id
 	if best_def == null:

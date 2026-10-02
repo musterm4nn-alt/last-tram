@@ -1,6 +1,7 @@
 extends TestCase
 ## T-0045: M2 acceptance in the suite: two days of the full town pass TownCheck (the 7-day
-## version is `tools/simrun.sh --days=7 --check-m2`).
+## version is `tools/simrun.sh --days=7 --check-m2`; conversations are judged only over a
+## week, D31).
 
 
 func test_two_days_in_town_pass_the_town_check() -> void:

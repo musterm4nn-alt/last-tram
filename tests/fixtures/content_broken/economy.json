@@ -1,5 +1,9 @@
 {
-	"_doc": "Broken on purpose (T-0054): a negative start amount and a range with min > max.",
+	"_doc": "Broken on purpose (T-0054): a negative start amount and a range with min > max. T-0077: negative pocket money, an impossible work block (no slack, no retries, lunch at minute 0 worth 150, an unknown relationship value) and an unknown need in the gentle profile.",
 	"player_start": { "cash": -100, "bank": 30000 },
-	"resident_start": { "cash": [8000, 1000], "bank": [20000, 300000] }
+	"resident_start": { "cash": [8000, 1000], "bank": [20000, 300000] },
+	"pocket_money": -5,
+	"cash_errand_score": 4.0,
+	"work": { "leave_margin": -1, "retry_minutes": 0, "look_ahead_hours": 3, "colleague_deltas": { "love": 5.0 }, "lunch_after_minutes": 0, "lunch_hunger": 150.0 },
+	"gentle_profile": { "mana": 1.0 }
 }

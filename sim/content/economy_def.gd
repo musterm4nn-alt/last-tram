@@ -37,3 +37,18 @@ var housing_cap: int = 0
 var pension_week: int = 0
 ## Performance rules by name (see data/economy.json "performance").
 var performance: Dictionary[String, float] = {}
+## Cash (T-0064): below this in the pocket, a trip to the ATM is an errand with this score.
+var pocket_money: int = 1000
+var cash_errand_score: float = 4.0
+## Leaving for work (T-0060): minutes of slack on top of the walk, how often someone not on
+## their way yet is sent again, and how close (hours) to a shift the walk is worked out.
+var leave_margin: int = 10
+var work_retry_minutes: int = 5
+var look_ahead_hours: int = 3
+## Relationship changes between colleagues who worked the same day (Social.change keys).
+var colleague_deltas: Dictionary[String, float] = {}
+## Lunch at work (T-0077): after this many minutes of a shift, hunger rises by lunch_hunger.
+var lunch_after_minutes: int = 240
+var lunch_hunger: float = 60.0
+## The need rates every job uses while World.work.gentle is on (T-0077).
+var gentle_profile: Dictionary[String, float] = {}

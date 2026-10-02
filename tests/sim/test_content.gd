@@ -43,6 +43,34 @@ func test_broken_content_is_reported_not_crashed() -> void:
 	assert_true(all.contains("not walkable"), "spawn in a wall must be reported: " + all)
 	assert_true(all.contains("player_start amounts must be >= 0"), all)
 	assert_true(all.contains("'cash' must be [min, max] with min <= max"), all)
+	for message: String in ["home 'wash_below' must be within 0..100", "pocket_money and cash_errand_score must be >= 0",
+			"leave_margin must be >= 0, retry_minutes and look_ahead_hours >= 1", "lunch_after_minutes must be >= 1 and lunch_hunger within 0..100",
+			"unknown relationship value 'love' in 'colleague_deltas'", "unknown need 'mana' in 'gentle_profile'"]:
+		assert_true(all.contains(message), "T-0077 data rules: %s\n%s" % [message, all])
+
+
+func test_moved_balance_numbers_load_from_data() -> void:
+	var db := content()
+	assert_eq(db.home_thresholds, {"wash_below": 45.0, "eat_below": 35.0, "low_below": 30.0} as Dictionary[String, float])
+	assert_eq(db.economy.leave_margin, 10)
+	assert_eq(db.economy.work_retry_minutes, 5)
+	assert_eq(db.economy.look_ahead_hours, 3)
+	assert_eq(db.economy.pocket_money, 1000)
+	assert_near(db.economy.cash_errand_score, 4.0)
+	assert_eq(db.economy.colleague_deltas, {"familiarity": 10.0, "friendship": 3.0} as Dictionary[String, float])
+	assert_false(db.economy.gentle_profile.is_empty())
+
+
+func test_the_shower_says_its_hygiene_once() -> void:
+	var shower := content().interaction("take_shower")
+	assert_eq(shower.advertise, shower.finish_needs, "without 'advertise', an interaction advertises what it gives")
+	assert_near(float(shower.advertise.get("hygiene", 0.0)), 85.0)
+	var text := FileAccess.get_file_as_string("res://data/interactions/home.json")
+	var json := JSON.new()
+	json.parse(text)
+	for entry: Dictionary in json.data["interactions"]:
+		if entry["id"] == "take_shower":
+			assert_false(entry.has("advertise"), "the shower's hygiene is written once, in finish_needs")
 
 
 func test_career_rules_are_checked_by_meaning() -> void:

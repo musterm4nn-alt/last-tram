@@ -22,12 +22,14 @@ static func attend(sim: Sim, person: Person, window_start: int, late_minutes: in
 	person.job.shift_start = window_start
 	person.job.shift_minutes = 0
 	person.job.shift_late = late_minutes
+	person.job.shift_lunch = false
 
 
 ## Settles the attended shift once (T-0077), after its window: the wage for every minute
 ## worked in it goes into `unpaid` (rounded once), performance moves by how it went, and
-## colleagues who were there get to know them. Emits &"shift_settled" {person_id, job_id,
-## minutes, late_minutes, left_early, pay}. No minutes inside the window: a missed shift.
+## colleagues who were there get to know them. A shift worked to the end gives the job's
+## shift_moodlet (varied work only). Emits &"shift_settled" {person_id, job_id, minutes,
+## late_minutes, left_early, pay, colleagues}. No minutes inside the window: a missed shift.
 static func settle(sim: Sim, person: Person) -> void:
 	var employment := person.job
 	if employment == null or employment.shift_start < 0:
@@ -55,12 +57,14 @@ static func settle(sim: Sim, person: Person) -> void:
 		if Mood.compute(person, sim.content) > 0.0:
 			delta += rules["good_mood"]
 		employment.level_shifts += 1
+		if not job.shift_moodlet.is_empty() and not sim.world.work.gentle:
+			Social.add_moodlet(sim, person, job.shift_moodlet)
 	if employment.shifts_worked > 0:  # a first day is forgiven (and day one of a new game starts at 08:00)
 		delta -= floorf(employment.shift_late / 5.0) * rules["per_5_minutes_late"]
 	employment.shifts_worked += 1
+	var colleagues := Jobs.know_colleagues(sim, person, start)
 	sim.emit_event(&"shift_settled", {"person_id": person.id, "job_id": job.id, "minutes": minutes,
-		"late_minutes": employment.shift_late, "left_early": left_early, "pay": pay})
-	Jobs.know_colleagues(sim, person, start)
+		"late_minutes": employment.shift_late, "left_early": left_early, "pay": pay, "colleagues": colleagues})
 	_change(sim, person, delta)
 
 

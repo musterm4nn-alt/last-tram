@@ -3,15 +3,10 @@ extends SimSystem
 ## Shifts as obligations (T-0060): once a minute, people with a job leave for work in time.
 ## At leave time (the shift start minus the walk and a margin), NPCs, and the idle player
 ## with free will on, drop what they're doing (sleep too) and queue `work` on their
-## workplace; the player gets a reminder an hour before. Runs before AutonomySystem, so
+## workplace; the player gets a reminder an hour before. The margin, the retry interval and how
+## far ahead the walk is worked out are in data/economy.json "work". Runs before AutonomySystem, so
 ## obligations go before free will. No state: everything is computed from the schedule.
 
-## Minutes of slack on top of the walk.
-const LEAVE_MARGIN: int = 10
-## A person who isn't on their way yet is sent again this often after leave time.
-const RETRY_MINUTES: int = 5
-## Only within this many hours of a shift is the walk worked out (keeps the minute cheap).
-const LOOK_AHEAD_HOURS: int = 3
 ## The reminder comes this long before the shift starts.
 const REMINDER_MINUTES: int = 60
 
@@ -19,6 +14,7 @@ const REMINDER_MINUTES: int = 60
 func on_minute(sim: Sim) -> void:
 	var now := sim.clock.tick
 	var minute := SimClock.STEPS_PER_GAME_MINUTE
+	var economy := sim.content.economy
 	for person: Person in sim.world.people.values():
 		if person.job == null:
 			continue
@@ -30,10 +26,10 @@ func on_minute(sim: Sim) -> void:
 			continue
 		if person.id == sim.world.player_id and now == shift.x - REMINDER_MINUTES * minute:
 			sim.emit_event(&"work_reminder", {"person_id": person.id, "job_id": person.job.job_id, "start_tick": shift.x})
-		if now < shift.x - LOOK_AHEAD_HOURS * 60 * minute:
+		if now < shift.x - economy.look_ahead_hours * 60 * minute:
 			continue  # far from the next shift: nothing to work out yet
-		var leave := shift.x - (Jobs.travel_minutes(sim, person) + LEAVE_MARGIN) * minute
-		if now < leave or ((now - leave) / minute) % RETRY_MINUTES != 0:
+		var leave := shift.x - (Jobs.travel_minutes(sim, person) + economy.leave_margin) * minute
+		if now < leave or ((now - leave) / minute) % economy.work_retry_minutes != 0:
 			continue
 		if _on_the_way(sim, person) or not _goes_alone(sim, person) or _almost_done(sim, person):
 			continue
@@ -69,14 +65,14 @@ static func _on_the_way(sim: Sim, person: Person) -> bool:
 	return false
 
 
-## True if the front action is performing and ends within LEAVE_MARGIN minutes (finishing a
+## True if the front action is performing and ends within leave_margin minutes (finishing a
 ## shower first still gets them there on time; the next retry sends them).
 static func _almost_done(sim: Sim, person: Person) -> bool:
 	if person.action_queue.is_empty() or person.action_queue[0].state != Action.PERFORMING:
 		return false
 	var action: Action = person.action_queue[0]
 	var def := sim.content.interaction(action.interaction_id)
-	return def != null and def.duration_minutes > 0 and def.duration_minutes - action.minutes_done <= LEAVE_MARGIN
+	return def != null and def.duration_minutes > 0 and def.duration_minutes - action.minutes_done <= sim.content.economy.leave_margin
 
 
 ## NPCs always go; the player only with free will on and no input for IDLE_MINUTES.

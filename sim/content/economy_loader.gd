@@ -57,7 +57,41 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		if amount < 0:
 			reader.error("%s: weekly amounts must be >= 0" % path)
 	economy.performance = read_performance(reader, root, path)
+	economy.pocket_money = reader.read_int(root, "pocket_money", path)
+	economy.cash_errand_score = reader.read_num(root, "cash_errand_score", path)
+	if economy.pocket_money < 0 or economy.cash_errand_score < 0.0:
+		reader.error("%s: pocket_money and cash_errand_score must be >= 0" % path)
+	_read_work(reader, economy, reader.read_obj(root, "work", path), path + ": work")
+	var gentle := reader.read_obj(root, "gentle_profile", path)
+	for need_id: Variant in gentle:
+		if not need_id is String or db.need(need_id) == null:
+			reader.error("%s: unknown need '%s' in 'gentle_profile'" % [path, need_id])
+		elif not (gentle[need_id] is float or gentle[need_id] is int):
+			reader.error("%s: 'gentle_profile' rate for '%s' must be a number" % [path, need_id])
+		else:
+			economy.gentle_profile[need_id] = float(gentle[need_id])
 	db.economy = economy
+
+
+## The "work" block (T-0077): leaving for work, colleagues and lunch.
+static func _read_work(reader: ContentReader, economy: EconomyDef, work: Dictionary, ctx: String) -> void:
+	economy.leave_margin = reader.read_int(work, "leave_margin", ctx)
+	economy.work_retry_minutes = reader.read_int(work, "retry_minutes", ctx)
+	economy.look_ahead_hours = reader.read_int(work, "look_ahead_hours", ctx)
+	economy.lunch_after_minutes = reader.read_int(work, "lunch_after_minutes", ctx)
+	economy.lunch_hunger = reader.read_num(work, "lunch_hunger", ctx)
+	if economy.leave_margin < 0 or economy.work_retry_minutes < 1 or economy.look_ahead_hours < 1:
+		reader.error("%s: leave_margin must be >= 0, retry_minutes and look_ahead_hours >= 1" % ctx)
+	if economy.lunch_after_minutes < 1 or economy.lunch_hunger < 0.0 or economy.lunch_hunger > 100.0:
+		reader.error("%s: lunch_after_minutes must be >= 1 and lunch_hunger within 0..100" % ctx)
+	var deltas := reader.read_obj(work, "colleague_deltas", ctx)
+	for key: Variant in deltas:
+		if not Relationship.RANGES.has(key):
+			reader.error("%s: unknown relationship value '%s' in 'colleague_deltas'" % [ctx, key])
+		elif not (deltas[key] is float or deltas[key] is int):
+			reader.error("%s: 'colleague_deltas' change for '%s' must be a number" % [ctx, key])
+		else:
+			economy.colleague_deltas[String(key)] = float(deltas[key])
 
 
 ## Every rule data/economy.json "performance" must give (T-0061, T-0077).

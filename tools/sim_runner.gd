@@ -9,7 +9,8 @@ extends SceneTree
 ##          --no-free-will (turns the player's free will off at the start, so needs are
 ##          not looked after; useful to contrast with the default run for M1's acceptance),
 ##          --tiers=full|tiered and --active-radius=CELLS (the fidelity dial, T-0042; the
-##          demote radius is 10 cells more), --check-m2 (M2 acceptance, T-0045: fails the run
+##          demote radius is 10 cells more), --gentle-work (every job uses the gentle need
+##          profile instead of its own, T-0077), --check-m2 (M2 acceptance, T-0045: fails the run
 ##          unless the town lives well, see TownCheck, and the cost stays within
 ##          BUDGET_MS_PER_STEP).
 
@@ -33,6 +34,8 @@ func _initialize() -> void:
 	if args.has("active-radius"):
 		sim.world.tiers.active_radius = float(args["active-radius"])
 		sim.world.tiers.demote_radius = sim.world.tiers.active_radius + 10.0
+	if args.has("gentle-work"):
+		sim.world.work.gentle = true
 	if args.has("no-free-will"):
 		sim.submit(SetFreeWillCommand.new(sim.world.player_id, false))
 	var minutes := int(args.get("minutes", "0")) + int(args.get("days", "0")) * SimClock.MINUTES_PER_DAY

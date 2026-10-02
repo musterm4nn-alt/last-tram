@@ -175,11 +175,82 @@ Built by Opus in three branches, as the ticket allows: `t/0077a-shifts` (A),
   €14/h), an old v9 save made mid-shift (full pay, no miss), warning hysteresis, unknown
   job. `test_leaving_for_work.gd`: the queue on leaving, colleagues who turned up.
   `test_content.gd`: the career rule fixtures.
-- Verified: `tools/check.sh` 569 tests pass; `tools/simrun.sh --days=7 --check-m2` PASSED
+- Verified (A alone): `tools/check.sh` 569 tests pass; `tools/simrun.sh --days=7 --check-m2` PASSED
   on seeds 1–6 (0.152, 0.146, 0.122, 0.140, 0.133, 0.129 ms/step).
 - **Changed test:** `test_lateness_and_leaving_early_cost_performance` now checks that
   nothing is judged on walking away, and the same numbers once the shift's window is over.
   That's the behaviour the ticket asks for (item 1); the numbers it checks are unchanged.
+
+### B. Needs, free will and an honest town check (`t/0077b-needs`)
+- **Item 9:** `Routines.home_needs` puts every need below its `critical_below` first (lowest
+  first), then hygiene/hunger by the home thresholds, then the rest (lowest first).
+- **Item 10:** `data/needs.json` "home" (`wash_below`, `eat_below`, `low_below` →
+  `ContentDB.home_thresholds`); `data/economy.json` "work" (`leave_margin`,
+  `retry_minutes`, `look_ahead_hours`, `colleague_deltas`, plus the new `lunch_*`) and
+  top-level `pocket_money`, `cash_errand_score` (money, not work, so not in "work").
+  All validated (`NeedsLoader`, `EconomyLoader._read_work`), broken cases in
+  `tests/fixtures/content_broken/`.
+- **Item 11:** jobs no longer have a hunger rate. `Jobs.have_lunch` fills hunger by
+  `lunch_hunger` (60, like cooking) and emits `meal_eaten {person_id, kind: "lunch"}`, once
+  a shift (`Employment.shift_lunch`). **Interpretation:** "a shift of 4 hours or more
+  includes lunch" became "lunch after 3 hours of work, or sooner when hunger falls below
+  `eat_below`". Lunch only at the end of a shift starved early-shift workers who woke
+  hungry and had to abandon breakfast for a 07:00 start (a care worker hit hunger 0 at
+  08:25 on seed 2). `TownCheck` counts `meal_eaten` and the eating interactions, never a
+  shift; `shift_settled` now carries `colleagues`, and the summary reports
+  "colleague days" apart from social exchanges.
+- **Item 12:** per-job profiles in `data/jobs.json` (see D31 for the numbers and why they
+  are mild), `care_worker.shift_moodlet = "helped_someone"` (new moodlet, given only in
+  varied mode), `economy.json` `gentle_profile` (today's shared profile without hunger).
+  `WorkSettings` (`World.work.gentle`, default false), `SetGentleWorkCommand` (registered,
+  validated in saves), Esc menu "Work: Varied / Gentle", `--gentle-work` for `simrun`.
+- **Fixing the town, not the check:** the honest check first failed with varied jobs
+  (fun, comfort, hunger to 0) and then, in both modes, on seeds 4–5 with a few lone workers
+  having 1–2 conversations a week. Fixed by: milder profiles; early lunch; new towns give a
+  worker the routine that leaves the most going-out hours free (`Jobs.routine_fit`, a
+  14–22 shift had eaten an early bird's every evening); friendly talk while out
+  `SOCIAL_OUT_SHARE` 0.8 → 0.9. Tried and rejected: lower social rates at work (comfort
+  fell to 0 elsewhere) and 1.0 (five times the conversations). All in D31.
+- **Owner decision (2 October, recorded in D31):** the suite's two-day check
+  (`test_m2_town_lives.gd`) failed on the social rule: on Monday and Tuesday, both
+  workdays, 1–4 working loners per town hadn't talked to anyone yet. Over a week all six
+  seeds pass in both modes. Asked the owner (a frozen rule): the "talks with people" rule
+  is now judged only over 7+ days (`TownCheck.SOCIAL_MIN_DAYS`), and the two-day check
+  covers meals, sleep and needs. An evening-shift routine was tried for it first and
+  rejected (it broke two week-long runs).
+- **Item 13:** `docs/workflow.md` "Acceptance rules are frozen per milestone".
+- **Item 14:** `QueueInteractionCommand` stamps `last_input_tick` only once it queues the
+  action; `CallCommand` only with room in the queue; `WalkToCommand` only when there is a
+  way (or it is a stop). Cancel, move intent and settings are unchanged.
+- **Item 15:** `Careers._change` returns without a job (A). HUD/menu/inspector wording
+  moved from `tests/sim/` to `tests/game/test_job_and_money_texts.gd`, with a lint test
+  (`test_sim_tests_do_not_use_game_classes`) that fails if a sim test names a `game/`
+  class. The shower has no "advertise" (an interaction without one advertises its
+  `finish_needs`); content test. `Jobs.HOUR_BEFORE_SHIFT` (A). `Autonomy.restock_needed`
+  and `Autonomy.cells_to_free_slot` are public.
+- Save v11 (`world.work`, `job.shift_lunch`); fixture `v11_basic.json`.
+- **Changed tests (all for behaviour the ticket changes):**
+  `test_every_player_command_counts_as_input` queued an unknown interaction, which is now
+  refused and is no longer input, so it queues a real one (a TV in a room);
+  `test_people_see_to_low_needs_at_home` keeps its case with fun above its critical level
+  and adds the critical case; `test_a_day_in_town_keeps_everyone_fed_rested_and_apart`
+  counts lunch from `meal_eaten` instead of a finished shift; wording checks moved to
+  `tests/game/` (same strings); `test_colleagues_get_to_know_each_other` reads the deltas
+  from data.
+- New tests: `test_work_profiles.gd` (lunch, early lunch, no lunch on a short stint,
+  varied vs gentle rates, distinct profiles, the care moodlet, the command and save round
+  trip, a bad saved setting, TownCheck counts), `test_free_will.gd` (refused commands and
+  a refused click aren't input), `test_leaving_for_work.gd` (critical first),
+  `test_content.gd` (moved numbers, broken data, the shower), `test_jobs.gd`
+  (`routine_fit`), `tests/game/test_pause_menu.gd` (the Work button), the lint test.
+- **Town check, 7 days, `--check-m2`, all PASSED** (ms/step; social exchanges; colleague days):
+  varied seeds 1–6: 0.159, 0.151, 0.125, 0.144, 0.135, 0.130 ms (exchanges 1504, 1761,
+  1254, 1347, 1206, 935); gentle (`--gentle-work`) seeds 1–6: 0.156, 0.150, 0.126, 0.142,
+  0.134, 0.129 ms (exchanges 1482, 1708, 1280, 1223, 1137, 873). Colleague days 59, 49,
+  29, 50, 44, 44. Before B, with colleagues counted as conversations, the town had about
+  1000 exchanges a week on seed 1; cost is about 5% higher than after A (0.152 on seed 1).
+- Screenshot `out/t0077-menu.png`: the Esc menu with "Work: Varied" under "Full lives".
+- `tools/check.sh`: 591 tests pass.
 
 ## Questions
 

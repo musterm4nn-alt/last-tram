@@ -41,6 +41,11 @@ func test_new_towns_fill_positions_sensibly() -> void:
 				if holder != null and holder.id != player.id:
 					assert_true(Jobs.fits_routine(content(), job, position, holder.routine_id),
 						"%s's routine fits %s (seed %d)" % [holder.full_name(), job.id, seed_value])
+					var best := 0
+					for routine_id: String in content().routines:
+						best = maxi(best, Jobs.routine_fit(content(), job, position, routine_id))
+					assert_eq(Jobs.routine_fit(content(), job, position, holder.routine_id), best,
+						"%s's routine leaves them the most evening out a %s can have (seed %d)" % [holder.full_name(), job.id, seed_value])
 		var working_age := 0
 		var employed := 0
 		for person: Person in sim.world.people.values():
@@ -56,6 +61,16 @@ func test_new_towns_fill_positions_sensibly() -> void:
 				var key := "%s/%d" % [person.job.job_id, person.job.position]
 				assert_false(taken.has(key), "one person per position")
 				taken[key] = true
+
+
+func test_routines_that_leave_an_evening_out_suit_a_late_shift_better() -> void:
+	var police := content().job("police_officer")
+	var late := 1  # 14–22
+	assert_eq(police.positions[late].from, 14)
+	assert_eq(Jobs.routine_fit(content(), police, late, "early_bird"), 1, "fits, but 17–21 out is all at work")
+	assert_true(Jobs.routine_fit(content(), police, late, "night_owl") > Jobs.routine_fit(content(), police, late, "regular"),
+		"a night owl still gets 22–02 out; a regular only 22–23")
+	assert_eq(Jobs.routine_fit(content(), content().job("bartender"), 0, "early_bird"), 0, "doesn't fit at all")
 
 
 func test_same_seed_same_jobs() -> void:

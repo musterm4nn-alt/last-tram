@@ -96,6 +96,7 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 		s.reject("world.tiers.mode", "unknown tier mode")
 	s.number(tiers.get("active_radius", 40.0), "world.tiers.active_radius", 0.0)
 	s.number(tiers.get("demote_radius", 50.0), "world.tiers.demote_radius", 0.0)
+	s.boolean(s.dictionary(world.get("work", {}), "world.work").get("gentle", false), "world.work.gentle")
 	for entry: Variant in s.list(world.get("households", []), "world.households"):
 		var household := s.dictionary(entry, "world.households[]")
 		_register(s.integer(household.get("id"), "world.households[].id", 1), next_id, ids, s)
@@ -155,6 +156,8 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			s.integer(command.get("position"), path + ".position")
 		"quit_job", "register_unemployed":
 			pass
+		"set_gentle_work":
+			s.boolean(command.get("gentle"), path + ".gentle")
 		"set_tier_mode":
 			if not s.text(command.get("mode"), path + ".mode") in [TierSettings.TIERED, TierSettings.FULL]:
 				s.reject(path + ".mode", "unknown tier mode")

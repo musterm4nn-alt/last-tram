@@ -81,7 +81,8 @@ func test_the_player_gets_a_reminder_and_free_will_decides() -> void:
 	sim.run_minutes(11)
 	var reminders := _drain(sim, &"work_reminder", player.id)
 	assert_eq(reminders.size(), 1, "an hour before 09:00")
-	assert_eq(Hud.notice_for_event({"type": &"work_reminder", "data": reminders[0]}, player.id, content(), sim), "Work at 09:00: Office clerk (Tram shelter)")
+	if reminders.size() == 1:
+		assert_eq(int(reminders[0]["start_tick"]), SimClock.ticks_for(1, 9))
 	sim.run_minutes(60)
 	assert_false(WorkSystem._on_the_way(sim, player), "free will off: nobody sends you")
 	var idle := _game(1, 8)
@@ -109,9 +110,23 @@ func test_people_see_to_low_needs_at_home() -> void:
 	sim.run_minutes(1)
 	assert_eq(player.action_queue[0].interaction_id if not player.action_queue.is_empty() else "", "take_shower", "grimy: off home to shower")
 	assert_eq(Routines.home_needs(sim, player), PackedStringArray(["hygiene"]))
-	player.needs["fun"] = 10.0
-	player.needs["hunger"] = 20.0
+	player.needs["fun"] = 20.0
+	player.needs["hunger"] = 25.0
 	assert_eq(Routines.home_needs(sim, player), PackedStringArray(["hygiene", "hunger", "fun"]))
+	player.needs["fun"] = 10.0
+	assert_eq(Routines.home_needs(sim, player), PackedStringArray(["fun", "hygiene", "hunger"]), "below its critical level, fun comes first")
+
+
+func test_critical_needs_come_before_routine_ones() -> void:
+	var sim := _game(1, 12)
+	var player := sim.world.player()
+	for need_def: NeedDef in content().needs:
+		player.needs[need_def.id] = 100.0
+	player.needs["hygiene"] = 44.0
+	player.needs["hunger"] = 1.0
+	assert_eq(Routines.home_needs(sim, player), PackedStringArray(["hunger", "hygiene"]), "starving beats grimy")
+	player.needs["energy"] = 5.0
+	assert_eq(Routines.home_needs(sim, player), PackedStringArray(["hunger", "energy", "hygiene"]), "critical ones lowest first")
 
 
 func test_an_empty_fridge_sends_people_to_the_shops() -> void:
@@ -147,7 +162,7 @@ func test_colleagues_get_to_know_each_other() -> void:
 	sim.submit(QueueInteractionCommand.new(player.id, "work", shelter.id))
 	sim.run_minutes(8 * 60 + 15)
 	var r := Social.relationship(player, colleague.id)
-	assert_true(r != null and r.familiarity >= Jobs.COLLEAGUE_DELTAS["familiarity"], "a shift together")
+	assert_true(r != null and r.familiarity >= content().economy.colleague_deltas["familiarity"], "a shift together")
 
 
 func test_leaving_for_work_drops_an_npcs_plans_but_keeps_the_players() -> void:

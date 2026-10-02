@@ -11,13 +11,15 @@ func test_a_day_in_town_keeps_everyone_fed_rested_and_apart() -> void:
 	for minute: int in SimClock.MINUTES_PER_DAY:
 		sim.run_minutes(1)
 		for event: Dictionary in sim.events.drain():
+			if event["type"] == &"meal_eaten":  # lunch at work (T-0077)
+				ate[int(event["data"]["person_id"])] = true
 			if event["type"] != &"action_finished":
 				continue
 			var id := int(event["data"]["person_id"])
 			match String(event["data"]["interaction_id"]):
 				"sleep", "nap":
 					slept[id] = true
-				var food when TownCheck.EATING.has(food) or food == "work":  # lunch at work (T-0060)
+				var food when TownCheck.EATING.has(food):
 					ate[id] = true
 		var used: Dictionary[String, int] = {}
 		for person: Person in sim.world.people.values():

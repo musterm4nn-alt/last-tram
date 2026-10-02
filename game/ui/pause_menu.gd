@@ -1,8 +1,8 @@
 class_name PauseMenu
 extends CanvasLayer
 ## The Esc menu during a game: pauses, and offers Resume, Save game (one of three slots),
-## Load game (any save), Free will on/off, Full lives on/off (T-0042) and Quit game. Closing
-## it restores the speed it had before.
+## Load game (any save), Free will on/off, Full lives on/off (T-0042), Work varied/gentle
+## (T-0077) and Quit game. Closing it restores the speed it had before.
 
 ## True while the menu is shown (the rest of the game ignores input then).
 var is_open: bool = false
@@ -11,6 +11,7 @@ var _speed_before: int = 1
 var _page: VBoxContainer
 var _free_will_button: Button
 var _full_lives_button: Button
+var _work_button: Button
 var _list: SaveList
 ## "save" or "load" while the list is shown.
 var _list_mode: String = ""
@@ -48,6 +49,7 @@ func _init() -> void:
 	_page_button("Load game", _show_list.bind("load"))
 	_free_will_button = _page_button("Free will: On", _toggle_free_will)
 	_full_lives_button = _page_button("Full lives: Off", _toggle_full_lives)
+	_work_button = _page_button("Work: Varied", _toggle_work)
 	_page_button("Quit game", func() -> void: get_tree().quit())
 	_list = SaveList.new()
 	_list.add_theme_constant_override("separation", 8)
@@ -87,6 +89,7 @@ func _show_page() -> void:
 		_show_free_will(player.free_will)
 	if Session.sim != null:
 		_show_full_lives(Session.sim.world.tiers.mode == TierSettings.FULL)
+		_show_work(Session.sim.world.work.gentle)
 	if _page.is_inside_tree():
 		(_page.get_child(0) as Button).grab_focus()
 
@@ -130,6 +133,20 @@ func _toggle_full_lives() -> void:
 	var full := _full_lives_button.text.ends_with("Off")
 	Session.submit(SetTierModeCommand.new(TierSettings.FULL if full else TierSettings.TIERED))
 	_show_full_lives(full)
+
+
+## "Work" (T-0077): varied jobs (each its own strains and rewards) or gentle ones (every
+## job looks after people the same, mild way).
+func _toggle_work() -> void:
+	if Session.sim == null:
+		return
+	var gentle := _work_button.text.ends_with("Varied")
+	Session.submit(SetGentleWorkCommand.new(gentle))
+	_show_work(gentle)
+
+
+func _show_work(gentle: bool) -> void:
+	_work_button.text = "Work: Gentle" if gentle else "Work: Varied"
 
 
 func _show_full_lives(full: bool) -> void:

@@ -217,3 +217,44 @@ Fixes (measured on seeds 1–6, all passing a week):
 - `TownCheck` counts a finished shift as a meal (lunch) and as social contact (colleagues).
 Rejected: filtering free will to an urgent need's options (it got worse and twice as slow),
 and dropping options under half the best score (it made the town much less sociable).
+
+**D31 · Hardening after the October reviews (T-0077).** Nine external reviews found real
+bugs in shifts and a town check bent to pass. Decided:
+- **A shift is settled once.** It is identified by its scheduled start. Every stretch of work
+  adds the minutes that fall inside its window (`Employment.shift_minutes`), and the shift is
+  settled once after the window ends: pay (rounded once), one lateness judgement from the
+  first arrival, `shifts_worked`, colleagues and the moodlet. "Left early" means the minutes
+  worked plus lateness fall more than 30 short of the shift. Minutes before the window
+  aren't attendance; a shift with none is missed.
+- **The town check is honest** (supersedes the last point of D30). Lunch at work is a real
+  meal (`meal_eaten`), not hunger +6 an hour: once a shift, after 3 hours of work, or sooner
+  when hunger falls below the home "eat" level. Colleague days are reported apart and are
+  not social exchanges. Acceptance rules are frozen per milestone (`docs/workflow.md`).
+- **Critical needs come first** at home: any need below its `critical_below`, then hygiene,
+  hunger and the rest.
+- **Jobs differ, switchably** (the owner, 2 October). Each job has its own need profile;
+  `World.work.gentle` (the Esc menu's "Work: varied / gentle") switches every job to the
+  shared gentle profile. Varied is the default. Measured on seeds 1–6, the differences had
+  to stay mild. Energy costs of −2 an hour, or comfort of +3 to +4 on a 9-hour shift, sent
+  fun or comfort to 0 for many workers, because tired workers nap instead of living. So a
+  desk is restful (comfort +7, energy +0.5) but dull (fun +2.5). Manual work is tiring
+  (energy −1.5) and social (+5). Bar work is fun (+7) and the most tiring of the evening
+  jobs (energy −1). Imbiss and police are harder on comfort (+5, +5.5). Care work is
+  draining (energy −1, fun +3.5) and gives "helped someone" after each shift.
+- **The honest check exposed lonely workers.** Without colleagues counting, a few people
+  living alone had only 1–2 conversations a week, in both modes. Two causes, both fixed in
+  the town: an evening shift that swallowed a person's whole going-out window (a 14–22
+  police shift for an early bird), so new towns now give a worker the routine that leaves
+  the most going-out hours free (`Jobs.routine_fit`); and friendly talk while out pulled
+  less than a drink, so `Routines.SOCIAL_OUT_SHARE` went from 0.8 to 0.9 (about a third more
+  conversations; 1.0 made five times as many and was rejected). Lowering the social rates
+  at work was tried and rejected: comfort fell to 0 for others.
+- **Conversations are judged over a full week** (the owner's approval, 2 October 2026, a
+  change to a frozen acceptance rule). With honest counting, on the first two days (both
+  workdays) one to four working loners per town hadn't talked to anyone yet, while over a
+  week everyone passes. `TownCheck` applies the "talks with people" rule only from 7 days
+  (`SOCIAL_MIN_DAYS`), so the suite's two-day check covers meals, sleep and needs. An
+  evening-shift routine (out in the afternoon) was tried for it and rejected: it made
+  two of the week-long runs fail.
+- Balance numbers that were constants (home thresholds, leaving for work, pocket money,
+  colleague changes, lunch) are in `data/needs.json` "home" and `data/economy.json`.

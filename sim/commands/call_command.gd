@@ -23,9 +23,9 @@ func apply(sim: Sim) -> void:
 	var def := sim.content.interaction("phone_call")
 	if person == null or def == null or other_id == person_id or sim.world.get_person(other_id) == null:
 		return
-	person.last_input_tick = sim.clock.tick
 	if person.action_queue.size() >= Person.MAX_QUEUE:
 		return
+	person.last_input_tick = sim.clock.tick
 	ActionSystem.cancel_front(sim, person, "call")
 	var action := Action.new(def.id, other_id)
 	action.id = sim.world.new_id()
