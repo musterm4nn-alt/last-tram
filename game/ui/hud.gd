@@ -49,6 +49,8 @@ static func place_text(sim: Sim, person: Person) -> String:
 	if place == null:
 		return "Altstadt"
 	var lot := Lots.by_place(sim.world, place.id)
+	if place.hidden and not Discoveries.found_places(sim, person).has(place.id):
+		return "Altstadt"  # a secret place you haven't found (T-0069)
 	if lot != null and not Lots.is_open(lot, sim.clock):
 		return "%s (closed, %s)" % [place.name, Lots.opening_text(lot, sim.clock)]
 	if Staffing.unserved(sim, lot):

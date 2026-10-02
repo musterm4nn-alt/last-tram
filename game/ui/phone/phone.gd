@@ -1,11 +1,12 @@
 class_name Phone
 extends CanvasLayer
 ## The player's phone (P, T-0063): a panel at the bottom right with apps: Bank, Jobs (apply,
-## quit, register; T-0064), Housing (rent an empty flat; T-0066), Contacts (with calls) and Map. The game keeps running while it is open. Reads sim state; calls go through
+## quit, register; T-0064), Housing (rent an empty flat; T-0066), Contacts (with calls), Notebook (leads and
+## finds; T-0069) and Map. The game keeps running while it is open. Reads sim state; calls go through
 ## CallCommand.
 
 const WIDTH: float = 320.0
-const APPS: PackedStringArray = ["Bank", "Jobs", "Housing", "Contacts", "Map"]
+const APPS: PackedStringArray = ["Bank", "Jobs", "Housing", "Contacts", "Notebook", "Map"]
 
 ## True while the phone is shown.
 var is_open: bool = false
@@ -130,6 +131,9 @@ func _rebuild() -> void:
 			for lot: Lot in flats:
 				_label(HousingApp.flat_text(Session.sim, lot))
 				_button("Rent this flat", func() -> void: Session.submit(RentFlatCommand.new(player_id, lot.id)))
+		"Notebook":
+			for text: String in NotebookApp.lines(Session.sim, player_id):
+				_label(text)
 		"Contacts":
 			var known := ContactsApp.contacts(Session.sim, player_id)
 			if known.is_empty():

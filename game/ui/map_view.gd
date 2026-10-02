@@ -50,14 +50,16 @@ static func view_rect(map_cells: Vector2, center: Vector2, view_cells: Vector2) 
 	return Rect2(top_left, view_cells)
 
 
-## Place names for `level`: [{"name": String, "cell": Vector2}], "cell" being the centre of
-## the place's rect in cells, in district and authoring order.
-static func labels(content: ContentDB, level: int) -> Array[Dictionary]:
+## Place names for `level`: [{"name": String, "cell": Vector2, "found": bool}], "cell" being
+## the centre of the place's rect in cells, in district and authoring order. Hidden places
+## (T-0069) are left out unless they are in `found` (places of the player's discoveries);
+## "found" marks those places with a note.
+static func labels(content: ContentDB, level: int, found: PackedStringArray = PackedStringArray()) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for district_id: String in content.district_order:
 		for place: PlaceDef in content.districts[district_id].places:
-			if place.level == level:
-				out.append({"name": place.name, "cell": Vector2(place.rect.position) + Vector2(place.rect.size) / 2.0})
+			if place.level == level and (not place.hidden or found.has(place.id)):
+				out.append({"name": place.name, "cell": Vector2(place.rect.position) + Vector2(place.rect.size) / 2.0, "found": found.has(place.id)})
 	return out
 
 
@@ -83,8 +85,8 @@ func _draw() -> void:
 	draw_texture_rect(_texture, Rect2(-shown.position * px_per_cell, map_cells * px_per_cell), false)
 	if show_labels:
 		var font := get_theme_default_font()
-		for label: Dictionary in labels(Session.content, _built_level):
-			var text: String = label["name"]
+		for label: Dictionary in labels(Session.content, _built_level, Discoveries.found_places(Session.sim, player)):
+			var text: String = label["name"] + (" ✎" if label["found"] else "")
 			var cell: Vector2 = label["cell"]
 			var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_FONT_SIZE).x
 			var at := (cell - shown.position) * px_per_cell + Vector2(-width / 2.0, LABEL_FONT_SIZE / 2.0)

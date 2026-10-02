@@ -91,7 +91,9 @@ static func entries(sim: Sim, object_id: int) -> Array[String]:
 	if person != null:
 		out.append(person.full_name())
 	elif lot != null:
-		out.append(sim.content.place(lot.place_id).name)
+		var place := sim.content.place(lot.place_id)
+		var secret := place.hidden and not Discoveries.found_places(sim, sim.world.player()).has(place.id)
+		out.append("Here" if secret else place.name)
 	elif obj != null:
 		var def := sim.content.object_def(obj.def_id)
 		var header := def.name if def != null else obj.def_id
