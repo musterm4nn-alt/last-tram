@@ -23,7 +23,8 @@ static func record_shift(sim: Sim, person: Person, result: WorkResult) -> void:
 		if Mood.compute(person, sim.content) > 0.0:
 			delta += rules["good_mood"]
 		employment.level_shifts += 1
-	delta -= floorf(result.late_minutes / 5.0) * rules["per_5_minutes_late"]
+	if employment.shifts_worked > 0:  # a first day is forgiven (and day one of a new game starts at 08:00)
+		delta -= floorf(result.late_minutes / 5.0) * rules["per_5_minutes_late"]
 	employment.shifts_worked += 1
 	_change(sim, person, delta)
 
