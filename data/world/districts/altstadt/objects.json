@@ -1,5 +1,5 @@
 {
-	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Entrance hall (NW, wood) with a 2x2 bathroom in its south-west corner (tiled): shower and sink. Kitchen (NE, tiled): stove, fridge and kitchen table. Bedroom (SE, tiled): double bed. Living room (SW, wood): desk with laptop, sofa and TV. Door cells and their neighbours are kept free, and the spawn (50,26) in the hall stays clear. Then (T-0031) the neighbours' flats: Haus 3's ground floor and 14 flats on levels 1 and 2 of Haus 5, 9, 3 and 14, each with a stove, fridge, sink, shower, double bed and sofa, plus (T-0035) a desk with a laptop and a TV for fun and video calls. T-0052: the Kneipe's bar counter and pub tables, Café Wolke's tables and the Altmarkt benches. T-0056: the Späti and Imbiss counters (customers stand south of them; the cells behind stay free for staff) and the cash machine on the Altmarkt. T-0058: the tram shelter at the Altmarkt stop and the Polizeiposten's desk. T-0059: the bar counter moved one row down, so the bartender can stand behind it.",
+	"_doc": "Haus 12, ground floor (the player's flat). Coordinates are LOCAL to the district. Entrance hall (NW, wood) with a 2x2 bathroom in its south-west corner (tiled): shower and sink. Kitchen (NE, tiled): stove, fridge and kitchen table. Bedroom (SE, tiled): double bed. Living room (SW, wood): desk with laptop, sofa and TV. Door cells and their neighbours are kept free, and the spawn (50,26) in the hall stays clear. Then (T-0031) the neighbours' flats: Haus 3's ground floor and 14 flats on levels 1 and 2 of Haus 5, 9, 3 and 14, each with a stove, fridge, sink, shower, double bed and sofa, plus (T-0035) a desk with a laptop and a TV for fun and video calls. T-0052: the Kneipe's bar counter and pub tables, Café Wolke's tables and the Altmarkt benches. T-0056: the Späti and Imbiss counters (customers stand south of them; the cells behind stay free for staff) and the cash machine on the Altmarkt. T-0058: the tram shelter at the Altmarkt stop and the Polizeiposten's desk. T-0059: the bar counter moved one row down, so the bartender can stand behind it. T-0082: 32 street lamps on level 0, appended last so earlier object ids stay: the Hauptstraße's north pavement (y 16) and the pavement south of the tram tracks (y 35) every 8 cells from x 4, the south pavement (y 22) every 8 cells from x 0 (none at the tram shelter), and six around the Altmarkt. Never on a door's neighbour or another object's use slot. Lamp posts don't block movement, so every route stays as it was.",
 	"objects": [
 		{
 			"def": "fridge",
@@ -1545,6 +1545,294 @@
 			"cell": [
 				37,
 				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				4,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				12,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				20,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				27,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				38,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				44,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				52,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				60,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				68,
+				16,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				0,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				8,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				16,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				24,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				40,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				48,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				56,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				64,
+				22,
+				0
+			],
+			"rotation": 2
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				4,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				12,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				20,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				28,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				36,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				44,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				52,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				60,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				68,
+				35,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				19,
+				24,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				44,
+				24,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				19,
+				33,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				44,
+				33,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				31,
+				24,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "street_lamp",
+			"cell": [
+				32,
+				33,
 				0
 			],
 			"rotation": 0
