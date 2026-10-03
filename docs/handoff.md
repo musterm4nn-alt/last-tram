@@ -1,11 +1,100 @@
-# Handoff: continuing M3 (Making a Living)
+# Handoff: M3 done, starting the art direction gate
 
 Rewritten on 2 October 2026, when the previous session's context ran full; updated after
-T-0077, when the owner moved the work to a Claude Code **cloud** session, and on 3 October,
-when that session had built the rest of M3. For the next Claude Code session (the architect and builder, Opus). Read this after
-CLAUDE.md and AGENTS.md. In the cloud, start with "Working in a cloud session" below.
+T-0077, when the owner moved the work to a Claude Code **cloud** session, and on 3 October at
+the end of that session: M3 is built and signed off, and the art direction gate has just
+started. For the next Claude Code session (the architect and builder, Opus), which runs
+**locally on the owner's Mac**. Read this after CLAUDE.md and AGENTS.md, then start with
+"Start here" below. (In a cloud session, read "Working in a cloud session" first.)
 
-## Working in a cloud session (read first in the cloud)
+## Start here (next local session)
+
+1. **Update `main`:** `git -C /Users/xamxim/last-tram pull --ff-only`, then bring the session
+   worktree up to date with `main`.
+2. **Push the `m3` tag.** The cloud session may not push tags, so it isn't on GitHub yet. Tag
+   the sign-off commit `f62dd21` ("M3 signed off by the owner"), the way `m2` was tagged:
+   `git -C /Users/xamxim/last-tram tag -a m3 f62dd21 -m "M3 Making a Living: signed off by the owner (3 October 2026)"`,
+   then `git -C /Users/xamxim/last-tram push origin m3`.
+3. **Ask the owner about their M3 playtest** (Playbook stop `play-m3`, T-0076's checklist).
+   They approved M3 before playing it. Anything they report comes before the art work: turn it
+   into tickets or fix it (`/bug`).
+4. **Carry on with the art gate:** "The art direction gate" below. The owner said "go" on
+   3 October; nothing has been built for it yet, and the plan below is a proposal they haven't
+   seen.
+
+## The art direction gate (started 3 October)
+
+**Goal** (roadmap, `docs/art.md`): the same scene, the Altmarkt and Haus 12, at day and at
+night, drawn in two or three art routes; the owner picks one. Record the pick as a decision
+(D34), update `docs/art.md`, the roadmap and the vision's "Open decisions", then art
+production runs alongside M4.
+
+**The scene** (level 0 of `data/world/districts/altstadt/`, cells x 18–60, y 16–35): the
+Hauptstraße with road and tram tracks (y 17–21) and the tram stop; the Altmarkt square
+(x 18–45, y 23–34, fountain at x 31–32, y 28–29, trees and grass beds); Haus 12 (x 46–59,
+y 23–34), with the player's flat ("Haus 12, ground floor"; the player starts at (50, 26)).
+- Terrains used: cobblestone, crossing, door, floor_tile, floor_wood, fountain, grass, road,
+  sidewalk, tram_track, tree, wall, window.
+- Objects in it: atm, bed_double, bench ×4, desk, fridge, kitchen_table, notice_case, shower,
+  sink, sofa, stove, tram_stop (the shelter), tv, wardrobe. Plus people walking through.
+
+**How the view draws today** (everything in `game/view2d/`, none of it in `sim/`):
+- `ViewConfig.TILE_PX` is 16; zoom levels 1, 2, 3, 4 and 6 (3× by default, so a cell is
+  48 screen pixels).
+- Terrain: `WorldView2D` makes one `TileMapLayer` per floor from
+  `PlaceholderTiles.build_tile_set(content)`: atlas coords (terrain index, 0), coloured from
+  `debug_color` in `data/terrain.json` with a few painted details.
+- Objects: `ObjectView2D._draw` fills the footprint with `debug_color` and a three-letter
+  label; slot dots under F3. Objects have a rotation (0–3).
+- People: `PersonDrawer2D` draws each person from their appearance and outfit, with the
+  player's marker.
+- Fixed layer order: terrain, then objects, then people. No day and night: nothing tints by
+  the clock and there are no lights. `art/` holds only `LICENSES.md`, and `data/art2d/`
+  (art.md's mapping spec) doesn't exist yet.
+- Screenshot options: `--advance=N` (minutes), `--zoom=N`, `--walk-to=X,Y`, `--command`.
+  The camera follows the player, so there is no way yet to frame the same view in every
+  route.
+
+**Proposed plan** (Opus's proposal; check it with the owner):
+1. Plumbing first, as normal tickets (the next free number is T-0080), merged before any art:
+   - **Art sets in the 2D view:** `data/art2d/<set>.json` (view-only, validated) maps terrain
+     ids and object def ids to sheet regions with rotations, as in art.md. `WorldView2D`
+     builds its TileSet from the set, with the placeholder as the fallback for each id;
+     `ObjectView2D` draws a sprite where one is mapped. `--art=<set>` picks the set
+     (default: the placeholders), so screenshots can compare sets. Tests: loading and
+     validation, fallback for unknown ids and missing files.
+   - **Day and night in the view:** a `CanvasModulate` tint from the clock (a pure function
+     of the minute of the day, tested), and at night warm pools of light from street lamps
+     and lit windows (art.md: "warm sodium-orange street lights at night"). There are no
+     street lamps in the world yet: add a decorative `street_lamp` object, with no
+     interactions, and place some.
+   - **Framing:** a `--look-at=X,Y` launch option that centres the camera on a cell (command
+     mode), so every route is shot from the same view, at `--advance` to 12:00 and to 22:00.
+   - The 3/4 view brings sprites taller than a cell (people at 16×32, wall fronts, trees): the
+     view will need y-sorting (`y_sort_enabled`) instead of the fixed layer order.
+   - Character sprites (16×32, layered by appearance and outfit, art.md) can wait until after
+     the pick, with `PersonDrawer2D` as the fallback.
+2. The routes, each as an art set **on a branch** (no art is merged before the owner approves
+   it, CLAUDE.md):
+   - **A pack:** Kenney (free, CC0, 16 px; look at the "RPG Urban Pack" and "Roguelike Modern
+     City" for the town) or LimeZu Modern Interiors and Exteriors (paid; the owner would buy
+     them). Record every asset in `art/LICENSES.md`.
+   - **Custom:** Opus draws the tiles in Aseprite (MCP), in art.md's palette: grey stone and
+     asphalt, ochre and pastel Altbau, rust, copper green, yellow trams, sodium orange at night.
+   - **ChatGPT Images, cleaned up:** the owner generates concepts from Opus's prompts (they
+     land in `~/Downloads`); Opus downscales, palette-locks and cleans them up in Aseprite.
+3. Show the owner a side-by-side page (an Artifact: each route at noon and at 22:00) and let
+   them pick. Also ask the open design question the 3/4 view raises: do buildings show roofs
+   from outside and open up when you walk in, or do interiors stay open all the time, as now
+   (D4)?
+
+**Found in the cloud (3 October):** kenney.nl, itch.io and opengameart.org are blocked by
+the cloud environment's network policy (403 at the proxy); PyPI is allowed (Pillow installs
+with pip), ImageMagick's `convert` is installed, and Godot's `Image` can draw and save PNGs
+headless. None of these limits apply on the Mac, which also has the Aseprite MCP and the
+owner's ChatGPT Images.
+
+## Working in a cloud session (read first in the cloud; reference otherwise)
 
 **The task there (2–3 October, done):** detail and build the M3 drafts, T-0065 to T-0076,
 in D29 order. See "Where things stand". A new cloud session follows the same steps for
@@ -43,12 +132,11 @@ What differs from the owner's Mac:
 ## Where things stand
 
 **Update, 3 October 2026 (end of the cloud session): M3 is done.** Every M3 ticket is built
-and merged (T-0054 to T-0079) and the owner signed M3 off. **The `m3` tag still has to be
-pushed from the Mac** (the cloud session may not push tags): after `git pull --ff-only`,
-run `git tag -a m3 -m "M3 Making a Living: signed off by the owner" && git push origin m3`. The
-owner's own playtest of T-0076's checklist (Playbook stop `play-m3`) is still to come; turn
-what it finds into tickets. Next on the roadmap: the art direction gate. Save version 19; `tools/check.sh`
-runs 685 tests. `tools/simrun.sh --days=30 --check-m3` passes on seeds 1–3, and
+and merged (T-0054 to T-0079) and the owner signed M3 off ("Approved"). The `m3` tag still
+has to be pushed from the Mac ("Start here", step 2). The owner's own playtest of T-0076's
+checklist (Playbook stop `play-m3`) is still to come; turn what it finds into tickets. Next on
+the roadmap: the art direction gate (M4 is marked current and starts with it). Save
+version 19; `tools/check.sh` runs 687 tests. `tools/simrun.sh --days=30 --check-m3` passes on seeds 1–3, and
 `--days=7 --check-m2 --check-staffing` on seeds 1–6 in both modes.
 
 Built in the cloud session (2–3 October), in order: T-0065 staffed counters (save v12),
@@ -63,9 +151,10 @@ backgrounds (v19), T-0076 the M3 check. The M3 save steps live in
   Späti clerk, Housing, Notebook, map, wardrobe, clothes rail, a secret's scene, the skip
   overlay, the Background tab). Taking them found and fixed two bugs (a long click-walk
   ended with free will sending you home; "Woke up" after a shift): see T-0076's notes.
-- The Playbook is up to date: build stops for T-0066 to T-0079 are ticked, and two new play
-  stops wait: `play-m3-muse` (an agent playtest, OpenCode) and `play-m3` (the owner's; never
-  tick it yourself).
+- The Playbook is up to date: build stops for T-0066 to T-0079 are ticked; waiting are two
+  play stops, `play-m3-muse` (an agent playtest, OpenCode) and `play-m3` (the owner's; never
+  tick it yourself), and the plan stop `art-gate-start` (this handoff's next step). Add
+  build, review and play stops for the art gate's tickets as you write them.
 - An agent playtest of a working week (Muse in OpenCode), before or with the owner's.
 - After `git pull --ff-only` on the Mac, the desktop icon runs the new build.
 
@@ -83,10 +172,14 @@ tests. Tune rents and prices when crime makes money a motive, and re-run `--chec
   "talks with people" rule (D31).
 - The owner wants **agent playtests** for play steps: Muse Spark 1.3 (free, xhigh) in
   OpenCode, run by Opus unattended (`docs/playtesting.md`, memory "agent-playtests"). Two
-  were done (shopping; a working week). Do one after T-0077 and after T-0065/T-0066. Ask the
-  owner for a **human** playtest of a working week before M3 is called done.
+  were done (shopping; a working week). Do one after T-0077 and after T-0065/T-0066.
+- **M3 approved before the owner played it** (3 Oct, "Approved"). Their human playtest of a
+  working week (`play-m3`) is still to come; treat what they find as M3 bugs.
+- **Art gate** (3 Oct): the owner said "go". The plan under "The art direction gate" is
+  Opus's proposal; they haven't seen it yet.
 - Process changes after the reviews: acceptance rules are frozen per milestone
-  (`docs/workflow.md`) and milestones are tagged (`m0`–`m2`; tag `m3` at its sign-off).
+  (`docs/workflow.md`) and milestones are tagged (`m0`–`m2`; `m3` is still to push, see
+  "Start here").
   Still waiting for the owner: an independent adversarial reviewer (a different model) for
   saves, money and time handling.
 
