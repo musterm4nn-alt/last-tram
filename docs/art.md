@@ -17,6 +17,11 @@ Until the art gate (after M3) everything is a readable placeholder:
 Placeholder rules: every kind of thing must be distinguishable at zoom 2, colours stay in the
 muted palette below, and nothing in `sim/` depends on how anything looks.
 
+**Day and night** (T-0083, view only): `DayNight` tints the world by the clock (white by day,
+dusk at 19:30, blue night from 21:00 to 05:00) and `NightLights2D` adds one light whose
+texture is a light map: lit interiors in warm white, sodium-orange pools under the street
+lamps, and amber glows at a share of the windows. Art should read under both.
+
 ## The look we're aiming for
 
 - **Top-down 3/4 pixel art**, like modern Stardew-style or LimeZu's Modern series, but
