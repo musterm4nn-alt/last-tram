@@ -12,6 +12,8 @@ var id: String = ""
 var name: String = ""
 ## Problems found while loading. The entries they concern were dropped.
 var errors: Array[String] = []
+## Optional colours of thin walls (T-0085): any of "top", "edge", "face", "glass".
+var thin_walls: Dictionary = {}
 
 var _sheets: Dictionary[String, Texture2D] = {}
 ## terrain id -> {"sheet": String, "cell": Vector2i, "variants": int}
@@ -82,6 +84,16 @@ func _read(data: Dictionary, content: ContentDB, reader: ContentReader, path: St
 		var terrain := reader.read_obj(data, "terrain", path)
 		for terrain_id: Variant in terrain:
 			_read_terrain(str(terrain_id), terrain[terrain_id], content, reader, path)
+	if data.has("thin_walls"):
+		var colors := reader.read_obj(data, "thin_walls", path)
+		for key: Variant in colors:
+			var ctx := "%s: thin_walls '%s'" % [path, key]
+			if not str(key) in ["top", "edge", "face", "glass"]:
+				reader.error("%s: unknown colour (use top, edge, face, glass)" % ctx)
+			elif not colors[key] is String or not Color.html_is_valid(colors[key]):
+				reader.error("%s: must be a colour like \"#aabbcc\"" % ctx)
+			else:
+				thin_walls[str(key)] = Color(colors[key])
 	if data.has("objects"):
 		var objects := reader.read_obj(data, "objects", path)
 		for def_id: Variant in objects:

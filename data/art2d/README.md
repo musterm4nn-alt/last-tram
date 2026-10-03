@@ -26,3 +26,7 @@ the placeholder, and the problem is printed as a warning. Loaded by `game/view2d
 - `objects`: object def id → `rect` `[x, y, w, h]` in sheet pixels for every rotation, or
   `rects` with exactly 4, one per rotation (0–3). A sprite may be larger than the footprint:
   its bottom edge sits on the footprint's bottom edge, centred horizontally.
+- `thin_walls` (optional, T-0085): colours of the thin walls the view draws for side and
+  bottom walls: any of `top`, `edge`, `face`, `glass` as `"#rrggbb"`. Without it they come
+  from the wall tile's average colour. The `wall`, `window` and `door` tiles are drawn only
+  where a wall shows its face (the top wall of a room), so draw them as faces.

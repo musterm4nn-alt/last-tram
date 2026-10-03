@@ -33,7 +33,7 @@ func test_bad_entries_fall_back() -> void:
 			"terrain 'road': no loaded sheet 'gone'", "terrain 'grass': cell", "object 'spaceship': no such object",
 			"object 'bench': rect", "object 'sofa': 'rects' must list 4"]:
 		assert_true(text.contains(expected), "expected an error containing \"%s\" in:\n%s" % [expected, text])
-	assert_eq(art.errors.size(), 7, text)
+	assert_eq(art.errors.size(), 9, text)
 	for terrain_id: String in ["lava", "road", "grass"]:
 		assert_eq(art.terrain_tile(terrain_id, Vector2i.ZERO), {}, "%s falls back" % terrain_id)
 	for def_id: String in ["spaceship", "bench", "sofa"]:
@@ -70,3 +70,13 @@ func test_sprite_rect_anchors_to_footprint() -> void:
 	assert_eq(ObjectView2D.sprite_rect(footprint, Vector2i(32, 40)), Rect2(32, 24, 32, 40), "taller: rises above")
 	assert_eq(ObjectView2D.sprite_rect(footprint, Vector2i(20, 16)), Rect2(38, 48, 20, 16), "narrower: centred")
 	assert_eq(ObjectView2D.sprite_rect(footprint, Vector2i(21, 16)), Rect2(37, 48, 21, 16), "whole pixels")
+
+
+## T-0085
+func test_thin_wall_colours() -> void:
+	var art := ArtSet.load_set("fixture", content(), ROOT)
+	assert_eq(art.thin_walls.size(), 2)
+	assert_eq(art.thin_walls["top"], Color("#d8c3a5"))
+	var bad := ArtSet.load_set("bad", content(), ROOT)
+	assert_true("\n".join(bad.errors).contains("thin_walls 'roof': unknown colour"), "\n".join(bad.errors))
+	assert_true("\n".join(bad.errors).contains("thin_walls 'edge': must be a colour"), "\n".join(bad.errors))
