@@ -5,8 +5,11 @@ extends Node2D
 var _views: Dictionary[int, PersonView2D] = {}
 
 
-func _ready() -> void:
+func _init() -> void:
 	y_sort_enabled = true
+
+
+func _ready() -> void:
 	Session.game_loaded.connect(rebuild)
 	Session.sim_event.connect(_on_sim_event)
 

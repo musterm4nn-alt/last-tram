@@ -3,8 +3,8 @@ extends Node2D
 ## Draws one world object: its sprite from the active art set (WorldView2D.art), or else a
 ## placeholder (a coloured block over its footprint with a short label), plus a dot on each
 ## use slot while the F3 debug overlay is open.
-## The node stays at the origin and draws with absolute cell coordinates, so objects
-## (which never move) need no per-frame repositioning. Visibility follows
+## The node sits on the bottom-left corner of its footprint (its depth for y-sorting, set
+## once by place(): objects never move) and draws in absolute pixel coordinates. Visibility follows
 ## Session.viewed_level; slot dots follow the static show_slots flag.
 
 ## True while the F3 debug overlay is visible: use-slot dots are drawn. A static on
@@ -63,6 +63,17 @@ static func sprite_rect(footprint: Rect2, sprite_size: Vector2i) -> Rect2:
 	return Rect2(x, footprint.end.y - float(sprite_size.y), float(sprite_size.x), float(sprite_size.y))
 
 
+## Puts the node on the bottom-left corner of the object's footprint, in pixels.
+func place() -> void:
+	if Session.sim == null:
+		return
+	var obj: WorldObject = Session.sim.world.get_object(object_id)
+	if obj == null:
+		return
+	var rect: Rect2 = footprint_rect(obj.cells(Session.content), ViewConfig.TILE_PX)
+	position = Vector2(rect.position.x, rect.end.y)
+
+
 func _process(_delta: float) -> void:
 	if Session.sim == null:
 		visible = false
@@ -86,6 +97,7 @@ func _draw() -> void:
 	var cells: Array[Vector3i] = obj.cells(Session.content)
 	if cells.is_empty():
 		return
+	draw_set_transform(-position)
 	var px: int = ViewConfig.TILE_PX
 	var rect: Rect2 = footprint_rect(cells, px)
 	var sprite: Dictionary = WorldView2D.art.object_sprite(obj.def_id, obj.rotation)

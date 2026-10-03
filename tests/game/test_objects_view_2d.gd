@@ -100,6 +100,29 @@ func test_view_visible_only_on_its_level() -> void:
 	views.free()
 
 
+## T-0081
+func test_object_view_sits_on_footprint_bottom() -> void:
+	var views := _views_with_two_objects()
+	for id: int in views._views:
+		var view: ObjectView2D = views._views[id]
+		var rect := ObjectView2D.footprint_rect(Session.sim.world.get_object(id).cells(Session.content), ViewConfig.TILE_PX)
+		assert_eq(view.position, Vector2(rect.position.x, rect.end.y), "bottom-left of the footprint")
+	var fridge: ObjectView2D = views._views[views._views.keys()[0]]
+	assert_eq(fridge.position, Vector2(7 * 16, 3 * 16), "the 1x1 fridge at (7, 2)")
+	views.free()
+
+
+## T-0081
+func test_depth_parent_sorts_objects_and_people() -> void:
+	var depth := DepthLayer2D.new()
+	assert_true(depth.y_sort_enabled)
+	assert_eq(depth.objects.get_parent(), depth)
+	assert_eq(depth.people.get_parent(), depth)
+	assert_true(depth.objects.y_sort_enabled, "objects sort with the people, not as one block")
+	assert_true(depth.people.y_sort_enabled)
+	depth.free()
+
+
 func _views_with_two_objects() -> ObjectsView2D:
 	var db := content()
 	var sim := SimFactory.from_rows(db, ROOM)
