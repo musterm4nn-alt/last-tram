@@ -275,15 +275,16 @@ static func routine_fit(content: ContentDB, job: JobDef, position: int, routine_
 	return fit
 
 
-## New games: the player gets the content's player_job (its first free position), then every
+## New games: the player gets `player_job` (their background's; its first free position; "" for
+## none), then every
 ## position, in content order, is filled with a chance of start_filled by a jobless resident
 ## under retirement age, preferring one whose routine suits it best (routine_fit). If a
 ## routine would suit it better than the chosen person's, they get the first such routine,
 ## by id. Draws come from the "jobs" stream.
-static func fill_at_start(sim: Sim) -> void:
+static func fill_at_start(sim: Sim, player_job_id: String) -> void:
 	var rng := sim.rng.stream("jobs")
 	var player := sim.world.player()
-	var player_job := sim.content.job(sim.content.economy.player_job)
+	var player_job := sim.content.job(player_job_id)
 	if player != null and player_job != null:
 		for position: int in player_job.positions.size():
 			if hire(sim, player, player_job.id, position):

@@ -1,0 +1,11 @@
+{
+	"_doc": "Backgrounds (T-0075, docs/design/character-and-appearance.md): where the player's life starts. cash/bank: starting money in euro cents; job: a job id the player starts in (\"\" = none); skills: skill id -> starting level; knows: how many neighbours already know the player (acquaintances, both ways); moodlet: optional, how it feels at the start; record: a criminal record (kept for M4). default: the background a character gets without a choice. Content rules (AGENTS.md) apply to every line.",
+	"default": "newcomer",
+	"backgrounds": [
+		{ "id": "newcomer", "name": "Newcomer", "description": "Just moved to the Altstadt for an office job. Some savings, knows nobody.", "cash": 4000, "bank": 30000, "job": "office_clerk", "skills": {}, "knows": 0, "record": false },
+		{ "id": "local", "name": "Local", "description": "Grew up here and works at the warehouse. Knows a few neighbours, modest savings.", "cash": 3000, "bank": 15000, "job": "warehouse_worker", "skills": { "fitness": 1 }, "knows": 5, "record": false },
+		{ "id": "student", "name": "Student", "description": "Studies in the city and lives cheaply. Little money, no job yet, good with logic.", "cash": 2000, "bank": 8000, "job": "", "skills": { "logic": 3 }, "knows": 2, "record": false },
+		{ "id": "ex_con", "name": "Ex-con", "description": "Just released. Almost no money, no job, and a record that will follow you.", "cash": 1500, "bank": 0, "job": "", "skills": { "fitness": 2, "handiness": 1 }, "knows": 1, "moodlet": "fresh_start", "record": true },
+		{ "id": "burnout", "name": "Burnout", "description": "Quit a corporate job before it broke you. Savings, office skills, and very tired.", "cash": 5000, "bank": 120000, "job": "", "skills": { "logic": 3, "charisma": 2 }, "knows": 0, "moodlet": "burned_out", "record": false }
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"_doc": "Deliberately broken backgrounds (T-0075). Do not fix.",
+	"default": "nobody_at_all",
+	"backgrounds": [
+		{ "id": "broke", "name": "Broke", "description": "x", "cash": -5, "bank": 0, "job": "astronaut", "skills": {}, "knows": 0, "record": false }
+	]
+}

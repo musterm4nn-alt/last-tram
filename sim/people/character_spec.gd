@@ -15,6 +15,8 @@ var appearance: Appearance = Appearance.new()
 var outfit: Outfit = Outfit.new()
 ## Neutral (all 0) unless chosen or drawn at random.
 var personality: Personality = Personality.new()
+## The background id (T-0075; data/backgrounds.json); "" means the content's default.
+var background: String = ""
 
 
 ## One message per problem with names, gender, pronouns, age, appearance and outfit.
@@ -38,6 +40,8 @@ func validate(content: ContentDB) -> PackedStringArray:
 		problems.append(problem)
 	for problem: String in outfit.validate(content):
 		problems.append(problem)
+	if not background.is_empty() and content.background(background) == null:
+		problems.append("unknown background '%s'" % background)
 	return problems
 
 
@@ -97,6 +101,7 @@ func to_dict() -> Dictionary:
 		"appearance": appearance.to_dict(),
 		"outfit": outfit.to_dict(),
 		"personality": personality.to_dict(),
+		"background": background,
 	}
 
 
@@ -117,4 +122,5 @@ static func from_dict(d: Dictionary) -> CharacterSpec:
 	var personality_data: Variant = d.get("personality", {})
 	if personality_data is Dictionary:
 		out.personality = Personality.from_dict(personality_data)
+	out.background = String(d.get("background", ""))
 	return out

@@ -2,9 +2,6 @@ class_name EconomyDef
 extends RefCounted
 ## Money tuning (data/economy.json, D29). All amounts are euro cents.
 
-## What a new game's player starts with.
-var player_start_cash: int = 0
-var player_start_bank: int = 0
 ## Ranges (x = min, y = max) for generated residents' starting money.
 var resident_cash: Vector2i = Vector2i.ZERO
 var resident_bank: Vector2i = Vector2i.ZERO
@@ -21,8 +18,6 @@ var restock_below: int = 0
 var restock_bonus: float = 0.0
 ## ...and eats out when hunger is below this with (almost) nothing at home.
 var hungry_below: float = 0.0
-## Jobs (T-0058): the job a new game's player starts in ("" = none), and the age people retire.
-var player_job: String = ""
 var retirement_age: int = 67
 ## Pay and performance (T-0061): wages are paid on payday (weekday 0 = Monday, whole hour).
 var payday_weekday: int = 4

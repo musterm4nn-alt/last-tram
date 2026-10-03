@@ -41,7 +41,9 @@ func test_broken_content_is_reported_not_crashed() -> void:
 	assert_true(all.contains("unknown glyph"), all)
 	assert_true(all.contains("expected"), "unequal row lengths must be reported: " + all)
 	assert_true(all.contains("not walkable"), "spawn in a wall must be reported: " + all)
-	assert_true(all.contains("player_start amounts must be >= 0"), all)
+	assert_true(all.contains("background 'broke': cash, bank and knows must be >= 0"), all)
+	assert_true(all.contains("background 'broke': unknown job 'astronaut'"), all)
+	assert_true(all.contains("'default' must be one of the backgrounds"), all)
 	assert_true(all.contains("'cash' must be [min, max] with min <= max"), all)
 	for message: String in ["home 'wash_below' must be within 0..100", "pocket_money and cash_errand_score must be >= 0",
 			"leave_margin must be >= 0, retry_minutes and look_ahead_hours >= 1", "lunch_after_minutes must be >= 1 and lunch_hunger within 0..100",

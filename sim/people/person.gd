@@ -64,6 +64,10 @@ var known_clues: PackedStringArray = PackedStringArray()
 ## Clothes the person owns (T-0072; Wardrobe keeps it sorted) and saved outfits by name.
 var wardrobe: Array[WornItem] = []
 var outfits: Dictionary[String, Outfit] = {}
+## The player's background id (T-0075; "" for residents) and whether they have a criminal
+## record (kept for M4).
+var origin: String = ""
+var record: bool = false
 ## How dirty each owned piece is, 0..100, by Laundry.key ("item:colour"; T-0074; missing = clean).
 var dirt: Dictionary[String, float] = {}
 ## Skill id -> XP (T-0071; Skills turns it into levels).
@@ -156,6 +160,8 @@ func to_dict() -> Dictionary:
 		"known_clues": Array(known_clues),
 		"skills": _skills_out(),
 		"dirt": _sorted(dirt),
+		"origin": origin,
+		"record": record,
 		"discoveries": Array(discoveries),
 		"relationships": _relationships_out(),
 		"memories": memories.map(func(m: Memory) -> Dictionary: return m.to_dict()),
@@ -246,6 +252,8 @@ static func from_dict(d: Dictionary) -> Person:
 	p.background = bool(d.get("background", false))
 	for scene_id: Variant in d.get("scenes_requested", []):
 		p.scenes_requested.append(String(scene_id))
+	p.origin = String(d.get("origin", ""))
+	p.record = bool(d.get("record", false))
 	var dirt_data: Variant = d.get("dirt", {})
 	if dirt_data is Dictionary:
 		for piece: Variant in dirt_data:

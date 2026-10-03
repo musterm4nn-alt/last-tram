@@ -13,7 +13,7 @@ func test_jobs_load() -> void:
 	assert_eq(clerk.positions.size(), 3, "count expands")
 	assert_eq(clerk.levels[0].wage, 1400)
 	assert_eq(content().job("bartender").positions[0].hours(), 9, "17–2 is nine hours")
-	assert_eq(content().economy.player_job, "office_clerk")
+	assert_eq(content().background(content().default_background).job_id, "office_clerk", "the default background's job")
 	assert_eq(content().economy.retirement_age, 67)
 
 

@@ -28,8 +28,9 @@ func _money_events(sim: Sim) -> Array[Dictionary]:
 
 func test_economy_content_loads() -> void:
 	var economy := content().economy
-	assert_eq(economy.player_start_cash, 4000)
-	assert_eq(economy.player_start_bank, 30000)
+	var newcomer := content().background("newcomer")
+	assert_eq(newcomer.cash, 4000, "the player's start money is the background's (T-0075)")
+	assert_eq(newcomer.bank, 30000)
 	assert_eq(economy.resident_cash, Vector2i(1000, 8000))
 	assert_eq(economy.resident_bank, Vector2i(20000, 300000))
 
@@ -164,8 +165,8 @@ func test_new_game_gives_everyone_starting_money() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var economy := content().economy
 	var player := sim.world.player()
-	assert_eq(player.wallet.cash, economy.player_start_cash)
-	assert_eq(player.wallet.bank, economy.player_start_bank)
+	assert_eq(player.wallet.cash, content().background("newcomer").cash, "the default background's money")
+	assert_eq(player.wallet.bank, content().background("newcomer").bank)
 	for person: Person in sim.world.people.values():
 		if person.id == player.id:
 			continue
