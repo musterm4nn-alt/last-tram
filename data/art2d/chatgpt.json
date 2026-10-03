@@ -1,0 +1,250 @@
+{
+	"name": "ChatGPT Images, cleaned up",
+	"objects": {
+		"atm": {
+			"rect": [
+				48,
+				0,
+				16,
+				27
+			],
+			"sheet": "objects"
+		},
+		"bed_double": {
+			"rect": [
+				80,
+				0,
+				32,
+				36
+			],
+			"sheet": "objects"
+		},
+		"bench": {
+			"rect": [
+				0,
+				0,
+				32,
+				21
+			],
+			"sheet": "objects"
+		},
+		"desk": {
+			"rect": [
+				240,
+				0,
+				16,
+				14
+			],
+			"sheet": "objects"
+		},
+		"fridge": {
+			"rect": [
+				160,
+				0,
+				16,
+				34
+			],
+			"sheet": "objects"
+		},
+		"kitchen_table": {
+			"rect": [
+				208,
+				0,
+				32,
+				26
+			],
+			"sheet": "objects"
+		},
+		"notice_case": {
+			"rect": [
+				64,
+				0,
+				16,
+				17
+			],
+			"sheet": "objects"
+		},
+		"shower": {
+			"rect": [
+				272,
+				0,
+				16,
+				22
+			],
+			"sheet": "objects"
+		},
+		"sink": {
+			"rect": [
+				192,
+				0,
+				16,
+				13
+			],
+			"sheet": "objects"
+		},
+		"sofa": {
+			"rect": [
+				112,
+				0,
+				32,
+				21
+			],
+			"sheet": "objects"
+		},
+		"stove": {
+			"rect": [
+				176,
+				0,
+				16,
+				24
+			],
+			"sheet": "objects"
+		},
+		"street_lamp": {
+			"rect": [
+				32,
+				0,
+				16,
+				48
+			],
+			"sheet": "objects"
+		},
+		"tram_stop": {
+			"rect": [
+				288,
+				0,
+				96,
+				48
+			],
+			"sheet": "objects"
+		},
+		"tv": {
+			"rect": [
+				256,
+				0,
+				16,
+				13
+			],
+			"sheet": "objects"
+		},
+		"wardrobe": {
+			"rect": [
+				144,
+				0,
+				16,
+				22
+			],
+			"sheet": "objects"
+		}
+	},
+	"sheets": {
+		"objects": "res://art/export/chatgpt/objects.png",
+		"terrain": "res://art/export/chatgpt/terrain.png"
+	},
+	"terrain": {
+		"cobblestone": {
+			"cell": [
+				2,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 2
+		},
+		"crossing": {
+			"cell": [
+				6,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"door": {
+			"cell": [
+				14,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"floor_tile": {
+			"cell": [
+				16,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"floor_wood": {
+			"cell": [
+				15,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"fountain": {
+			"cell": [
+				9,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"grass": {
+			"cell": [
+				7,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"road": {
+			"cell": [
+				4,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"sidewalk": {
+			"cell": [
+				0,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 2
+		},
+		"tram_track": {
+			"cell": [
+				5,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"tree": {
+			"cell": [
+				8,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		},
+		"wall": {
+			"cell": [
+				10,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 3
+		},
+		"window": {
+			"cell": [
+				13,
+				0
+			],
+			"sheet": "terrain",
+			"variants": 1
+		}
+	}
+}
