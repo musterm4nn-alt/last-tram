@@ -41,7 +41,7 @@ D20); `data/scenes/core.json`.
 - [x] A 7-day run changes nothing for the economy except finds: NPCs share clues but never
   search, and nothing new draws random numbers; `--check-m2 --check-staffing` pass on seeds
   1–3 (meals 592/564/516, as before).
-- [ ] Screenshot of a scene (`the_cellar_door` after searching the Kneipe with the clue): on
+- [x] Screenshot of a scene (`out/t0070.png`, 3 October) (`the_cellar_door` after searching the Kneipe with the clue): on
   the Mac.
 
 ## Implementation notes

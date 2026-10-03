@@ -41,7 +41,7 @@ stress, office skills). It sets your starting money, job, skills and contacts.
 - [x] Local knows neighbours (both ways) → the same test (`knows`).
 - [x] The tab → `test_the_background_line`, `test_randomising_a_section_leaves_the_others_alone`
   (now with "background").
-- [ ] Screenshot of the tab: on the Mac (`tools/screenshot.sh out/t0075.png --screen=creator`
+- [x] Screenshot of the tab (`out/t0075.png`, 3 October) (`tools/screenshot.sh out/t0075.png --screen=creator`
   then the Background tab).
 
 ## Implementation notes

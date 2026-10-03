@@ -160,7 +160,7 @@ func _process(delta: float) -> void:
 				time_skip.active = false
 				_accumulator = 0.0
 				if not _woken_by_need(skipped_action):
-					notice.emit("Woke up at %s" % sim.clock.format())
+					notice.emit(TimeSkip.end_notice(sim, skipped_action))
 				break
 		if steps_last_frame == limit:
 			_accumulator = 0.0
@@ -224,9 +224,11 @@ static func should_skip(p_sim: Sim, p_speed: int, stopped_tick: int) -> bool:
 
 ## A critical need wakes the player: stop skipping for this sleep and say why.
 func _stop_skipping(need_id: String) -> void:
+	var player := sim.world.player()
+	var action: Action = player.action_queue[0] if not player.action_queue.is_empty() else null
 	time_skip.stop(sim)
 	var need_def := content.need(need_id)
-	notice.emit("Woke up: %s is low" % (need_def.name if need_def != null else need_id))
+	notice.emit(TimeSkip.end_notice(sim, action, need_def.name if need_def != null else need_id))
 
 
 ## Writes the daily autosave into the older of the two autosave files.

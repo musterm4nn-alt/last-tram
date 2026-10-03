@@ -231,3 +231,25 @@ func test_a_day_alone_keeps_every_need_above_zero() -> void:
 	print("    lowest needs over one day with free will: %s" % [lowest])
 	for need_id: String in lowest:
 		assert_true(float(lowest[need_id]) > 0.0, "%s reached 0" % need_id)
+
+
+func test_free_will_waits_after_a_long_walk_not_from_the_click() -> void:
+	# T-0076: walking across town to the Späti took longer than IDLE_MINUTES, and on arrival
+	# free will found nothing to do there and sent the player straight back home.
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	var target := Vector3i(5, 26, 0)  # in front of the Späti counter
+	sim.submit(WalkToCommand.new(player.id, target))
+	sim.step()
+	assert_true(WalkToCommand.walk_ticks(player, player.path) > AutonomySystem.IDLE_MINUTES * SimClock.STEPS_PER_GAME_MINUTE, "a long walk")
+	var arrived := -1
+	for minute: int in 60:
+		sim.run_minutes(1)
+		var chose := sim.events.drain().filter(func(e: Dictionary) -> bool:
+			return int(e["data"].get("person_id", -1)) == player.id and e["type"] in [&"heading_home", &"autonomy_chose"])
+		if arrived < 0 and player.path.is_empty():
+			arrived = minute
+		if arrived >= 0 and minute - arrived < AutonomySystem.IDLE_MINUTES - 1:
+			assert_eq(chose, [], "minute %d after arriving: free will waits" % (minute - arrived))
+			assert_eq(player.cell(), target)
+	assert_true(arrived > AutonomySystem.IDLE_MINUTES, "arrived after %d minutes" % arrived)

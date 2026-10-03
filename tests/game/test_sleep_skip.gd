@@ -189,3 +189,13 @@ func test_replacing_sleep_with_another_sleep_discards_the_old_budget() -> void:
 func test_the_overlay_says_skipping() -> void:
 	var sim := _sleeper("sleep", {"energy": 40.0})
 	assert_eq(SkipOverlay.text(sim), "Skipping… %s (Esc to stop)" % sim.clock.format())
+
+
+func test_the_notice_says_what_was_skipped() -> void:
+	# T-0076: after a shift the notice said "Woke up at 17:00".
+	var sim := SimFactory.new_game(content(), 1)
+	sim.clock.tick = SimClock.ticks_for(0, 17)
+	assert_eq(TimeSkip.end_notice(sim, Action.new("sleep", 1)), "Woke up at %s" % sim.clock.format())
+	assert_eq(TimeSkip.end_notice(sim, Action.new("work", 1)), "Back from work at %s" % sim.clock.format())
+	assert_eq(TimeSkip.end_notice(sim, Action.new("work", 1), "Hunger"), "Stopped work: Hunger is low")
+	assert_eq(TimeSkip.end_notice(sim, Action.new("sleep", 1), "Hunger"), "Woke up: Hunger is low")

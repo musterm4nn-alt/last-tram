@@ -80,6 +80,22 @@ ticket was merged.
   person ends with about €2,400. Residents never get near broke, so nothing tests the safety
   nets (benefit, eviction) in a normal month. Prices and rents are worth tuning when M4 makes
   money a motive (crime): raise rents or add costs, then re-run `--check-m3`.
+- **Screenshots and two fixes (3 October, after the merge).** Screenshots do work in the cloud
+  under a virtual display (`xvfb-run -a -s "-screen 0 1280x720x24" tools/screenshot.sh ...`;
+  Godot falls back to software rendering). Taking the missing M3 ones found two things the
+  owner's playtest would have hit:
+  - Clicking the ground to walk somewhere far (command mode) ended with free will sending the
+    player straight back home on arrival: the ten idle minutes ran from the click. Now
+    `WalkToCommand` holds free will (`autonomy_retry_tick`) until IDLE_MINUTES after the
+    expected arrival (`WalkToCommand.walk_ticks`). Test:
+    `test_free_will_waits_after_a_long_walk_not_from_the_click` (fails without the fix).
+    Residents never use WalkToCommand, so the town checks are unchanged.
+  - After a skipped shift the notice said "Woke up at 17:00". Now "Back from work at 17:00"
+    (and "Stopped work: Hunger is low"): `TimeSkip.end_notice`, tested in `test_sleep_skip.gd`.
+  - `--queue` and `--interact` in screenshots now prefer the player's own object (their own
+    wardrobe, not a neighbour's locked one).
+  - Seen, not fixed: on the town map two stairwell labels run together ("Haus 9,
+    stairwellHaus 3, stairwell").
 - Not done in the cloud: the owner's playtest above (needed for sign-off and the `m3` tag),
   and an agent playtest (needs OpenCode on the Mac).
 

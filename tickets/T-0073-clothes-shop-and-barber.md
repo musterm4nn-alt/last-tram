@@ -42,7 +42,7 @@ room with the right hours, so nobody loses their home.
 - [x] A haircut changes your hair and costs €18 → `test_a_haircut_costs_18_and_changes_your_hair`.
 - [x] Both respect the hours → `test_the_shop_keeps_its_hours`; placed and reachable →
   `test_the_rail_and_chair_are_in_the_waschsalon`; old saves → `test_old_saves_get_the_rail_and_chair`.
-- [ ] Screenshots of both screens: on the Mac.
+- [x] Screenshot of the clothes rail's screen (`out/t0073.png`, 3 October); the barber's uses the same screen.
 
 ## Implementation notes
 Built and self-reviewed by Opus in a cloud session (3 October 2026). Residents don't shop for

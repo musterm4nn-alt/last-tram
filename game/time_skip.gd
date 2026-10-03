@@ -30,6 +30,17 @@ static func should_skip(sim: Sim, speed: int, p_stopped_tick: int) -> bool:
 	return def != null and def.time_skip
 
 
+## The notice when skipping `action` ends: "Woke up at 07:00" after sleep, "Back from work
+## at 17:00" after a shift (T-0076); with `low_need`, why it stopped early ("Woke up: Hunger
+## is low", "Stopped work: Hunger is low").
+static func end_notice(sim: Sim, action: Action, low_need: String = "") -> String:
+	var def := sim.content.interaction(action.interaction_id) if action != null else null
+	var working := def != null and def.work
+	if not low_need.is_empty():
+		return "%s: %s is low" % ["Stopped work" if working else "Woke up", low_need]
+	return "%s at %s" % ["Back from work" if working else "Woke up", sim.clock.format()]
+
+
 ## Stops skipping the player's current action for good (Esc, or a critical need).
 func stop(sim: Sim) -> void:
 	var player := sim.world.player() if sim != null else null

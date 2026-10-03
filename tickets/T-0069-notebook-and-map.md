@@ -31,7 +31,7 @@ until you've found them, and marks your finds with a small note icon.
 - [x] Leads and Finds → `test_notebook_lists_leads_and_finds`.
 - [x] A hidden place is off the map and unnamed until found, then marked →
   `test_hidden_places_appear_once_found`.
-- [ ] Screenshots of the Notebook and the map: on the Mac (no display in the cloud).
+- [x] Screenshots of the Notebook and the map (taken 3 October under a virtual display: `out/t0069-notebook.png`, `out/t0069-map.png`).
 
 ## Implementation notes
 Built and self-reviewed by Opus in a cloud session (2 October 2026). No place is hidden yet:
