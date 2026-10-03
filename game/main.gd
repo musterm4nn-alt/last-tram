@@ -26,7 +26,8 @@ extends Node2D
 ##   --scene=ID          show that scene (as the player) after the quick start
 ##   --command           start in command mode (Tab)
 ##   --walk-to=X,Y       send the player walking to cell X,Y (on their level) at the start
-##   --interact=DEF_ID   open the interaction menu on the first object of that kind
+##   --interact=DEF_ID   open the interaction menu on the first object of that kind (the
+##                       player's own, if their home has one)
 ##   --queue=DEF:ACTION,...  queue actions at the start, e.g. --queue=fridge:grab_snack,tv:watch_tv
 
 var _controller: PlayerController
@@ -278,12 +279,19 @@ func _open_menu_on(def_id: String) -> void:
 	_interaction_menu.open_for(id, get_viewport().get_canvas_transform() * centre)
 
 
-## The lowest id of an object with this def id, or 0.
+## The lowest id of an object with this def id in the player's home, else in the town, or 0
+## (so --queue=wardrobe:change_clothes uses the player's own wardrobe).
 func _first_object(def_id: String) -> int:
-	var ids: Array = Session.sim.world.objects.keys()
+	var world := Session.sim.world
+	var player := world.player()
+	if player != null:
+		for id: int in world.objects_on_lot(player.home_lot_id):
+			if world.objects[id].def_id == def_id:
+				return id
+	var ids: Array = world.objects.keys()
 	ids.sort()
 	for id: int in ids:
-		if Session.sim.world.objects[id].def_id == def_id:
+		if world.objects[id].def_id == def_id:
 			return id
 	return 0
 

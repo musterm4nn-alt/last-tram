@@ -19,10 +19,10 @@ What differs from the owner's Mac:
 - **Git.** There is one clone, no worktrees: branch from `main`, then
   `git checkout main && git merge --no-ff t/NNNN-slug && git push`, and delete the branch
   locally and on GitHub. Ignore the `git -C /Users/xamxim/last-tram` lines below.
-- **No screenshots or game window.** `tools/screenshot.sh` and `tools/run.sh` need a display.
-  For visible changes, write in the ticket notes which screenshot to take
-  (`tools/screenshot.sh out/tNNNN.png ...`) and list it in your final message; the owner (or
-  the next session on the Mac) takes it and looks before calling the ticket done.
+- **Screenshots work under a virtual display:**
+  `xvfb-run -a -s "-screen 0 1280x720x24" tools/screenshot.sh out/tNNNN.png ...` (Godot
+  prints Vulkan errors, then falls back to software rendering). Open the PNG and look at it.
+  `tools/run.sh` (a window to play in) still needs the Mac.
 - **The Playbook** (`ArtifactData`) may not be reachable. If it isn't, list in your final
   message which stops to tick or add (ids `t<nnnn>-build`), so the Mac session can do it.
 - **No local memory.** The Mac session's memory notes don't travel. What matters from them:
@@ -56,10 +56,10 @@ backgrounds (v19), T-0076 the M3 check. The M3 save steps live in
 `sim/save/save_migrations_m3.gd`.
 
 **Left for the Mac:**
-- Screenshots to take and look at (none could be taken in the cloud): `t0065` (the clerk
-  behind the Späti counter), the phone's Housing app, the Notebook and the map with a found
-  place, the wardrobe screen, the clothes shop and barber screens, the skip overlay
-  (`out/t0078-skip.png`), the creator's Background tab. Each ticket's notes say how.
+- Screenshots: all the M3 ones were taken and checked in the cloud on 3 October (the
+  Späti clerk, Housing, Notebook, map, wardrobe, clothes rail, a secret's scene, the skip
+  overlay, the Background tab). Taking them found and fixed two bugs (a long click-walk
+  ended with free will sending you home; "Woke up" after a shift): see T-0076's notes.
 - The Playbook is up to date: build stops for T-0066 to T-0079 are ticked, and two new play
   stops wait: `play-m3-muse` (an agent playtest, OpenCode) and `play-m3` (the owner's; never
   tick it yourself).

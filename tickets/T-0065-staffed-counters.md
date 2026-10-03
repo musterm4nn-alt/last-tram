@@ -82,7 +82,7 @@ D10, D29; `docs/design/jobs-and-economy.md` → Shops and services; `sim/jobs/` 
 - [x] Over 7 days (staffing yes on every run; `--check-m2` 11 of 12, see the notes and T-0079) each shop is staffed at least 90% of its open time, and `--check-m2` still
   passes → `tools/simrun.sh --days=7 --check-m2 --check-staffing` on seeds 1–6, both work
   modes (results in the notes).
-- [ ] Screenshot of the clerk behind the Späti counter (`tools/screenshot.sh out/t0065.png`
+- [x] Screenshot of the clerk behind the Späti counter (`tools/screenshot.sh out/t0065.png`
   at a staffed time; taken on the Mac if the build session has no display).
 
 ## Implementation notes

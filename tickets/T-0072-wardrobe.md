@@ -44,7 +44,7 @@ home lets you change clothes or put on a saved outfit.
 - [x] Saved outfits round-trip; old saves migrate → `test_wardrobes_survive_saves_and_old_saves_migrate`.
 - [x] The command validates; the wardrobe opens the screen; every home has a reachable
   wardrobe → the tests in `tests/sim/test_wardrobe.gd`.
-- [ ] Screenshot of the wardrobe screen: on the Mac.
+- [x] Screenshot of the wardrobe screen (`out/t0072.png`, 3 October: `--queue=wardrobe:change_clothes`).
 
 ## Implementation notes
 Built and self-reviewed by Opus in a cloud session (2 October 2026). Residents don't change

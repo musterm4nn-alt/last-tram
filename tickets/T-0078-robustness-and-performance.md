@@ -96,7 +96,7 @@ at 30 people no slower than before T-0077.
   the gap explained.
 - [x] Each optimisation has a test that the behaviour is unchanged (candidates equal on
   sample worlds, or documented differences); `--check-m2` PASSED on seeds 1–3.
-- [ ] (screenshot only, on the Mac) Session split with all game tests passing; skip overlay screenshot
+- [x] (screenshot `out/t0078-skip.png` taken 3 October) Session split with all game tests passing; skip overlay screenshot
   `out/t0078-skip.png`; Esc stops a skip (game test).
 - [x] Full-town save-and-continue test; new lint rules with a sample violation each in a
   lint fixture; acceptance curve without `exp`; stable-noise test (adding an unrelated object
