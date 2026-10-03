@@ -45,6 +45,17 @@ the owner has to add it themselves (`claude mcp add pixellab ... -H "Authorizati
 <token>"`; never handle the token). Check its terms (commercial use, ownership) before relying
 on it. T-0087 fixed the playtest's corners and the wheel-over-phone zoom.
 
+**PixelLab is connected** (the owner added it on 3 October; `claude mcp list` shows it
+healthy, but its tools load only in a new session). Its docs: https://api.pixellab.ai/mcp/docs
+(read them first).
+
+0. **PixelLab test (next session, first):** (a) one resident as a 4-direction character with a
+   walk and an idle animation, at a size that fits art.md's 16×32 frames (or say what size it
+   gives and what that means); (b) a few blended ground tiles in route B's palette (pavement
+   to grass, cobbles to road) as a top-down tileset; (c) one object (a bench) matched to B's
+   style. Bring them into the game on a branch (`art/pixellab-test`) and show the owner a
+   screenshot beside route B. Characters need a view change (sprites instead of
+   `PersonDrawer2D`): only a throwaway test on that branch for now.
 1. **Settle the art plan**: B as the base, more detail, with or without PixelLab. Then:
    **D35** (D34 is taken) in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
    "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
