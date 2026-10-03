@@ -36,7 +36,16 @@ direction, `WallShapes`, `WallLayer2D`) and T-0086 (roofs over closed buildings,
 dark inside in direct mode, `Interiors`), recorded as **D34**. That answers the roofs
 question. Playbook: `play-roofs` waits for the owner.
 
-1. **Wait for the owner's pick**: likely a mix of B and C (ask which parts of each). Then:
+**Owner's verdict on the routes (3 October):** "C is more detailed, but B fits better", so
+B as the base, raised towards C's detail. They also asked about the **PixelLab MCP**
+(pixellab.ai/mcp: characters in 4/8 directions with walk/idle animations, top-down Wang
+tilesets for terrain transitions, map objects with style matching, image generation with
+forced palettes). Opus suggested it for characters and animation, and for detail in B's palette;
+the owner has to add it themselves (`claude mcp add pixellab ... -H "Authorization: Bearer
+<token>"`; never handle the token). Check its terms (commercial use, ownership) before relying
+on it. T-0087 fixed the playtest's corners and the wheel-over-phone zoom.
+
+1. **Settle the art plan**: B as the base, more detail, with or without PixelLab. Then:
    **D35** (D34 is taken) in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
    "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
    the others; plan art production alongside M4 (characters 16×32 next, art.md).
