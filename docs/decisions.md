@@ -279,3 +279,13 @@ slot). Rules that came out of it:
   woke up starving and the two-day check failed: the game was wrong, not the check.
 Result on the cloud machine (about 2.5× slower than the Mac): 28 people 0.259 → 0.139 ms per
 step, 148 people 1.755 → 1.328 ms (about 0.53 ms on the Mac, the target was 0.5).
+
+**D33 · A video call is half a conversation (T-0079).** The town check's "talks with people"
+rule (frozen, D31) kept failing on lone early-shift workers in some towns: out from 15 to
+19 while the town works, they filled their social need with 45-minute video calls (+45
+social) and never looked for company. Measured on seeds 1–12 in both work modes (24 weeks):
+with calls at half strength (30 social per hour, advertising 25) the quietest resident of
+any town talks 9 or more times a week (was 0–3 in four runs, two failing) and the average of
+the towns' median counts moves from about 110 to 115. Rejected: small talk with every server
+(T-0065; every purchase would count as a conversation), and changing the rule. Calls still
+help a lonely evening; they just don't replace the town.

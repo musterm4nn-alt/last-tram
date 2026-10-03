@@ -94,11 +94,11 @@
 			],
 			"duration_minutes": 45,
 			"need_rates": {
-				"social": 60.0
+				"social": 30.0
 			},
 			"finish_needs": {},
 			"advertise": {
-				"social": 45
+				"social": 25
 			}
 		},
 		{
