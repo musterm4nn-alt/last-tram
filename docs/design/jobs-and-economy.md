@@ -131,4 +131,8 @@ runs low. A personal inventory (a beer in your pocket, stolen goods, tools) come
 `tools/simrun.sh` reports money held (total and median), the ledger by reason, the employment
 rate, shifts worked and missed, rent paid and owed, and evictions. The M3 check runs 30 days
 and fails on mass bankruptcy (too many people broke), mass eviction, a broken ledger
-(conservation) or an employment rate that collapses (T-0076).
+(conservation) or an employment rate that collapses (T-0076). In numbers (`EconomyCheck` in
+`tools/economy_check.gd`, frozen for M3): at every day's end the ledger balances, at most 10% of
+people hold under €5, and employment stays within 20 points of the start; over the run, at
+most one eviction and every staffed shop served for at least 80% of its open time; plus the M2
+town rules and the cost budget. Run it with `tools/simrun.sh --days=30 --check-m3`.

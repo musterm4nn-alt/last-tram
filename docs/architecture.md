@@ -91,7 +91,8 @@ game/                     Godot side
 data/                     content JSON + district ASCII maps
 tests/                    runner, TestCase base, sim/ (behaviour), game/ (UI logic and
                           wording), lint/ (architecture rules, docs), fixtures
-tools/                    check/test/run/simrun/screenshot/tickets scripts, TownCheck
+tools/                    check/test/run/simrun/screenshot/tickets scripts, TownCheck,
+                          EconomyCheck
 docs/                     vision, roadmap, architecture, decisions, design/, conventions,
                           cookbook, workflow, playtesting, handoff
 tickets/                  one markdown file per ticket
