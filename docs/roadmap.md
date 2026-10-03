@@ -12,7 +12,7 @@ Legend: ✅ done · ▶ current · ◻ planned
 | M1 | A Day at Home | create your character, then live a full day in your flat: sleep, eat, shower, relax | ✅ |
 | M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ✅ |
 | M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ✅ |
-| ◆ | Art direction gate | pick the art style from real side-by-side tests | ▶ |
+| ◆ | Art direction gate | pick the art style from real side-by-side tests | ✅ |
 | M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ▶ |
 | M5 | Home Sweet Home | redecorate, rebuild, buy property; add your own content packs | ◻ |
 | M6 | Love & Relationships | date, move in, marry, share a flat, play as your partner | ◻ |
@@ -139,7 +139,7 @@ test where the player is hired, paid, pays rent and is fired. **Signed off by th
 3 October 2026** (tag `m3`). Their own playtest of T-0076's checklist is still to come;
 what it finds becomes tickets.
 
-## ◆ Art direction gate ▶
+## ◆ Art direction gate ✅
 
 After M3 the systems are real enough to judge a look. Opus (the art owner) produces the same
 scene (Altmarkt + Haus 12, day and night) in two or three routes, for example:
@@ -149,6 +149,9 @@ scene (Altmarkt + Haus 12, day and night) in two or three routes, for example:
 
 The owner picks one. Art production then runs alongside M4 and later, handled by Opus in
 Claude Code. See [art.md](art.md).
+
+**Picked (3 October 2026, D35):** route 2 (drawn by Opus), with PixelLab for characters,
+animations and objects, palette-locked to it.
 
 ## M4 · The Other Side ▶
 

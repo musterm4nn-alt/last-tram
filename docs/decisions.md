@@ -302,3 +302,19 @@ street visible (it's for watching the town) but other buildings stay closed. Rej
 now: real separate maps (interiors bigger than their outline, but a big change to the world
 format, routing, saves and every building); walls between cells as in The Sims (rooms a cell
 larger, but the same size of change). Either can still come later; nothing here is in the way.
+
+**D35 · The look: route B, with PixelLab for people and objects (T-0088).** At the art gate
+(3 October) Opus drew the Altmarkt and Haus 12 in three routes: Kenney's free packs (A), drawn
+by Opus in Aseprite (B), and ChatGPT Images cleaned up (C). The owner: "C is more detailed,
+but B fits better". A test of the PixelLab MCP on route B (branch `art/pixellab-test`) gave a
+resident with walk and idle animations at the right size, blended ground edges, and a bench;
+everything needed recolouring to B's palette. Out of three versions of the same spot (B; B
+with PixelLab people and bench; all PixelLab), the owner chose the middle one. So: B's
+hand-drawn tiles and palette are the game's look and its default art set (`custom`);
+characters, their animations and objects come from PixelLab, always palette-locked to B; B is
+raised in detail over time; Wang edge tiles only where they help (grass beds, kerbs). PixelLab's
+terms: we own the output and may sell it; no attribution; not to be used to train models.
+Rejected: Kenney (fast, but generic and not gritty), C as the base (rich, but inconsistent and
+not real pixel art), PixelLab's ground (its cobbles are busier than B's). Open: how PixelLab
+characters vary with appearance and outfit (art.md wants layers; PixelLab draws one fixed
+look per character), to be tested before character production.

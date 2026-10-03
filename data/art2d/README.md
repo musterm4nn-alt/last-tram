@@ -1,6 +1,6 @@
 # Art sets for the 2D view
 
-One JSON file per art set: `data/art2d/<set>.json`, picked with `--art=<set>` (T-0080). View
+One JSON file per art set: `data/art2d/<set>.json`, picked with `--art=<set>` (T-0080); the game uses `custom` (route B, D35) unless told otherwise, and `--art=placeholder` draws the placeholders. View
 only: the sim never reads these files. Anything a set doesn't map, or maps wrongly, draws as
 the placeholder, and the problem is printed as a warning. Loaded by `game/view2d/art_set.gd`.
 

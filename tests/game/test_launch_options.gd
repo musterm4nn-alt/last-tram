@@ -111,7 +111,8 @@ func test_gallery_options_parse() -> void:
 ## T-0080
 func test_art_option() -> void:
 	assert_eq(LaunchOptions.parse(PackedStringArray(["--art=kenney"])).art, "kenney")
-	assert_eq(LaunchOptions.parse(PackedStringArray([])).art, "", "placeholders by default")
+	assert_eq(LaunchOptions.parse(PackedStringArray([])).art, "custom", "route B by default (T-0088)")
+	assert_eq(LaunchOptions.parse(PackedStringArray(["--art=placeholder"])).art, "", "placeholders on request")
 
 
 ## T-0084

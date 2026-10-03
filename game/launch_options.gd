@@ -51,8 +51,12 @@ var look_at: Vector2i = NO_CELL
 var hide_hud: bool = false
 ## Start paused, so no time passes while a screenshot waits for its frames (--paused).
 var paused: bool = false
-## Art set to draw with (--art=kenney loads data/art2d/kenney.json); "" = the placeholders.
-var art: String = ""
+## The art set the game draws with unless told otherwise: route B, picked at the art gate (D35).
+const DEFAULT_ART: String = "custom"
+
+## Art set to draw with (--art=kenney loads data/art2d/kenney.json); "" = the placeholders
+## (--art=placeholder).
+var art: String = DEFAULT_ART
 ## Actions to queue at the start (--queue=fridge:grab_snack,tv:watch_tv): [def_id, interaction_id].
 var queue: Array[PackedStringArray] = []
 
@@ -117,7 +121,7 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 			"interact":
 				out.interact = value
 			"art":
-				out.art = value
+				out.art = "" if value == "placeholder" else value
 			"look-at":
 				var look := _parse_walk(value)
 				out.look_at = Vector2i(int(look.x), int(look.y))

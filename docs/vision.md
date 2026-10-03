@@ -67,6 +67,9 @@ memory + circumstances, not from scripts.
   square, St. Nikolai church, Café Wolke, Kneipe Zum Anker, Späti Kaya, Imbiss Anadolu, a
   police post, and the player's ground-floor flat in Haus 12. More districts are added over
   time.
+- **Look** (picked at the art gate, 3 October 2026, D35): top-down 3/4 pixel art drawn by
+  Opus in a muted urban palette (route B), with people, their animations and objects made with
+  PixelLab and recoloured to match. "B fits better."
 - **Tone:** gritty and mature, with a wry sense of humour. Violence, drugs, gangs, poverty,
   eviction, addiction and adult themes are all in scope.
 - **Hard content rules** (non-negotiable, for every agent):
@@ -100,8 +103,5 @@ none should shape today's code, except that it must stay clean enough to allow t
 ## Open decisions (the owner decides later)
 
 - City name and exact country flavour.
-- Art route after the placeholder phase: an asset pack (e.g. LimeZu Modern Interiors and
-  Exteriors, or Kenney), AI-drawn in Aseprite, or ChatGPT Images cleaned up in Aseprite. There
-  is a planned decision point in the roadmap.
 - Whether and when to switch the view to 3D low-poly isometric.
 - LLM dialogue: which model (local or API), and how much it may influence outcomes.
