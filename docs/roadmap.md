@@ -11,9 +11,9 @@ Legend: ✅ done · ▶ current · ◻ planned
 | M0 | Foundation | walk around the Altstadt; save and load | ✅ |
 | M1 | A Day at Home | create your character, then live a full day in your flat: sleep, eat, shower, relax | ✅ |
 | M2 | The Neighbours | watch ~30 residents live their lives, meet them, make friends and enemies | ✅ |
-| M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ▶ |
-| ◆ | Art direction gate | pick the art style from real side-by-side tests | ◻ |
-| M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ◻ |
+| M3 | Making a Living | get a job, earn, shop, pay rent (or don't) | ✅ |
+| ◆ | Art direction gate | pick the art style from real side-by-side tests | ▶ |
+| M4 | The Other Side | steal, fight, deal, get seen, get chased, get arrested | ▶ |
 | M5 | Home Sweet Home | redecorate, rebuild, buy property; add your own content packs | ◻ |
 | M6 | Love & Relationships | date, move in, marry, share a flat, play as your partner | ◻ |
 | M7 | Getting Around | ride trams and buses to a second district | ◻ |
@@ -97,7 +97,7 @@ town for an evening and it looks alive.
 benches (T-0052), talking to people (T-0053), and exact saves (T-0051). The owner played the
 evening checklist and signed M2 off on 1 October 2026 ("didn't feel bad").
 
-## M3 · Making a Living ▶
+## M3 · Making a Living ✅
 
 **Goal:** money matters.
 
@@ -135,10 +135,11 @@ backgrounds T-0075; M3 acceptance T-0076. After the October code reviews: harden
 
 **Status (3 October 2026):** every M3 ticket is built, T-0054 to T-0079. The 30-day check
 (`tools/simrun.sh --days=30 --check-m3`, T-0076) passes on seeds 1–3, and the suite has a
-test where the player is hired, paid, pays rent and is fired. **Waiting for the owner's
-playtest** (the checklist is in T-0076); M3 is done, and tagged `m3`, at their sign-off.
+test where the player is hired, paid, pays rent and is fired. **Signed off by the owner on
+3 October 2026** and tagged `m3`. Their own playtest of T-0076's checklist is still to come;
+what it finds becomes tickets.
 
-## ◆ Art direction gate
+## ◆ Art direction gate ▶
 
 After M3 the systems are real enough to judge a look. Opus (the art owner) produces the same
 scene (Altmarkt + Haus 12, day and night) in two or three routes, for example:
@@ -149,7 +150,7 @@ scene (Altmarkt + Haus 12, day and night) in two or three routes, for example:
 The owner picks one. Art production then runs alongside M4 and later, handled by Opus in
 Claude Code. See [art.md](art.md).
 
-## M4 · The Other Side
+## M4 · The Other Side ▶
 
 **Goal:** crime and consequences.
 

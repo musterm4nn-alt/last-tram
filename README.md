@@ -43,5 +43,6 @@ Keys (as the HUD shows them):
 
 ## Status
 
-M0, M1 and M2 are done. **M3 · Making a Living** is in progress. See the
+M0 to M3 are done. **M4 · The Other Side** is in progress, starting with the art direction
+gate (picking the game's look). See the
 [roadmap](docs/roadmap.md).

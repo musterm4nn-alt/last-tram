@@ -42,9 +42,10 @@ What differs from the owner's Mac:
 
 ## Where things stand
 
-**Update, 3 October 2026 (end of the cloud session): every M3 ticket is built and merged**
-(T-0054 to T-0079). M3 waits only for the owner's playtest (the checklist is in T-0076) and
-their sign-off; then tag `m3` and mark M3 ✅ in the roadmap. Save version 19; `tools/check.sh`
+**Update, 3 October 2026 (end of the cloud session): M3 is done.** Every M3 ticket is built
+and merged (T-0054 to T-0079), the owner signed M3 off, and `main` is tagged `m3`. The
+owner's own playtest of T-0076's checklist (Playbook stop `play-m3`) is still to come; turn
+what it finds into tickets. Next on the roadmap: the art direction gate. Save version 19; `tools/check.sh`
 runs 685 tests. `tools/simrun.sh --days=30 --check-m3` passes on seeds 1–3, and
 `--days=7 --check-m2 --check-staffing` on seeds 1–6 in both modes.
 
