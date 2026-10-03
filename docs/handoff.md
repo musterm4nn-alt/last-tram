@@ -60,8 +60,9 @@ backgrounds (v19), T-0076 the M3 check. The M3 save steps live in
   behind the Späti counter), the phone's Housing app, the Notebook and the map with a found
   place, the wardrobe screen, the clothes shop and barber screens, the skip overlay
   (`out/t0078-skip.png`), the creator's Background tab. Each ticket's notes say how.
-- Playbook stops to tick or add: build and review stops for T-0066 to T-0076, T-0078 and
-  T-0079, and a "You" play stop for the M3 playtest (don't tick it).
+- The Playbook is up to date: build stops for T-0066 to T-0079 are ticked, and two new play
+  stops wait: `play-m3-muse` (an agent playtest, OpenCode) and `play-m3` (the owner's; never
+  tick it yourself).
 - An agent playtest of a working week (Muse in OpenCode), before or with the owner's.
 - After `git pull --ff-only` on the Mac, the desktop icon runs the new build.
 
