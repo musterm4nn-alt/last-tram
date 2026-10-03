@@ -30,8 +30,14 @@ comparison page is https://claude.ai/artifact/UA8ToL3km1mUUYmPAfk7A4 (Playbook s
 (`~/Library/Containers/local.xamxim.ChatGPTImages/Data/Library/Caches/WebKit/NetworkCache/Version 17/Blobs/`,
 the newest 1254×1254 PNG), not in Downloads; copies are in `~/Downloads/last-tram-art/`.
 
-1. **Wait for the owner's pick** (A, B, C or a mix) and their answer on roofs vs open
-   houses. Then: D34 in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
+**Then (same day):** the owner said B and C both have good parts, and asked for hidden
+interiors and thin walls instead of separate maps. Built and merged: T-0085 (walls drawn by
+direction, `WallShapes`, `WallLayer2D`) and T-0086 (roofs over closed buildings, the street
+dark inside in direct mode, `Interiors`), recorded as **D34**. That answers the roofs
+question. Playbook: `play-roofs` waits for the owner.
+
+1. **Wait for the owner's pick**: likely a mix of B and C (ask which parts of each). Then:
+   **D35** (D34 is taken) in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
    "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
    the others; plan art production alongside M4 (characters 16×32 next, art.md).
 2. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
