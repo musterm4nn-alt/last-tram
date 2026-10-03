@@ -58,6 +58,7 @@ func _ready() -> void:
 	add_child(WorldView2D.new())
 	add_child(PathMarker2D.new())
 	add_child(DepthLayer2D.new())
+	add_child(NightLights2D.new())
 	_camera = CameraRig2D.new()
 	add_child(_camera)
 	add_child(BubblesLayer.new())
