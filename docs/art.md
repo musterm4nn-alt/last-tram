@@ -59,8 +59,9 @@ Späti, characters).
 - **Files:** sources in `art/src/` (`.aseprite`), exports in `art/export/<category>/`, and
   licences and credits in `art/LICENSES.md` (every third-party asset is listed with source and
   licence).
-- **Mapping art to content:** by content id, in view-only data (`data/art2d/*.json`, created at
-  the gate), for example `"bed_double": {"sheet": "furniture", "rect": [...], "rotations": 4}`.
+- **Mapping art to content:** by content id, in view-only art sets (`data/art2d/<set>.json`,
+  format in [data/art2d/README.md](../data/art2d/README.md), T-0080), picked with `--art=<set>`.
+  Terrain maps to 16-px tiles (with variants), objects to a sheet rect (or one per rotation).
   The view falls back to the placeholder when an id has no art, so art can arrive gradually.
 
 ## AI image pipeline (if chosen)

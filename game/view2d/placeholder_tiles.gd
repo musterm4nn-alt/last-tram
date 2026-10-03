@@ -2,7 +2,8 @@ class_name PlaceholderTiles
 extends RefCounted
 ## Generates a TileSet of simple coloured tiles from the terrain debug colours, so the game
 ## is playable before any art exists. Atlas coords (terrain_index, 0) = that terrain.
-## When real art arrives, a data-driven art TileSet replaces this; the sim is unaffected.
+## Art sets (ArtSet) add their own atlas sources next to this one; cells they don't map keep
+## these tiles.
 
 const SOURCE_ID: int = 0
 

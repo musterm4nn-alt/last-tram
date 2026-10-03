@@ -106,3 +106,9 @@ func test_gallery_options_parse() -> void:
 	assert_eq(options.screen, "gallery")
 	assert_eq(options.gallery_page, 2)
 
+
+
+## T-0080
+func test_art_option() -> void:
+	assert_eq(LaunchOptions.parse(PackedStringArray(["--art=kenney"])).art, "kenney")
+	assert_eq(LaunchOptions.parse(PackedStringArray([])).art, "", "placeholders by default")

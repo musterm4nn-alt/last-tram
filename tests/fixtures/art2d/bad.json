@@ -1,0 +1,16 @@
+{
+	"name": "Broken on purpose",
+	"sheets": { "test": "res://tests/fixtures/art2d/sheet.png", "gone": "res://tests/fixtures/art2d/missing.png" },
+	"terrain": {
+		"lava": { "sheet": "test", "cell": [0, 0] },
+		"road": { "sheet": "gone", "cell": [0, 0] },
+		"grass": { "sheet": "test", "cell": [11, 0], "variants": 2 },
+		"sidewalk": { "sheet": "test", "cell": [1, 0] }
+	},
+	"objects": {
+		"spaceship": { "sheet": "test", "rect": [0, 0, 16, 16] },
+		"bench": { "sheet": "test", "rect": [180, 40, 32, 32] },
+		"sofa": { "sheet": "test", "rects": [[0, 0, 16, 16], [0, 0, 16, 16]] },
+		"tv": { "sheet": "test", "rect": [0, 16, 16, 24] }
+	}
+}

@@ -45,6 +45,8 @@ var level: int = NO_LEVEL
 var walk_to: Vector2i = NO_CELL
 ## Open the interaction menu on the first object with this def id (--interact=fridge).
 var interact: String = ""
+## Art set to draw with (--art=kenney loads data/art2d/kenney.json); "" = the placeholders.
+var art: String = ""
 ## Actions to queue at the start (--queue=fridge:grab_snack,tv:watch_tv): [def_id, interaction_id].
 var queue: Array[PackedStringArray] = []
 
@@ -108,6 +110,8 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.walk_to = Vector2i(int(cell.x), int(cell.y))
 			"interact":
 				out.interact = value
+			"art":
+				out.art = value
 			"queue":
 				for pair: String in value.split(",", false):
 					var parts := pair.split(":")

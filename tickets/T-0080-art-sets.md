@@ -1,12 +1,12 @@
 ---
 id: T-0080
 title: Art sets in the 2D view
-status: todo
+status: done
 milestone: Art
 size: M
 owner: builder
 depends_on: []
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -76,21 +76,40 @@ the F3 slot dots draw either way. The view holds the active set in a static
 set, so everything is a placeholder). Load errors are printed once with `push_warning`.
 
 ## Acceptance criteria
-- [ ] A valid set loads with no errors and returns the right texture and region for terrain
+- [x] A valid set loads with no errors and returns the right texture and region for terrain
   and for each object rotation → `test_art_set.gd: test_loads_fixture_set`
-- [ ] Unknown ids, a missing sheet, a rect outside the sheet and a bad `rects` list each give
+- [x] Unknown ids, a missing sheet, a rect outside the sheet and a bad `rects` list each give
   an error and fall back → `test_bad_entries_fall_back`
-- [ ] A missing set file gives an empty set and one error → `test_missing_set`
-- [ ] `variant_index` is stable and spreads over all variants →
+- [x] A missing set file gives an empty set and one error → `test_missing_set`
+- [x] `variant_index` is stable and spreads over all variants →
   `test_variant_index_is_stable`
-- [ ] Sprite placement: bottom on the footprint bottom, centred →
+- [x] Sprite placement: bottom on the footprint bottom, centred →
   `test_sprite_rect_anchors_to_footprint` (make the placement a static function on
   `ObjectView2D`)
-- [ ] `--art=fixture` style parsing → `test_launch_options.gd: test_art_option`
-- [ ] With no `--art`, the game looks exactly as before → screenshot
+- [x] `--art=fixture` style parsing → `test_launch_options.gd: test_art_option`
+- [x] With no `--art`, the game looks exactly as before → screenshot
   `out/t0080-placeholder.png`, compared by eye with `main`
 
 ## Implementation notes
+- `game/view2d/art_set.gd` (`ArtSet`): reads the set with `ContentReader`, loads sheets with
+  `load()` after `ResourceLoader.exists` (so a missing PNG is an error, not an engine error),
+  drops each bad entry with a message. `terrain_tile` / `object_sprite` return
+  `{"texture", "region"}` or `{}`; `variant_index` is an integer hash of (x, y).
+- `WorldView2D.art` (static, empty by default) is the active set; `main.gd` loads it from
+  `--art` and prints load problems with `push_warning`. `WorldView2D.rebuild` adds one atlas
+  source per sheet on first use (tiles created on demand) next to the placeholder source.
+- `ObjectView2D` draws the sprite where mapped (`sprite_rect`: bottom on the footprint
+  bottom, centred, whole pixels), else the old placeholder (moved to `_draw_placeholder`).
+  Slot dots draw either way.
+- Format documented in `data/art2d/README.md`; `docs/art.md` points to it.
+- Fixtures: `tests/fixtures/art2d/sheet.png` (coloured blocks made with a throwaway Godot
+  script, test data only), `fixture.json`, `bad.json` (seven different mistakes).
+
+Verified: `tools/check.sh` → 693 passed (new: `test_art_set.gd` ×5,
+`test_launch_options.gd: test_art_option`). `out/t0080-placeholder.png` (no `--art`) looks
+the same as `main`. A temporary `data/art2d/try.json` (the fixture, not committed) drew the
+grass beds in three sheet shades and the benches as taller sprites anchored on their
+footprints, with everything else as placeholders (`out/t0080-try.png`).
 
 ## Questions
 
