@@ -110,7 +110,7 @@ func test_the_laptop_offers_browsing_and_video_calls() -> void:
 	var sim2 := SimFactory.new_game(content(), 1)
 	var caller := _run(sim2, "desk", "video_call", {}, 45)
 	assert_true(caller.action_queue.is_empty(), "a video call takes 45 minutes")
-	assert_near(caller.needs["social"], 50.0 + 45.0 * (60.0 - 4.0) / 60.0, 0.001)
+	assert_near(caller.needs["social"], 50.0 + 45.0 * (30.0 - 4.0) / 60.0, 0.001, "half a real conversation's worth (T-0079)")
 
 
 func test_sleep_is_comfortable() -> void:
