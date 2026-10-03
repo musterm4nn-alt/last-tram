@@ -50,6 +50,8 @@ var colleague_deltas: Dictionary[String, float] = {}
 ## Lunch at work (T-0077): after this many minutes of a shift, hunger rises by lunch_hunger.
 var lunch_after_minutes: int = 240
 var lunch_hunger: float = 60.0
+## The lunch break's fun (T-0074): a break from the desk.
+var lunch_fun: float = 10.0
 ## The need rates every job uses while World.work.gentle is on (T-0077).
 var gentle_profile: Dictionary[String, float] = {}
 ## Housing (T-0066): rent days behind before eviction, weeks of rent paid up front to move in,
@@ -58,3 +60,10 @@ var evict_after_weeks: int = 3
 var move_in_weeks: int = 2
 var move_in_hour: int = 10
 var vacant_days: int = 7
+## Laundry (T-0074): dirt per hour worn awake, extra at work, the "dirty" line, the hygiene it
+## costs per hour past it, and the errand bonus for a wash.
+var dirt_per_hour: float = 1.5
+var work_dirt_per_hour: float = 1.5
+var dirty_at: float = 60.0
+var dirty_hygiene_per_hour: float = 1.0
+var laundry_errand_score: float = 8.0

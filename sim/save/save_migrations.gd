@@ -4,7 +4,8 @@ extends RefCounted
 ##
 ## To change the save format:
 ##   1. bump SaveCodec.SAVE_VERSION (say to 2)
-##   2. write `static func _v1_to_v2(d: Dictionary) -> Dictionary` below and add it to STEPS
+##   2. write `static func v1_to_v2(d: Dictionary) -> Dictionary` (M3 steps live in
+##      SaveMigrationsM3) and add it to the match below
 ##   3. add a fixture made with the new version to tests/fixtures/saves/
 ## Never edit an existing migration step once it has been merged.
 
@@ -45,128 +46,24 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 			10:
 				d = _v10_to_v11(d)
 			11:
-				d = _v11_to_v12(d)
+				d = SaveMigrationsM3.v11_to_v12(d)
 			12:
-				d = _v12_to_v13(d)
+				d = SaveMigrationsM3.v12_to_v13(d)
 			13:
-				d = _v13_to_v14(d)
+				d = SaveMigrationsM3.v13_to_v14(d)
 			14:
-				d = _v14_to_v15(d)
+				d = SaveMigrationsM3.v14_to_v15(d)
 			15:
-				d = _v15_to_v16(d)
+				d = SaveMigrationsM3.v15_to_v16(d)
 			16:
-				d = _v16_to_v17(d)
+				d = SaveMigrationsM3.v16_to_v17(d)
+			17:
+				d = SaveMigrationsM3.v17_to_v18(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
-	return d
-
-
-## v17 (T-0073): Waschsalon Blitz gets a second-hand clothes rail and a barber chair (saves
-## with objects and none yet; ids from next_id).
-const V17_NEW: Array = [["clothes_rack", [32, 10, 0]], ["clothes_rack", [32, 12, 0]], ["barber_chair", [39, 11, 0]]]
-
-
-static func _v16_to_v17(d: Dictionary) -> Dictionary:
-	if not d.get("world") is Dictionary or not d["world"].get("objects") is Array:
-		return d
-	var world: Dictionary = d["world"]
-	var objects: Array = world["objects"]
-	if objects.is_empty() or objects.any(func(obj: Variant) -> bool: return obj is Dictionary and obj.get("def_id") == "barber_chair"):
-		return d
-	var next := _int(world.get("next_id"), 1)
-	for entry: Array in V17_NEW:
-		objects.append({"id": next, "def_id": entry[0], "origin": entry[1], "rotation": 0})
-		next += 1
-	world["next_id"] = next
-	return d
-
-
-## Where the wardrobes stood when v16 was made (origin, rotation), one per home.
-const V16_WARDROBES: Array = [[[27, 7, 1], 0], [[36, 7, 1], 0], [[27, 7, 2], 0], [[36, 7, 2], 0], [[48, 7, 1], 0], [[48, 7, 2], 0], [[62, 10, 1], 1], [[69, 9, 1], 1], [[62, 10, 2], 1], [[69, 9, 2], 1], [[7, 24, 1], 0], [[11, 24, 1], 0], [[7, 24, 2], 0], [[11, 24, 2], 0], [[60, 7, 0], 0], [[48, 24, 0], 0]]
-
-
-## v16 (T-0072): everyone owns what they wear, saved as "Everyday", and every home gets its
-## wardrobe (saves with objects and none yet; ids from next_id).
-static func _v15_to_v16(d: Dictionary) -> Dictionary:
-	if not d.get("world") is Dictionary:
-		return d
-	var world: Dictionary = d["world"]
-	for person: Variant in world.get("people", []):
-		if not person is Dictionary:
-			continue
-		var outfit: Dictionary = person.get("outfit", {}) if person.get("outfit") is Dictionary else {}
-		var owned: Array = []
-		for slot: Variant in outfit:
-			if outfit[slot] is Dictionary:
-				owned.append((outfit[slot] as Dictionary).duplicate())
-		owned.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-			return String(a.get("item")) < String(b.get("item")) or (a.get("item") == b.get("item") and String(a.get("colour")) < String(b.get("colour"))))
-		person["wardrobe"] = owned
-		person["outfits"] = {"Everyday": outfit.duplicate(true)}
-	var objects: Variant = world.get("objects")
-	if not objects is Array or (objects as Array).is_empty():
-		return d
-	for obj: Variant in objects:
-		if obj is Dictionary and obj.get("def_id") == "wardrobe":
-			return d
-	var next := _int(world.get("next_id"), 1)
-	for spot: Array in V16_WARDROBES:
-		objects.append({"id": next, "def_id": "wardrobe", "origin": spot[0], "rotation": spot[1]})
-		next += 1
-	world["next_id"] = next
-	return d
-
-
-## v15 (T-0071): nobody has practised anything yet.
-static func _v14_to_v15(d: Dictionary) -> Dictionary:
-	if not d.get("world") is Dictionary:
-		return d
-	for person: Variant in d["world"].get("people", []):
-		if person is Dictionary:
-			person["skills"] = {}
-	return d
-
-
-## v14 (T-0067): nobody knows a clue or has found anything, and no reward has been taken.
-static func _v13_to_v14(d: Dictionary) -> Dictionary:
-	if not d.get("world") is Dictionary:
-		return d
-	d["world"]["looted_discoveries"] = []
-	for person: Variant in d["world"].get("people", []):
-		if person is Dictionary:
-			person["known_clues"] = []
-			person["discoveries"] = []
-	return d
-
-
-## v13 (T-0066): no flat has been left empty yet.
-static func _v12_to_v13(d: Dictionary) -> Dictionary:
-	if not d.get("world") is Dictionary or not d["world"].get("lots", []) is Array:
-		return d
-	for lot: Variant in d["world"].get("lots", []):
-		if lot is Dictionary:
-			lot["vacant_since_day"] = -1
-	return d
-
-
-## v12 (T-0065): Café Wolke gets its counter (the barista's workplace), as in new towns.
-## Saves that already have one, or have no objects (test rooms), are left alone.
-static func _v11_to_v12(d: Dictionary) -> Dictionary:
-	if not d.get("world") is Dictionary or not d["world"].get("objects") is Array:
-		return d
-	var world: Dictionary = d["world"]
-	var objects: Array = world["objects"]
-	if objects.is_empty():
-		return d
-	for obj: Variant in objects:
-		if obj is Dictionary and obj.get("def_id") == "cafe_counter":
-			return d
-	var id := _int(world.get("next_id"), 1)
-	objects.append({"id": id, "def_id": "cafe_counter", "origin": [21, 13, 0], "rotation": 2})
-	world["next_id"] = id + 1
 	return d
 
 
@@ -209,6 +106,10 @@ static func _v9_to_v10(d: Dictionary) -> Dictionary:
 
 
 ## A number from a save dictionary as an int, or `fallback` (validation comes later).
+static func number(value: Variant, fallback: int) -> int:
+	return _int(value, fallback)
+
+
 static func _int(value: Variant, fallback: int) -> int:
 	return int(value) if value is int or value is float else fallback
 

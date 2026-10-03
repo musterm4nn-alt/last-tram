@@ -1512,6 +1512,42 @@
 				0
 			],
 			"rotation": 0
+		},
+		{
+			"def": "washing_machine",
+			"cell": [
+				34,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "washing_machine",
+			"cell": [
+				35,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "washing_machine",
+			"cell": [
+				36,
+				7,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "washing_machine",
+			"cell": [
+				37,
+				7,
+				0
+			],
+			"rotation": 0
 		}
 	]
 }

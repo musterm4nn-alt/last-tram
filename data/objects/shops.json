@@ -1,5 +1,5 @@
 {
-	"_doc": "Shop furniture (T-0056): the Späti and Imbiss counters, the ATM, and the café counter (T-0065: two staff slots, placed turned round). Same format as furniture.json. Customers use the slots in front of a counter; the staff slot behind it (role \"staff\") is where people work (T-0059). Waschsalon Blitz (T-0073): a second-hand clothes rail (browse and buy) and a barber chair.",
+	"_doc": "Shop furniture (T-0056): the Späti and Imbiss counters, the ATM, and the café counter (T-0065: two staff slots, placed turned round). Same format as furniture.json. Customers use the slots in front of a counter; the staff slot behind it (role \"staff\") is where people work (T-0059). Waschsalon Blitz (T-0073): a second-hand clothes rail (browse and buy) and a barber chair. Washing machines (T-0074) at Waschsalon Blitz.",
 	"objects": [
 		{
 			"id": "spaeti_counter",
@@ -276,6 +276,33 @@
 			],
 			"price": 40000,
 			"debug_color": "#b03a48"
+		},
+		{
+			"id": "washing_machine",
+			"name": "Washing machine",
+			"size": [
+				1,
+				1
+			],
+			"blocks_movement": true,
+			"blocks_sight": false,
+			"tags": [
+				"washing_machine"
+			],
+			"use_slots": [
+				{
+					"offset": [
+						0,
+						1
+					],
+					"facing": [
+						0,
+						-1
+					]
+				}
+			],
+			"price": 60000,
+			"debug_color": "#d0d8e0"
 		}
 	]
 }

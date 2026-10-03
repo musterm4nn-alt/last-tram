@@ -9,17 +9,30 @@ extends SimSystem
 
 ## Steps every active person's front action once: QUEUED ones start or route, ROUTING ones
 ## arrive, re-route or cancel, PERFORMING ones cancel on direct input. Background people
-## (T-0042) get the same step once per game minute (on_minute).
+## (T-0042) get the same step once per game minute (on_minute) while they perform an object
+## action; starting, walking and conversations step every step for them too (T-0074: at a
+## minute per transition, a two-minute chat took them several, and background towns talked a
+## quarter less).
 func step(sim: Sim) -> void:
 	for person: Person in sim.world.people.values():
-		if not person.background:
+		if not person.background or not _minute_paced(sim, person):
 			step_person(sim, person)
 
 
 func on_minute(sim: Sim) -> void:
 	for person: Person in sim.world.people.values():
-		if person.background:
+		if person.background and _minute_paced(sim, person):
 			step_person(sim, person)
+
+
+## True when a background person's front action can advance once a minute: an object action
+## being performed (nothing else happens to it in between). Empty queues count too.
+static func _minute_paced(sim: Sim, person: Person) -> bool:
+	if person.action_queue.is_empty():
+		return true
+	var action: Action = person.action_queue[0]
+	var def := sim.content.interaction(action.interaction_id)
+	return action.state == Action.PERFORMING and (def == null or def.target != "person")
 
 
 ## One step of `person`'s front action.
@@ -263,6 +276,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
 		if def.target == "place":
 			PlaceActions.finish(sim, person, action)
+		if def.launders:
+			Laundry.wash(person)
 		if not def.opens_screen.is_empty() and person.id == sim.world.player_id:
 			sim.emit_event(&"screen_requested", {"person_id": person.id, "screen": def.opens_screen})
 		if not def.teaches_clue.is_empty():

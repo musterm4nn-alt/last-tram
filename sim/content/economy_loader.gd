@@ -75,6 +75,14 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		economy.set(key, reader.read_int(housing, key, path + ": housing"))
 	if economy.evict_after_weeks < 1 or economy.move_in_weeks < 1 or economy.vacant_days < 1 or economy.move_in_hour < 0 or economy.move_in_hour > 23:
 		reader.error("%s: housing needs evict_after_weeks, move_in_weeks and vacant_days >= 1 and move_in_hour 0..23" % path)
+	var laundry := reader.read_obj(root, "laundry", path)
+	economy.dirt_per_hour = reader.read_num(laundry, "dirt_per_hour", path + ": laundry")
+	economy.work_dirt_per_hour = reader.read_num(laundry, "work_dirt_per_hour", path + ": laundry")
+	economy.dirty_at = reader.read_num(laundry, "dirty_at", path + ": laundry")
+	economy.dirty_hygiene_per_hour = reader.read_num(laundry, "hygiene_per_hour", path + ": laundry")
+	economy.laundry_errand_score = reader.read_num(laundry, "errand_score", path + ": laundry")
+	if economy.dirt_per_hour < 0.0 or economy.work_dirt_per_hour < 0.0 or economy.dirty_at <= 0.0 or economy.dirty_at > 100.0:
+		reader.error("%s: laundry needs dirt rates >= 0 and 0 < dirty_at <= 100" % path)
 	db.economy = economy
 
 
@@ -85,6 +93,7 @@ static func _read_work(reader: ContentReader, economy: EconomyDef, work: Diction
 	economy.look_ahead_hours = reader.read_int(work, "look_ahead_hours", ctx)
 	economy.lunch_after_minutes = reader.read_int(work, "lunch_after_minutes", ctx)
 	economy.lunch_hunger = reader.read_num(work, "lunch_hunger", ctx)
+	economy.lunch_fun = reader.read_num(work, "lunch_fun", ctx) if work.has("lunch_fun") else 0.0
 	if economy.leave_margin < 0 or economy.work_retry_minutes < 1 or economy.look_ahead_hours < 1:
 		reader.error("%s: leave_margin must be >= 0, retry_minutes and look_ahead_hours >= 1" % ctx)
 	if economy.lunch_after_minutes < 1 or economy.lunch_hunger < 0.0 or economy.lunch_hunger > 100.0:

@@ -21,6 +21,8 @@
 		{ "id": "evicted", "name": "Evicted", "value": -40, "duration_hours": 72 },
 		{ "id": "slept_rough", "name": "Slept rough", "value": -10, "duration_hours": 8 },
 		{ "id": "quiet_moment", "name": "A quiet moment", "value": 8, "duration_hours": 4 },
-		{ "id": "fresh_cut", "name": "Fresh haircut", "value": 6, "duration_hours": 24 }
+		{ "id": "fresh_cut", "name": "Fresh haircut", "value": 6, "duration_hours": 24 },
+		{ "id": "dirty_clothes", "name": "Dirty clothes", "value": -8, "duration_hours": 2 },
+		{ "id": "clean_laundry", "name": "Clean laundry", "value": 6, "duration_hours": 6 }
 	]
 }
