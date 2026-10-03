@@ -62,8 +62,8 @@ get a weekly pension instead of working.
   delivery van).
 - M3 venues in the Altstadt: Späti Kaya (snacks, beer, groceries), Imbiss Anadolu (Döner,
   fries), Café Wolke (coffee, with a barista from T-0065), Kneipe Zum Anker (drinks),
-  Waschsalon Blitz (laundry), a second-hand clothes shop and a barber (T-0073), and an ATM
-  on the Altmarkt.
+  Waschsalon Blitz (laundry, plus a second-hand rail and a barber chair since T-0073), and
+  an ATM on the Altmarkt.
 
 ## Groceries
 

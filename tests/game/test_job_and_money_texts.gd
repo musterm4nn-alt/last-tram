@@ -99,3 +99,13 @@ func test_housing_app_lines() -> void:
 	assert_eq(Hud.notice_for_event(refused, player.id, content(), sim), "Haus 12, ground floor: not enough money in the bank")
 	var someone_else := {"type": &"moved_in", "data": {"household_id": -5, "lot_id": lot.id}}
 	assert_eq(Hud.notice_for_event(someone_else, player.id, content(), sim), "")
+
+
+func test_shop_screen_texts() -> void:
+	assert_eq(ShopScreen.item_text(content().clothing_def("hoodie")), "Hoodie (outer) · €35.00")
+	assert_eq(ShopScreen.stepped(PackedStringArray(["a", "b", "c"]), "c", 1), "a", "wraps")
+	assert_eq(ShopScreen.stepped(PackedStringArray(["a", "b", "c"]), "a", -1), "c")
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	var bought := {"type": &"clothes_bought", "data": {"person_id": player.id, "item": "cap", "colour": "black", "price": 1500}}
+	assert_eq(Hud.notice_for_event(bought, player.id, content(), sim), "Bought: Cap (black), €15.00")

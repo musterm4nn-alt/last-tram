@@ -161,6 +161,12 @@ static func _command(command: Dictionary, s: SaveSchema) -> void:
 			pass
 		"rent_flat":
 			s.integer(command.get("lot_id"), path + ".lot_id")
+		"buy_clothes":
+			s.text(command.get("item"), path + ".item")
+			s.text(command.get("colour"), path + ".colour")
+		"change_hair":
+			s.text(command.get("style"), path + ".style")
+			s.text(command.get("colour"), path + ".colour")
 		"change_outfit":
 			s.dictionary(command.get("outfit"), path + ".outfit")
 			s.text(command.get("save_as", ""), path + ".save_as")

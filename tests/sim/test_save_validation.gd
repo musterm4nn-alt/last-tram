@@ -20,7 +20,7 @@ func test_every_required_root_field_is_validated_before_loading() -> void:
 		var missing := _save()
 		missing.erase(key)
 		_reject(missing, "missing " + key)
-		for value: Variant in [null, false, "bad", [], 17]:
+		for value: Variant in [null, false, "bad", [], -17]:  # -17: never valid (17 became a real save version)
 			if key == "pending_commands" and value is Array:
 				continue
 			var wrong := _save()
