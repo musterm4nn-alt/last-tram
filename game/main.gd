@@ -30,6 +30,9 @@ extends Node2D
 ##                       player's own, if their home has one)
 ##   --queue=DEF:ACTION,...  queue actions at the start, e.g. --queue=fridge:grab_snack,tv:watch_tv
 ##   --art=SET           draw with the art set data/art2d/SET.json (default: placeholders)
+##   --look-at=X,Y       command mode, camera centred on cell X,Y (for same-view screenshots)
+##   --hide-hud          hide the HUD: only the world is drawn
+##   --paused            start paused (no time passes while a screenshot waits)
 
 var _controller: PlayerController
 var _interaction_menu: InteractionMenu
@@ -244,6 +247,12 @@ func _start_quick() -> void:
 		_phone.open()
 		if _options.phone != "home":
 			_phone.show_app(_options.phone)
+	if _options.look_at != LaunchOptions.NO_CELL:
+		_camera.look_at_cell(_options.look_at)
+	if _options.hide_hud:
+		_hud.visible = false
+	if _options.paused:
+		Session.set_speed(0)
 	if _options.inspect:
 		var ids: Array = Session.sim.world.people.keys()
 		ids.sort()

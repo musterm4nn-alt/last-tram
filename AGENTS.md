@@ -42,6 +42,7 @@ Other docs, for when a ticket points you there: [vision](docs/vision.md) ·
 | `tools/check.sh` | Import + **all** tests + architecture lint. **Must pass before every commit** (the pre-commit hook runs it). |
 | `tools/test.sh --filter=<text>` | Only matching tests, while you work. After adding files, use `check.sh`. |
 | `tools/screenshot.sh out/<name>.png [--debug] [--zoom=N] [--walk=X,Y]` | Render the game to a PNG. Required for visible changes: **open the image and look at it**. |
+| `tools/art_shots.sh <set>` | The art gate's scene at noon and 22:00 from a fixed camera, drawn with one art set (`out/art/<set>/`). |
 | `tools/simrun.sh --days=1` | Run the sim headless and print a report. |
 | `tools/tickets.sh [ready\|todo\|review\|...]` | List tickets and their status. |
 | `tools/run.sh` | Start the game in a window. |

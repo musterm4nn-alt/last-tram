@@ -112,3 +112,16 @@ func test_gallery_options_parse() -> void:
 func test_art_option() -> void:
 	assert_eq(LaunchOptions.parse(PackedStringArray(["--art=kenney"])).art, "kenney")
 	assert_eq(LaunchOptions.parse(PackedStringArray([])).art, "", "placeholders by default")
+
+
+## T-0084
+func test_look_at_and_hide_hud() -> void:
+	var options := LaunchOptions.parse(PackedStringArray(["--look-at=40,26", "--hide-hud", "--paused"]))
+	assert_eq(options.look_at, Vector2i(40, 26))
+	assert_true(options.hide_hud)
+	assert_true(options.paused)
+	assert_true(options.skip_menu(), "--look-at starts straight into the game")
+	var plain := LaunchOptions.parse(PackedStringArray([]))
+	assert_eq(plain.look_at, LaunchOptions.NO_CELL)
+	assert_false(plain.hide_hud)
+	assert_false(plain.paused)
