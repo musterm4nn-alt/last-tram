@@ -89,6 +89,13 @@ static func career_notice(event: Dictionary, content: ContentDB) -> String:
 		&"skill_up":
 			var skill: SkillDef = content.skill(String(data.get("skill_id", ""))) if content != null else null
 			return "%s skill: level %d" % [skill.name if skill != null else "A", int(data.get("level", 0))]
+		&"clothes_bought":
+			var item: ClothingDef = content.clothing_def(String(data.get("item", ""))) if content != null else null
+			return "Bought: %s (%s), %s" % [item.name if item != null else "clothes", data.get("colour", ""), Money.format(int(data.get("price", 0)))]
+		&"clothes_refused":
+			return "Can't buy that: %s" % {"owned": "you have it already", "cant_afford": "not enough money", "not_at_shop": "go to the rail"}.get(String(data.get("reason", "")), "not for sale")
+		&"hair_changed":
+			return "New hair. Looking good."
 		&"outfit_refused":
 			return "Can't wear that: %s" % ("go to your wardrobe" if data.get("reason") == "not_at_wardrobe" else "you don't own it")
 		&"registered":

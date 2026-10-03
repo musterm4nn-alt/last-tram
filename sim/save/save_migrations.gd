@@ -54,11 +54,33 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = _v14_to_v15(d)
 			15:
 				d = _v15_to_v16(d)
+			16:
+				d = _v16_to_v17(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}
 		version += 1
 		d["save_version"] = version
+	return d
+
+
+## v17 (T-0073): Waschsalon Blitz gets a second-hand clothes rail and a barber chair (saves
+## with objects and none yet; ids from next_id).
+const V17_NEW: Array = [["clothes_rack", [32, 10, 0]], ["clothes_rack", [32, 12, 0]], ["barber_chair", [39, 11, 0]]]
+
+
+static func _v16_to_v17(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary or not d["world"].get("objects") is Array:
+		return d
+	var world: Dictionary = d["world"]
+	var objects: Array = world["objects"]
+	if objects.is_empty() or objects.any(func(obj: Variant) -> bool: return obj is Dictionary and obj.get("def_id") == "barber_chair"):
+		return d
+	var next := _int(world.get("next_id"), 1)
+	for entry: Array in V17_NEW:
+		objects.append({"id": next, "def_id": entry[0], "origin": entry[1], "rotation": 0})
+		next += 1
+	world["next_id"] = next
 	return d
 
 

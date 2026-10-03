@@ -1,5 +1,5 @@
 {
-	"_doc": "Buying at the shops (T-0056). Same format as basics.json; price is in euro cents, paid when it starts (T-0055). cash_out (the cash machine) moves that many cents from the bank to cash when it finishes. An empty advertise means free will never chooses it. adds_groceries: portions put in the buyer's home fridge (T-0057). staffed: sold only while someone works an on-site shift on the counter's place (T-0065).",
+	"_doc": "Buying at the shops (T-0056). Same format as basics.json; price is in euro cents, paid when it starts (T-0055). cash_out (the cash machine) moves that many cents from the bank to cash when it finishes. An empty advertise means free will never chooses it. adds_groceries: portions put in the buyer's home fridge (T-0057). Waschsalon Blitz (T-0073): browse_clothes opens the shop screen (buying is BuyClothesCommand, at the item's price); get_haircut is paid when it starts and opens the barber screen (ChangeHairCommand). staffed: sold only while someone works an on-site shift on the counter's place (T-0065).",
 	"interactions": [
 		{ "id": "buy_snack", "staffed": true, "name": "Buy a snack", "price": 200, "object_tags": ["spaeti_counter"], "duration_minutes": 5, "need_rates": {}, "finish_needs": { "hunger": 20 }, "advertise": { "hunger": 20 } },
 		{ "id": "grab_a_beer", "staffed": true, "name": "Have a Späti beer", "price": 150, "object_tags": ["spaeti_counter"], "duration_minutes": 10, "need_rates": {}, "finish_needs": { "fun": 10 }, "advertise": { "fun": 10 } },
@@ -7,6 +7,8 @@
 		{ "id": "eat_fries", "staffed": true, "name": "Eat fries", "price": 350, "object_tags": ["imbiss_counter"], "duration_minutes": 15, "need_rates": {}, "finish_needs": { "hunger": 35 }, "advertise": { "hunger": 35 } },
 		{ "id": "buy_groceries", "staffed": true, "name": "Buy groceries", "price": 900, "adds_groceries": 6, "object_tags": ["spaeti_counter"], "duration_minutes": 5, "need_rates": {}, "finish_needs": {}, "advertise": { "hunger": 30 } },
 		{ "id": "withdraw_20", "name": "Withdraw €20", "cash_out": 2000, "object_tags": ["atm"], "duration_minutes": 2, "need_rates": {}, "finish_needs": {}, "advertise": {} },
-		{ "id": "withdraw_50", "name": "Withdraw €50", "cash_out": 5000, "object_tags": ["atm"], "duration_minutes": 2, "need_rates": {}, "finish_needs": {}, "advertise": {} }
+		{ "id": "withdraw_50", "name": "Withdraw €50", "cash_out": 5000, "object_tags": ["atm"], "duration_minutes": 2, "need_rates": {}, "finish_needs": {}, "advertise": {} },
+		{ "id": "browse_clothes", "name": "Browse the clothes", "opens_screen": "clothes_shop", "object_tags": ["clothes_rack"], "duration_minutes": 5, "need_rates": { "fun": 10.0 }, "finish_needs": {}, "advertise": {} },
+		{ "id": "get_haircut", "name": "Get a haircut", "price": 1800, "finish_moodlet": "fresh_cut", "opens_screen": "barber", "object_tags": ["barber_chair"], "duration_minutes": 30, "need_rates": { "comfort": 6.0 }, "finish_needs": {}, "advertise": {} }
 	]
 }

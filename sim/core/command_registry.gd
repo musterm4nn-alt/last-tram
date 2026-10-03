@@ -34,6 +34,10 @@ static func create(type_id: String) -> Command:
 			return RentFlatCommand.new()
 		"change_outfit":
 			return ChangeOutfitCommand.new()
+		"buy_clothes":
+			return BuyClothesCommand.new()
+		"change_hair":
+			return ChangeHairCommand.new()
 	return null
 
 

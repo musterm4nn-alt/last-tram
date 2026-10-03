@@ -1485,6 +1485,33 @@
 				0
 			],
 			"rotation": 0
+		},
+		{
+			"def": "clothes_rack",
+			"cell": [
+				32,
+				10,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "clothes_rack",
+			"cell": [
+				32,
+				12,
+				0
+			],
+			"rotation": 0
+		},
+		{
+			"def": "barber_chair",
+			"cell": [
+				39,
+				11,
+				0
+			],
+			"rotation": 0
 		}
 	]
 }

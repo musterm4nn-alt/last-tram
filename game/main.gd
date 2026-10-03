@@ -39,6 +39,7 @@ var _town_map: TownMap
 var _phone: Phone
 var _scene_popup: ScenePopup
 var _wardrobe: WardrobeScreen
+var _shop: ShopScreen
 var _menu: MainMenu
 var _creator: CharacterCreator
 var _options: LaunchOptions
@@ -75,6 +76,8 @@ func _ready() -> void:
 	add_child(_scene_popup)
 	_wardrobe = WardrobeScreen.new()
 	add_child(_wardrobe)
+	_shop = ShopScreen.new()
+	add_child(_shop)
 	add_child(SkipOverlay.new())
 	# A popup is a Window: under a CanvasLayer it keeps its normal size (under this Node2D it
 	# would inherit the camera's zoom).
@@ -145,11 +148,12 @@ func _process(_delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _scene_popup.is_open:
 		return  # its button takes Enter and Space
-	if _wardrobe.is_open:
-		if event.is_action_pressed("menu"):
-			get_viewport().set_input_as_handled()
-			_wardrobe.close()
-		return
+	for screen: Variant in [_wardrobe, _shop]:
+		if screen.is_open:
+			if event.is_action_pressed("menu"):
+				get_viewport().set_input_as_handled()
+				screen.close()
+			return
 	if Session.skipping and event.is_action_pressed("menu"):
 		get_viewport().set_input_as_handled()
 		Session.stop_skipping()  # Esc ends a skip before it opens the menu (T-0078)
