@@ -136,7 +136,7 @@ backgrounds T-0075; M3 acceptance T-0076. After the October code reviews: harden
 **Status (3 October 2026):** every M3 ticket is built, T-0054 to T-0079. The 30-day check
 (`tools/simrun.sh --days=30 --check-m3`, T-0076) passes on seeds 1–3, and the suite has a
 test where the player is hired, paid, pays rent and is fired. **Signed off by the owner on
-3 October 2026** and tagged `m3`. Their own playtest of T-0076's checklist is still to come;
+3 October 2026** (tag `m3`). Their own playtest of T-0076's checklist is still to come;
 what it finds becomes tickets.
 
 ## ◆ Art direction gate ▶

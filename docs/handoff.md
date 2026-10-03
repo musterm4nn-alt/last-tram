@@ -43,7 +43,9 @@ What differs from the owner's Mac:
 ## Where things stand
 
 **Update, 3 October 2026 (end of the cloud session): M3 is done.** Every M3 ticket is built
-and merged (T-0054 to T-0079), the owner signed M3 off, and `main` is tagged `m3`. The
+and merged (T-0054 to T-0079) and the owner signed M3 off. **The `m3` tag still has to be
+pushed from the Mac** (the cloud session may not push tags): after `git pull --ff-only`,
+run `git tag -a m3 -m "M3 Making a Living: signed off by the owner" && git push origin m3`. The
 owner's own playtest of T-0076's checklist (Playbook stop `play-m3`) is still to come; turn
 what it finds into tickets. Next on the roadmap: the art direction gate. Save version 19; `tools/check.sh`
 runs 685 tests. `tools/simrun.sh --days=30 --check-m3` passes on seeds 1–3, and
