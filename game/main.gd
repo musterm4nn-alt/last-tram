@@ -29,6 +29,7 @@ extends Node2D
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind (the
 ##                       player's own, if their home has one)
 ##   --queue=DEF:ACTION,...  queue actions at the start, e.g. --queue=fridge:grab_snack,tv:watch_tv
+##   --art=SET           draw with the art set data/art2d/SET.json (default: placeholders)
 
 var _controller: PlayerController
 var _interaction_menu: InteractionMenu
@@ -96,6 +97,10 @@ func _ready() -> void:
 	Session.game_loaded.connect(_on_game_loaded)
 
 	_options = LaunchOptions.parse(OS.get_cmdline_user_args())
+	if not _options.art.is_empty():
+		WorldView2D.art = ArtSet.load_set(_options.art, Session.content)
+		for problem: String in WorldView2D.art.errors:
+			push_warning("Art set: %s" % problem)
 	if _options.zoom >= 0:
 		_camera.set_zoom_index(_options.zoom)
 	if not _options.screenshot_path.is_empty():
