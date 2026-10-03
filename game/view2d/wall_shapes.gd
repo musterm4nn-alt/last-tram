@@ -1,7 +1,8 @@
 class_name WallShapes
 extends RefCounted
 ## How each wall, window and door cell is drawn in the 3/4 view (T-0085). The wall along the
-## top of a room shows its FACE (the plaster, a window, a front door: the cell's tile); every
+## top of a room shows its FACE (the plaster, a window, a front door: the cell's tile), and so
+## do the corners and junctions at the ends of that wall; every
 ## other wall is a THIN line through its cell with ground beside it; a door in such a wall is
 ## a DOORWAY. Pure functions of the grid; the sim still treats walls as whole cells.
 
@@ -25,10 +26,16 @@ static func kind(grid: WorldGrid, cell: Vector3i) -> int:
 	var terrain := grid.terrain_def_at(cell)
 	if terrain.surface == "wall":
 		var south := cell + Vector3i(0, 1, 0)
-		if _indoor(grid, south) and not _is_door(grid, south):
+		if _faces_room(grid, cell):
 			return FACE
 		if not _near_indoor(grid, cell):
 			return THIN if _walled(grid, south) else FACE
+		# A corner or T-junction in a top wall carries the face on, and the wall below it
+		# starts under the face (the owner's playtest, 3 October: corners poked out).
+		if terrain.id == "wall" and _walled(grid, south):  # a window there stays in its side wall
+			for side: Vector3i in [Vector3i(1, 0, 0), Vector3i(-1, 0, 0)]:
+				if _faces_room(grid, cell + side):
+					return FACE
 		return THIN
 	if terrain.id == DOOR:
 		for side: Vector3i in [Vector3i(1, 0, 0), Vector3i(-1, 0, 0)]:
@@ -64,6 +71,14 @@ static func quadrant_ground(grid: WorldGrid, cell: Vector3i, quadrant: int) -> V
 		if grid.in_bounds(next) and not _walled(grid, next):
 			return next
 	return cell
+
+
+## True for a wall or window with a room right below it (not a door): it shows its face.
+static func _faces_room(grid: WorldGrid, cell: Vector3i) -> bool:
+	if not grid.in_bounds(cell) or grid.terrain_def_at(cell).surface != "wall":
+		return false
+	var south := cell + Vector3i(0, 1, 0)
+	return _indoor(grid, south) and not _is_door(grid, south)
 
 
 ## True for walls, windows and doors (the cells a wall line connects through).
