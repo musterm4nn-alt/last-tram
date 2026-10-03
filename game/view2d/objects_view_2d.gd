@@ -1,10 +1,13 @@
 class_name ObjectsView2D
 extends Node2D
 ## Holds one ObjectView2D per WorldObject. Rebuilds on load; follows sim events
-## afterwards. Added after WorldView2D and before PeopleView2D so objects draw
-## under people.
+## afterwards. Lives in the DepthLayer2D, y-sorted together with the people.
 
 var _views: Dictionary[int, ObjectView2D] = {}
+
+
+func _init() -> void:
+	y_sort_enabled = true
 
 
 func _ready() -> void:
@@ -39,5 +42,6 @@ func _add(object_id: int) -> void:
 		return
 	var view := ObjectView2D.new()
 	view.object_id = object_id
+	view.place()
 	add_child(view)
 	_views[object_id] = view

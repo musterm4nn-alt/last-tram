@@ -56,9 +56,8 @@ var _frames_seen: int = 0
 func _ready() -> void:
 	InputActions.register()
 	add_child(WorldView2D.new())
-	add_child(ObjectsView2D.new())
 	add_child(PathMarker2D.new())
-	add_child(PeopleView2D.new())
+	add_child(DepthLayer2D.new())
 	_camera = CameraRig2D.new()
 	add_child(_camera)
 	add_child(BubblesLayer.new())
