@@ -69,9 +69,9 @@ static func held(world: World) -> int:
 	return total
 
 
-## New games only: the player gets the content's player_start; everyone else, in ascending id
+## New games only: the player gets `cash` and `bank` (their background's); everyone else, in ascending id
 ## order, a random cash and then bank amount in whole euros from the "money" stream.
-static func give_start(sim: Sim) -> void:
+static func give_start(sim: Sim, cash: int, bank: int) -> void:
 	var economy := sim.content.economy
 	var rng := sim.rng.stream("money")
 	var ids: Array = sim.world.people.keys()
@@ -79,8 +79,8 @@ static func give_start(sim: Sim) -> void:
 	for id: int in ids:
 		var person: Person = sim.world.people[id]
 		if id == sim.world.player_id:
-			earn(sim, person, economy.player_start_cash, "start", CASH)
-			earn(sim, person, economy.player_start_bank, "start", BANK)
+			earn(sim, person, cash, "start", CASH)
+			earn(sim, person, bank, "start", BANK)
 		else:
 			give_resident_start(sim, person, rng)
 

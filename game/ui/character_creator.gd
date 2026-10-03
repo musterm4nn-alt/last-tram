@@ -14,8 +14,8 @@ const HINT: String = "Type a first and last name, or press Random name."
 const HINT_COLOR: Color = Color(1, 1, 1, 0.6)
 const ERROR_COLOR: Color = Color("#e06c6c")
 ## Tab ids in order, and their titles.
-const TABS: PackedStringArray = ["name", "identity", "body", "face", "clothes", "personality"]
-const TAB_TITLES: PackedStringArray = ["Name", "Identity", "Body", "Face & hair", "Clothes", "Personality"]
+const TABS: PackedStringArray = ["name", "identity", "body", "face", "clothes", "personality", "background"]
+const TAB_TITLES: PackedStringArray = ["Name", "Identity", "Body", "Face & hair", "Clothes", "Personality", "Background"]
 
 var model: CreatorModel
 
@@ -35,6 +35,7 @@ var _height: SpinBox
 var _feature_boxes: Dictionary[String, CheckBox] = {}
 var _clothes: CreatorClothesTab
 var _personality: CreatorPersonalityTab
+var _background: CreatorBackgroundTab
 ## Randomise buttons draw from this (seeded by --creator-seed, else random).
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _rng_seeded: bool = false
@@ -87,6 +88,11 @@ func _ready() -> void:
 	_tabs.add_child(_personality)
 	_personality.build(model)
 	_personality.changed.connect(_sync_from_model)
+	_background = CreatorBackgroundTab.new()
+	_background.name = "Background"
+	_tabs.add_child(_background)
+	_background.build(model)
+	_background.changed.connect(_sync_from_model)
 	# The Name tab's "Random name" button is its Randomise.
 	for index: int in range(1, TABS.size()):
 		_randomise_button(_tabs.get_child(index) as VBoxContainer, TABS[index])
@@ -275,6 +281,7 @@ func _sync_from_model() -> void:
 		_feature_boxes[id].set_pressed_no_signal(model.spec.appearance.features.has(id))
 	_clothes.sync(model)
 	_personality.sync(model)
+	_background.sync(model)
 	_refresh()
 
 

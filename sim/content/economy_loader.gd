@@ -8,12 +8,6 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	if not root is Dictionary:
 		return
 	var economy := EconomyDef.new()
-	var player := reader.read_obj(root, "player_start", path)
-	economy.player_start_cash = reader.read_int(player, "cash", path + ": player_start")
-	economy.player_start_bank = reader.read_int(player, "bank", path + ": player_start")
-	for amount: int in [economy.player_start_cash, economy.player_start_bank]:
-		if amount < 0:
-			reader.error("%s: player_start amounts must be >= 0" % path)
 	var residents := reader.read_obj(root, "resident_start", path)
 	economy.resident_cash = _range(reader, residents, "cash", path)
 	economy.resident_bank = _range(reader, residents, "bank", path)
@@ -35,7 +29,6 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		reader.error("%s: 'fridge_capacity' must be >= 1 and hold the starting groceries" % path)
 	if economy.restock_below < 0 or economy.restock_bonus < 0.0 or economy.hungry_below < 0.0:
 		reader.error("%s: restock_below, restock_bonus and hungry_below must be >= 0" % path)
-	economy.player_job = reader.read_str(root, "player_job", path) if root.has("player_job") else ""
 	economy.retirement_age = reader.read_int(root, "retirement_age", path)
 	if economy.retirement_age <= Person.MIN_AGE:
 		reader.error("%s: 'retirement_age' must be above %d" % [path, Person.MIN_AGE])

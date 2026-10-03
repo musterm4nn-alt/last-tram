@@ -36,6 +36,9 @@ var jobs: Dictionary[String, JobDef] = {}
 ## Skills by id, and their rules (data/skills.json, T-0071).
 var skills: Dictionary[String, SkillDef] = {}
 var skill_rules: SkillRules = SkillRules.new()
+## The player's possible backgrounds (T-0075), by id, and the one used without a choice.
+var backgrounds: Dictionary[String, BackgroundDef] = {}
+var default_background: String = ""
 ## The town's secrets (T-0067), by id.
 var discoveries: Dictionary[String, DiscoveryDef] = {}
 ## Money tuning (data/economy.json, D29).
@@ -99,6 +102,7 @@ func load_from(root: String) -> void:
 	WorldLoader.load(self, reader, root.path_join("world"))
 	JobLoader.load(self, reader, root.path_join("jobs.json"))
 	DiscoveryLoader.load(self, reader, root.path_join("discoveries"))
+	BackgroundLoader.load(self, reader, root.path_join("backgrounds.json"))
 	AppearanceLoader.load_default_player(self, reader, root.path_join("appearance").path_join("default_player.json"))
 	for problem: String in reader.errors:
 		errors.append(problem)
@@ -219,6 +223,10 @@ func job(id: String) -> JobDef:
 
 func skill(id: String) -> SkillDef:
 	return skills.get(id)
+
+
+func background(id: String) -> BackgroundDef:
+	return backgrounds.get(id)
 
 
 func discovery(id: String) -> DiscoveryDef:

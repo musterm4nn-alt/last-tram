@@ -25,6 +25,7 @@ func _sections(model: CreatorModel) -> Dictionary:
 		"face": "%s|%s|%s|%s|%s" % [look.hair_style, look.hair_colour, look.eye_colour, look.facial_hair, ",".join(look.features)],
 		"clothes": Ser.to_json(s.outfit.to_dict()),
 		"personality": Ser.to_json(s.personality.to_dict()),
+		"background": s.background,
 	}
 
 
@@ -179,6 +180,7 @@ func test_randomise_all_keeps_the_earlier_sections_as_before_personality() -> vo
 		model.randomise_all(rng)
 		var d := model.spec.to_dict()
 		d.erase("personality")
+		d.erase("background")  # added after the golden values too (T-0075); drawn last, so the rest is unchanged
 		assert_eq(JSON.stringify(d), RANDOMISE_ALL_GOLDEN[seed_value], "seed %d" % seed_value)
 
 
@@ -214,3 +216,10 @@ func test_wardrobe_model_offers_only_owned_clothes() -> void:
 	model.next_clothing("top")
 	assert_eq(model.clothing("top"), "t_shirt")
 	assert_eq(model.spec.outfit.get_item("top").colour, "black", "an owned colour")
+
+
+func test_the_background_line() -> void:
+	var line := CreatorBackgroundTab.line(content(), content().background("ex_con"))
+	assert_true(line.begins_with(content().background("ex_con").description), line)
+	assert_true(line.ends_with("€15.00 · no job"), line)
+	assert_true(CreatorBackgroundTab.line(content(), content().background("newcomer")).ends_with("€340.00 · Office clerk"))

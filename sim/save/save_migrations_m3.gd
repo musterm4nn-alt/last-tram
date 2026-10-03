@@ -4,6 +4,18 @@ extends RefCounted
 ## Never edit a step once it has been merged.
 
 
+## v19 (T-0075): the player came as a newcomer (the only start there was), nobody has a record.
+static func v18_to_v19(d: Dictionary) -> Dictionary:
+	if not d.get("world") is Dictionary:
+		return d
+	var world: Dictionary = d["world"]
+	for person: Variant in world.get("people", []):
+		if person is Dictionary:
+			person["origin"] = "newcomer" if person.get("id") == world.get("player_id") else ""
+			person["record"] = false
+	return d
+
+
 ## v18 (T-0074): clothes start clean, and the Waschsalon gets its four washing machines.
 static func v17_to_v18(d: Dictionary) -> Dictionary:
 	if not d.get("world") is Dictionary:

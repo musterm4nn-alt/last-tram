@@ -59,6 +59,8 @@ static func migrate(data: Dictionary, errors: Array[String] = []) -> Dictionary:
 				d = SaveMigrationsM3.v16_to_v17(d)
 			17:
 				d = SaveMigrationsM3.v17_to_v18(d)
+			18:
+				d = SaveMigrationsM3.v18_to_v19(d)
 			_:
 				errors.append("No migration from save v%d." % version)
 				return {}

@@ -11,7 +11,7 @@ const HEIGHT_MIN: int = 150
 const HEIGHT_MAX: int = 205
 ## Section ids, in tab order.
 ## "personality" is last, so Randomise everything draws the others as before it existed.
-const SECTIONS: PackedStringArray = ["name", "identity", "body", "face", "clothes", "personality"]
+const SECTIONS: PackedStringArray = ["name", "identity", "body", "face", "clothes", "personality", "background"]
 ## Fields stepped with next()/previous(), and the section each belongs to.
 const LIST_FIELDS: Dictionary = {
 	"gender": "identity", "pronouns": "identity",
@@ -220,6 +220,9 @@ func randomise(section: String, rng: RandomNumberGenerator) -> void:
 			spec.outfit = Outfit.random(_content, rng, true)
 		"personality":
 			spec.personality = Personality.random(rng)
+		"background":
+			var ids: Array = _content.backgrounds.keys()
+			spec.background = String(ids[rng.randi_range(0, ids.size() - 1)]) if not ids.is_empty() else ""
 
 
 ## Sets one personality axis (clamped to −100..100; unknown axes are ignored).

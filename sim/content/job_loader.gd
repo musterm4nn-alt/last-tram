@@ -53,9 +53,6 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			reader.error("%s: empty or duplicate job id" % ctx)
 			continue
 		db.jobs[job.id] = job
-	var player_job := db.economy.player_job
-	if not player_job.is_empty() and not db.jobs.has(player_job):
-		reader.error("economy.json: 'player_job' '%s' is not a job in %s" % [player_job, path])
 	check_staffed(db, reader)
 
 

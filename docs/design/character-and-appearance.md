@@ -82,8 +82,10 @@ romance, and police suspicion.
 
 ## Backgrounds (M3)
 
-Where your life starts. Each background sets starting money, skills, contacts and sometimes a
-record. Numbers live in data and get tuned later.
+Where your life starts. Each background sets starting money, a job (or none), skills, the
+neighbours who already know you, a feeling, and sometimes a record (`data/backgrounds.json`,
+T-0075; the Background tab in the creator). Newcomer is the default and is the old fixed
+start: €340, the office job.
 
 | Background | Start |
 |---|---|

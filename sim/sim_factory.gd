@@ -46,13 +46,15 @@ static func new_game(content: ContentDB, seed_value: int, spec: CharacterSpec = 
 	sim.world.households[household.id] = household
 	player.household_id = household.id
 	ResidentGenerator.populate(sim, skip)
-	Jobs.fill_at_start(sim)
+	var background := Backgrounds.of(content, spec.background if spec != null else "")
+	Jobs.fill_at_start(sim, background.job_id)
 	Discoveries.seed_clues(sim)
 	for person: Person in sim.world.people.values():
 		person.benefit_registered = person.id != sim.world.player_id  # the player registers on the phone
-	Money.give_start(sim)
+	Money.give_start(sim, background.cash, background.bank)
 	Groceries.give_start(sim)
 	Wardrobe.give_start(sim)
+	Backgrounds.apply(sim, player, background)
 	return sim
 
 
