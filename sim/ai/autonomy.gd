@@ -109,7 +109,8 @@ static func _unwalked(sim: Sim, person: Person) -> Array[Dictionary]:
 				"base": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
 					+ Routines.score_bonus(sim, person, def) - Utility.price_cost(person, def, sim.content)
 					+ (sim.content.economy.restock_bonus if def.adds_groceries > 0 else 0.0)
-					+ (sim.content.economy.cash_errand_score if def.cash_out > 0 and errand(sim, person, def) else 0.0),
+					+ (sim.content.economy.cash_errand_score if def.cash_out > 0 and errand(sim, person, def) else 0.0)
+					+ (sim.content.economy.laundry_errand_score if def.launders and errand(sim, person, def) else 0.0),
 			})
 	for other: Person in _nearby_people(sim, person):
 		var bound := 0 if Conversations.adjacent(person, other) else maxi(0, _chebyshev(here, other.cell()) - 1)
@@ -190,10 +191,12 @@ static func _nearby_people(sim: Sim, person: Person) -> Array[Person]:
 ## below restock_below, and food for sale (a price, advertises hunger) while hunger is below
 ## hungry_below and the home has fewer than 2 portions, and the ATM while the pocket holds
 ## less than pocket_money (T-0064 playtest: pockets ran empty; data/economy.json), and a bench
-## to sleep on for someone with no home (T-0066).
+## to sleep on for someone with no home (T-0066), and a wash for dirty clothes (T-0074).
 static func errand(sim: Sim, person: Person, def: InteractionDef) -> bool:
 	if def.homeless_only:
 		return person.home_lot_id <= 0
+	if def.launders:
+		return Laundry.dirty(sim, person)
 	if def.adds_groceries > 0:
 		return restock_needed(sim, person)
 	if def.cash_out > 0:

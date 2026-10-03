@@ -102,12 +102,14 @@ static func work_minute(sim: Sim, person: Person, action: Action) -> void:
 		have_lunch(sim, person)
 
 
-## Lunch at work (T-0077): no action of its own; hunger rises by lunch_hunger like a meal,
+## Lunch at work (T-0077): no action of its own; hunger rises by lunch_hunger like a meal
+## and fun by lunch_fun (a break, T-0074),
 ## and &"meal_eaten" {person_id, kind: "lunch"} goes out.
 static func have_lunch(sim: Sim, person: Person) -> void:
 	person.job.shift_lunch = true
 	var before := float(person.needs.get("hunger", 0.0))
 	person.needs["hunger"] = clampf(before + sim.content.economy.lunch_hunger, 0.0, 100.0)
+	person.needs["fun"] = clampf(float(person.needs.get("fun", 0.0)) + sim.content.economy.lunch_fun, 0.0, 100.0)
 	sim.emit_event(&"meal_eaten", {"person_id": person.id, "kind": "lunch"})
 
 

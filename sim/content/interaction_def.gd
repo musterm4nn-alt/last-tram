@@ -62,6 +62,8 @@ var places: PackedStringArray = PackedStringArray()
 var requires_discovery: String = ""
 ## Doing it teaches this discovery's clue (T-0068: notice boards and the like).
 var teaches_clue: String = ""
+## Washing (T-0074): when it finishes, all the person's clothes are clean (Laundry.wash).
+var launders: bool = false
 ## Only for people with no home (T-0066: sleeping rough); Requirements "has_home" otherwise.
 var homeless_only: bool = false
 ## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's

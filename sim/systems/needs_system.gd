@@ -1,7 +1,8 @@
 class_name NeedsSystem
 extends SimSystem
 ## Decays every person's needs once per game minute. Runs after MovementSystem.
-## Emits &"need_critical" once when a need crosses below its critical threshold.
+## Emits &"need_critical" once when a need crosses below its critical threshold. Clothes get
+## dirtier here too (Laundry, T-0074).
 
 
 func on_minute(sim: Sim) -> void:
@@ -12,3 +13,4 @@ func on_minute(sim: Sim) -> void:
 			person.needs[need_def.id] = after
 			if before >= need_def.critical_below and after < need_def.critical_below:
 				sim.emit_event(&"need_critical", {"person_id": person.id, "need": need_def.id})
+		Laundry.minute(sim, person)

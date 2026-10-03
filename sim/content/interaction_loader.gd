@@ -84,6 +84,8 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 		for key: String in ["requires_discovery", "teaches_clue"]:
 			if d.has(key):
 				def.set(key, reader.read_str(d, key, ctx))
+		if d.has("launders"):
+			def.launders = reader.read_bool(d, "launders", ctx)
 		if d.has("homeless_only"):
 			def.homeless_only = reader.read_bool(d, "homeless_only", ctx)
 		if d.has("work"):

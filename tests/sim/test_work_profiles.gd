@@ -46,12 +46,15 @@ func test_lunch_at_work_is_a_meal() -> void:
 	sim.run_minutes(lunch_after - 1)
 	assert_eq(_of(sim.events.drain(), &"meal_eaten", player.id).size(), 0, "not before lunchtime")
 	player.needs["hunger"] = 20.0
+	player.needs["fun"] = 20.0
 	sim.run_minutes(1)
 	var meals := _of(sim.events.drain(), &"meal_eaten", player.id)
 	assert_eq(meals.size(), 1)
 	if meals.size() == 1:
 		assert_eq(meals[0]["kind"], "lunch")
 	assert_near(float(player.needs["hunger"]), 20.0 + content().economy.lunch_hunger, 0.5, "fed like a meal")
+	assert_true(content().economy.lunch_fun > 0.0)
+	assert_near(float(player.needs["fun"]), 20.0 + content().economy.lunch_fun, 0.5, "and a break (T-0074)")
 	sim.run_minutes(8 * 60)
 	assert_eq(_of(sim.events.drain(), &"meal_eaten", player.id).size(), 0, "one lunch a shift")
 

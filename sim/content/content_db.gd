@@ -265,7 +265,7 @@ func free_will_objects() -> Dictionary[String, bool]:
 	if _free_will_objects.is_empty():
 		for def: ObjectDef in objects.values():
 			for candidate: InteractionDef in interactions.values():
-				if (not candidate.advertise.is_empty() or candidate.cash_out > 0) and Array(candidate.object_tags).any(func(tag: String) -> bool: return def.tags.has(tag)):
+				if (not candidate.advertise.is_empty() or candidate.cash_out > 0 or candidate.launders) and Array(candidate.object_tags).any(func(tag: String) -> bool: return def.tags.has(tag)):
 					_free_will_objects[def.id] = true
 					break
 	return _free_will_objects

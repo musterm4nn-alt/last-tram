@@ -64,6 +64,8 @@ var known_clues: PackedStringArray = PackedStringArray()
 ## Clothes the person owns (T-0072; Wardrobe keeps it sorted) and saved outfits by name.
 var wardrobe: Array[WornItem] = []
 var outfits: Dictionary[String, Outfit] = {}
+## How dirty each owned piece is, 0..100, by Laundry.key ("item:colour"; T-0074; missing = clean).
+var dirt: Dictionary[String, float] = {}
 ## Skill id -> XP (T-0071; Skills turns it into levels).
 var skills: Dictionary[String, float] = {}
 var discoveries: PackedStringArray = PackedStringArray()
@@ -153,6 +155,7 @@ func to_dict() -> Dictionary:
 		"scenes_requested": Array(scenes_requested),
 		"known_clues": Array(known_clues),
 		"skills": _skills_out(),
+		"dirt": _sorted(dirt),
 		"discoveries": Array(discoveries),
 		"relationships": _relationships_out(),
 		"memories": memories.map(func(m: Memory) -> Dictionary: return m.to_dict()),
@@ -183,11 +186,16 @@ func _outfits_out() -> Dictionary:
 
 ## Skills sorted by id (stable save text).
 func _skills_out() -> Dictionary:
-	var ids: Array = skills.keys()
+	return _sorted(skills)
+
+
+## A copy of `values` with its keys in order (stable save text).
+static func _sorted(values: Dictionary) -> Dictionary:
+	var ids: Array = values.keys()
 	ids.sort()
 	var out: Dictionary = {}
-	for id: String in ids:
-		out[id] = skills[id]
+	for id: Variant in ids:
+		out[id] = values[id]
 	return out
 
 
@@ -238,6 +246,10 @@ static func from_dict(d: Dictionary) -> Person:
 	p.background = bool(d.get("background", false))
 	for scene_id: Variant in d.get("scenes_requested", []):
 		p.scenes_requested.append(String(scene_id))
+	var dirt_data: Variant = d.get("dirt", {})
+	if dirt_data is Dictionary:
+		for piece: Variant in dirt_data:
+			p.dirt[String(piece)] = float(dirt_data[piece])
 	var skills_data: Variant = d.get("skills", {})
 	if skills_data is Dictionary:
 		for id: Variant in skills_data:
