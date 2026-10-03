@@ -58,6 +58,8 @@ func rebuild() -> void:
 					var coords := region.position / ViewConfig.TILE_PX
 					layer.set_cell(Vector2i(x, y), _source_for(tile_set, tile["texture"], coords), coords)
 		add_child(layer)
+		if not art.wang.is_empty():
+			layer.add_child(_wang_layer(grid, level, tile_set))
 		add_child(walls)
 		_layers[level] = layer
 		_wall_layers[level] = walls
@@ -71,6 +73,26 @@ func _process(_delta: float) -> void:
 	if Session.sim.world.grid.revision != _built_revision:
 		rebuild()
 	_update_visibility()
+
+
+## PixelLab test: corner tiles half a cell off the grid wherever four ground cells meet
+## that one terrain pair covers. Shown with its level's tile layer (a child of it).
+func _wang_layer(grid: WorldGrid, level: int, tile_set: TileSet) -> TileMapLayer:
+	var layer := TileMapLayer.new()
+	layer.name = "Wang%d" % level
+	layer.tile_set = tile_set
+	layer.position = -Vector2.ONE * ViewConfig.TILE_PX / 2.0
+	for y: int in range(1, grid.height):
+		for x: int in range(1, grid.width):
+			var corners: Array[String] = []
+			for cell: Vector2i in [Vector2i(x - 1, y - 1), Vector2i(x, y - 1), Vector2i(x - 1, y), Vector2i(x, y)]:
+				var at := Vector3i(cell.x, cell.y, level)
+				corners.append("" if WallShapes.kind(grid, at) != WallShapes.NONE else Session.content.terrain(grid.terrain_at(at)).id)
+			var tile := art.wang_tile(corners)
+			if not tile.is_empty():
+				var coords: Vector2i = (tile["region"] as Rect2i).position / ViewConfig.TILE_PX
+				layer.set_cell(Vector2i(x, y), _source_for(tile_set, tile["texture"], coords), coords)
+	return layer
 
 
 ## The tile drawn for a cell's ground: {"texture", "region"} from the art set or the

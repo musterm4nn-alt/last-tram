@@ -1,0 +1,106 @@
+{
+	"palette": {
+		"ink": "#1e1c22",
+		"shadow": "#2c2d31",
+		"asph0": "#36373c",
+		"asph1": "#414248",
+		"asph2": "#4b4c53",
+		"asph3": "#585a61",
+		"st0": "#6e6a66",
+		"st1": "#85807a",
+		"st2": "#9c968e",
+		"st3": "#b2aba1",
+		"st4": "#c7c0b4",
+		"cb0": "#554c46",
+		"cb1": "#73685f",
+		"cb2": "#867a6f",
+		"cb3": "#978a7d",
+		"cb4": "#ab9d8e",
+		"gr0": "#3e5429",
+		"gr1": "#4c6632",
+		"gr2": "#5d7a3e",
+		"gr3": "#728f4a",
+		"gr4": "#8aa65a",
+		"wd0": "#5e3f29",
+		"wd1": "#7d5536",
+		"wd2": "#966644",
+		"wd3": "#ab7b52",
+		"wd4": "#c29164",
+		"steel0": "#5a5e64"
+	},
+	"pairs": [
+		{
+			"raw": "cobbles_grass",
+			"lower": "cobblestone",
+			"upper": "grass",
+			"lower_ramp": [
+				"cb0",
+				"cb1",
+				"cb2",
+				"cb3",
+				"cb4"
+			],
+			"upper_ramp": [
+				"gr1",
+				"gr2",
+				"gr2",
+				"gr3",
+				"gr4"
+			],
+			"edge_ramp": [
+				"shadow",
+				"st0",
+				"st1"
+			]
+		},
+		{
+			"raw": "cobbles_pavement",
+			"lower": "cobblestone",
+			"upper": "sidewalk",
+			"lower_ramp": [
+				"cb0",
+				"cb1",
+				"cb2",
+				"cb3",
+				"cb4"
+			],
+			"upper_ramp": [
+				"st0",
+				"st1",
+				"st2",
+				"st2",
+				"st3"
+			],
+			"edge_ramp": [
+				"st0",
+				"st1",
+				"st2"
+			]
+		}
+	],
+	"resident": {
+		"walk_frames": 4,
+		"idle_frames": 4
+	},
+	"objects": [
+		{
+			"raw": "bench",
+			"size": [
+				32,
+				24
+			],
+			"main_ramp": [
+				"wd0",
+				"wd1",
+				"wd2",
+				"wd3",
+				"wd4"
+			],
+			"dark_ramp": [
+				"ink",
+				"shadow",
+				"steel0"
+			]
+		}
+	]
+}

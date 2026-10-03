@@ -21,4 +21,30 @@ func _draw() -> void:
 	var person := Session.sim.world.get_person(person_id)
 	if person == null:
 		return
+	if not WorldView2D.art.people.is_empty():
+		_draw_sprite(person, WorldView2D.art.people)
+		return
 	PersonDrawer2D.draw(self, Session.content, person.appearance, person.outfit, person.facing, float(ViewConfig.TILE_PX), person.id == Session.sim.world.player_id)
+
+
+## PixelLab test: every person drawn with the art set's one sprite sheet, walking while they
+## move and breathing while they stand.
+func _draw_sprite(person: Person, sheet: Dictionary) -> void:
+	var facing := person.facing
+	var row := 0
+	if absf(facing.x) > absf(facing.y):
+		row = 1 if facing.x > 0.0 else 3
+	elif facing.y < 0.0:
+		row = 2
+	var walk: int = sheet["walk"]
+	var ticks := Time.get_ticks_msec() + person.id * 97
+	var col := int(ticks / 150) % walk if person.pos != person.prev_pos else walk + int(ticks / 300) % int(sheet["idle"])
+	var frame: Vector2i = sheet["frame"]
+	var feet: Vector2i = sheet["feet"]
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.45))
+	draw_circle(Vector2.ZERO, 5.0, Color(0, 0, 0, 0.3))
+	draw_set_transform(Vector2.ZERO)
+	draw_texture_rect_region(sheet["texture"], Rect2(-Vector2(feet), Vector2(frame)), Rect2(Vector2(col, row) * Vector2(frame), Vector2(frame)))
+	if person.id == Session.sim.world.player_id:
+		var top := -float(feet.y) + 3.0
+		draw_colored_polygon(PackedVector2Array([Vector2(-2, top), Vector2(2, top), Vector2(0, top + 3)]), ViewConfig.PLAYER_MARKER_COLOR)

@@ -16,6 +16,13 @@ var errors: Array[String] = []
 var thin_walls: Dictionary = {}
 ## Optional roof tile (T-0086): {"sheet", "cell": Vector2i, "variants"} like a terrain.
 var _roof: Dictionary = {}
+## PixelLab test: corner (Wang) tiles per terrain pair, drawn half a cell off the grid.
+## Each {"lower": String, "upper": String, "texture": Texture2D, "tiles": {"NWNESWSE" -> Vector2i}},
+## a key's digit being 1 where that corner is the upper terrain.
+var wang: Array[Dictionary] = []
+## PixelLab test: one sprite sheet for every person, or {}: {"texture", "frame": Vector2i,
+## "feet": Vector2i, "walk": int, "idle": int}; rows south, east, north, west.
+var people: Dictionary = {}
 
 var _sheets: Dictionary[String, Texture2D] = {}
 ## terrain id -> {"sheet": String, "cell": Vector2i, "variants": int}
@@ -68,6 +75,24 @@ func object_sprite(def_id: String, rotation: int) -> Dictionary:
 	return {"texture": _sheets[entry["sheet"]], "region": region}
 
 
+## PixelLab test: the corner tile where four cells meet (terrain ids NW, NE, SW, SE):
+## {"texture", "region"}, or {} when no pair covers them.
+func wang_tile(corners: Array[String]) -> Dictionary:
+	for pair: Dictionary in wang:
+		var key := ""
+		for id: String in corners:
+			if id == pair["upper"]:
+				key += "1"
+			elif id == pair["lower"]:
+				key += "0"
+			else:
+				break
+		if key.length() == 4 and (pair["tiles"] as Dictionary).has(key):
+			var px := ViewConfig.TILE_PX
+			return {"texture": pair["texture"], "region": Rect2i(pair["tiles"][key] * px, Vector2i(px, px))}
+	return {}
+
+
 ## Which of `variants` tiles a map cell uses: a fixed hash, the same on every run.
 static func variant_index(cell: Vector2i, variants: int) -> int:
 	if variants <= 1:
@@ -107,6 +132,15 @@ func _read(data: Dictionary, content: ContentDB, reader: ContentReader, path: St
 				reader.error("%s: must be a colour like \"#aabbcc\"" % ctx)
 			else:
 				thin_walls[str(key)] = Color(colors[key])
+	for entry: Dictionary in data.get("wang", []):
+		var tiles: Dictionary = {}
+		for key: String in entry["tiles"]:
+			tiles[key] = Vector2i(int(entry["tiles"][key][0]), int(entry["tiles"][key][1]))
+		wang.append({"lower": entry["lower"], "upper": entry["upper"], "texture": _sheets[entry["sheet"]], "tiles": tiles})
+	if data.has("people"):
+		var p: Dictionary = data["people"]
+		people = {"texture": _sheets[p["sheet"]], "frame": Vector2i(int(p["frame"][0]), int(p["frame"][1])),
+				"feet": Vector2i(int(p["feet"][0]), int(p["feet"][1])), "walk": int(p["walk"]), "idle": int(p["idle"])}
 	if data.has("objects"):
 		var objects := reader.read_obj(data, "objects", path)
 		for def_id: Variant in objects:

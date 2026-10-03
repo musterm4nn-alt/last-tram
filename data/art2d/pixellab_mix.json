@@ -1,0 +1,265 @@
+{
+	"name": "Route B + PixelLab people and bench",
+	"sheets": {
+		"terrain": "res://art/export/custom/terrain.png",
+		"objects": "res://art/export/custom/objects.png",
+		"pl_people": "res://art/export/pixellab/resident.png",
+		"pl_objects": "res://art/export/pixellab/objects.png"
+	},
+	"terrain": {
+		"sidewalk": {
+			"sheet": "terrain",
+			"cell": [
+				0,
+				0
+			],
+			"variants": 3
+		},
+		"cobblestone": {
+			"sheet": "terrain",
+			"cell": [
+				3,
+				0
+			],
+			"variants": 3
+		},
+		"road": {
+			"sheet": "terrain",
+			"cell": [
+				6,
+				0
+			],
+			"variants": 5
+		},
+		"tram_track": {
+			"sheet": "terrain",
+			"cell": [
+				11,
+				0
+			],
+			"variants": 1
+		},
+		"crossing": {
+			"sheet": "terrain",
+			"cell": [
+				12,
+				0
+			],
+			"variants": 1
+		},
+		"grass": {
+			"sheet": "terrain",
+			"cell": [
+				13,
+				0
+			],
+			"variants": 3
+		},
+		"tree": {
+			"sheet": "terrain",
+			"cell": [
+				16,
+				0
+			],
+			"variants": 1
+		},
+		"fountain": {
+			"sheet": "terrain",
+			"cell": [
+				17,
+				0
+			],
+			"variants": 1
+		},
+		"wall": {
+			"sheet": "terrain",
+			"cell": [
+				18,
+				0
+			],
+			"variants": 4
+		},
+		"window": {
+			"sheet": "terrain",
+			"cell": [
+				22,
+				0
+			],
+			"variants": 1
+		},
+		"door": {
+			"sheet": "terrain",
+			"cell": [
+				23,
+				0
+			],
+			"variants": 1
+		},
+		"floor_wood": {
+			"sheet": "terrain",
+			"cell": [
+				24,
+				0
+			],
+			"variants": 2
+		},
+		"floor_tile": {
+			"sheet": "terrain",
+			"cell": [
+				26,
+				0
+			],
+			"variants": 1
+		}
+	},
+	"objects": {
+		"bench": {
+			"sheet": "pl_objects",
+			"rect": [
+				0,
+				0,
+				32,
+				24
+			]
+		},
+		"street_lamp": {
+			"sheet": "objects",
+			"rect": [
+				32,
+				0,
+				16,
+				48
+			]
+		},
+		"atm": {
+			"sheet": "objects",
+			"rect": [
+				48,
+				0,
+				16,
+				24
+			]
+		},
+		"notice_case": {
+			"sheet": "objects",
+			"rect": [
+				64,
+				0,
+				16,
+				24
+			]
+		},
+		"bed_double": {
+			"sheet": "objects",
+			"rect": [
+				80,
+				0,
+				32,
+				32
+			]
+		},
+		"sofa": {
+			"sheet": "objects",
+			"rect": [
+				112,
+				0,
+				32,
+				20
+			]
+		},
+		"wardrobe": {
+			"sheet": "objects",
+			"rect": [
+				144,
+				0,
+				16,
+				32
+			]
+		},
+		"fridge": {
+			"sheet": "objects",
+			"rect": [
+				160,
+				0,
+				16,
+				28
+			]
+		},
+		"stove": {
+			"sheet": "objects",
+			"rect": [
+				176,
+				0,
+				16,
+				16
+			]
+		},
+		"sink": {
+			"sheet": "objects",
+			"rect": [
+				192,
+				0,
+				16,
+				16
+			]
+		},
+		"kitchen_table": {
+			"sheet": "objects",
+			"rect": [
+				208,
+				0,
+				32,
+				16
+			]
+		},
+		"desk": {
+			"sheet": "objects",
+			"rect": [
+				240,
+				0,
+				16,
+				20
+			]
+		},
+		"tv": {
+			"sheet": "objects",
+			"rect": [
+				256,
+				0,
+				16,
+				20
+			]
+		},
+		"shower": {
+			"sheet": "objects",
+			"rect": [
+				272,
+				0,
+				16,
+				16
+			]
+		},
+		"tram_stop": {
+			"sheet": "objects",
+			"rect": [
+				288,
+				0,
+				96,
+				40
+			]
+		}
+	},
+	"people": {
+		"sheet": "pl_people",
+		"frame": [
+			44,
+			44
+		],
+		"feet": [
+			22,
+			38
+		],
+		"walk": 4,
+		"idle": 4
+	}
+}
