@@ -45,17 +45,32 @@ the owner has to add it themselves (`claude mcp add pixellab ... -H "Authorizati
 <token>"`; never handle the token). Check its terms (commercial use, ownership) before relying
 on it. T-0087 fixed the playtest's corners and the wheel-over-phone zoom.
 
-**PixelLab is connected** (the owner added it on 3 October; `claude mcp list` shows it
-healthy, but its tools load only in a new session). Its docs: https://api.pixellab.ai/mcp/docs
-(read them first).
+**PixelLab test done (3 October, local session), waiting for the owner.** Branch
+`art/pixellab-test` (route B + `main`, pushed, not for merging; notes in
+`art/src/pixellab/README.md`). PixelLab's terms: we own the output, commercial use is allowed,
+no attribution; the only limit is not training other models on it. The owner's account is a
+**trial: 40 generations, 21 used, one job at a time** (so an 8-frame walk in 4 directions is 4
+separate calls). What it gave:
+- **Resident:** standard mode, `size` 30, low top-down, 4 directions = a 12×31 px figure on a
+  44×44 canvas (feet at y 38), so it fits art.md's 16×32. (`size` 48 gave a 49 px figure: too
+  tall.) Template animations `walking-4-frames` and `breathing-idle`, 1 generation per
+  direction. It reads well in game; side-view passing frames are thin. No layering: one
+  sprite per look, so art.md's layered characters (appearance × outfit) would need a
+  generated sheet per look or `create_character_state`/`transfer_outfit` (untested).
+- **Ground tiles:** 16-px Wang tilesets (16 corner tiles, ~3 generations each), chained by base
+  tile ids so cobbles, grass and pavement share their pure tiles. The colours come out wrong
+  (lavender pavement, "asphalt" that looks like dark cobbles), so `build_pixellab.gd`
+  palette-locks them to route B by brightness. Shapes and kerbs are good; PixelLab's cobbles
+  are busier than B's. The view draws them half a cell off the grid (`WorldView2D._wang_layer`).
+- **Bench:** `create_map_object` style-matched to a crop of B's cobbles: a clean 30×21 bench,
+  orange until palette-locked to B's wood.
+- Art sets: `--art=pixellab` (all of it), `--art=pixellab_mix` (B's ground + PixelLab people
+  and bench). Comparison shown to the owner (B | mix | all, same camera):
+  `tools/screenshot.sh out/x.png --seed=1 --hide-hud --art=<set> --walk-to=36,31 --frames=420 --zoom=3`.
+- Opus's advice: B's hand-drawn ground stays; PixelLab for characters and their animations
+  (the biggest gap) and for objects, always palette-locked to B; Wang transitions only where
+  edges matter (grass beds, kerbs), generated after B's own tiles are final.
 
-0. **PixelLab test (next session, first):** (a) one resident as a 4-direction character with a
-   walk and an idle animation, at a size that fits art.md's 16×32 frames (or say what size it
-   gives and what that means); (b) a few blended ground tiles in route B's palette (pavement
-   to grass, cobbles to road) as a top-down tileset; (c) one object (a bench) matched to B's
-   style. Bring them into the game on a branch (`art/pixellab-test`) and show the owner a
-   screenshot beside route B. Characters need a view change (sprites instead of
-   `PersonDrawer2D`): only a throwaway test on that branch for now.
 1. **Settle the art plan**: B as the base, more detail, with or without PixelLab. Then:
    **D35** (D34 is taken) in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
    "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
