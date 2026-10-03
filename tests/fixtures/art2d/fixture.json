@@ -1,12 +1,74 @@
 {
 	"name": "Test fixture",
-	"sheets": { "test": "res://tests/fixtures/art2d/sheet.png" },
+	"sheets": {
+		"test": "res://tests/fixtures/art2d/sheet.png"
+	},
 	"terrain": {
-		"grass": { "sheet": "test", "cell": [0, 0], "variants": 3 },
-		"road": { "sheet": "test", "cell": [3, 0] }
+		"grass": {
+			"sheet": "test",
+			"cell": [
+				0,
+				0
+			],
+			"variants": 3
+		},
+		"road": {
+			"sheet": "test",
+			"cell": [
+				3,
+				0
+			]
+		}
 	},
 	"objects": {
-		"bench": { "sheet": "test", "rect": [0, 16, 16, 24] },
-		"bed_double": { "sheet": "test", "rects": [[16, 16, 32, 48], [48, 16, 48, 32], [96, 16, 32, 48], [128, 16, 48, 32]] }
+		"bench": {
+			"sheet": "test",
+			"rect": [
+				0,
+				16,
+				16,
+				24
+			]
+		},
+		"bed_double": {
+			"sheet": "test",
+			"rects": [
+				[
+					16,
+					16,
+					32,
+					48
+				],
+				[
+					48,
+					16,
+					48,
+					32
+				],
+				[
+					96,
+					16,
+					32,
+					48
+				],
+				[
+					128,
+					16,
+					48,
+					32
+				]
+			]
+		}
+	},
+	"thin_walls": {
+		"top": "#d8c3a5",
+		"edge": "#3a2e24"
+	},
+	"roof": {
+		"sheet": "test",
+		"cell": [
+			1,
+			0
+		]
 	}
 }

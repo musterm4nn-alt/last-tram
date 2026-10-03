@@ -17,6 +17,15 @@ Until the art gate (after M3) everything is a readable placeholder:
 Placeholder rules: every kind of thing must be distinguishable at zoom 2, colours stay in the
 muted palette below, and nothing in `sim/` depends on how anything looks.
 
+**Walls by direction** (T-0085, view only, `WallShapes`): the wall along the top of a room
+shows its face (the wall, window or door tile); side and bottom walls are thin lines with the
+ground beside them, windows there are strips of glass, doors there are doorways. So wall,
+window and door tiles are always drawn as faces.
+
+**Roofs** (T-0086, view only, `Interiors`): a building you're not in shows a roof (the art
+set's optional `"roof"` tile, else shingles in terracotta, slate or brown), its front walls
+as faces and its doors; the player's building is open. Draw roofs as a seamless 16-px tile.
+
 **Day and night** (T-0083, view only): `DayNight` tints the world by the clock (white by day,
 dusk at 19:30, blue night from 21:00 to 05:00) and `NightLights2D` adds one light whose
 texture is a light map: lit interiors in warm white, sodium-orange pools under the street

@@ -20,14 +20,50 @@ T-0080 art sets (`--art=<set>`, `data/art2d/README.md`), T-0081 depth sorting, T
 lamps, T-0083 day and night (`DayNight`, `NightLights2D`), T-0084 `tools/art_shots.sh <set>`
 (noon and 22:00 from a fixed camera into `out/art/<set>/`).
 
-1. Make the three routes, each as an art set **on its own branch** (`art/kenney`,
-   `art/custom`, `art/chatgpt`; never merged before the owner picks): sheets in
-   `art/export/<set>/`, sources in `art/src/`, `data/art2d/<set>.json`, credits in
-   `art/LICENSES.md`. Shoot each with `tools/art_shots.sh <set>`.
-2. Publish a side-by-side Artifact (each route at noon and 22:00) and ask the owner to pick;
-   also ask the roofs question (below). Then D34, `docs/art.md`, roadmap, vision.
-3. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
+**Update, later on 3 October:** the three routes are built and pushed, each on its own
+branch (not merged): `art/kenney` (built by `art/src/kenney/build_kenney.gd` from the CC0
+packs), `art/custom` (drawn by `art/src/custom/draw_custom.lua`, run through the Aseprite MCP:
+`ROOT = "<worktree>"; dofile(ROOT .. "/art/src/custom/draw_custom.lua")`), `art/chatgpt` (two
+concept sheets, prompts in `art/src/chatgpt/prompts.md`, cleaned by `clean_chatgpt.gd`). The
+comparison page is https://claude.ai/artifact/UA8ToL3km1mUUYmPAfk7A4 (Playbook stop
+`art-pick`, a "You" stop). Note: the ChatGPT Images app keeps images in its WebKit cache
+(`~/Library/Containers/local.xamxim.ChatGPTImages/Data/Library/Caches/WebKit/NetworkCache/Version 17/Blobs/`,
+the newest 1254×1254 PNG), not in Downloads; copies are in `~/Downloads/last-tram-art/`.
+
+**Then (same day):** the owner said B and C both have good parts, and asked for hidden
+interiors and thin walls instead of separate maps. Built and merged: T-0085 (walls drawn by
+direction, `WallShapes`, `WallLayer2D`) and T-0086 (roofs over closed buildings, the street
+dark inside in direct mode, `Interiors`), recorded as **D34**. That answers the roofs
+question. Playbook: `play-roofs` waits for the owner.
+
+**Owner's verdict on the routes (3 October):** "C is more detailed, but B fits better", so
+B as the base, raised towards C's detail. They also asked about the **PixelLab MCP**
+(pixellab.ai/mcp: characters in 4/8 directions with walk/idle animations, top-down Wang
+tilesets for terrain transitions, map objects with style matching, image generation with
+forced palettes). Opus suggested it for characters and animation, and for detail in B's palette;
+the owner has to add it themselves (`claude mcp add pixellab ... -H "Authorization: Bearer
+<token>"`; never handle the token). Check its terms (commercial use, ownership) before relying
+on it. T-0087 fixed the playtest's corners and the wheel-over-phone zoom.
+
+**PixelLab is connected** (the owner added it on 3 October; `claude mcp list` shows it
+healthy, but its tools load only in a new session). Its docs: https://api.pixellab.ai/mcp/docs
+(read them first).
+
+0. **PixelLab test (next session, first):** (a) one resident as a 4-direction character with a
+   walk and an idle animation, at a size that fits art.md's 16×32 frames (or say what size it
+   gives and what that means); (b) a few blended ground tiles in route B's palette (pavement
+   to grass, cobbles to road) as a top-down tileset; (c) one object (a bench) matched to B's
+   style. Bring them into the game on a branch (`art/pixellab-test`) and show the owner a
+   screenshot beside route B. Characters need a view change (sprites instead of
+   `PersonDrawer2D`): only a throwaway test on that branch for now.
+1. **Settle the art plan**: B as the base, more detail, with or without PixelLab. Then:
+   **D35** (D34 is taken) in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
+   "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
+   the others; plan art production alongside M4 (characters 16×32 next, art.md).
+2. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
    find into tickets first.
+3. `game/main.gd` is at 338 of 350 lines: move launch-option handling into its own class
+   before adding another option.
 
 ## The art direction gate (started 3 October)
 

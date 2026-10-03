@@ -2,7 +2,8 @@ class_name CameraRig2D
 extends Camera2D
 ## Direct mode: follows the player. Command mode (Session.command_mode): stays put and pans
 ## with WASD/arrows or by dragging with the right mouse button. Mouse wheel or +/- zooms
-## between ViewConfig.ZOOM_LEVELS. Camera limits keep the view inside the town.
+## between ViewConfig.ZOOM_LEVELS (the wheel only over the town, not over a panel). Camera
+## limits keep the view inside the town.
 
 var _zoom_index: int = ViewConfig.DEFAULT_ZOOM_INDEX
 
@@ -35,6 +36,8 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and wheel_over_ui(event as InputEventMouseButton, get_viewport().gui_get_hovered_control()):
+		return  # a list that can't scroll further hands the wheel on; it mustn't become zoom
 	if event.is_action_pressed("zoom_in"):
 		_zoom_index = mini(_zoom_index + 1, ViewConfig.ZOOM_LEVELS.size() - 1)
 		_apply_zoom()
@@ -46,6 +49,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		# Drag the town under the mouse.
 		var motion := event as InputEventMouseMotion
 		position = clamp_to_town(position - motion.relative / zoom.x, Session.sim.world.grid)
+
+
+## True for a mouse-wheel event while the mouse is over a panel (the phone, a list, a menu):
+## the wheel only zooms over the town itself, even when the panel has nothing left to scroll.
+static func wheel_over_ui(event: InputEventMouseButton, hovered: Control) -> bool:
+	var wheel := event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_LEFT, MOUSE_BUTTON_WHEEL_RIGHT]
+	return wheel and hovered != null
 
 
 ## Index into ViewConfig.ZOOM_LEVELS (clamped).

@@ -70,3 +70,24 @@ static func _disc(image: Image, cx: int, cy: int, radius: int, color: Color) -> 
 		for x: int in range(cx - radius, cx + radius + 1):
 			if Vector2(x - cx, y - cy).length() <= radius + 0.3:
 				image.set_pixel(x, y, color)
+
+
+## Placeholder roof colours: terracotta, slate and brown (RoofView2D picks one per building).
+const ROOF_COLORS: Array[Color] = [Color("#8a4a36"), Color("#4e535c"), Color("#6b4a3a")]
+
+
+## A strip of three 16-px roof tiles, one per ROOF_COLORS entry: staggered rows of shingles.
+static func build_roof_texture() -> ImageTexture:
+	var px := ViewConfig.TILE_PX
+	var image := Image.create_empty(px * ROOF_COLORS.size(), px, false, Image.FORMAT_RGBA8)
+	for i: int in ROOF_COLORS.size():
+		var base := ROOF_COLORS[i]
+		var x0 := i * px
+		image.fill_rect(Rect2i(x0, 0, px, px), base)
+		for row: int in range(0, px, 4):
+			image.fill_rect(Rect2i(x0, row, px, 1), base.lightened(0.12))
+			image.fill_rect(Rect2i(x0, row + 3, px, 1), base.darkened(0.28))
+			var offset := 0 if (row / 4) % 2 == 0 else 3
+			for x: int in range(offset, px, 6):
+				image.fill_rect(Rect2i(x0 + x, row, 1, 3), base.darkened(0.2))
+	return ImageTexture.create_from_image(image)

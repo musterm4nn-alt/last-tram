@@ -12,6 +12,10 @@ var id: String = ""
 var name: String = ""
 ## Problems found while loading. The entries they concern were dropped.
 var errors: Array[String] = []
+## Optional colours of thin walls (T-0085): any of "top", "edge", "face", "glass".
+var thin_walls: Dictionary = {}
+## Optional roof tile (T-0086): {"sheet", "cell": Vector2i, "variants"} like a terrain.
+var _roof: Dictionary = {}
 
 var _sheets: Dictionary[String, Texture2D] = {}
 ## terrain id -> {"sheet": String, "cell": Vector2i, "variants": int}
@@ -43,6 +47,15 @@ func terrain_tile(terrain_id: String, cell: Vector2i) -> Dictionary:
 	var px := ViewConfig.TILE_PX
 	var tile: Vector2i = entry["cell"] + Vector2i(variant_index(cell, int(entry["variants"])), 0)
 	return {"texture": _sheets[entry["sheet"]], "region": Rect2i(tile * px, Vector2i(px, px))}
+
+
+## The roof tile at a map cell: {"texture", "region"}, or {} (then the view draws shingles).
+func roof_tile(cell: Vector2i) -> Dictionary:
+	if _roof.is_empty():
+		return {}
+	var px := ViewConfig.TILE_PX
+	var tile: Vector2i = _roof["cell"] + Vector2i(variant_index(cell, int(_roof["variants"])), 0)
+	return {"texture": _sheets[_roof["sheet"]], "region": Rect2i(tile * px, Vector2i(px, px))}
 
 
 ## The sprite for an object def at a rotation (0-3): {"texture": Texture2D, "region": Rect2i}, or {}.
@@ -82,6 +95,18 @@ func _read(data: Dictionary, content: ContentDB, reader: ContentReader, path: St
 		var terrain := reader.read_obj(data, "terrain", path)
 		for terrain_id: Variant in terrain:
 			_read_terrain(str(terrain_id), terrain[terrain_id], content, reader, path)
+	if data.has("roof"):
+		_read_terrain("roof", data["roof"], content, reader, path)
+	if data.has("thin_walls"):
+		var colors := reader.read_obj(data, "thin_walls", path)
+		for key: Variant in colors:
+			var ctx := "%s: thin_walls '%s'" % [path, key]
+			if not str(key) in ["top", "edge", "face", "glass"]:
+				reader.error("%s: unknown colour (use top, edge, face, glass)" % ctx)
+			elif not colors[key] is String or not Color.html_is_valid(colors[key]):
+				reader.error("%s: must be a colour like \"#aabbcc\"" % ctx)
+			else:
+				thin_walls[str(key)] = Color(colors[key])
 	if data.has("objects"):
 		var objects := reader.read_obj(data, "objects", path)
 		for def_id: Variant in objects:
@@ -90,7 +115,7 @@ func _read(data: Dictionary, content: ContentDB, reader: ContentReader, path: St
 
 func _read_terrain(terrain_id: String, value: Variant, content: ContentDB, reader: ContentReader, path: String) -> void:
 	var ctx := "%s: terrain '%s'" % [path, terrain_id]
-	if content.terrain_index(terrain_id) < 0:
+	if terrain_id != "roof" and content.terrain_index(terrain_id) < 0:
 		reader.error("%s: no such terrain" % ctx)
 		return
 	if not value is Dictionary:
@@ -110,7 +135,11 @@ func _read_terrain(terrain_id: String, value: Variant, content: ContentDB, reade
 	if not _inside(region, texture):
 		reader.error("%s: cell %s (with %d variants) is outside the sheet" % [ctx, cell, variants])
 		return
-	_terrain[terrain_id] = {"sheet": d["sheet"], "cell": Vector2i(cell[0], cell[1]), "variants": variants}
+	var entry := {"sheet": d["sheet"], "cell": Vector2i(cell[0], cell[1]), "variants": variants}
+	if terrain_id == "roof":
+		_roof = entry
+	else:
+		_terrain[terrain_id] = entry
 
 
 func _read_object(def_id: String, value: Variant, content: ContentDB, reader: ContentReader, path: String) -> void:
