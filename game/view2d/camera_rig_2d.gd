@@ -54,6 +54,21 @@ func set_zoom_index(index: int) -> void:
 	_apply_zoom()
 
 
+## Command mode on, and the camera centred on `cell` (clamped to the town), e.g. to shoot the
+## same view in every art set (--look-at).
+func look_at_cell(cell: Vector2i) -> void:
+	if Session.sim == null:
+		return
+	Session.set_command_mode(true)
+	position = cell_centre(cell, Session.sim.world.grid)
+	reset_smoothing()
+
+
+## The pixel centre of `cell`, clamped to the town.
+static func cell_centre(cell: Vector2i, grid: WorldGrid) -> Vector2:
+	return clamp_to_town((Vector2(cell) + Vector2(0.5, 0.5)) * ViewConfig.TILE_PX, grid)
+
+
 ## `pos` clamped to the town in pixels: x in 0..grid.width*TILE_PX, y in 0..grid.height*TILE_PX.
 static func clamp_to_town(pos: Vector2, grid: WorldGrid) -> Vector2:
 	return Vector2(

@@ -122,3 +122,19 @@ func test_notice_for_the_players_failed_walk_only() -> void:
 	assert_eq(Hud.notice_for_event(failed, 6), "", "someone else's failed walk")
 	var other := {"type": &"path_blocked", "tick": 0, "data": {"person_id": 5}}
 	assert_eq(Hud.notice_for_event(other, 5), "")
+
+
+## T-0084
+func test_look_at_cell() -> void:
+	var sim := SimFactory.from_rows(content(), ROOM)
+	Session.content = sim.content
+	Session.sim = sim
+	Session.command_mode = false
+	var grid := sim.world.grid
+	assert_vec_near(CameraRig2D.cell_centre(Vector2i(3, 2), grid), Vector2(3.5, 2.5) * ViewConfig.TILE_PX)
+	assert_vec_near(CameraRig2D.cell_centre(Vector2i(40, -9), grid), Vector2(grid.width * ViewConfig.TILE_PX, 0), 0.0001, "clamped to the town")
+	var camera := CameraRig2D.new()
+	camera.look_at_cell(Vector2i(6, 3))
+	assert_true(Session.command_mode, "command mode, so the camera stays put")
+	assert_vec_near(camera.position, Vector2(6.5, 3.5) * ViewConfig.TILE_PX)
+	camera.free()

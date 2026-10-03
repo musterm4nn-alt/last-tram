@@ -45,6 +45,12 @@ var level: int = NO_LEVEL
 var walk_to: Vector2i = NO_CELL
 ## Open the interaction menu on the first object with this def id (--interact=fridge).
 var interact: String = ""
+## Centre the camera on this cell in command mode after the quick start (--look-at=X,Y).
+var look_at: Vector2i = NO_CELL
+## Hide the HUD, so only the world is drawn (--hide-hud).
+var hide_hud: bool = false
+## Start paused, so no time passes while a screenshot waits for its frames (--paused).
+var paused: bool = false
 ## Art set to draw with (--art=kenney loads data/art2d/kenney.json); "" = the placeholders.
 var art: String = ""
 ## Actions to queue at the start (--queue=fridge:grab_snack,tv:watch_tv): [def_id, interaction_id].
@@ -112,6 +118,13 @@ static func parse(args: PackedStringArray) -> LaunchOptions:
 				out.interact = value
 			"art":
 				out.art = value
+			"look-at":
+				var look := _parse_walk(value)
+				out.look_at = Vector2i(int(look.x), int(look.y))
+			"hide-hud":
+				out.hide_hud = true
+			"paused":
+				out.paused = true
 			"queue":
 				for pair: String in value.split(",", false):
 					var parts := pair.split(":")
@@ -126,7 +139,7 @@ func skip_menu() -> bool:
 		return false
 	return quickstart or not screenshot_path.is_empty() or not load_path.is_empty() or advance_minutes > 0 \
 			or walk != Vector2.ZERO or random_character or seed_given or command_mode or walk_to != NO_CELL \
-			or not interact.is_empty() or not queue.is_empty()
+			or not interact.is_empty() or not queue.is_empty() or look_at != NO_CELL
 
 
 static func _parse_walk(value: String) -> Vector2:
