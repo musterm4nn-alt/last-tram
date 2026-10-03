@@ -11,7 +11,8 @@ func _process(_delta: float) -> void:
 	var person := Session.sim.world.get_person(person_id)
 	if person == null:
 		return
-	visible = person.level == Session.viewed_level and not Jobs.hidden(Session.sim, person)
+	visible = person.level == Session.viewed_level and not Jobs.hidden(Session.sim, person) \
+			and not Interiors.current.hidden(person.cell())
 	position = person.prev_pos.lerp(person.pos, Session.alpha) * ViewConfig.TILE_PX
 	queue_redraw()
 

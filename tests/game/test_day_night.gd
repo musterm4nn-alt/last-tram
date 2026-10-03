@@ -64,6 +64,18 @@ func test_light_map() -> void:
 	assert_eq(_at(by_day, Vector2i(5, 1)), Color.BLACK, "no lit windows by day (the window is at (4, 1))")
 
 
+## T-0086
+func test_light_map_lights_only_open_rooms() -> void:
+	var sim := SimFactory.from_rows(content(), ROWS)
+	var interiors := Interiors.build(sim.world.grid)
+	var none: Array[Vector2i] = []
+	var closed := DayNight.light_map(sim.world.grid, 0, none, 21 * 60, interiors)
+	assert_eq(_at(closed, Vector2i(2, 1)), Color.BLACK, "a closed building's roof stays dark")
+	interiors.revealed = interiors.reveal_for(Vector3i(2, 2, 0), 0)
+	var open := DayNight.light_map(sim.world.grid, 0, none, 21 * 60, interiors)
+	assert_true(_at(open, Vector2i(2, 1)).r > 0.5, "an open room is lit")
+
+
 func test_lamp_cells_reads_street_lamps() -> void:
 	var sim := SimFactory.new_game(content(), 1)
 	var cells := NightLights2D.lamp_cells(sim.world, 0)

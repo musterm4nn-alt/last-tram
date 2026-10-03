@@ -79,7 +79,7 @@ func _process(_delta: float) -> void:
 		visible = false
 		return
 	var obj: WorldObject = Session.sim.world.get_object(object_id)
-	visible = obj != null and obj.origin.z == Session.viewed_level
+	visible = obj != null and obj.origin.z == Session.viewed_level and not Interiors.current.hidden(obj.origin)
 	if show_slots != _last_show_slots:
 		_last_show_slots = show_slots
 		queue_redraw()

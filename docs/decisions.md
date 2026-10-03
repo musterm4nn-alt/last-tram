@@ -289,3 +289,16 @@ any town talks 9 or more times a week (was 0–3 in four runs, two failing) and 
 the towns' median counts moves from about 110 to 115. Rejected: small talk with every server
 (T-0065; every purchase would count as a conversation), and changing the rule. Calls still
 help a lonely evening; they just don't replace the town.
+
+**D34 · Interiors hidden from outside, walls drawn by direction: in the view only (T-0085,
+T-0086).** The owner disliked the full-tile walls and the front-facing windows in side walls,
+and asked whether being outside could mean not seeing inside, with a door leading to a
+separate map (3 October). Chosen: the town stays one map (D4's open interiors stay true for
+the sim). The view draws the top wall of a room as a face and every other wall as a thin line
+(`WallShapes`); a building you're not in shows a roof, its front and its doors
+(`Interiors`, `RoofView2D`), and the people and objects inside are invisible and can't be
+clicked; inside, in direct mode, the street goes dark (`InteriorDim2D`). Command mode keeps the
+street visible (it's for watching the town) but other buildings stay closed. Rejected for
+now: real separate maps (interiors bigger than their outline, but a big change to the world
+format, routing, saves and every building); walls between cells as in The Sims (rooms a cell
+larger, but the same size of change). Either can still come later; nothing here is in the way.

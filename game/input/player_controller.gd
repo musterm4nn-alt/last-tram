@@ -77,6 +77,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		var cell := ViewConfig.cell_at(world_px)
 		var someone := person_at(Session.sim, world_px / ViewConfig.TILE_PX, Session.viewed_level, player.id)
 		var here := Session.sim.world.objects_at(Vector3i(cell.x, cell.y, Session.viewed_level))
+		if Interiors.current.hidden(Vector3i(cell.x, cell.y, Session.viewed_level)):
+			here = []  # behind a roof (T-0086)
 		if inspector != null:
 			inspector.show_person(someone)
 		if someone > 0 and menu != null:
@@ -132,11 +134,13 @@ static func stairs_command(sim: Sim, player: Person, delta: int) -> WalkToComman
 
 ## The person whose figure covers `point` (in cells) on `level`, other than `except_id`, or 0.
 ## A figure covers PERSON_HALF_WIDTH to each side of the feet and PERSON_HEIGHT above them.
+## People inside a closed building can't be clicked (T-0086).
 static func person_at(sim: Sim, point: Vector2, level: int, except_id: int) -> int:
 	var best := 0
 	var best_distance := INF
 	for person: Person in sim.world.people.values():
-		if person.id == except_id or person.level != level or Jobs.hidden(sim, person):
+		if person.id == except_id or person.level != level or Jobs.hidden(sim, person) \
+				or Interiors.current.hidden(person.cell()):
 			continue
 		var offset := point - person.pos
 		if absf(offset.x) > PERSON_HALF_WIDTH or offset.y > 0.2 or offset.y < -PERSON_HEIGHT:

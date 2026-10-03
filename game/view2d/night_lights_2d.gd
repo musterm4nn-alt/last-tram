@@ -11,7 +11,7 @@ const LAMP_TAG: String = "street_lamp"
 
 var _tint: CanvasModulate
 var _light: PointLight2D
-## What the current map was built from (level, grid revision, window share, game).
+## What the current map was built from (level, grid revision, window share, game, open buildings).
 var _built_key: Array = []
 var _game: int = 0
 
@@ -42,10 +42,10 @@ func _process(_delta: float) -> void:
 	if not _light.visible:
 		return
 	var grid := Session.sim.world.grid
-	var key: Array = [Session.viewed_level, grid.revision, DayNight.window_share(minute), _game]
+	var key: Array = [Session.viewed_level, grid.revision, DayNight.window_share(minute), _game, Interiors.current.revealed]
 	if key != _built_key:
 		_built_key = key
-		var image := DayNight.light_map(grid, Session.viewed_level, lamp_cells(Session.sim.world, Session.viewed_level), minute)
+		var image := DayNight.light_map(grid, Session.viewed_level, lamp_cells(Session.sim.world, Session.viewed_level), minute, Interiors.current)
 		_light.texture = ImageTexture.create_from_image(image)
 		_light.position = Vector2(grid.width, grid.height) * ViewConfig.TILE_PX / 2.0
 
