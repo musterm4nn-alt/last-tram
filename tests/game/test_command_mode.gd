@@ -158,3 +158,17 @@ func test_hidden_people_cannot_be_clicked() -> void:
 	Interiors.current.revealed = Interiors.current.reveal_for(Vector3i(3, 2, 0), 0)
 	assert_eq(PlayerController.person_at(sim, point, 0, -1), someone.id, "once it's open")
 	Interiors.current = old
+
+
+## The owner's playtest (3 October): scrolling the phone past its end zoomed the town.
+func test_wheel_over_a_panel_does_not_zoom() -> void:
+	var wheel := InputEventMouseButton.new()
+	wheel.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	wheel.pressed = true
+	var panel := ScrollContainer.new()
+	assert_true(CameraRig2D.wheel_over_ui(wheel, panel), "over the phone's list")
+	assert_false(CameraRig2D.wheel_over_ui(wheel, null), "over the town")
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	assert_false(CameraRig2D.wheel_over_ui(click, panel), "only the wheel")
+	panel.free()
