@@ -71,12 +71,26 @@ separate calls). What it gave:
   (the biggest gap) and for objects, always palette-locked to B; Wang transitions only where
   edges matter (grass beds, kerbs), generated after B's own tiles are final.
 
-1. **Settle the art plan**: B as the base, more detail, with or without PixelLab. Then:
-   **D35** (D34 is taken) in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
-   "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
-   the others; plan art production alongside M4 (characters 16×32 next, art.md).
-2. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
-   find into tickets first.
+**The owner's pick (3 October): B + PixelLab** (the middle picture: B's ground, PixelLab
+people and objects). Done: **D35**, `docs/art.md` ("The chosen look"), the roadmap (gate ✅),
+the vision ("Look"); **T-0088** merged route B and made it the default (`--art=placeholder`
+for the placeholders). Branches: `art/kenney` and `art/chatgpt` deleted (kept as tags
+`archive/art-kenney`, `archive/art-chatgpt`), `art/custom` merged and deleted,
+`art/pixellab-test` kept (PixelLab sources and the palette-lock script). Playbook:
+`pixellab-test` ticked, T-0088 stops added, `play-style-b` (You) and the plan stop
+`pixellab-characters` added; `art-pick` is the owner's to tick.
+
+1. **Plan the characters with PixelLab** (Playbook `pixellab-characters`). The open question:
+   residents vary (skin, hair, build, clothes: `data/appearance/`, `data/clothing/`), but
+   PixelLab draws one fixed look per character. Try `create_character_state` and
+   `transfer_outfit` (and v3 with a reference image) on the test resident with the trial's
+   **19 generations left** (one job at a time); decide between layered sheets (art.md) and a
+   pool of generated residents; record it (D36), update art.md, then write tickets for real
+   character sprites alongside M4 (the view's `PersonView2D._draw_sprite` on the test branch
+   is the starting point; `PersonDrawer2D` stays the fallback). Ask the owner before buying
+   PixelLab credits.
+2. The owner's M3 playtest (`play-m3`), `play-night`, `play-roofs` and `play-style-b` are
+   still to come: turn what they find into tickets first.
 3. `game/main.gd` is at 338 of 350 lines: move launch-option handling into its own class
    before adding another option.
 
