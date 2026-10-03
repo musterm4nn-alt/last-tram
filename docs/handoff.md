@@ -9,18 +9,25 @@ started. For the next Claude Code session (the architect and builder, Opus), whi
 
 ## Start here (next local session)
 
-1. **Update `main`:** `git -C /Users/xamxim/last-tram pull --ff-only`, then bring the session
-   worktree up to date with `main`.
-2. **Push the `m3` tag.** The cloud session may not push tags, so it isn't on GitHub yet. Tag
-   the sign-off commit `f62dd21` ("M3 signed off by the owner"), the way `m2` was tagged:
-   `git -C /Users/xamxim/last-tram tag -a m3 f62dd21 -m "M3 Making a Living: signed off by the owner (3 October 2026)"`,
-   then `git -C /Users/xamxim/last-tram push origin m3`.
-3. **Ask the owner about their M3 playtest** (Playbook stop `play-m3`, T-0076's checklist).
-   They approved M3 before playing it. Anything they report comes before the art work: turn it
-   into tickets or fix it (`/bug`).
-4. **Carry on with the art gate:** "The art direction gate" below. The owner said "go" on
-   3 October; nothing has been built for it yet, and the plan below is a proposal they haven't
-   seen.
+**Update, 3 October (local session):** steps 1–3 of the old list are done (`main` pulled; the
+`m3` tag was already on GitHub, on `57917c9`, the handoff commit right after the sign-off;
+the owner hasn't played M3 yet and said "go on with art"). The owner approved the art plan
+below and picked **three routes: Kenney (free packs), drawn by Opus in Aseprite, and ChatGPT
+Images cleaned up**. They allowed downloading `kenney_rpg-urban-pack.zip`,
+`kenney_roguelike-modern-city.zip` and `kenney_roguelike-indoors.zip` from kenney.nl, and
+Opus driving their ChatGPT Images app (about 4–8 images). The groundwork is merged:
+T-0080 art sets (`--art=<set>`, `data/art2d/README.md`), T-0081 depth sorting, T-0082 street
+lamps, T-0083 day and night (`DayNight`, `NightLights2D`), T-0084 `tools/art_shots.sh <set>`
+(noon and 22:00 from a fixed camera into `out/art/<set>/`).
+
+1. Make the three routes, each as an art set **on its own branch** (`art/kenney`,
+   `art/custom`, `art/chatgpt`; never merged before the owner picks): sheets in
+   `art/export/<set>/`, sources in `art/src/`, `data/art2d/<set>.json`, credits in
+   `art/LICENSES.md`. Shoot each with `tools/art_shots.sh <set>`.
+2. Publish a side-by-side Artifact (each route at noon and 22:00) and ask the owner to pick;
+   also ask the roofs question (below). Then D34, `docs/art.md`, roadmap, vision.
+3. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
+   find into tickets first.
 
 ## The art direction gate (started 3 October)
 
