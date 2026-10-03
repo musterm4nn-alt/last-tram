@@ -133,9 +133,10 @@ T-0070; skills T-0071; wardrobe T-0072, clothes shop and barber T-0073, laundry 
 backgrounds T-0075; M3 acceptance T-0076. After the October code reviews: hardening T-0077
 (before T-0065) and robustness and performance T-0078 (before T-0076).
 
-**Status (2 October 2026):** T-0054 to T-0064 are built (money, prices, shops, groceries, jobs,
-going to work, pay and careers, rent and benefit, the phone, applying), plus two rounds of
-fixes from agent playtests. Next: T-0077.
+**Status (3 October 2026):** every M3 ticket is built, T-0054 to T-0079. The 30-day check
+(`tools/simrun.sh --days=30 --check-m3`, T-0076) passes on seeds 1–3, and the suite has a
+test where the player is hired, paid, pays rent and is fired. **Waiting for the owner's
+playtest** (the checklist is in T-0076); M3 is done, and tagged `m3`, at their sign-off.
 
 ## ◆ Art direction gate
 

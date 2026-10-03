@@ -14,6 +14,9 @@ extends SceneTree
 ##          unless the town lives well, see TownCheck, and the cost stays within
 ##          BUDGET_MS_PER_STEP), --check-staffing (T-0065: fails the run unless every shop
 ##          had someone serving for TownCheck.MIN_STAFFED_SHARE of its open time),
+##          --check-m3 (M3 acceptance, T-0076: run it with --days=30; fails the run unless the
+##          economy stays stable, see EconomyCheck, the town passes the M2 rules and the cost
+##          stays within BUDGET_MS_PER_STEP),
 ##          --profile (T-0078: time per system, in ms per step), --extra-residents=N (a stress
 ##          test: N more adults move into the existing homes, round-robin; beds run short, so
 ##          only use it to measure cost).
@@ -65,13 +68,17 @@ func _initialize() -> void:
 	var action_counts: Dictionary = {}
 	var resident_actions: Dictionary = {}
 	var town := TownCheck.new()
+	var economy := EconomyCheck.new()
+	economy.start(sim)
 	var started := Time.get_ticks_usec()
 	for m: int in minutes:
 		sim.run_minutes(1)
 		_sample_needs(sim, need_stats)
 		_sample_residents(sim, resident_stats)
-		_count_finished_actions(sim, action_counts, resident_actions, town)
+		_count_finished_actions(sim, action_counts, resident_actions, town, economy)
 		town.sample(sim)
+		if sim.clock.minute_of_day() == 0:
+			economy.end_of_day(sim)
 		if (m + 1) % report_every == 0:
 			_report(sim)
 	var seconds := (Time.get_ticks_usec() - started) / 1_000_000.0
@@ -95,29 +102,41 @@ func _initialize() -> void:
 	print(town.work_summary())
 	print(_housing_line(sim))
 	print(town.staffing_summary(sim))
-	if args.has("check-staffing"):
-		var unstaffed := town.staffing_failures(sim)
-		for problem: String in unstaffed:
-			print("STAFFING CHECK: " + problem)
-		print("STAFFING CHECK: %s" % ("PASSED" if unstaffed.is_empty() else "FAILED"))
-		if not unstaffed.is_empty():
-			print("LAST_TRAM_SIMRUN: FAILED")
-			quit(1)
-			return
+	print(economy.summary())
+	var ms_per_step := seconds * 1000.0 / steps
+	if args.has("check-staffing") and not _passes("STAFFING CHECK", town.staffing_failures(sim)):
+		return
 	if args.has("check-m2"):
 		var problems := town.failures(sim, minutes / SimClock.MINUTES_PER_DAY)
-		var ms_per_step := seconds * 1000.0 / steps
-		if ms_per_step > BUDGET_MS_PER_STEP:
-			problems.append("%.3f ms per step is over the %.2f ms budget" % [ms_per_step, BUDGET_MS_PER_STEP])
-		for problem: String in problems:
-			print("M2 CHECK: " + problem)
-		print("M2 CHECK: %s" % ("PASSED" if problems.is_empty() else "FAILED"))
-		if not problems.is_empty():
-			print("LAST_TRAM_SIMRUN: FAILED")
-			quit(1)
+		problems.append_array(_budget_problems(ms_per_step))
+		if not _passes("M2 CHECK", problems):
+			return
+	if args.has("check-m3"):
+		var problems := economy.failures(sim, town)
+		problems.append_array(town.failures(sim, minutes / SimClock.MINUTES_PER_DAY))
+		problems.append_array(_budget_problems(ms_per_step))
+		if not _passes("M3 CHECK", problems):
 			return
 	print("LAST_TRAM_SIMRUN: OK")
 	quit(0)
+
+
+## Prints a check's problems and its verdict; on failure, also fails the run (and quits).
+func _passes(label: String, problems: PackedStringArray) -> bool:
+	for problem: String in problems:
+		print("%s: %s" % [label, problem])
+	print("%s: %s" % [label, "PASSED" if problems.is_empty() else "FAILED"])
+	if not problems.is_empty():
+		print("LAST_TRAM_SIMRUN: FAILED")
+		quit(1)
+	return problems.is_empty()
+
+
+## [] within BUDGET_MS_PER_STEP, else the overrun in words.
+func _budget_problems(ms_per_step: float) -> PackedStringArray:
+	if ms_per_step <= BUDGET_MS_PER_STEP:
+		return PackedStringArray()
+	return PackedStringArray(["%.3f ms per step is over the %.2f ms budget" % [ms_per_step, BUDGET_MS_PER_STEP]])
 
 
 ## Stress test (T-0078): `count` more adults join existing households, round-robin by id,
@@ -267,9 +286,10 @@ func _sample_residents(sim: Sim, stats: Dictionary) -> void:
 
 ## Drains this minute's events and tallies finished interactions: the player's in `counts`,
 ## everyone else's in `resident_counts`.
-func _count_finished_actions(sim: Sim, counts: Dictionary, resident_counts: Dictionary, town: TownCheck) -> void:
+func _count_finished_actions(sim: Sim, counts: Dictionary, resident_counts: Dictionary, town: TownCheck, economy: EconomyCheck) -> void:
 	for event: Dictionary in sim.events.drain():
 		town.observe(sim, event)
+		economy.observe(sim, event)
 		if event["type"] != &"action_finished":
 			continue
 		var data: Dictionary = event["data"]

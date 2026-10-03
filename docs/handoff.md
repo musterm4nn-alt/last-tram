@@ -1,18 +1,15 @@
 # Handoff: continuing M3 (Making a Living)
 
-Rewritten on 2 October 2026, when the previous session's context ran full; updated the same
-day after T-0077, when the owner moved the work to a Claude Code **cloud** session for a
-while. For the next Claude Code session (the architect and builder, Opus). Read this after
+Rewritten on 2 October 2026, when the previous session's context ran full; updated after
+T-0077, when the owner moved the work to a Claude Code **cloud** session, and on 3 October,
+when that session had built the rest of M3. For the next Claude Code session (the architect and builder, Opus). Read this after
 CLAUDE.md and AGENTS.md. In the cloud, start with "Working in a cloud session" below.
 
 ## Working in a cloud session (read first in the cloud)
 
-**The task there:** detail **T-0065** (staffed counters, still a `draft`) against the merged
-code, set it to `todo`, then build it: branch `t/0065-staffed-counters`, tests,
-`tools/check.sh`, the ticket's notes, merge into `main` and push. If there is time, carry on
-with **T-0066** (eviction and moving) the same way. Follow D29 order; T-0078 must land before
-T-0076. Skip the agent playtest the next stop asks for (it needs OpenCode on the owner's Mac):
-leave a note for it in the ticket instead.
+**The task there (2–3 October, done):** detail and build the M3 drafts, T-0065 to T-0076,
+in D29 order. See "Where things stand". A new cloud session follows the same steps for
+whatever the owner asks next; agent playtests need OpenCode on the owner's Mac.
 
 What differs from the owner's Mac:
 - **Godot.** The SessionStart hook (`tools/cloud_session_start.sh`) runs `tools/setup.sh`
@@ -45,30 +42,32 @@ What differs from the owner's Mac:
 
 ## Where things stand
 
-**Update, 2 October 2026 (cloud session):** **T-0065 is done** (staffed counters: visible
-shopkeepers, a barista and counter at Café Wolke, "nobody's serving", `--check-staffing`; save
-version 12; 605 tests). Its screenshot is still to take on the Mac
-(`tools/screenshot.sh out/t0065.png`, see the ticket). One gentle-mode town (seed 5) fails the
-"talks with people" rule on a lone early-shift worker, as `main` already did on seed 11: the
-owner chose to merge and fix it in **T-0079** (draft, before T-0076). Next: T-0066, then
-T-0078 and T-0079. Playbook stops to add/tick: `t0065-build`, `t0065-review` (done), and new
-stops for T-0079 once it is `todo`.
+**Update, 3 October 2026 (end of the cloud session): every M3 ticket is built and merged**
+(T-0054 to T-0079). M3 waits only for the owner's playtest (the checklist is in T-0076) and
+their sign-off; then tag `m3` and mark M3 ✅ in the roadmap. Save version 19; `tools/check.sh`
+runs 685 tests. `tools/simrun.sh --days=30 --check-m3` passes on seeds 1–3, and
+`--days=7 --check-m2 --check-staffing` on seeds 1–6 in both modes.
 
-- **M1 ✅, M2 ✅** (owner sign-offs). **M3 ▶**: T-0054 to T-0064 are built and merged:
-  money and the ledger, prices and the shared `Requirements` check, the Späti/Imbiss/ATM and
-  Sunday closing, groceries, jobs and positions, going to work (WorkSession, rabbit hole),
-  leaving for work (WorkSystem, D30), pay and careers (Careers, EconomySystem), rent, bills,
-  benefit and pensions (Housing), the phone (Bank, Jobs, Contacts with calls, Map; P key),
-  and applying, quitting and registering (Hiring). **T-0077** (hardening after the reviews)
-  is done: shifts settled once, critical needs first, lunch as a meal, varied/gentle jobs,
-  an honest town check, docs (D31). Save version 11. `tools/check.sh`: 593 tests pass.
-  `tools/simrun.sh --days=7 --check-m2` passes on seeds 1–6 in both modes (add
-  `--gentle-work` for gentle jobs).
-- **Next: T-0065** (staffed counters), and the rest of the drafts in D29 order. **T-0078**
-  (robustness and performance) must land before T-0076 (M3 acceptance). Drafts T-0065 to
-  T-0076 are detailed right before building each one, against the merged code. Do an agent
-  playtest of a working week first (T-0077 changed how jobs feel).
-- 12 tickets are left in M3: T-0065 to T-0076 and T-0078.
+Built in the cloud session (2–3 October), in order: T-0065 staffed counters (save v12),
+T-0066 eviction and moving (v13), T-0067 to T-0070 secrets and discoveries (v14), T-0071
+skills (v15), T-0072 wardrobe (v16), T-0078 robustness and speed (D32), T-0073 clothes rail
+and barber in the Waschsalon (v17), T-0074 laundry (v18), T-0079 lone workers (D33), T-0075
+backgrounds (v19), T-0076 the M3 check. The M3 save steps live in
+`sim/save/save_migrations_m3.gd`.
+
+**Left for the Mac:**
+- Screenshots to take and look at (none could be taken in the cloud): `t0065` (the clerk
+  behind the Späti counter), the phone's Housing app, the Notebook and the map with a found
+  place, the wardrobe screen, the clothes shop and barber screens, the skip overlay
+  (`out/t0078-skip.png`), the creator's Background tab. Each ticket's notes say how.
+- Playbook stops to tick or add: build and review stops for T-0066 to T-0076, T-0078 and
+  T-0079, and a "You" play stop for the M3 playtest (don't tick it).
+- An agent playtest of a working week (Muse in OpenCode), before or with the owner's.
+- After `git pull --ff-only` on the Mac, the desktop icon runs the new build.
+
+**Balance note for M4:** money piles up. In 30 days the town earns more in wages than it
+spends; nobody gets near broke, so the safety nets (benefit, eviction) are only exercised by
+tests. Tune rents and prices when crime makes money a motive, and re-run `--check-m3`.
 
 ## Owner decisions still open or recent
 
@@ -153,7 +152,7 @@ are strong. The criticism that held up became T-0077 and T-0078:
 Decisions D26 (exact floats in saves: read save text with `Ser.parse_json`), D27 (cost of 30
 people) and D28 (tiers v1) are in `docs/decisions.md`.
 
-## What M3 added so far (map)
+## What M3 added (map)
 
 | Area | Where |
 |---|---|
@@ -165,7 +164,14 @@ people) and D28 (tiers v1) are in `docs/decisions.md`.
 | Weekly cycle | `sim/systems/work_system.gd`, `economy_system.gd`, `sim/economy/housing.gd` |
 | Home needs first, colleagues | `Routines.home_needs`, `AutonomySystem._see_to_home_needs`, `Jobs._know_colleagues` (D30) |
 | Phone | `game/ui/phone/` (Phone, BankApp, JobsApp, ContactsApp), `CallCommand`, remote interactions |
-| Reports | `tools/sim_runner.gd` lines: money, groceries, jobs, work, housing |
+| Reports | `tools/sim_runner.gd` lines: money, groceries, jobs, work, housing, staffed, economy |
+| Staffed counters | `sim/jobs/on_site_work.gd`, `staffing.gd`, `InteractionDef.staffed` |
+| Eviction, moving, sleeping rough | `sim/economy/moving.gd`, `RentFlatCommand`, `game/ui/phone/housing_app.gd` |
+| Secrets and discoveries | `data/discoveries/`, `sim/discoveries/`, `sim/systems/place_actions.gd`, `game/ui/phone/notebook_app.gd` |
+| Skills | `data/skills.json`, `sim/people/skills.gd`, `JobLevel.requires` |
+| Clothes, laundry, looks | `sim/people/wardrobe.gd`, `shopping.gd`, `laundry.gd`, `presentation.gd`, `game/ui/wardrobe_screen.gd`, `shop_screen.gd` |
+| Backgrounds | `data/backgrounds.json`, `sim/people/backgrounds.gd`, `game/ui/creator_background_tab.gd` |
+| Economy check | `tools/economy_check.gd`, `tools/simrun.sh --days=30 --check-m3` |
 
 ## Lessons that will bite again
 
