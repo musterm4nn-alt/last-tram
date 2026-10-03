@@ -20,14 +20,24 @@ T-0080 art sets (`--art=<set>`, `data/art2d/README.md`), T-0081 depth sorting, T
 lamps, T-0083 day and night (`DayNight`, `NightLights2D`), T-0084 `tools/art_shots.sh <set>`
 (noon and 22:00 from a fixed camera into `out/art/<set>/`).
 
-1. Make the three routes, each as an art set **on its own branch** (`art/kenney`,
-   `art/custom`, `art/chatgpt`; never merged before the owner picks): sheets in
-   `art/export/<set>/`, sources in `art/src/`, `data/art2d/<set>.json`, credits in
-   `art/LICENSES.md`. Shoot each with `tools/art_shots.sh <set>`.
-2. Publish a side-by-side Artifact (each route at noon and 22:00) and ask the owner to pick;
-   also ask the roofs question (below). Then D34, `docs/art.md`, roadmap, vision.
-3. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
+**Update, later on 3 October:** the three routes are built and pushed, each on its own
+branch (not merged): `art/kenney` (built by `art/src/kenney/build_kenney.gd` from the CC0
+packs), `art/custom` (drawn by `art/src/custom/draw_custom.lua`, run through the Aseprite MCP:
+`ROOT = "<worktree>"; dofile(ROOT .. "/art/src/custom/draw_custom.lua")`), `art/chatgpt` (two
+concept sheets, prompts in `art/src/chatgpt/prompts.md`, cleaned by `clean_chatgpt.gd`). The
+comparison page is https://claude.ai/artifact/UA8ToL3km1mUUYmPAfk7A4 (Playbook stop
+`art-pick`, a "You" stop). Note: the ChatGPT Images app keeps images in its WebKit cache
+(`~/Library/Containers/local.xamxim.ChatGPTImages/Data/Library/Caches/WebKit/NetworkCache/Version 17/Blobs/`,
+the newest 1254×1254 PNG), not in Downloads; copies are in `~/Downloads/last-tram-art/`.
+
+1. **Wait for the owner's pick** (A, B, C or a mix) and their answer on roofs vs open
+   houses. Then: D34 in `docs/decisions.md`, `docs/art.md`, the roadmap and the vision's
+   "Open decisions"; merge the chosen branch (owner approval is the art approval); delete
+   the others; plan art production alongside M4 (characters 16×32 next, art.md).
+2. The owner's M3 playtest (`play-m3`) and `play-night` are still to come: turn what they
    find into tickets first.
+3. `game/main.gd` is at 338 of 350 lines: move launch-option handling into its own class
+   before adding another option.
 
 ## The art direction gate (started 3 October)
 
