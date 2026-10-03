@@ -80,3 +80,10 @@ func test_thin_wall_colours() -> void:
 	var bad := ArtSet.load_set("bad", content(), ROOT)
 	assert_true("\n".join(bad.errors).contains("thin_walls 'roof': unknown colour"), "\n".join(bad.errors))
 	assert_true("\n".join(bad.errors).contains("thin_walls 'edge': must be a colour"), "\n".join(bad.errors))
+
+
+## T-0086
+func test_roof_tile() -> void:
+	var art := ArtSet.load_set("fixture", content(), ROOT)
+	assert_eq(art.roof_tile(Vector2i(4, 4))["region"], Rect2i(16, 0, 16, 16))
+	assert_eq(ArtSet.load_set("bad", content(), ROOT).roof_tile(Vector2i.ZERO), {}, "no roof: shingles")

@@ -67,8 +67,9 @@ static func window_lit(cell: Vector2i, minute_of_day: int) -> bool:
 ## The light map for one floor: LIGHT_PX pixels per cell, RGB = the light added there. Indoor
 ## cells get INDOOR_LIGHT; each lamp adds a soft disc of LAMP_LIGHT, each lit window a
 ## smaller one of WINDOW_LIGHT, both outdoors only (they don't shine through walls into lit
-## rooms). Channels are clamped to 1.
-static func light_map(grid: WorldGrid, level: int, lamp_cells: Array[Vector2i], minute_of_day: int) -> Image:
+## rooms). With `interiors`, only open buildings' rooms are lit: closed ones show a roof,
+## which stays dark (T-0086). Channels are clamped to 1.
+static func light_map(grid: WorldGrid, level: int, lamp_cells: Array[Vector2i], minute_of_day: int, interiors: Interiors = null) -> Image:
 	var w := grid.width * LIGHT_PX
 	var h := grid.height * LIGHT_PX
 	var light := PackedFloat32Array()
@@ -82,7 +83,7 @@ static func light_map(grid: WorldGrid, level: int, lamp_cells: Array[Vector2i], 
 		for x: int in grid.width:
 			var cell := Vector3i(x, y, level)
 			var terrain := grid.terrain_def_at(cell)
-			if indoor[y * grid.width + x] == 1:
+			if indoor[y * grid.width + x] == 1 and (interiors == null or not interiors.hidden(cell)):
 				for py: int in LIGHT_PX:
 					for px: int in LIGHT_PX:
 						_add(light, (y * LIGHT_PX + py) * w + x * LIGHT_PX + px, INDOOR_LIGHT, 1.0)

@@ -63,5 +63,12 @@
 	"thin_walls": {
 		"top": "#d8c3a5",
 		"edge": "#3a2e24"
+	},
+	"roof": {
+		"sheet": "test",
+		"cell": [
+			1,
+			0
+		]
 	}
 }

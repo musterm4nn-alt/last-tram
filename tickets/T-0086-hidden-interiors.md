@@ -1,12 +1,12 @@
 ---
 id: T-0086
 title: Hidden interiors (roofs from outside, dimmed street inside)
-status: todo
+status: done
 milestone: Art
 size: L
 owner: builder
 depends_on: [T-0085]
-builder:
+builder: Claude Code / Opus 5.5
 review_rounds: 0
 ---
 
@@ -65,17 +65,43 @@ bubbles don't show. The light map lights only revealed rooms (roofs stay dark at
 and windows still glow).
 
 ## Acceptance criteria
-- [ ] Buildings are found per floor, walls shared by two belong to both →
+- [x] Buildings are found per floor, walls shared by two belong to both →
   `test_interiors.gd: test_buildings_and_shared_walls`
-- [ ] Reveal: inside → that building; outside → none; another floor → the overlapping ones →
+- [x] Reveal: inside → that building; outside → none; another floor → the overlapping ones →
   `test_reveal_for`
-- [ ] `hidden`, `is_front` and `is_entrance` → `test_hidden_front_and_entrances`
-- [ ] Hidden people can't be clicked → `test_command_mode.gd: test_hidden_people_cannot_be_clicked`
-- [ ] Only revealed rooms are lit → `test_day_night.gd: test_light_map_lights_only_open_rooms`
-- [ ] Screenshots: the Altmarkt from outside (roofs, fronts, doors; nobody visible inside),
+- [x] `hidden`, `is_front` and `is_entrance` → `test_hidden_front_and_entrances`
+- [x] Hidden people can't be clicked → `test_command_mode.gd: test_hidden_people_cannot_be_clicked`
+- [x] Only revealed rooms are lit → `test_day_night.gd: test_light_map_lights_only_open_rooms`
+- [x] Screenshots: the Altmarkt from outside (roofs, fronts, doors; nobody visible inside),
   inside the flat (open, street dark), at noon and 22:00
 
 ## Implementation notes
+- `game/view2d/interiors.gd` (`Interiors`): buildings by flood fill per floor, walls
+  shared; `reveal_for`, `hidden`, `is_open`, `is_front`, `is_entrance`, and
+  `shuts_out_street(command_mode)`.
+- `roofs_view_2d.gd` / `roof_view_2d.gd`: one roof per building in the depth layer at the
+  building's lowest edge; fronts and entrances drawn as their tiles, the rest as roof (art
+  set `roof` or `PlaceholderTiles.build_roof_texture()`, three colours), a dark eave above
+  the front. `RoofsView2D` updates `Interiors.current.revealed` when the player's cell or the
+  viewed floor changes.
+- `interior_dim_2d.gd`: darkens the floor outside the open building (and the outer halves
+  of its thin walls, which otherwise left a pale frame of pavement), `light_mask` 0.
+- **Changed from the spec (architect):** the street only goes dark in direct mode. In the
+  first night screenshot free will had taken the player into the Kneipe and the whole town
+  went black; command mode is for watching the town, so it keeps the street (other buildings
+  stay closed). Bubbles from the street hide while you're indoors in direct mode.
+- Hiding: `PersonView2D`, `ObjectView2D`, `BubblesLayer`, and `PlayerController` (people via
+  `person_at`, objects in the click handler). `DayNight.light_map(..., interiors)` lights only
+  open rooms; `NightLights2D` rebuilds when the open building changes.
+- D34 in `docs/decisions.md`; `docs/architecture.md`, `docs/art.md`,
+  `data/art2d/README.md` (`roof`).
+
+Verified: `tools/check.sh` → 719 passed (new `test_interiors.gd` ×5,
+`test_hidden_people_cannot_be_clicked`, `test_light_map_lights_only_open_rooms`,
+`test_roof_tile`). Screenshots: `out/t0086-noon-out.png` (from the square: roofs, Haus 12's
+front and door, nobody inside visible), `out/t0086-inside.png` (the flat open, the street
+dark), `out/art/placeholder/night.png` (command mode at 22:00: street lit by lamps, Haus 12 a
+dark roof, the Kneipe open with the player inside).
 
 ## Questions
 

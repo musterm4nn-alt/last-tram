@@ -138,3 +138,23 @@ func test_look_at_cell() -> void:
 	assert_true(Session.command_mode, "command mode, so the camera stays put")
 	assert_vec_near(camera.position, Vector2(6.5, 3.5) * ViewConfig.TILE_PX)
 	camera.free()
+
+
+## T-0086
+func test_hidden_people_cannot_be_clicked() -> void:
+	var rows: PackedStringArray = [
+		"::::::::::",
+		":#####:::@",
+		":#...#::::",
+		":#...D::::",
+		":#####::::",
+	]
+	var sim := SimFactory.from_rows(content(), rows)
+	var someone := SimFactory.spawn_person(sim, Vector3i(3, 2, 0), CharacterSpec.default_player(sim.content))
+	var point := someone.pos + Vector2(0, -0.5)
+	var old := Interiors.current
+	Interiors.current = Interiors.build(sim.world.grid)
+	assert_eq(PlayerController.person_at(sim, point, 0, -1), 0, "inside a closed building")
+	Interiors.current.revealed = Interiors.current.reveal_for(Vector3i(3, 2, 0), 0)
+	assert_eq(PlayerController.person_at(sim, point, 0, -1), someone.id, "once it's open")
+	Interiors.current = old

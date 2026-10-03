@@ -81,8 +81,9 @@ game/                     Godot side
   launch_options.gd       the command-line options (screenshots, tools)
   save_slots.gd           save slots and autosave; save_file.gd writes atomically
   input/                  InputActions (bindings in code), PlayerController
-  view2d/                 WorldView2D, ObjectsView2D, PeopleView2D, PersonView2D,
-                          CameraRig2D, PathMarker2D, placeholder tiles
+  view2d/                 WorldView2D (+ WallLayer2D), DepthLayer2D (objects, people,
+                          roofs, y-sorted), Interiors, InteriorDim2D, NightLights2D,
+                          ArtSet, CameraRig2D, PathMarker2D, placeholder tiles
   dialogue/               speech-bubble text for the view
   ui/                     Hud, NeedsPanel, InteractionMenu, ActionQueuePanel, PersonInspector,
                           PauseMenu, MainMenu, CharacterCreator, MapView/TownMap,
@@ -191,6 +192,10 @@ reports and "run 30 days headless" tests trustworthy. To keep it:
   time (lint-enforced).
 - **Views** (`game/view2d/`) read state every frame and rebuild on `game_loaded`. They convert
   cells to pixels (`ViewConfig.TILE_PX`); the sim never knows about pixels.
+- **What the view hides is the view's business** (D34): walls drawn thin or as faces
+  (`WallShapes`), closed buildings behind roofs (`Interiors`), day and night (`DayNight`).
+  The sim still sees whole-cell walls and open interiors; nothing hidden changes what people
+  do, and saves don't record it. Picking (clicks) asks `Interiors.current.hidden(cell)`.
 - **UI** (`game/ui/`) is built in code (no hand-edited scene files) and reads state; buttons
   submit commands through `Session.submit()`.
 - **Input** bindings are registered in code (`InputActions`), using physical keys so WASD works

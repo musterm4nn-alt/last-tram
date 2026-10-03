@@ -72,8 +72,10 @@ func _draw_bubbles() -> void:
 	var drawn: Array[Rect2] = []
 	for id: int in order:
 		var person := Session.sim.world.get_person(id)
-		if person == null or person.level != Session.viewed_level:
+		if person == null or person.level != Session.viewed_level or Interiors.current.hidden(person.cell()):
 			continue
+		if Interiors.current.shuts_out_street(Session.command_mode) and not Interiors.current.is_open(person.cell()):
+			continue  # indoors, the street is out of sight (T-0086)
 		var bubble: Dictionary = bubbles[id]
 		var text: String = bubble["text"]
 		var feet := person.prev_pos.lerp(person.pos, Session.alpha) - Vector2(0, HEAD_OFFSET)

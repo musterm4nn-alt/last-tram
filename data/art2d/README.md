@@ -30,3 +30,5 @@ the placeholder, and the problem is printed as a warning. Loaded by `game/view2d
   bottom walls: any of `top`, `edge`, `face`, `glass` as `"#rrggbb"`. Without it they come
   from the wall tile's average colour. The `wall`, `window` and `door` tiles are drawn only
   where a wall shows its face (the top wall of a room), so draw them as faces.
+- `roof` (optional, T-0086): `{ "sheet": ..., "cell": [x, y], "variants": n }`, like a
+  terrain: the tile drawn over closed buildings. Without it the view draws shingles.
