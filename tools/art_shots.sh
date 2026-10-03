@@ -12,7 +12,7 @@ OUT="${2:-out/art/$SET}"
 NOON=$((12 * 60 - 8 * 60))
 NIGHT=$((22 * 60 - 8 * 60))
 echo "noon: --advance=$NOON, night: --advance=$NIGHT"
-ART=()
+ART=(--art=placeholder)
 if [ -f "data/art2d/$SET.json" ]; then
 	ART=(--art="$SET")
 fi

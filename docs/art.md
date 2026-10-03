@@ -3,9 +3,20 @@
 **Owner of all art work: Claude Code (Opus).** Builders don't make or edit art. The human
 owner approves every look.
 
-## Now: placeholders on purpose
+## The chosen look (D35, 3 October 2026)
 
-Until the art gate (after M3) everything is a readable placeholder:
+**Route B, drawn by Opus in Aseprite, is the game's look**, and its art set (`custom`:
+`data/art2d/custom.json`, sources in `art/src/custom/`) is the default. **PixelLab** (MCP) makes
+characters, their animations and objects, always palette-locked to B's palette (the `P` table
+in `art/src/custom/draw_custom.lua`); see `art/src/pixellab/` on the `art/pixellab-test` branch
+for the locking script and what its tools give (a 16x32 person is `size` 30 in standard mode).
+Ground tiles stay hand-drawn; PixelLab's Wang edge tiles only where an edge matters. B is to
+be raised in detail over time.
+
+## Placeholders (the fallback)
+
+`--art=placeholder` draws the placeholders, and anything an art set doesn't map falls back to
+them:
 - Terrain: flat colour tiles generated at runtime from `debug_color` in `data/terrain.json`
   (`game/view2d/placeholder_tiles.gd`).
 - People: drawn from their appearance and outfit by `PersonDrawer2D` (T-0019): body width

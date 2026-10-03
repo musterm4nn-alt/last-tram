@@ -87,3 +87,16 @@ func test_roof_tile() -> void:
 	var art := ArtSet.load_set("fixture", content(), ROOT)
 	assert_eq(art.roof_tile(Vector2i(4, 4))["region"], Rect2i(16, 0, 16, 16))
 	assert_eq(ArtSet.load_set("bad", content(), ROOT).roof_tile(Vector2i.ZERO), {}, "no roof: shingles")
+
+
+## T-0088: the default set (route B) ships complete: it loads cleanly and draws every terrain
+## and object of the art gate's scene.
+func test_default_set_covers_the_scene() -> void:
+	var art := ArtSet.load_set(LaunchOptions.DEFAULT_ART, content())
+	assert_eq(art.errors, [] as Array[String])
+	for terrain_id: String in ["cobblestone", "crossing", "door", "floor_tile", "floor_wood", "fountain",
+			"grass", "road", "sidewalk", "tram_track", "tree", "wall", "window"]:
+		assert_false(art.terrain_tile(terrain_id, Vector2i(3, 4)).is_empty(), "terrain %s" % terrain_id)
+	for def_id: String in ["atm", "bed_double", "bench", "desk", "fridge", "kitchen_table", "notice_case",
+			"shower", "sink", "sofa", "stove", "tram_stop", "tv", "wardrobe", "street_lamp"]:
+		assert_false(art.object_sprite(def_id, 0).is_empty(), "object %s" % def_id)

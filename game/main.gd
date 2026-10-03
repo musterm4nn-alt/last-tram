@@ -29,7 +29,7 @@ extends Node2D
 ##   --interact=DEF_ID   open the interaction menu on the first object of that kind (the
 ##                       player's own, if their home has one)
 ##   --queue=DEF:ACTION,...  queue actions at the start, e.g. --queue=fridge:grab_snack,tv:watch_tv
-##   --art=SET           draw with the art set data/art2d/SET.json (default: placeholders)
+##   --art=SET           draw with data/art2d/SET.json (default: custom, route B; placeholder)
 ##   --look-at=X,Y       command mode, camera centred on cell X,Y (for same-view screenshots)
 ##   --hide-hud          hide the HUD: only the world is drawn
 ##   --paused            start paused (no time passes while a screenshot waits)
