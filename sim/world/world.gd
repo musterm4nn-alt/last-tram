@@ -23,6 +23,8 @@ var work: WorkSettings = WorkSettings.new()
 var looted_discoveries: PackedStringArray = PackedStringArray()
 ## Money that entered and left people's hands, by reason (T-0054, D29).
 var ledger: Ledger = Ledger.new()
+## Every crime committed, by incident id (T-0091).
+var incidents: Dictionary[int, Incident] = {}
 
 var _next_id: int = 1
 ## Derived: place id -> lot id (rebuilt by lot_id_for_place when the lot count changes).
@@ -203,6 +205,7 @@ func to_dict() -> Dictionary:
 		"work": work.to_dict(),
 		"looted_discoveries": Array(looted_discoveries),
 		"ledger": ledger.to_dict(),
+		"incidents": incidents.keys().map(func(id: int) -> Dictionary: return incidents[id].to_dict()),
 	}
 
 
@@ -271,6 +274,10 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 	var ledger_data: Variant = d.get("ledger", {})
 	if ledger_data is Dictionary:
 		world.ledger = Ledger.from_dict(ledger_data)
+	for incident_entry: Variant in d.get("incidents", []):
+		var incident := Incident.from_dict(incident_entry)
+		if content.crime(incident.crime_id) != null:
+			world.incidents[incident.id] = incident
 	for household_entry: Variant in d.get("households", []):
 		var household := Household.from_dict(household_entry)
 		world.households[household.id] = household

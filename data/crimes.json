@@ -1,0 +1,14 @@
+{
+	"_doc": "Kinds of crime (T-0091, docs/design/crime-and-police.md). severity 1-8 sets police priority and punishment. An interaction commits one with \"crime\": \"<id>\"; each crime committed is saved as an incident. Only shoplifting has an interaction so far.",
+	"crimes": [
+		{ "id": "trespassing", "name": "Trespassing", "severity": 1 },
+		{ "id": "shoplifting", "name": "Shoplifting", "severity": 2 },
+		{ "id": "vandalism", "name": "Vandalism", "severity": 2 },
+		{ "id": "pickpocketing", "name": "Pickpocketing", "severity": 2 },
+		{ "id": "drug_possession", "name": "Drug possession", "severity": 2 },
+		{ "id": "drug_dealing", "name": "Drug dealing", "severity": 3 },
+		{ "id": "burglary", "name": "Burglary", "severity": 4 },
+		{ "id": "mugging", "name": "Mugging", "severity": 4 },
+		{ "id": "assault", "name": "Assault", "severity": 4 }
+	]
+}

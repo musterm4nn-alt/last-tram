@@ -10,6 +10,7 @@
 		{ "id": "withdraw_50", "name": "Withdraw €50", "cash_out": 5000, "object_tags": ["atm"], "duration_minutes": 2, "need_rates": {}, "finish_needs": {}, "advertise": {} },
 		{ "id": "browse_clothes", "name": "Browse the clothes", "opens_screen": "clothes_shop", "object_tags": ["clothes_rack"], "duration_minutes": 5, "need_rates": { "fun": 10.0 }, "finish_needs": {}, "advertise": {} },
 		{ "id": "wash_clothes", "name": "Wash your clothes", "price": 400, "launders": true, "finish_moodlet": "clean_laundry", "object_tags": ["washing_machine"], "duration_minutes": 60, "need_rates": { "fun": 2.0 }, "finish_needs": {}, "advertise": {} },
-		{ "id": "get_haircut", "name": "Get a haircut", "price": 1800, "finish_moodlet": "fresh_cut", "opens_screen": "barber", "object_tags": ["barber_chair"], "duration_minutes": 30, "need_rates": { "comfort": 6.0 }, "finish_needs": {}, "advertise": {} }
+		{ "id": "get_haircut", "name": "Get a haircut", "price": 1800, "finish_moodlet": "fresh_cut", "opens_screen": "barber", "object_tags": ["barber_chair"], "duration_minutes": 30, "need_rates": { "comfort": 6.0 }, "finish_needs": {}, "advertise": {} },
+		{ "id": "steal_snack", "name": "Pocket a snack", "crime": "shoplifting", "object_tags": ["spaeti_counter"], "duration_minutes": 2, "need_rates": {}, "finish_needs": { "hunger": 15 }, "advertise": {} }
 	]
 }

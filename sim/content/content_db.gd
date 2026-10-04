@@ -35,6 +35,8 @@ var default_routine: String = ""
 var jobs: Dictionary[String, JobDef] = {}
 ## Skills by id, and their rules (data/skills.json, T-0071).
 var skills: Dictionary[String, SkillDef] = {}
+## Kinds of crime by id (T-0091).
+var crimes: Dictionary[String, CrimeDef] = {}
 var skill_rules: SkillRules = SkillRules.new()
 ## The player's possible backgrounds (T-0075), by id, and the one used without a choice.
 var backgrounds: Dictionary[String, BackgroundDef] = {}
@@ -90,6 +92,7 @@ func load_from(root: String) -> void:
 	NeedsLoader.load(self, reader, root.path_join("needs.json"))
 	EconomyLoader.load(self, reader, root.path_join("economy.json"))
 	SkillLoader.load(self, reader, root.path_join("skills.json"))
+	CrimeLoader.load(self, reader, root.path_join("crimes.json"))
 	NamesLoader.load(self, reader, root.path_join("names").path_join("names.json"))
 	AppearanceLoader.load(self, reader, root.path_join("appearance").path_join("appearance.json"))
 	ClothingLoader.load(self, reader, root.path_join("clothing"))
@@ -223,6 +226,10 @@ func job(id: String) -> JobDef:
 
 func skill(id: String) -> SkillDef:
 	return skills.get(id)
+
+
+func crime(id: String) -> CrimeDef:
+	return crimes.get(id)
 
 
 func background(id: String) -> BackgroundDef:
