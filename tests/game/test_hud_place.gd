@@ -101,3 +101,7 @@ func test_police_notices() -> void:
 	assert_eq(Hud.notice_for_event({"type": &"police_dispatched", "data": {"person_id": 8, "officer_id": 7}}, 7), "", "only the suspect is told")
 	assert_eq(Hud.notice_for_event({"type": &"arrested", "data": {"person_id": 7, "officer_id": 9, "fine": 10000}}, 7), "Arrested: fined €100.00. It's on your record now.")
 	assert_eq(Hud.notice_for_event({"type": &"arrested", "data": {"person_id": 8, "officer_id": 9, "fine": 10000}}, 7), "")
+	assert_eq(Hud.notice_for_event({"type": &"police_searching", "data": {"person_id": 7, "officer_id": 9}}, 7), "The police lost sight of you")
+	assert_eq(Hud.notice_for_event({"type": &"police_gave_up", "data": {"person_id": 7, "officer_id": 9}}, 7), "The police gave up looking for you")
+	assert_eq(Hud.notice_for_event({"type": &"police_spotted", "data": {"person_id": 7, "officer_id": 9}}, 7), "The police spotted you again")
+	assert_eq(Hud.notice_for_event({"type": &"police_gave_up", "data": {"person_id": 8, "officer_id": 7}}, 7), "")

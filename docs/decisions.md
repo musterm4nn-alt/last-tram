@@ -329,5 +329,9 @@ while in sight, arrest within `arrest_range` (a fine that may overdraw the bank,
 closed, `Person.record`), then walk back to the desk; the call ends with the shift. Rejected:
 cancelling the work action to send them out (a shift left early, and `WorkSystem` would call
 them back to the desk mid-chase); a separate "respond" interaction (the same exemptions,
-plus a second action for the shift to survive). Not yet: fleeing and giving up (T-0095),
-jail, night shifts for the police, uniforms.
+plus a second action for the shift to survive). T-0095 added getting away: officers on a
+call run a little slower than a running player (`officer_run_speed`, in `MovementSystem.speed`),
+search near where they lost sight of the suspect (`PoliceSearch`) and then give up; the
+suspect's incidents are then "lost" (`Incident.lost_tick`): still wanted, but for only
+`lost_heat_hours`, and nobody is sent unless an officer sees them again or a new crime is
+reported. Not yet: jail, night shifts for the police, uniforms.

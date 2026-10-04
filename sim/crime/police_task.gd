@@ -11,6 +11,9 @@ var target_id: int = 0
 var last_seen: Vector3i = Vector3i.ZERO
 ## True while the officer walks back to the desk after an arrest.
 var returning: bool = false
+## While the officer searches for a suspect they lost sight of: the tick they give up at
+## (T-0095; -1 = not searching).
+var search_until: int = -1
 
 
 func to_dict() -> Dictionary:
@@ -19,6 +22,7 @@ func to_dict() -> Dictionary:
 		"target_id": target_id,
 		"last_seen": Ser.cell(last_seen),
 		"returning": returning,
+		"search_until": search_until,
 	}
 
 
@@ -28,4 +32,5 @@ static func from_dict(d: Dictionary) -> PoliceTask:
 	task.target_id = int(d["target_id"])
 	task.last_seen = Ser.to_cell(d["last_seen"])
 	task.returning = bool(d.get("returning", false))
+	task.search_until = int(d.get("search_until", -1))
 	return task

@@ -3,8 +3,8 @@ extends SimSystem
 ## The police on the street (T-0094, D36). Every step, each officer on a call chases their
 ## suspect (Police.chase: follow while in sight, arrest when close, walk back afterwards).
 ## Every minute, calls end for officers whose shift is over, officers whose suspect is no
-## longer wanted walk back, and each wanted person nobody is after gets the nearest free
-## on-duty officer (Police.dispatch). No state: the calls are World.police_tasks.
+## longer wanted walk back, and each sought person (wanted, not lost: T-0095) nobody is after
+## gets the nearest free on-duty officer (Police.dispatch). No state: the calls are World.police_tasks.
 
 
 func step(sim: Sim) -> void:
@@ -20,7 +20,7 @@ func on_minute(sim: Sim) -> void:
 			Police.end_call(sim, task)
 		elif not task.returning and Police.wanted_level(sim, task.target_id) == 0:
 			Police.go_back(sim, officer, task)
-	for id: int in Police.wanted_people(sim):
+	for id: int in Police.sought_people(sim):
 		var suspect := sim.world.get_person(id)
 		if suspect != null and not Police.pursued(sim, id):
 			Police.dispatch(sim, suspect)
