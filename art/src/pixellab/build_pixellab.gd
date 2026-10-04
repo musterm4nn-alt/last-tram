@@ -117,13 +117,18 @@ func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 			out.blit_rect(frame, Rect2i(0, 0, FRAME, FRAME), Vector2i(f * FRAME, row * FRAME))
 	out.save_png(ProjectSettings.globalize_path(OUT + "%s.png" % base["name"]))
 	var rules: Array = base["rules"]
+	var hair_rows: int = int(base.get("dark_hair_rows", 0))
+	var tops: Dictionary = {}
+	for row: int in DIRS.size():
+		for f: int in walk + idle:
+			tops[Vector2i(f, row)] = out.get_region(Rect2i(f * FRAME, row * FRAME, FRAME, FRAME)).get_used_rect().position.y
 	var sums: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0]
 	var counts: Array[int] = [0, 0, 0, 0, 0]
 	for y: int in out.get_height():
 		for x: int in out.get_width():
 			var c := out.get_pixel(x, y)
 			if c.a >= 0.5:
-				var g := _group(c, rules)
+				var g := _pixel_group(out, x, y, rules, hair_rows, tops)
 				sums[g] += c.v
 				counts[g] += 1
 	var mask := Image.create_empty(out.get_width(), out.get_height(), false, Image.FORMAT_RGBA8)
@@ -132,11 +137,27 @@ func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 			var c := out.get_pixel(x, y)
 			if c.a < 0.5:
 				continue
-			var g := _group(c, rules)
+			var g := _pixel_group(out, x, y, rules, hair_rows, tops)
 			var ratio := 0.0 if g == 0 else c.v / (sums[g] / counts[g])
 			mask.set_pixel(x, y, Color8(g * 50, clampi(int(ratio * 127.5), 0, 255), 0, 255))
 	mask.save_png(ProjectSettings.globalize_path(OUT + "%s_mask.png" % base["name"]))
 	print("%s: skin %d, hair %d, top %d, bottom %d, kept %d px" % [base["name"], counts[1], counts[2], counts[3], counts[4], counts[0]])
+
+
+## A pixel's group: near-black pixels inside the outline within `hair_rows` rows of the
+## figure's top are hair (for black hair, which matches the outline's colour); otherwise
+## the first matching rule.
+func _pixel_group(image: Image, x: int, y: int, rules: Array, hair_rows: int, tops: Dictionary) -> int:
+	var c := image.get_pixel(x, y)
+	if hair_rows > 0 and c.v < 0.12 and y % FRAME - int(tops[Vector2i(x / FRAME, y / FRAME)]) < hair_rows:
+		var inside := true
+		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n := Vector2i(x, y) + d
+			if n.x < 0 or n.y < 0 or n.x >= image.get_width() or n.y >= image.get_height() or image.get_pixelv(n).a < 0.5:
+				inside = false
+		if inside:
+			return 2
+	return _group(c, rules)
 
 
 ## The first rule that matches: [group, h_min, h_max, s_min, s_max, v_min, v_max] (hue in

@@ -35,3 +35,12 @@ so the goods keep their colours. **It cost 5 generations** (a 96×64 canvas; the
 cost 1). Too wide for the 3-cell counter, and the shelves hide the clerk behind them: in
 production, split into back shelves (under people) and the counter front. The first trial
 account is used up (40 of 40).
+
+## Four more bodies (second trial account, 4 October)
+
+`base_d` 4b237698-… (curly black hair, red jacket, blue chinos; black hair is found by
+position, `dark_hair_rows`), `base_e` 09ae7578-… (ponytail, green sweater, jeans), `base_f`
+3f6dc39e-… (short blonde hair, purple jacket, grey trousers), `base_g` 135de5b9-… (tall,
+slim, grey hair, long navy coat; custom proportions). `PeopleSprites.base_for` picks: tied
+hair → e, long hair → b, curly → d, heavy/beard/bald → c, slim and 180 cm+ → g, women
+otherwise → f, else a. Second account: 36 of 40 used.

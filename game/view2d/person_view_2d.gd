@@ -44,7 +44,7 @@ func _draw_sprite(person: Person, sheet: Dictionary) -> void:
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.45))
 	draw_circle(Vector2.ZERO, 5.0, Color(0, 0, 0, 0.3))
 	draw_set_transform(Vector2.ZERO)
-	draw_texture_rect_region(PeopleSprites.texture(sheet, Session.content, person.appearance, person.outfit), Rect2(-Vector2(feet), Vector2(frame)), Rect2(Vector2(col, row) * Vector2(frame), Vector2(frame)))
+	draw_texture_rect_region(PeopleSprites.texture(sheet, Session.content, person.appearance, person.outfit, person.gender), Rect2(-Vector2(feet), Vector2(frame)), Rect2(Vector2(col, row) * Vector2(frame), Vector2(frame)))
 	if person.id == Session.sim.world.player_id:
 		var top := -float(feet.y) + 3.0
 		draw_colored_polygon(PackedVector2Array([Vector2(-2, top), Vector2(2, top), Vector2(0, top + 3)]), ViewConfig.PLAYER_MARKER_COLOR)
