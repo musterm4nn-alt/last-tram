@@ -12,6 +12,8 @@ const BAND: int = 6
 ## Colours: "top", "edge", "face", "glass", "door".
 var colors: Dictionary = {}
 var _cells: Array[Dictionary] = []
+## Faces trimmed at a corner (T-0089): {"cell", "sides" (ARM_E/ARM_W), "east", "west"}.
+var _trims: Array[Dictionary] = []
 
 
 ## The colours for walls whose base (average) colour is `base`.
@@ -43,8 +45,21 @@ func add_cell(cell: Vector2i, kind: int, arms: int, window: bool, quads: Array[D
 	queue_redraw()
 
 
+## Covers the outer strip of a corner's face (beyond the thin wall's edge) with the ground
+## beside it: `east` and `west` are {"texture", "region"} grounds, each possibly empty.
+func add_trim(cell: Vector2i, sides: int, east: Dictionary, west: Dictionary) -> void:
+	_trims.append({"cell": cell, "sides": sides, "east": east, "west": west})
+	queue_redraw()
+
+
 func _draw() -> void:
 	var px := ViewConfig.TILE_PX
+	for trim: Dictionary in _trims:
+		var at: Vector2 = Vector2(trim["cell"]) * px
+		if int(trim["sides"]) & WallShapes.ARM_W:
+			_strip(at, 0, BAND_FROM - 1, trim["west"])
+		if int(trim["sides"]) & WallShapes.ARM_E:
+			_strip(at, BAND_FROM + BAND + 1, px, trim["east"])
 	var half := px / 2
 	for entry: Dictionary in _cells:
 		var origin: Vector2 = Vector2(entry["cell"]) * px
@@ -124,6 +139,15 @@ func _draw_doorway(origin: Vector2, arms: int) -> void:
 		for y: int in [0, px - 3]:
 			_rect(origin, Rect2i(a - 1, y, BAND + 2, 3), edge)
 			_rect(origin, Rect2i(a, y + (0 if y == 0 else 1), BAND, 2), top)
+
+
+## Ground over columns [from, to) of a cell, the full cell height.
+func _strip(origin: Vector2, from: int, to: int, ground: Dictionary) -> void:
+	if ground.is_empty():
+		return
+	var region: Rect2i = ground["region"]
+	var size := Vector2(to - from, ViewConfig.TILE_PX)
+	draw_texture_rect_region(ground["texture"], Rect2(origin + Vector2(from, 0), size), Rect2(Vector2(region.position) + Vector2(from, 0), size))
 
 
 func _rect(origin: Vector2, rect: Rect2i, color: Color) -> void:

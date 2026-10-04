@@ -49,6 +49,10 @@ func rebuild() -> void:
 						quads.append(_ground(grid, WallShapes.quadrant_ground(grid, cell, q), placeholder))
 					walls.add_cell(Vector2i(x, y), kind, WallShapes.arms(grid, cell), grid.terrain_def_at(cell).id == "window", quads)
 					continue
+				var trim := WallShapes.face_trim(grid, cell)
+				if trim != 0:
+					walls.add_trim(Vector2i(x, y), trim, _ground(grid, cell + Vector3i(1, 0, 0), placeholder),
+							_ground(grid, cell + Vector3i(-1, 0, 0), placeholder))
 				var terrain := grid.terrain_at(cell)
 				var tile := art.terrain_tile(Session.content.terrain(terrain).id, Vector2i(x, y))
 				if tile.is_empty():
