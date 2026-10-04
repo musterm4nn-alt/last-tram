@@ -1,0 +1,6 @@
+{
+	"_doc": "T-0094 test fixture: police numbers out of range.",
+	"witness": { "day_range": 8, "night_range": 5, "night_from": 21, "night_until": 6, "memory_valence": -40, "memory_salience": 70 },
+	"police": { "report_base": 0.1, "report_per_severity": 0.2, "friend_report_factor": 0.3, "friend_at": 30, "heat_hours": 48, "severity_per_level": 2, "fine_per_severity": -1, "arrest_range": 9.0 },
+	"crimes": [ { "id": "shoplifting", "name": "Shoplifting", "severity": 2 } ]
+}

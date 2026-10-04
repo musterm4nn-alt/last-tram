@@ -318,3 +318,16 @@ Rejected: Kenney (fast, but generic and not gritty), C as the base (rich, but in
 not real pixel art), PixelLab's ground (its cobbles are busier than B's). Open: how PixelLab
 characters vary with appearance and outfit (art.md wants layers; PixelLab draws one fixed
 look per character), to be tested before character production.
+
+**D36 · Police officers answer calls during their shift (T-0094).** Officers are ordinary
+residents with the police job, who work in the Polizeiposten's rabbit hole. A wanted person
+(T-0093) gets the nearest free on-duty officer: a `PoliceTask` in `World.police_tasks`
+(saved), driven by a new `PoliceSystem` after `WorkSystem`. While on a call the officer keeps
+their work action and shift (the call is work): `ActionSystem` doesn't cancel it for leaving
+the desk, and `Jobs.hidden` is false, so they are seen and can see. They follow the suspect
+while in sight, arrest within `arrest_range` (a fine that may overdraw the bank, the incidents
+closed, `Person.record`), then walk back to the desk; the call ends with the shift. Rejected:
+cancelling the work action to send them out (a shift left early, and `WorkSystem` would call
+them back to the desk mid-chase); a separate "respond" interaction (the same exemptions,
+plus a second action for the shift to survive). Not yet: fleeing and giving up (T-0095),
+jail, night shifts for the police, uniforms.

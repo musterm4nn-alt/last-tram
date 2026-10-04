@@ -9,7 +9,7 @@ const BANK: String = "bank"
 ## Reasons money enters people's hands (ledger sources).
 const SOURCES: PackedStringArray = ["start", "wage", "benefit", "pension", "found"]
 ## Reasons money leaves people's hands (ledger sinks).
-const SINKS: PackedStringArray = ["purchase", "rent", "bill"]
+const SINKS: PackedStringArray = ["purchase", "rent", "bill", "fine"]
 ## The reason on both statement entries of a withdrawal (it moves money, the ledger stays).
 const ATM: String = "atm"
 
@@ -44,6 +44,20 @@ static func charge(sim: Sim, person: Person, amount: int, reason: String, detail
 		return false
 	_change(sim, person, BANK, -amount, reason, detail)
 	sim.world.ledger.add_sink(reason, amount)
+	return true
+
+
+## A fine (T-0094): `amount` from cash first, the rest from the bank, which may go below zero
+## (a debt). Reason "fine". False, with no change, for a non-positive amount.
+static func fine(sim: Sim, person: Person, amount: int, detail: String = "") -> bool:
+	if person == null or amount <= 0:
+		return false
+	var from_cash := clampi(person.wallet.cash, 0, amount)
+	if from_cash > 0:
+		_change(sim, person, CASH, -from_cash, "fine", detail)
+	if amount > from_cash:
+		_change(sim, person, BANK, from_cash - amount, "fine", detail)
+	sim.world.ledger.add_sink("fine", amount)
 	return true
 
 

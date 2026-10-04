@@ -35,7 +35,8 @@ func _init(p_content: ContentDB, p_world: World, p_clock: SimClock, p_rng: SimRn
 ## moves) and before NeedsSystem (its per-minute rates apply before the decay,
 ## so one minute of sleep nets rate minus decay). SocialSystem ends moodlets before free
 ## will looks at mood. WorkSystem sends people to work before free will picks anything
-## (obligations first, T-0060). AutonomySystem runs last, so free
+## (obligations first, T-0060). PoliceSystem follows movement (an arrest needs this step's
+## positions) and work (an officer must be on shift to be sent out). AutonomySystem runs last, so free
 ## will decides after the minute's needs have changed (D23, D24).
 static func default_systems() -> Array[SimSystem]:
 	return [
@@ -45,6 +46,7 @@ static func default_systems() -> Array[SimSystem]:
 		NeedsSystem.new(),
 		SocialSystem.new(),
 		WorkSystem.new(),
+		PoliceSystem.new(),
 		EconomySystem.new(),
 		AutonomySystem.new(),
 	]

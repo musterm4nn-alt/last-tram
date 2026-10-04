@@ -127,11 +127,13 @@ art/                      art sources and exports (after the art gate)
 
 - A `SimSystem` has `step(sim)` and `on_minute(sim)` and **no state of its own**. The order is
   defined in one place: `Sim.default_systems()`.
-- Today: Tier → Action → Movement → Needs → Social → Work → Economy → Autonomy (see the
-  comment on `Sim.default_systems()`). `WorkSystem` goes before free will (obligations
-  first: leaving for a shift, settling shifts, missed shifts); `EconomySystem` runs the
-  weekly cycle (benefit, rent, wages); `AutonomySystem` goes last, after the minute's needs
-  have changed. Crime and police come in M4.
+- Today: Tier → Action → Movement → Needs → Social → Work → Police → Economy → Autonomy
+  (see the comment on `Sim.default_systems()`). `WorkSystem` goes before free will
+  (obligations first: leaving for a shift, settling shifts, missed shifts); `PoliceSystem`
+  (D36) sends on-duty officers after wanted people and runs their chases and arrests;
+  `EconomySystem` runs the weekly cycle (benefit, rent, wages); `AutonomySystem` goes last,
+  after the minute's needs have changed. Crimes, witnesses and reports are not a system:
+  they happen when a crime interaction finishes (`Crimes.commit`).
 
 ### Input: Commands
 
