@@ -52,3 +52,13 @@ their colour (they were read as trousers), the blonde body's pale face highlight
 the tall body's legs below the coat are trousers, the long-haired body's hair stops at the
 shoulders, and the ponytail body's cheeks follow the skin. `_despeckle` gives a lone stray
 pixel its neighbours' group.
+
+## Heads cleaned up (4 October, after the owner's notes)
+
+`_resolve_heads`: in the head rows, light one-off pixels (eye whites, highlights) join the
+skin or hair around them, dark strands inside hair join the hair, skin pixels inside hair
+join it, and clothing colours high on the head (a hair clip) join hair or skin; below the
+head, dark folds inside clothes take the clothes' colour. `_shade` softens each pixel's
+brightness against its group (CONTRAST) and snaps it to SHADES, so bright recolours don't
+streak. Rules added: pale top-of-head pixels are the blonde body's hair; the tall body's
+greys in the top rows are hair, and its coat takes lighter blue highlights.

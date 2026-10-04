@@ -15,6 +15,14 @@ const OUT: String = "res://art/export/pixellab/"
 const PX: int = 16
 const FRAME: int = 44
 const DIRS: Array[String] = ["south", "east", "north", "west"]
+## Shade steps a recoloured pixel snaps to (multiples of its colour's brightness).
+const SHADES: Array[float] = [0.55, 0.7, 0.85, 1.0, 1.15]
+## How much of the original brightness differences to keep, by group (skin, hair, top, bottom).
+const CONTRAST: Array[float] = [0.0, 0.7, 0.5, 0.8, 0.8]
+## Rows from the top of a figure that count as the head (for _resolve_heads).
+const HEAD_ROWS: int = 14
+## Rows from the top where clothing colours can only be hair accessories.
+const FACE_ROWS: int = 9
 ## How close (RGB distance) a transition-only colour must be to a terrain's mean to join it.
 const JOIN_DISTANCE: float = 0.2
 
@@ -127,6 +135,7 @@ func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 		for x: int in out.get_width():
 			if out.get_pixel(x, y).a >= 0.5:
 				groups[Vector2i(x, y)] = _pixel_group(out, x, y, rules, hair_rows, tops)
+	_resolve_heads(groups, out, tops)
 	_despeckle(groups)
 	var sums: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0]
 	var counts: Array[int] = [0, 0, 0, 0, 0]
@@ -141,10 +150,77 @@ func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 			if c.a < 0.5:
 				continue
 			var g: int = groups[Vector2i(x, y)]
-			var ratio := 0.0 if g == 0 else c.v / (sums[g] / counts[g])
+			var ratio := 0.0 if g == 0 else _shade(c.v / (sums[g] / counts[g]), g)
 			mask.set_pixel(x, y, Color8(g * 50, clampi(int(ratio * 127.5), 0, 255), 0, 255))
 	mask.save_png(ProjectSettings.globalize_path(OUT + "%s_mask.png" % base["name"]))
 	print("%s: skin %d, hair %d, top %d, bottom %d, kept %d px" % [base["name"], counts[1], counts[2], counts[3], counts[4], counts[0]])
+
+
+## Head rows (HEAD_ROWS from the top of each figure; below them, only dark folds inside
+## clothes are resolved) have many one-off pixels that only
+## look right in the original colours. Each pass, by the 8 neighbours that are skin or hair:
+## a kept pixel inside the figure (not touching the background) that is light (eye whites,
+## highlights) joins the majority; a kept dark pixel (strands, outline-coloured hair) joins
+## hair when most of them are hair (so eyes and mouths, among skin, stay); a skin pixel with
+## 5+ hair neighbours joins hair.
+func _resolve_heads(groups: Dictionary, image: Image, tops: Dictionary) -> void:
+	for _pass: int in 3:
+		var changes: Dictionary = {}
+		for at: Vector2i in groups:
+			var row := at.y % FRAME - int(tops[Vector2i(at.x / FRAME, at.y / FRAME)])
+			if row < 0:
+				continue
+			var skin := 0
+			var hair := 0
+			var top := 0
+			var bottom := 0
+			var edge := false
+			for dy: int in range(-1, 2):
+				for dx: int in range(-1, 2):
+					if dx == 0 and dy == 0:
+						continue
+					var n := at + Vector2i(dx, dy)
+					if not groups.has(n):
+						edge = edge or (absi(dx) + absi(dy) == 1)
+						continue
+					var g: int = groups[n]
+					skin += 1 if g == 1 else 0
+					hair += 1 if g == 2 else 0
+					top += 1 if g == 3 else 0
+					bottom += 1 if g == 4 else 0
+			var group: int = groups[at]
+			var c := image.get_pixelv(at)
+			if row >= HEAD_ROWS:
+				# Dark folds inside clothes take the clothes' colour (as a dark shade).
+				if group == 0 and not edge and c.v < 0.3 and maxi(top, bottom) >= 4:
+					changes[at] = 3 if top >= bottom else 4
+				continue
+			if group == 0 and skin + hair >= 3:
+				if c.v >= 0.6 and c.s < 0.35:
+					changes[at] = 1 if skin >= hair else 2
+				elif not edge and hair >= 4 and hair > skin:
+					changes[at] = 2
+			elif group == 1 and hair >= 5:
+				changes[at] = 2
+			elif (group == 3 or group == 4) and row < FACE_ROWS and skin + hair >= 2:
+				# Clips, bands and the like in the hair: hair (or skin) around them.
+				changes[at] = 2 if hair >= skin else 1
+		if changes.is_empty():
+			break
+		for at: Vector2i in changes:
+			groups[at] = changes[at]
+
+
+## A pixel's brightness relative to its group, softened (the AI sprites' strand and fold
+## texture turns harsh on bright colours) and snapped to SHADES steps, like hand-picked
+## ramps.
+func _shade(ratio: float, group: int) -> float:
+	var soft := 1.0 + (ratio - 1.0) * float(CONTRAST[group])
+	var best := SHADES[0]
+	for step: float in SHADES:
+		if absf(step - soft) < absf(best - soft):
+			best = step
+	return best
 
 
 ## A lone pixel of a recoloured group whose four neighbours all share one other recoloured
