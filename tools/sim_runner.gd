@@ -25,6 +25,7 @@ extends SceneTree
 const BUDGET_MS_PER_STEP: float = 0.25
 ## The summary covers the player and, separately, all residents together (T-0035).
 ## As systems are added, extend _report() with their key numbers (needs, money, crimes...).
+## Crimes: CrimeReport.line (T-0097).
 
 
 func _initialize() -> void:
@@ -103,6 +104,7 @@ func _initialize() -> void:
 	print(_housing_line(sim))
 	print(town.staffing_summary(sim))
 	print(economy.summary())
+	print(CrimeReport.line(sim, maxi(1, minutes / SimClock.MINUTES_PER_DAY)))
 	var ms_per_step := seconds * 1000.0 / steps
 	if args.has("check-staffing") and not _passes("STAFFING CHECK", town.staffing_failures(sim)):
 		return

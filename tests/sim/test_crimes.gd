@@ -95,10 +95,17 @@ func test_bad_incidents_are_rejected() -> void:
 	assert_true(text.contains("world.incidents[].tick"), text)
 
 
-func test_free_will_never_steals() -> void:
+## Since T-0097 residents may commit crimes, but only the tempted (dishonest or broke), and
+## never the player on free will.
+func test_only_the_tempted_steal() -> void:
 	var sim := SimFactory.new_game(content(), 2)
 	sim.run_minutes(24 * 60)
-	assert_eq(sim.world.incidents.size(), 0)
+	var rules := content().temptation_rules
+	for incident: Incident in sim.world.incidents.values():
+		var thief := sim.world.get_person(incident.perpetrator_id)
+		assert_ne(thief.id, sim.world.player_id, "the player only on purpose")
+		var broke := thief.wallet.total() - incident.stolen < rules.broke_below
+		assert_true(thief.personality.get_axis("honesty") <= rules.honesty_below or broke, "%s is honest and not broke" % thief.full_name())
 
 
 func test_police_numbers_are_validated() -> void:

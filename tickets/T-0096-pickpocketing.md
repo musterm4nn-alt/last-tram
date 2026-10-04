@@ -43,7 +43,7 @@ items, gossip.
 - [x] In play over 40 seeds, about 60% go unnoticed; each outcome leaves the right traces →
   `test_picking_pockets_in_play`
 - [x] Saved and validated → `test_stolen_cash_survives_save_and_load`
-- [x] Free will never picks it → `test_free_will_never_picks_a_pocket`
+- [x] Free will never picks it → `test_free_will_never_picks_a_pocket_for_the_honest`
 - [x] Notices → `test_hud_place.gd: test_pickpocket_notices`, `test_police_notices`
 
 ## Implementation notes
@@ -56,7 +56,7 @@ Built and reviewed by the architect. `tools/check.sh` passes.
 - Also: speech-bubble lines for it (the thief "bumps into them"; caught: "Hey! Hands off!")
   and inspector words for the memories "caught_pickpocketing" and "saw_crime"; free will
   skips crime interactions on people too (`Autonomy`, tested by
-  `test_free_will_never_picks_a_pocket`). Two tests that list every person interaction
+  `test_free_will_never_picks_a_pocket_for_the_honest`). Two tests that list every person interaction
   (`test_social.gd`, `test_talk_to_people.gd`) now expect the new one at the end.
 - No screenshot: the launch options can't target a person, and what's new on screen is the
   menu line and the notices (tested as text).

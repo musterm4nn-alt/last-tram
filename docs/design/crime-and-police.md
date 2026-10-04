@@ -78,6 +78,14 @@ vice is high and honesty low, crime interactions score well. Their **risk cost**
 visible witnesses, police nearby and bravery. Long headless runs must show believable rates
 (`tools/simrun.sh` reports crimes per day by type).
 
+**Built so far (T-0097):** residents with honesty at -40 or below (about one in five), or
+with less than €10 to their name, consider crimes, unless they are wanted or committed one in
+the last three days. Picking a pocket scores a little on its own (the money); pocketing a
+snack scores like a meal. Every onlooker counts against it (a police officer much more), less
+so for the brave. In a week's run that is about two pickpocketings a day across the town, a
+few of them reported; shoplifting happens only when someone is broke and hungry, which the
+economy rarely allows yet.
+
 ## Health, injuries and death
 
 Fights cause injuries and knock-outs. Hospital visits cost money. The player "dies" → wakes

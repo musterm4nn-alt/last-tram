@@ -86,6 +86,7 @@ static func _unwalked(sim: Sim, person: Person) -> Array[Dictionary]:
 	var far_defs := _outing_objects(sim) if going_out else {}
 	far_defs.merge(_errand_objects(sim, person))
 	var taken := Interactions.taken_slots(sim)
+	var willing := Temptation.willing(sim, person)  # crimes are options for the tempted only (T-0097)
 	for id: int in ids:
 		var obj: WorldObject = sim.world.objects[id]
 		var near := obj.origin.z == here.z and maxi(absi(obj.origin.x - here.x), absi(obj.origin.y - here.y)) <= SEARCH_RADIUS
@@ -98,7 +99,7 @@ static func _unwalked(sim: Sim, person: Person) -> Array[Dictionary]:
 		if bound < 0:
 			continue
 		for def: InteractionDef in Interactions.offered_by(sim, id):
-			if not def.crime.is_empty():  # people don't commit crimes on their own yet (M4)
+			if not def.crime.is_empty() and not willing:
 				continue
 			if not near and not (going_out and def.routine == "out") and not errand(sim, person, def):
 				continue
@@ -112,17 +113,19 @@ static func _unwalked(sim: Sim, person: Person) -> Array[Dictionary]:
 					+ Routines.score_bonus(sim, person, def) - Utility.price_cost(person, def, sim.content)
 					+ (sim.content.economy.restock_bonus if def.adds_groceries > 0 else 0.0)
 					+ (sim.content.economy.cash_errand_score if def.cash_out > 0 and errand(sim, person, def) else 0.0)
-					+ (sim.content.economy.laundry_errand_score if def.launders and errand(sim, person, def) else 0.0),
+					+ (sim.content.economy.laundry_errand_score if def.launders and errand(sim, person, def) else 0.0)
+					+ (Temptation.bonus(sim, person, def, obj.origin) if not def.crime.is_empty() else 0.0),
 			})
 	for other: Person in _nearby_people(sim, person):
 		var bound := 0 if Conversations.adjacent(person, other) else maxi(0, _chebyshev(here, other.cell()) - 1)
 		for def: InteractionDef in Interactions.offered_by_person(sim, person.id, other.id):
-			if not def.crime.is_empty():  # no pickpocketing on their own yet (T-0096)
+			if not def.crime.is_empty() and not willing:
 				continue
 			out.append({
 				"object_id": other.id, "interaction_id": def.id, "near": true, "person": true, "bound": bound, "order": out.size(),
 				"base": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
-					+ Utility.social_bias(person, other, def) + Routines.social_out_bonus(sim, person, def),
+					+ Utility.social_bias(person, other, def) + Routines.social_out_bonus(sim, person, def)
+					+ (Temptation.bonus(sim, person, def, other.cell(), other.id) if not def.crime.is_empty() else 0.0),
 			})
 	return out
 
