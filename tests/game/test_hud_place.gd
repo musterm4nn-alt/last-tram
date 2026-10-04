@@ -126,3 +126,18 @@ func test_pickpocket_notices() -> void:
 	assert_eq(Hud.notice_for_event(exchange.call(player.id, anna.id, "fail"), player.id, content(), sim), "Anna Weber caught you!")
 	assert_eq(Hud.notice_for_event(exchange.call(player.id, anna.id, "success"), player.id, content(), sim), "", "the theft notice says it")
 	assert_eq(Hud.notice_for_event(exchange.call(anna.id, player.id, "fail"), player.id, content(), sim), "Anna Weber tried to rob you!")
+
+
+func test_trespass_and_burglary_notices() -> void:
+	var sim := SimFactory.new_game(content(), 1)
+	var player := sim.world.player()
+	var victim := Crimes.home_victim(sim, Lots.by_place(sim.world, "haus_3").id)
+	var event := func(thief: int, who: int, amount: int) -> Dictionary:
+		return {"type": &"stolen", "data": {"person_id": thief, "victim_id": who, "amount": amount, "incident_id": 1, "crime_id": "burglary"}}
+	assert_eq(Hud.notice_for_event(event.call(player.id, victim.id, 10000), player.id, content(), sim), "You found €100.00 at %s's" % victim.full_name())
+	assert_eq(Hud.notice_for_event(event.call(player.id, victim.id, 0), player.id, content(), sim), "Nothing worth taking")
+	assert_eq(Hud.notice_for_event(event.call(victim.id, player.id, 2500), player.id, content(), sim), "Someone broke into your home: €25.00 gone")
+	var trespass := {"type": &"crime_committed", "data": {"incident_id": 1, "crime_id": "trespassing", "person_id": player.id}}
+	assert_eq(Hud.notice_for_event(trespass, player.id, content(), sim), "You're trespassing")
+	var shoplifting := {"type": &"crime_committed", "data": {"incident_id": 1, "crime_id": "shoplifting", "person_id": player.id}}
+	assert_eq(Hud.notice_for_event(shoplifting, player.id, content(), sim), "")

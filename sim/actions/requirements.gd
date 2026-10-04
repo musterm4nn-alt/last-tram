@@ -18,7 +18,7 @@ const TEXT: Dictionary = {
 	"unknown_secret": "you don't know about it",
 }
 ## Reasons the menu doesn't show at all (the option isn't for this person).
-const HIDDEN: PackedStringArray = ["not_your_job", "has_home", "unknown_secret"]
+const HIDDEN: PackedStringArray = ["not_your_job", "has_home", "unknown_secret", "not_a_break_in"]
 
 
 ## Checked in order: a homeless-only interaction for someone with a home (T-0066), or a
@@ -44,7 +44,10 @@ static func check(sim: Sim, person: Person, def: InteractionDef, target_id: int)
 		var lot := Lots.lot_at(sim, obj.origin) if obj != null else null
 		if lot != null and lot.access == Lot.HOURS and not Lots.is_open(lot, sim.clock):
 			return "closed"
-		if lot != null and lot.access == Lot.PRIVATE and person.home_lot_id != lot.id:
+		if def.trespass:  # a break-in: only in someone else's home (T-0098)
+			if lot == null or lot.access != Lot.PRIVATE or person.home_lot_id == lot.id:
+				return "not_a_break_in"
+		elif lot != null and lot.access == Lot.PRIVATE and person.home_lot_id != lot.id:
 			return "private"
 		if def.staffed and lot != null and not Staffing.serving(sim, lot.place_id):
 			return "not_staffed"

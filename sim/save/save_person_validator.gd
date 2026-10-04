@@ -25,6 +25,7 @@ static func validate(p: Dictionary, s: SaveSchema, path: String, version: int) -
 		s.text(scene_id, path + ".scenes_requested[]")
 	s.text(p.get("origin", ""), path + ".origin")
 	s.boolean(p.get("record", false), path + ".record")
+	s.integer(p.get("on_lot_id", 0), path + ".on_lot_id")
 	var dirt := s.dictionary(p.get("dirt", {}), path + ".dirt")
 	for piece: Variant in dirt:
 		s.number(dirt[piece], path + ".dirt." + str(piece), 0.0, 100.0)

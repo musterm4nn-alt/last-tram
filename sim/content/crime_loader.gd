@@ -61,6 +61,10 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 			var steal := reader.read_obj(entry, "steals_cash", ctx)
 			def.steal_share = reader.read_num(steal, "share", ctx + " steals_cash")
 			def.steal_max = reader.read_int(steal, "max", ctx + " steals_cash")
+			if steal.has("account"):
+				def.steal_account = reader.read_str(steal, "account", ctx + " steals_cash")
+			if not def.steal_account in [Money.CASH, Money.BANK]:
+				reader.error("%s: steals_cash account must be \"cash\" or \"bank\"" % ctx)
 			if def.steal_share <= 0.0 or def.steal_share > 1.0 or def.steal_max < 1:
 				reader.error("%s: steals_cash needs a share above 0 and up to 1, and a max of 1 or more" % ctx)
 		if def.severity < 1 or def.severity > MAX_SEVERITY:

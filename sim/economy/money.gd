@@ -63,12 +63,16 @@ static func fine(sim: Sim, person: Person, amount: int, detail: String = "") -> 
 	return true
 
 
-## A theft (T-0096): up to `amount` of `victim`'s cash goes into `thief`'s pocket. The ledger
-## doesn't change. Returns the cents taken (0 when they had no cash).
-static func steal(sim: Sim, victim: Person, thief: Person, amount: int, detail: String = "") -> int:
-	var taken := clampi(amount, 0, maxi(victim.wallet.cash, 0)) if victim != null and thief != null else 0
+## A theft (T-0096): up to `amount` of `victim`'s cash (or, for a burglary, of their bank:
+## the savings at home, T-0098) goes into `thief`'s pocket. The ledger doesn't change.
+## Returns the cents taken (0 when there was nothing).
+static func steal(sim: Sim, victim: Person, thief: Person, amount: int, detail: String = "", account: String = CASH) -> int:
+	if victim == null or thief == null:
+		return 0
+	var held_there := victim.wallet.cash if account == CASH else victim.wallet.bank
+	var taken := clampi(amount, 0, maxi(held_there, 0))
 	if taken > 0:
-		_change(sim, victim, CASH, -taken, THEFT, detail)
+		_change(sim, victim, account, -taken, THEFT, detail)
 		_change(sim, thief, CASH, taken, THEFT, detail)
 	return taken
 

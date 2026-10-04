@@ -67,8 +67,10 @@ var launders: bool = false
 ## Only for people with no home (T-0066: sleeping rough); Requirements "has_home" otherwise.
 var homeless_only: bool = false
 ## A crime this interaction commits when it finishes (a CrimeDef id; T-0091), or "".
-## Free will never picks it.
+## Free will offers it only to the tempted (T-0097).
 var crime: String = ""
+## Only in someone else's home (T-0098: a break-in); Requirements "not_a_break_in" elsewhere.
+var trespass: bool = false
 ## A shift at work (T-0059): uses staff slots, lasts until the shift ends, and the job's
 ## WorkSession drives it. Work has no duration of its own.
 var work: bool = false

@@ -11,3 +11,6 @@ var severity: int = 1
 ## cash, at most steal_max cents. 0 = the crime takes no cash.
 var steal_share: float = 0.0
 var steal_max: int = 0
+## Which of the victim's accounts it takes from: "cash" (pockets), or "bank" (T-0098: the
+## savings a burglar finds at home).
+var steal_account: String = "cash"

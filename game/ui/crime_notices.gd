@@ -1,6 +1,6 @@
 class_name CrimeNotices
 extends RefCounted
-## The HUD's words for crime and the police (T-0093 to T-0096): what the player did, what was
+## The HUD's words for crime and the police (T-0093 to T-0098): what the player did, what was
 ## done to them, and what the police are up to. Pure helpers; Hud.notice_for_event asks first.
 
 
@@ -12,6 +12,8 @@ static func notice(event: Dictionary, player_id: int, sim: Sim) -> String:
 	if int(data.get("person_id", -1)) != player_id:
 		return ""
 	match event.get("type"):
+		&"crime_committed":
+			return "You're trespassing" if data.get("crime_id") == Trespass.CRIME_ID else ""
 		&"crime_reported":
 			return "Someone called the police on you"
 		&"police_dispatched":
@@ -41,14 +43,18 @@ static func sneaky(data: Dictionary, player_id: int, sim: Sim) -> String:
 	return "%s tried to rob you!" % who if target_id == player_id else ""
 
 
-## Words for a theft of cash (T-0096) the player did or suffered.
+## Words for a theft (T-0096 pickpocketing, T-0098 burglary) the player did or suffered.
 static func theft(data: Dictionary, player_id: int, sim: Sim) -> String:
 	var amount := int(data.get("amount", 0))
+	var burglary: bool = data.get("crime_id") == "burglary"
 	if int(data.get("victim_id", 0)) == player_id:
-		return "Someone picked your pocket: %s gone" % Money.format(amount) if amount > 0 else ""
+		if amount <= 0:
+			return ""
+		return ("Someone broke into your home: %s gone" if burglary else "Someone picked your pocket: %s gone") % Money.format(amount)
 	if int(data.get("person_id", 0)) != player_id:
 		return ""
 	if amount <= 0:
-		return "Their pockets were empty"
+		return "Nothing worth taking" if burglary else "Their pockets were empty"
 	var victim := sim.world.get_person(int(data.get("victim_id", 0))) if sim != null else null
-	return "You lifted %s from %s" % [Money.format(amount), victim.full_name() if victim != null else "them"]
+	var whose := victim.full_name() if victim != null else "them"
+	return ("You found %s at %s's" if burglary else "You lifted %s from %s") % [Money.format(amount), whose]

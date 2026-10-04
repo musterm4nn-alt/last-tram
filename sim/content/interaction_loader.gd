@@ -88,6 +88,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.launders = reader.read_bool(d, "launders", ctx)
 		if d.has("homeless_only"):
 			def.homeless_only = reader.read_bool(d, "homeless_only", ctx)
+		if d.has("trespass"):
+			def.trespass = reader.read_bool(d, "trespass", ctx)
+			if def.trespass and (def.target != "object" or not d.has("crime")):
+				reader.error("%s: only object interactions that commit a crime can be 'trespass'" % ctx)
 		if d.has("crime"):
 			def.crime = reader.read_str(d, "crime", ctx)
 			if db.crime(def.crime) == null:
