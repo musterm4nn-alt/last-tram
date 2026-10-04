@@ -6,7 +6,7 @@ extends SceneTree
 ##   the rest (kerbs, edge stones) the edge ramp; brightness picks the step on the ramp.
 ## - objects.png: each object cropped to its pixels, bottom-centred in its "size" box, dark
 ##   colours (v < 0.3) on the dark ramp and the rest on its main ramp, by brightness.
-## - resident.png: 44x44 frames, rows south, east, north, west; walk frames, then idle.
+## - <base>.png and <base>_mask.png per base body (see _build_base).
 ## Prints the "wang" entries for data/art2d/pixellab.json.
 ##   godot --headless --path . --script res://art/src/pixellab/build_pixellab.gd
 
@@ -44,7 +44,7 @@ func _initialize() -> void:
 			keys[key] = [col, row]
 		wang.append({"sheet": "terrain", "lower": pair["lower"], "upper": pair["upper"], "tiles": keys})
 	terrain.save_png(ProjectSettings.globalize_path(OUT + "terrain.png"))
-	_build_resident(config["resident"])
+	_build_people(config["people"])
 	_build_objects(config["objects"], palette)
 	print(JSON.stringify({"wang": wang}, "\t"))
 
@@ -90,20 +90,59 @@ func _map_by_brightness(keys: Array, ramp: PackedColorArray, mapping: Dictionary
 		mapping[key] = ramp[clampi(int(t * ramp.size()), 0, ramp.size() - 1)]
 
 
-func _build_resident(spec: Dictionary) -> void:
-	var walk: int = spec["walk_frames"]
-	var idle: int = spec["idle_frames"]
+func _build_people(spec: Dictionary) -> void:
+	for base: Dictionary in spec["bases"]:
+		_build_base(base, int(spec["walk_frames"]), int(spec["idle_frames"]))
+
+
+## One base body: <name>.png (44x44 frames, rows south, east, north, west; walk frames, then
+## idle) and <name>_mask.png, which marks each pixel's colour group for recolouring in the
+## game: red = group (1 skin, 2 hair, 3 top, 4 bottom; 0 keeps its colour), green = its
+## brightness relative to the group's average, halved.
+func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 	var out := Image.create_empty(FRAME * (walk + idle), FRAME * DIRS.size(), false, Image.FORMAT_RGBA8)
 	for row: int in DIRS.size():
 		for f: int in walk + idle:
 			var file := "%s_%d.png" % [DIRS[row], f] if f < walk else "%s_idle_%d.png" % [DIRS[row], f - walk]
-			var path := ProjectSettings.globalize_path(SRC + "raw/resident/" + file)
+			var path := ProjectSettings.globalize_path(SRC + "raw/%s/%s" % [base["raw"], file])
 			if not FileAccess.file_exists(path):
-				path = ProjectSettings.globalize_path(SRC + "raw/resident/%s_rot.png" % DIRS[row])
+				path = ProjectSettings.globalize_path(SRC + "raw/%s/%s_rot.png" % [base["raw"], DIRS[row]])
 			var frame := Image.load_from_file(path)
 			frame.convert(Image.FORMAT_RGBA8)
 			out.blit_rect(frame, Rect2i(0, 0, FRAME, FRAME), Vector2i(f * FRAME, row * FRAME))
-	out.save_png(ProjectSettings.globalize_path(OUT + "resident.png"))
+	out.save_png(ProjectSettings.globalize_path(OUT + "%s.png" % base["name"]))
+	var rules: Array = base["rules"]
+	var sums: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0]
+	var counts: Array[int] = [0, 0, 0, 0, 0]
+	for y: int in out.get_height():
+		for x: int in out.get_width():
+			var c := out.get_pixel(x, y)
+			if c.a >= 0.5:
+				var g := _group(c, rules)
+				sums[g] += c.v
+				counts[g] += 1
+	var mask := Image.create_empty(out.get_width(), out.get_height(), false, Image.FORMAT_RGBA8)
+	for y: int in out.get_height():
+		for x: int in out.get_width():
+			var c := out.get_pixel(x, y)
+			if c.a < 0.5:
+				continue
+			var g := _group(c, rules)
+			var ratio := 0.0 if g == 0 else c.v / (sums[g] / counts[g])
+			mask.set_pixel(x, y, Color8(g * 50, clampi(int(ratio * 127.5), 0, 255), 0, 255))
+	mask.save_png(ProjectSettings.globalize_path(OUT + "%s_mask.png" % base["name"]))
+	print("%s: skin %d, hair %d, top %d, bottom %d, kept %d px" % [base["name"], counts[1], counts[2], counts[3], counts[4], counts[0]])
+
+
+## The first rule that matches: [group, h_min, h_max, s_min, s_max, v_min, v_max] (hue in
+## degrees; h_min > h_max wraps through red). 0 when none does.
+func _group(c: Color, rules: Array) -> int:
+	var h := c.h * 360.0
+	for rule: Array in rules:
+		var hue_ok: bool = (h >= rule[1] and h <= rule[2]) if rule[1] <= rule[2] else (h >= rule[1] or h <= rule[2])
+		if hue_ok and c.s >= rule[3] and c.s <= rule[4] and c.v >= rule[5] and c.v <= rule[6]:
+			return int(rule[0])
+	return 0
 
 
 func _lock(sheet: Image, tiles: Array, ramps: Array) -> void:

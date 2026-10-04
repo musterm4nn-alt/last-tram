@@ -4,7 +4,12 @@
 		"terrain": "res://art/export/custom/terrain.png",
 		"objects": "res://art/export/custom/objects.png",
 		"pl_terrain": "res://art/export/pixellab/terrain.png",
-		"pl_people": "res://art/export/pixellab/resident.png",
+		"pl_base_a": "res://art/export/pixellab/base_a.png",
+		"pl_base_a_mask": "res://art/export/pixellab/base_a_mask.png",
+		"pl_base_b": "res://art/export/pixellab/base_b.png",
+		"pl_base_b_mask": "res://art/export/pixellab/base_b_mask.png",
+		"pl_base_c": "res://art/export/pixellab/base_c.png",
+		"pl_base_c_mask": "res://art/export/pixellab/base_c_mask.png",
 		"pl_objects": "res://art/export/pixellab/objects.png"
 	},
 	"terrain": {
@@ -395,7 +400,20 @@
 		}
 	],
 	"people": {
-		"sheet": "pl_people",
+		"bases": {
+			"base_a": [
+				"pl_base_a",
+				"pl_base_a_mask"
+			],
+			"base_b": [
+				"pl_base_b",
+				"pl_base_b_mask"
+			],
+			"base_c": [
+				"pl_base_c",
+				"pl_base_c_mask"
+			]
+		},
 		"frame": [
 			44,
 			44

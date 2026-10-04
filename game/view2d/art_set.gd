@@ -20,8 +20,9 @@ var _roof: Dictionary = {}
 ## Each {"lower": String, "upper": String, "texture": Texture2D, "tiles": {"NWNESWSE" -> Vector2i}},
 ## a key's digit being 1 where that corner is the upper terrain.
 var wang: Array[Dictionary] = []
-## PixelLab test: one sprite sheet for every person, or {}: {"texture", "frame": Vector2i,
-## "feet": Vector2i, "walk": int, "idle": int}; rows south, east, north, west.
+## PixelLab test: base bodies recoloured per person (PeopleSprites), or {}: {"bases": {name:
+## {"image", "mask"}}, "frame": Vector2i, "feet": Vector2i, "walk": int, "idle": int}; rows
+## south, east, north, west.
 var people: Dictionary = {}
 
 var _sheets: Dictionary[String, Texture2D] = {}
@@ -139,7 +140,10 @@ func _read(data: Dictionary, content: ContentDB, reader: ContentReader, path: St
 		wang.append({"lower": entry["lower"], "upper": entry["upper"], "texture": _sheets[entry["sheet"]], "tiles": tiles})
 	if data.has("people"):
 		var p: Dictionary = data["people"]
-		people = {"texture": _sheets[p["sheet"]], "frame": Vector2i(int(p["frame"][0]), int(p["frame"][1])),
+		var bases: Dictionary = {}
+		for base: String in p["bases"]:
+			bases[base] = {"image": _sheets[p["bases"][base][0]].get_image(), "mask": _sheets[p["bases"][base][1]].get_image()}
+		people = {"bases": bases, "frame": Vector2i(int(p["frame"][0]), int(p["frame"][1])),
 				"feet": Vector2i(int(p["feet"][0]), int(p["feet"][1])), "walk": int(p["walk"]), "idle": int(p["idle"])}
 	if data.has("objects"):
 		var objects := reader.read_obj(data, "objects", path)
