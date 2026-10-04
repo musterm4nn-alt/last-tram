@@ -1,5 +1,5 @@
 {
-	"_doc": "T-0094 test fixture: police numbers out of range.",
+	"_doc": "T-0095 test fixture: search numbers out of range.",
 	"witness": {
 		"day_range": 8,
 		"night_range": 5,
@@ -15,10 +15,10 @@
 		"friend_at": 30,
 		"heat_hours": 48,
 		"severity_per_level": 2,
-		"fine_per_severity": -1,
-		"arrest_range": 9.0,
-		"officer_run_speed": 8.0,
-		"search_minutes": 10,
+		"fine_per_severity": 5000,
+		"arrest_range": 1.0,
+		"officer_run_speed": 0,
+		"search_minutes": 0,
 		"search_radius": 6,
 		"lost_heat_hours": 6
 	},

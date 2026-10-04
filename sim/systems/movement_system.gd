@@ -1,7 +1,7 @@
 class_name MovementSystem
 extends SimSystem
 ## Moves people by their move_intent (direct control), or else along their path (set by
-## WalkToCommand), sliding along walls, at Person.move_speed() (faster while running).
+## WalkToCommand), sliding along walls, at speed() (faster while running).
 ## Collision: a person is a box of half-size Person.RADIUS that may only overlap walkable
 ## cells. X and Y are resolved separately, so walking diagonally into a wall slides along it.
 
@@ -18,9 +18,9 @@ func step(sim: Sim) -> void:
 		if person.move_intent != Vector2.ZERO:
 			var direction := person.move_intent.limit_length(1.0)
 			person.facing = _cardinal(direction)
-			move_person(sim.world.grid, person, direction * person.move_speed() * cells_per_step)
+			move_person(sim.world.grid, person, direction * speed(sim, person) * cells_per_step)
 		elif not person.path.is_empty():
-			follow_path(sim, person, person.move_speed() * cells_per_step)
+			follow_path(sim, person, speed(sim, person) * cells_per_step)
 
 
 ## Background people (T-0042) follow their path a whole minute's walk at a time. They never
@@ -28,7 +28,16 @@ func step(sim: Sim) -> void:
 func on_minute(sim: Sim) -> void:
 	for person: Person in sim.world.people.values():
 		if person.background and not person.path.is_empty():
-			follow_path(sim, person, person.move_speed())
+			follow_path(sim, person, speed(sim, person))
+
+
+## Cells per game minute for `person` now: Person.move_speed(), but a police officer on a call
+## runs at most PoliceRules.officer_run_speed (T-0095).
+static func speed(sim: Sim, person: Person) -> float:
+	var cells := person.move_speed()
+	if Police.on_call(sim, person):
+		cells = minf(cells, sim.content.police_rules.officer_run_speed)
+	return cells
 
 
 ## Walks `person` along their path, covering up to `budget` cells this step.

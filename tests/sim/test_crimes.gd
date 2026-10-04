@@ -106,3 +106,15 @@ func test_police_numbers_are_validated() -> void:
 	CrimeLoader.load(ContentDB.new(), reader, "res://tests/fixtures/crimes_broken/bad_police.json")
 	var all := "\n".join(reader.errors)
 	assert_true(all.contains("fine_per_severity must be 0 or more and arrest_range 0.5 to 3"), all)
+
+
+func test_search_numbers_are_validated() -> void:
+	var reader := ContentReader.new()
+	CrimeLoader.load(ContentDB.new(), reader, "res://tests/fixtures/crimes_broken/bad_search.json")
+	var all := "\n".join(reader.errors)
+	assert_true(all.contains("officer_run_speed must be above 0"), all)
+	assert_true(all.contains("search_minutes, search_radius and lost_heat_hours must be 1 or more"), all)
+	assert_eq(content().police_rules.search_minutes, 10, "T-0095")
+	assert_eq(content().police_rules.search_radius, 6)
+	assert_eq(content().police_rules.lost_heat_hours, 6)
+	assert_eq(content().police_rules.officer_run_speed, 8.0)

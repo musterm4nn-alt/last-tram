@@ -95,11 +95,11 @@ func test_closed_incidents_dont_count() -> void:
 	var id := sim.world.player_id
 	var incident := _reported(sim, id)
 	assert_eq(Police.wanted_level(sim, id), 1)
-	assert_eq(Police.wanted_people(sim), [id] as Array[int])
+	assert_eq(Police.sought_people(sim), [id] as Array[int])
 	assert_eq(Police.fine_for(sim, id), 2 * content().police_rules.fine_per_severity)
 	incident.closed_tick = sim.clock.tick
 	assert_eq(Police.wanted_level(sim, id), 0)
-	assert_eq(Police.wanted_people(sim), [] as Array[int])
+	assert_eq(Police.sought_people(sim), [] as Array[int])
 	assert_eq(Police.fine_for(sim, id), 0)
 
 

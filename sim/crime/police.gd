@@ -40,26 +40,21 @@ static func report_chance(sim: Sim, witness: Person, perpetrator_id: int, severi
 
 ## How hard the police are looking for `person_id` now: 0 (not at all) to MAX_LEVEL.
 static func wanted_level(sim: Sim, person_id: int) -> int:
-	var rules := sim.content.police_rules
-	var window := SimClock.ticks_for(0, rules.heat_hours)
 	var total := 0
 	for id: int in sim.world.incidents:
 		var incident: Incident = sim.world.incidents[id]
-		if incident.perpetrator_id != person_id or incident.reported_by == 0 or incident.closed_tick >= 0:
-			continue
-		if sim.clock.tick - incident.reported_tick >= window:
-			continue
-		var crime := sim.content.crime(incident.crime_id)
-		total += crime.severity if crime != null else 0
-	return mini(ceili(float(total) / rules.severity_per_level), MAX_LEVEL)
+		if incident.perpetrator_id == person_id and counts(sim, incident):
+			total += sim.content.crime(incident.crime_id).severity
+	return mini(ceili(float(total) / sim.content.police_rules.severity_per_level), MAX_LEVEL)
 
 
-## The ids (ascending) of everyone with a wanted level of 1 or more.
-static func wanted_people(sim: Sim) -> Array[int]:
+## The ids (ascending) of the people the police go after: those with a counting incident
+## the police haven't lost (T-0095).
+static func sought_people(sim: Sim) -> Array[int]:
 	var out: Array[int] = []
 	for id: int in sim.world.incidents:
 		var incident: Incident = sim.world.incidents[id]
-		if not out.has(incident.perpetrator_id) and _counts(sim, incident):
+		if not out.has(incident.perpetrator_id) and incident.lost_tick < 0 and counts(sim, incident):
 			out.append(incident.perpetrator_id)
 	out.sort()
 	return out
@@ -70,18 +65,22 @@ static func last_reported_cell(sim: Sim, person_id: int) -> Vector3i:
 	var best: Incident = null
 	for id: int in sim.world.incidents:
 		var incident: Incident = sim.world.incidents[id]
-		if incident.perpetrator_id == person_id and _counts(sim, incident) \
+		if incident.perpetrator_id == person_id and counts(sim, incident) \
 				and (best == null or incident.reported_tick >= best.reported_tick):
 			best = incident
 	return best.cell if best != null else Vector3i.ZERO
 
 
 ## True while an incident counts towards its perpetrator's wanted level: reported, not closed,
-## within the last heat_hours, and of a crime the content still has.
-static func _counts(sim: Sim, incident: Incident) -> bool:
+## within the last heat_hours (and lost_heat_hours after the police lost them), and of a
+## crime the content still has.
+static func counts(sim: Sim, incident: Incident) -> bool:
 	if incident.reported_by == 0 or incident.closed_tick >= 0 or sim.content.crime(incident.crime_id) == null:
 		return false
-	return sim.clock.tick - incident.reported_tick < SimClock.ticks_for(0, sim.content.police_rules.heat_hours)
+	var rules := sim.content.police_rules
+	if incident.lost_tick >= 0 and sim.clock.tick - incident.lost_tick >= SimClock.ticks_for(0, rules.lost_heat_hours):
+		return false
+	return sim.clock.tick - incident.reported_tick < SimClock.ticks_for(0, rules.heat_hours)
 
 
 ## True while `person` works a police shift (at the desk or out on a call).
@@ -133,7 +132,7 @@ static func dispatch(sim: Sim, suspect: Person) -> PoliceTask:
 	task.last_seen = goal
 	sim.world.police_tasks[best.id] = task
 	best.running = true
-	_head_to(sim, best, goal)
+	head_to(sim, best, goal)
 	sim.emit_event(&"police_dispatched", {"officer_id": best.id, "person_id": suspect.id})
 	return task
 
@@ -151,8 +150,9 @@ static func can_see(sim: Sim, officer: Person, suspect: Person) -> bool:
 
 
 ## One step of a call: an officer who sees the suspect heads for where they are now and
-## arrests them within arrest_range; one who doesn't keeps going to where they last saw them
-## (and waits there). An officer walking back ends the call at the desk.
+## arrests them within arrest_range; one who doesn't keeps going to where they last saw them,
+## then searches there (PoliceSearch). An officer walking back ends the call at the desk, or
+## turns round if they spot a suspect who is still wanted.
 static func chase(sim: Sim, task: PoliceTask) -> void:
 	var officer := sim.world.get_person(task.officer_id)
 	var suspect := sim.world.get_person(task.target_id)
@@ -160,22 +160,27 @@ static func chase(sim: Sim, task: PoliceTask) -> void:
 		end_call(sim, task)
 		return
 	if task.returning:
-		if officer.path.is_empty():
+		if wanted_level(sim, suspect.id) > 0 and can_see(sim, officer, suspect):
+			PoliceSearch.spotted(sim, task, officer, suspect)
+		elif officer.path.is_empty():
 			var desk := desk_cell(sim, officer)
 			if officer.cell() != desk:
-				_head_to(sim, officer, desk)
+				head_to(sim, officer, desk)
 			if officer.path.is_empty():
 				end_call(sim, task)  # at the desk (or no way back)
 		return
 	if not can_see(sim, officer, suspect):
+		PoliceSearch.step(sim, task, officer)
 		return
+	if task.search_until >= 0:
+		PoliceSearch.found(sim, task, officer)
 	if officer.pos.distance_to(suspect.pos) <= sim.content.police_rules.arrest_range:
 		arrest(sim, officer, suspect)
 		return
 	var cell := suspect.cell()
 	if cell != task.last_seen or (officer.path.is_empty() and officer.cell() != cell):
 		task.last_seen = cell
-		_head_to(sim, officer, cell)
+		head_to(sim, officer, cell)
 
 
 ## The fine for `person_id`'s open reported crimes: severity × fine_per_severity each.
@@ -216,8 +221,9 @@ static func arrest(sim: Sim, officer: Person, suspect: Person) -> int:
 ## The officer stops chasing and walks back to the desk (the call ends there).
 static func go_back(sim: Sim, officer: Person, task: PoliceTask) -> void:
 	task.returning = true
+	task.search_until = -1
 	officer.running = false
-	_head_to(sim, officer, desk_cell(sim, officer))
+	head_to(sim, officer, desk_cell(sim, officer))
 
 
 ## Ends the call: the officer stops where they are.
@@ -250,7 +256,7 @@ static func _charges(sim: Sim, person_id: int) -> Array[Incident]:
 
 
 ## Sets the officer's path to `cell` (none when already there or there is no way).
-static func _head_to(sim: Sim, officer: Person, cell: Vector3i) -> void:
+static func head_to(sim: Sim, officer: Person, cell: Vector3i) -> void:
 	if officer.cell() == cell:
 		officer.path.clear()
 	else:

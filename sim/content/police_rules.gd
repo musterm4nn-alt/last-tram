@@ -18,3 +18,13 @@ var severity_per_level: int = 2
 var fine_per_severity: int = 5000
 ## An officer arrests a suspect they can see within this many cells (feet to feet).
 var arrest_range: float = 1.0
+## Officers on a call run at most this fast, in cells per game minute (T-0095): a little
+## slower than a running player (walk_speed 4.5 × Person.RUN_FACTOR), so running away works.
+var officer_run_speed: float = 8.0
+## An officer who loses sight of the suspect searches for this many game minutes (T-0095)...
+var search_minutes: int = 10
+## ...within this many cells (Chebyshev) of where they last saw them.
+var search_radius: int = 6
+## After the police give up, the crimes count towards the wanted level for this many more
+## game hours (never past heat_hours after the report).
+var lost_heat_hours: int = 6

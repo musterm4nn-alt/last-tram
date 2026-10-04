@@ -25,6 +25,13 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	police.severity_per_level = reader.read_int(p, "severity_per_level", path + ": police")
 	police.fine_per_severity = reader.read_int(p, "fine_per_severity", path + ": police")
 	police.arrest_range = reader.read_num(p, "arrest_range", path + ": police")
+	police.officer_run_speed = reader.read_num(p, "officer_run_speed", path + ": police")
+	if police.officer_run_speed <= 0.0:
+		reader.error("%s: police officer_run_speed must be above 0" % path)
+	for key: String in ["search_minutes", "search_radius", "lost_heat_hours"]:
+		police.set(key, reader.read_int(p, key, path + ": police"))
+	if police.search_minutes < 1 or police.search_radius < 1 or police.lost_heat_hours < 1:
+		reader.error("%s: police search_minutes, search_radius and lost_heat_hours must be 1 or more" % path)
 	if police.heat_hours < 1 or police.severity_per_level < 1:
 		reader.error("%s: police heat_hours and severity_per_level must be 1 or more" % path)
 	if police.fine_per_severity < 0 or police.arrest_range < 0.5 or police.arrest_range > 3.0:

@@ -156,6 +156,12 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return "Someone called the police on you"
 	if event.get("type") == &"police_dispatched":
 		return "The police are looking for you"
+	if event.get("type") == &"police_searching":
+		return "The police lost sight of you"
+	if event.get("type") == &"police_gave_up":
+		return "The police gave up looking for you"
+	if event.get("type") == &"police_spotted":
+		return "The police spotted you again"
 	if event.get("type") == &"arrested":
 		return "Arrested: fined %s. It's on your record now." % Money.format(int(data.get("fine", 0)))
 	var reason := String(data.get("reason", ""))

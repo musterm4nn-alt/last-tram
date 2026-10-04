@@ -22,6 +22,9 @@ var reported_tick: int = -1
 ## When an arrest closed it (T-0094; -1 = still open). Closed incidents no longer count
 ## towards the wanted level.
 var closed_tick: int = -1
+## When the police gave up looking for the perpetrator (T-0095; -1 = not lost). A lost
+## incident counts towards the wanted level for only PoliceRules.lost_heat_hours more.
+var lost_tick: int = -1
 ## Who saw it, ascending ids (T-0092).
 var witnesses: PackedInt32Array = PackedInt32Array()
 
@@ -39,6 +42,7 @@ func to_dict() -> Dictionary:
 		"reported_by": reported_by,
 		"reported_tick": reported_tick,
 		"closed_tick": closed_tick,
+		"lost_tick": lost_tick,
 	}
 
 
@@ -55,6 +59,7 @@ static func from_dict(d: Dictionary) -> Incident:
 	incident.reported_by = int(d.get("reported_by", 0))
 	incident.reported_tick = int(d.get("reported_tick", -1))
 	incident.closed_tick = int(d.get("closed_tick", -1))
+	incident.lost_tick = int(d.get("lost_tick", -1))
 	for id: Variant in d.get("witnesses", []):
 		incident.witnesses.append(int(id))
 	return incident

@@ -48,6 +48,10 @@ and there are no sexual-violence mechanics.
   the suspect while they can see them and arrests them when they catch up: a fine of €50
   per severity point (cash, then the bank, which can go below zero), the case closed, a
   criminal record. Then they walk back to the desk. A call ends with the officer's shift.
+- **Getting away (T-0095):** officers run a little slower than a running player. An officer
+  who loses sight of you searches around where they last saw you for 10 minutes, then gives
+  up; your stars then fade after 6 hours instead of 48, unless an officer spots you again
+  (they turn round) or you're reported for something new.
 - **Chase** on foot; officers tackle when adjacent. Losing line of sight for a while starts a
   search of the area, then they give up.
 - **Arrest:** comply (cuffs, station, processing) or resist (escalation, an extra charge).
