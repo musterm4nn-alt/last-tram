@@ -25,6 +25,8 @@ var looted_discoveries: PackedStringArray = PackedStringArray()
 var ledger: Ledger = Ledger.new()
 ## Every crime committed, by incident id (T-0091).
 var incidents: Dictionary[int, Incident] = {}
+## Police officers on a call, by officer id (T-0094).
+var police_tasks: Dictionary[int, PoliceTask] = {}
 
 var _next_id: int = 1
 ## Derived: place id -> lot id (rebuilt by lot_id_for_place when the lot count changes).
@@ -206,7 +208,15 @@ func to_dict() -> Dictionary:
 		"looted_discoveries": Array(looted_discoveries),
 		"ledger": ledger.to_dict(),
 		"incidents": incidents.keys().map(func(id: int) -> Dictionary: return incidents[id].to_dict()),
+		"police_tasks": _police_tasks_out(),
 	}
+
+
+## Police tasks sorted by officer id (stable save text).
+func _police_tasks_out() -> Array:
+	var ids: Array = police_tasks.keys()
+	ids.sort()
+	return ids.map(func(id: int) -> Dictionary: return police_tasks[id].to_dict())
 
 
 static func from_dict(d: Dictionary, content: ContentDB) -> World:
@@ -278,6 +288,11 @@ static func from_dict(d: Dictionary, content: ContentDB) -> World:
 		var incident := Incident.from_dict(incident_entry)
 		if content.crime(incident.crime_id) != null:
 			world.incidents[incident.id] = incident
+	# Tasks of officers or suspects who are gone are dropped.
+	for task_entry: Variant in d.get("police_tasks", []):
+		var task := PoliceTask.from_dict(task_entry)
+		if world.people.has(task.officer_id) and world.people.has(task.target_id):
+			world.police_tasks[task.officer_id] = task
 	for household_entry: Variant in d.get("households", []):
 		var household := Household.from_dict(household_entry)
 		world.households[household.id] = household

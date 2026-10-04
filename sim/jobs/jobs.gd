@@ -211,9 +211,10 @@ static func working(sim: Sim, person: Person) -> bool:
 	return def != null and def.work
 
 
-## True while the person works out of sight (the rabbit hole).
+## True while the person works out of sight (the rabbit hole). A police officer on a call is
+## out in the street (T-0094).
 static func hidden(sim: Sim, person: Person) -> bool:
-	if not working(sim, person) or person.job == null:
+	if not working(sim, person) or person.job == null or Police.on_call(sim, person):
 		return false
 	var job := sim.content.job(person.job.job_id)
 	return job != null and WorkSessions.for_job(job).hidden()

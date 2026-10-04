@@ -216,9 +216,10 @@ static func cancel_front(sim: Sim, person: Person, reason: String) -> void:
 
 ## Cheap checks every step (input, the target still exists); where the person stands is
 ## checked once per personal minute, before its benefits apply (_progress). Only input or a
-## path can move someone, so a performer cannot leave the slot unnoticed in between.
+## path can move someone, so a performer cannot leave the slot unnoticed in between. A police
+## officer on a call keeps working their shift while away (T-0094).
 static func _step_performing(sim: Sim, person: Person, action: Action) -> void:
-	if person.move_intent != Vector2.ZERO or not person.path.is_empty():
+	if person.move_intent != Vector2.ZERO or (not person.path.is_empty() and not Police.on_call(sim, person)):
 		_cancel(sim, person, action, "moved")
 		return
 	if not sim.world.objects.has(action.target_id):
@@ -255,8 +256,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		if not PlaceActions.still_there(sim, person, action):
 			_cancel(sim, person, action, "moved")
 			return
-	elif not _still_in_place(sim, person, action):
-		return
+	elif not Police.on_call(sim, person) and not _still_in_place(sim, person, action):
+		return  # an officer on a call works away from the desk (T-0094)
 	for need_id: String in def.need_rates:
 		var before: float = float(person.needs.get(need_id, 0.0))
 		person.needs[need_id] = clampf(before + float(def.need_rates[need_id]) / 60.0, 0.0, 100.0)

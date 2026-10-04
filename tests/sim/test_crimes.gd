@@ -29,6 +29,8 @@ func test_crime_content_loads() -> void:
 	assert_eq(content().crime("shoplifting").severity, 2)
 	assert_eq(content().crime("burglary").severity, 4)
 	assert_eq(content().crime("nonsense"), null)
+	assert_eq(content().police_rules.fine_per_severity, 5000, "T-0094")
+	assert_eq(content().police_rules.arrest_range, 1.0)
 	assert_eq(content().interaction("steal_snack").crime, "shoplifting")
 	assert_eq(content().interaction("buy_snack").crime, "")
 
@@ -97,3 +99,10 @@ func test_free_will_never_steals() -> void:
 	var sim := SimFactory.new_game(content(), 2)
 	sim.run_minutes(24 * 60)
 	assert_eq(sim.world.incidents.size(), 0)
+
+
+func test_police_numbers_are_validated() -> void:
+	var reader := ContentReader.new()
+	CrimeLoader.load(ContentDB.new(), reader, "res://tests/fixtures/crimes_broken/bad_police.json")
+	var all := "\n".join(reader.errors)
+	assert_true(all.contains("fine_per_severity must be 0 or more and arrest_range 0.5 to 3"), all)

@@ -5,7 +5,7 @@ extends RefCounted
 
 const REASONS: Dictionary = {
 	"start": "Savings", "wage": "Wages", "benefit": "Benefit", "pension": "Pension",
-	"found": "Found", "rent": "Rent", "bill": "Bills", "atm": "ATM",
+	"found": "Found", "rent": "Rent", "bill": "Bills", "atm": "ATM", "fine": "Fine",
 }
 
 

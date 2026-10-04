@@ -14,3 +14,7 @@ var heat_hours: int = 48
 ## Wanted level = ceil(sum of the severities of the crimes that count / severity_per_level),
 ## at most MAX_LEVEL.
 var severity_per_level: int = 2
+## An arrest costs this many cents per severity point of the crimes charged (T-0094).
+var fine_per_severity: int = 5000
+## An officer arrests a suspect they can see within this many cells (feet to feet).
+var arrest_range: float = 1.0

@@ -5,7 +5,8 @@ extends TestCase
 
 ## Saved sim classes and a fresh instance of each (save-field coverage).
 const SAVED_CLASSES: Array[String] = ["Person", "Employment", "Wallet", "Household", "Lot", "Action",
-	"WorldObject", "Relationship", "Memory", "Moodlet", "WorkSettings", "TierSettings", "Ledger"]
+	"WorldObject", "Relationship", "Memory", "Moodlet", "WorkSettings", "TierSettings", "Ledger",
+	"Incident", "PoliceTask"]
 
 
 func test_the_full_town_saves_and_continues_identically() -> void:

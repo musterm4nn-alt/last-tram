@@ -23,8 +23,12 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		police.set(key, reader.read_num(p, key, path + ": police"))
 	police.heat_hours = reader.read_int(p, "heat_hours", path + ": police")
 	police.severity_per_level = reader.read_int(p, "severity_per_level", path + ": police")
+	police.fine_per_severity = reader.read_int(p, "fine_per_severity", path + ": police")
+	police.arrest_range = reader.read_num(p, "arrest_range", path + ": police")
 	if police.heat_hours < 1 or police.severity_per_level < 1:
 		reader.error("%s: police heat_hours and severity_per_level must be 1 or more" % path)
+	if police.fine_per_severity < 0 or police.arrest_range < 0.5 or police.arrest_range > 3.0:
+		reader.error("%s: police fine_per_severity must be 0 or more and arrest_range 0.5 to 3" % path)
 	for entry: Variant in reader.read_arr(root, "crimes", path):
 		if not entry is Dictionary:
 			reader.error("%s: every crime must be an object" % path)
