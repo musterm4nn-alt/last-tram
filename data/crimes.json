@@ -1,5 +1,6 @@
 {
-	"_doc": "Kinds of crime (T-0091, docs/design/crime-and-police.md). severity 1-8 sets police priority and punishment. An interaction commits one with \"crime\": \"<id>\"; each crime committed is saved as an incident. Only shoplifting has an interaction so far.",
+	"_doc": "Kinds of crime (T-0091, docs/design/crime-and-police.md). severity 1-8 sets police priority and punishment. An interaction commits one with \"crime\": \"<id>\"; each crime committed is saved as an incident. Only shoplifting has an interaction so far. witness (T-0092): people see a crime within day_range cells (night_range from night_from to night_until o'clock) on the same floor, awake, with nothing that blocks sight in between; each remembers it (saw_crime, memory_valence, memory_salience).",
+	"witness": { "day_range": 8, "night_range": 5, "night_from": 21, "night_until": 6, "memory_valence": -40, "memory_salience": 70 },
 	"crimes": [
 		{ "id": "trespassing", "name": "Trespassing", "severity": 1 },
 		{ "id": "shoplifting", "name": "Shoplifting", "severity": 2 },

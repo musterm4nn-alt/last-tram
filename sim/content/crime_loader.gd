@@ -10,6 +10,13 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	var root: Variant = reader.read_json(path)
 	if not root is Dictionary:
 		return
+	var w := reader.read_obj(root, "witness", path)
+	var rules := db.witness_rules
+	for key: String in ["day_range", "night_range", "night_from", "night_until", "memory_valence"]:
+		rules.set(key, reader.read_int(w, key, path + ": witness"))
+	rules.memory_salience = reader.read_num(w, "memory_salience", path + ": witness")
+	if rules.day_range < 1 or rules.night_range < 1 or rules.night_from > 23 or rules.night_until > 23:
+		reader.error("%s: witness ranges must be 1 or more and hours 0-23" % path)
 	for entry: Variant in reader.read_arr(root, "crimes", path):
 		if not entry is Dictionary:
 			reader.error("%s: every crime must be an object" % path)

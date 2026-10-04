@@ -37,6 +37,8 @@ var jobs: Dictionary[String, JobDef] = {}
 var skills: Dictionary[String, SkillDef] = {}
 ## Kinds of crime by id (T-0091).
 var crimes: Dictionary[String, CrimeDef] = {}
+## How people notice crimes (T-0092).
+var witness_rules: WitnessRules = WitnessRules.new()
 var skill_rules: SkillRules = SkillRules.new()
 ## The player's possible backgrounds (T-0075), by id, and the one used without a choice.
 var backgrounds: Dictionary[String, BackgroundDef] = {}
