@@ -1,0 +1,1914 @@
+{
+  "name": "Last Tram · Route B / Altstadt",
+  "version": 1,
+  "tileSize": 16,
+  "sheets": {
+    "terrain": "terrain.png",
+    "objects": "objects.png",
+    "characters": "characters.png",
+    "character_layers": "character-layers.png"
+  },
+  "terrain": {
+    "sidewalk": {
+      "sheet": "terrain",
+      "cell": [
+        0,
+        0
+      ],
+      "variants": 3
+    },
+    "cobblestone": {
+      "sheet": "terrain",
+      "cell": [
+        4,
+        0
+      ],
+      "variants": 3
+    },
+    "road": {
+      "sheet": "terrain",
+      "cell": [
+        8,
+        0
+      ],
+      "variants": 3
+    },
+    "tram_track": {
+      "sheet": "terrain",
+      "cell": [
+        12,
+        0
+      ],
+      "variants": 3
+    },
+    "crossing": {
+      "sheet": "terrain",
+      "cell": [
+        0,
+        1
+      ],
+      "variants": 3
+    },
+    "grass": {
+      "sheet": "terrain",
+      "cell": [
+        4,
+        1
+      ],
+      "variants": 3
+    },
+    "hedge": {
+      "sheet": "terrain",
+      "cell": [
+        8,
+        1
+      ],
+      "variants": 3
+    },
+    "tree": {
+      "sheet": "terrain",
+      "cell": [
+        12,
+        1
+      ],
+      "variants": 3
+    },
+    "water": {
+      "sheet": "terrain",
+      "cell": [
+        0,
+        2
+      ],
+      "variants": 3
+    },
+    "bridge": {
+      "sheet": "terrain",
+      "cell": [
+        4,
+        2
+      ],
+      "variants": 3
+    },
+    "fountain": {
+      "sheet": "terrain",
+      "cell": [
+        8,
+        2
+      ],
+      "variants": 3
+    },
+    "floor_wood": {
+      "sheet": "terrain",
+      "cell": [
+        12,
+        2
+      ],
+      "variants": 3
+    },
+    "floor_tile": {
+      "sheet": "terrain",
+      "cell": [
+        0,
+        3
+      ],
+      "variants": 3
+    },
+    "floor_stone": {
+      "sheet": "terrain",
+      "cell": [
+        4,
+        3
+      ],
+      "variants": 3
+    },
+    "stairs": {
+      "sheet": "terrain",
+      "cell": [
+        8,
+        3
+      ],
+      "variants": 3
+    },
+    "wall": {
+      "sheet": "terrain",
+      "cell": [
+        12,
+        3
+      ],
+      "variants": 3
+    },
+    "window": {
+      "sheet": "terrain",
+      "cell": [
+        0,
+        4
+      ],
+      "variants": 3
+    },
+    "door": {
+      "sheet": "terrain",
+      "cell": [
+        4,
+        4
+      ],
+      "variants": 3
+    },
+    "roof": {
+      "sheet": "terrain",
+      "cell": [
+        8,
+        4
+      ],
+      "variants": 3
+    }
+  },
+  "roof": {
+    "sheet": "terrain",
+    "cell": [
+      8,
+      4
+    ],
+    "variants": 3
+  },
+  "objects": {
+    "bed_double": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          0,
+          0,
+          32,
+          48
+        ],
+        [
+          32,
+          0,
+          32,
+          48
+        ],
+        [
+          64,
+          0,
+          32,
+          48
+        ],
+        [
+          96,
+          0,
+          32,
+          48
+        ]
+      ]
+    },
+    "sofa": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          128,
+          0,
+          32,
+          32
+        ],
+        [
+          160,
+          0,
+          16,
+          48
+        ],
+        [
+          176,
+          0,
+          32,
+          32
+        ],
+        [
+          208,
+          0,
+          16,
+          48
+        ]
+      ]
+    },
+    "kitchen_table": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          224,
+          0,
+          32,
+          32
+        ],
+        [
+          256,
+          0,
+          16,
+          48
+        ],
+        [
+          272,
+          0,
+          32,
+          32
+        ],
+        [
+          304,
+          0,
+          16,
+          48
+        ]
+      ]
+    },
+    "wardrobe": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          320,
+          0,
+          16,
+          48
+        ],
+        [
+          336,
+          0,
+          16,
+          48
+        ],
+        [
+          352,
+          0,
+          16,
+          48
+        ],
+        [
+          368,
+          0,
+          16,
+          48
+        ]
+      ]
+    },
+    "fridge": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          384,
+          0,
+          16,
+          48
+        ],
+        [
+          400,
+          0,
+          16,
+          48
+        ],
+        [
+          416,
+          0,
+          16,
+          48
+        ],
+        [
+          432,
+          0,
+          16,
+          48
+        ]
+      ]
+    },
+    "stove": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          448,
+          0,
+          16,
+          32
+        ],
+        [
+          464,
+          0,
+          16,
+          32
+        ],
+        [
+          480,
+          0,
+          16,
+          32
+        ],
+        [
+          496,
+          0,
+          16,
+          32
+        ]
+      ]
+    },
+    "sink": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          0,
+          48,
+          16,
+          32
+        ],
+        [
+          16,
+          48,
+          16,
+          32
+        ],
+        [
+          32,
+          48,
+          16,
+          32
+        ],
+        [
+          48,
+          48,
+          16,
+          32
+        ]
+      ]
+    },
+    "shower": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          64,
+          48,
+          16,
+          48
+        ],
+        [
+          80,
+          48,
+          16,
+          48
+        ],
+        [
+          96,
+          48,
+          16,
+          48
+        ],
+        [
+          112,
+          48,
+          16,
+          48
+        ]
+      ]
+    },
+    "tv": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          128,
+          48,
+          16,
+          32
+        ],
+        [
+          144,
+          48,
+          16,
+          32
+        ],
+        [
+          160,
+          48,
+          16,
+          32
+        ],
+        [
+          176,
+          48,
+          16,
+          32
+        ]
+      ]
+    },
+    "desk": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          192,
+          48,
+          16,
+          32
+        ],
+        [
+          208,
+          48,
+          16,
+          32
+        ],
+        [
+          224,
+          48,
+          16,
+          32
+        ],
+        [
+          240,
+          48,
+          16,
+          32
+        ]
+      ]
+    },
+    "washing_machine": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          256,
+          48,
+          16,
+          32
+        ],
+        [
+          272,
+          48,
+          16,
+          32
+        ],
+        [
+          288,
+          48,
+          16,
+          32
+        ],
+        [
+          304,
+          48,
+          16,
+          32
+        ]
+      ]
+    },
+    "clothes_rack": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          320,
+          48,
+          32,
+          48
+        ],
+        [
+          352,
+          48,
+          16,
+          64
+        ],
+        [
+          368,
+          48,
+          32,
+          48
+        ],
+        [
+          400,
+          48,
+          16,
+          64
+        ]
+      ]
+    },
+    "barber_chair": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          416,
+          48,
+          16,
+          32
+        ],
+        [
+          432,
+          48,
+          16,
+          32
+        ],
+        [
+          448,
+          48,
+          16,
+          32
+        ],
+        [
+          464,
+          48,
+          16,
+          32
+        ]
+      ]
+    },
+    "bench": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          480,
+          48,
+          32,
+          32
+        ],
+        [
+          0,
+          112,
+          16,
+          48
+        ],
+        [
+          16,
+          112,
+          32,
+          32
+        ],
+        [
+          48,
+          112,
+          16,
+          48
+        ]
+      ]
+    },
+    "street_lamp": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          64,
+          112,
+          16,
+          48
+        ],
+        [
+          80,
+          112,
+          16,
+          48
+        ],
+        [
+          96,
+          112,
+          16,
+          48
+        ],
+        [
+          112,
+          112,
+          16,
+          48
+        ]
+      ]
+    },
+    "tram_stop": {
+      "sheet": "objects",
+      "footprint": [
+        6,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          128,
+          112,
+          96,
+          48
+        ],
+        [
+          224,
+          112,
+          16,
+          128
+        ],
+        [
+          240,
+          112,
+          96,
+          48
+        ],
+        [
+          336,
+          112,
+          16,
+          128
+        ]
+      ]
+    },
+    "notice_case": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          352,
+          112,
+          16,
+          48
+        ],
+        [
+          368,
+          112,
+          16,
+          48
+        ],
+        [
+          384,
+          112,
+          16,
+          48
+        ],
+        [
+          400,
+          112,
+          16,
+          48
+        ]
+      ]
+    },
+    "atm": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          416,
+          112,
+          16,
+          48
+        ],
+        [
+          432,
+          112,
+          16,
+          48
+        ],
+        [
+          448,
+          112,
+          16,
+          48
+        ],
+        [
+          464,
+          112,
+          16,
+          48
+        ]
+      ]
+    },
+    "spaeti_counter": {
+      "sheet": "objects",
+      "footprint": [
+        3,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          0,
+          240,
+          48,
+          32
+        ],
+        [
+          48,
+          240,
+          16,
+          64
+        ],
+        [
+          64,
+          240,
+          48,
+          32
+        ],
+        [
+          112,
+          240,
+          16,
+          64
+        ]
+      ]
+    },
+    "imbiss_counter": {
+      "sheet": "objects",
+      "footprint": [
+        3,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          128,
+          240,
+          48,
+          32
+        ],
+        [
+          176,
+          240,
+          16,
+          64
+        ],
+        [
+          192,
+          240,
+          48,
+          32
+        ],
+        [
+          240,
+          240,
+          16,
+          64
+        ]
+      ]
+    },
+    "cafe_counter": {
+      "sheet": "objects",
+      "footprint": [
+        3,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          256,
+          240,
+          48,
+          32
+        ],
+        [
+          304,
+          240,
+          16,
+          64
+        ],
+        [
+          320,
+          240,
+          48,
+          32
+        ],
+        [
+          368,
+          240,
+          16,
+          64
+        ]
+      ]
+    },
+    "cafe_table": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          384,
+          240,
+          16,
+          32
+        ],
+        [
+          400,
+          240,
+          16,
+          32
+        ],
+        [
+          416,
+          240,
+          16,
+          32
+        ],
+        [
+          432,
+          240,
+          16,
+          32
+        ]
+      ]
+    },
+    "bar_counter": {
+      "sheet": "objects",
+      "footprint": [
+        4,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          448,
+          240,
+          64,
+          32
+        ],
+        [
+          0,
+          304,
+          16,
+          80
+        ],
+        [
+          16,
+          304,
+          64,
+          32
+        ],
+        [
+          80,
+          304,
+          16,
+          80
+        ]
+      ]
+    },
+    "pub_table": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          96,
+          304,
+          32,
+          32
+        ],
+        [
+          128,
+          304,
+          16,
+          48
+        ],
+        [
+          144,
+          304,
+          32,
+          32
+        ],
+        [
+          176,
+          304,
+          16,
+          48
+        ]
+      ]
+    },
+    "police_desk": {
+      "sheet": "objects",
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          192,
+          304,
+          32,
+          32
+        ],
+        [
+          224,
+          304,
+          16,
+          48
+        ],
+        [
+          240,
+          304,
+          32,
+          32
+        ],
+        [
+          272,
+          304,
+          16,
+          48
+        ]
+      ]
+    },
+    "service_board": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          288,
+          304,
+          16,
+          48
+        ],
+        [
+          304,
+          304,
+          16,
+          48
+        ],
+        [
+          320,
+          304,
+          16,
+          48
+        ],
+        [
+          336,
+          304,
+          16,
+          48
+        ]
+      ]
+    },
+    "vestry_chair": {
+      "sheet": "objects",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": "bottom-center",
+      "rects": [
+        [
+          352,
+          304,
+          16,
+          32
+        ],
+        [
+          368,
+          304,
+          16,
+          32
+        ],
+        [
+          384,
+          304,
+          16,
+          32
+        ],
+        [
+          400,
+          304,
+          16,
+          32
+        ]
+      ]
+    }
+  },
+  "extras": {
+    "fountain_large": {
+      "sheet": "objects",
+      "rect": [
+        416,
+        304,
+        64,
+        48
+      ]
+    },
+    "tree_large": {
+      "sheet": "objects",
+      "rect": [
+        0,
+        384,
+        48,
+        48
+      ]
+    },
+    "tree_small": {
+      "sheet": "objects",
+      "rect": [
+        48,
+        384,
+        32,
+        32
+      ]
+    },
+    "bicycle": {
+      "sheet": "objects",
+      "rect": [
+        80,
+        384,
+        32,
+        24
+      ]
+    },
+    "bin": {
+      "sheet": "objects",
+      "rect": [
+        112,
+        384,
+        16,
+        24
+      ]
+    },
+    "planter": {
+      "sheet": "objects",
+      "rect": [
+        128,
+        384,
+        32,
+        32
+      ]
+    },
+    "tram": {
+      "sheet": "objects",
+      "rect": [
+        160,
+        384,
+        160,
+        48
+      ]
+    }
+  },
+  "transitions": {
+    "sheet": "terrain",
+    "cell": [
+      0,
+      5
+    ],
+    "variants": 16,
+    "from": "cobblestone",
+    "to": "grass",
+    "maskOrder": [
+      "NW",
+      "NE",
+      "SE",
+      "SW"
+    ]
+  },
+  "rotationOrder": [
+    "down",
+    "left",
+    "up",
+    "right"
+  ],
+  "characters": {
+    "frame": [
+      16,
+      32
+    ],
+    "directions": [
+      "down",
+      "left",
+      "up",
+      "right"
+    ],
+    "columns": [
+      "idle",
+      "walk_0",
+      "walk_1",
+      "walk_2",
+      "walk_3"
+    ],
+    "walkFps": 6,
+    "residents": {
+      "Marta": {
+        "sheet": "characters",
+        "origin": [
+          0,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 45,
+        "config": {
+          "name": "Marta",
+          "age": 45,
+          "build": "average",
+          "height": "average",
+          "skin": 1,
+          "hair": "bob",
+          "hairColor": 6,
+          "top": "sweater",
+          "topColor": 4,
+          "outer": "parka",
+          "outerColor": 7,
+          "bottom": "jeans",
+          "bottomColor": 10,
+          "feet": "boots",
+          "head": "none",
+          "bag": "tote",
+          "neck": "scarf",
+          "neckColor": 12
+        }
+      },
+      "Yusuf": {
+        "sheet": "characters",
+        "origin": [
+          80,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 34,
+        "config": {
+          "name": "Yusuf",
+          "age": 34,
+          "build": "athletic",
+          "height": "tall",
+          "skin": 4,
+          "hair": "curly_short",
+          "hairColor": 0,
+          "top": "shirt",
+          "topColor": 0,
+          "outer": "leather",
+          "outerColor": 1,
+          "bottom": "jeans",
+          "bottomColor": 10,
+          "feet": "trainers",
+          "beard": "stubble"
+        }
+      },
+      "Anja": {
+        "sheet": "characters",
+        "origin": [
+          160,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 28,
+        "config": {
+          "name": "Anja",
+          "age": 28,
+          "build": "slim",
+          "height": "average",
+          "skin": 0,
+          "hair": "shoulder",
+          "hairColor": 8,
+          "top": "blouse",
+          "topColor": 0,
+          "outer": "denim",
+          "outerColor": 10,
+          "bottom": "skirt",
+          "bottomColor": 1,
+          "feet": "boots",
+          "bag": "tote"
+        }
+      },
+      "Gunter": {
+        "sheet": "characters",
+        "origin": [
+          240,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 63,
+        "config": {
+          "name": "Gunter",
+          "age": 63,
+          "build": "stocky",
+          "height": "average",
+          "skin": 1,
+          "hair": "short",
+          "hairColor": 3,
+          "beard": "full",
+          "top": "sweater",
+          "topColor": 3,
+          "outer": "parka",
+          "outerColor": 4,
+          "bottom": "chinos",
+          "bottomColor": 2,
+          "feet": "boots",
+          "head": "beanie",
+          "headColor": 1
+        }
+      },
+      "Luka": {
+        "sheet": "characters",
+        "origin": [
+          320,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 31,
+        "config": {
+          "name": "Luka",
+          "age": 31,
+          "build": "slim",
+          "height": "tall",
+          "skin": 2,
+          "hair": "undercut",
+          "hairColor": 5,
+          "top": "tshirt",
+          "topColor": 0,
+          "outer": "hoodie",
+          "outerColor": 5,
+          "bottom": "trackpants",
+          "bottomColor": 1,
+          "feet": "trainers",
+          "bag": "backpack"
+        }
+      },
+      "Mina": {
+        "sheet": "characters",
+        "origin": [
+          400,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 38,
+        "config": {
+          "name": "Mina",
+          "age": 38,
+          "build": "average",
+          "height": "short",
+          "skin": 6,
+          "hair": "bun",
+          "hairColor": 0,
+          "top": "shirt",
+          "topColor": 11,
+          "outer": "blazer",
+          "outerColor": 1,
+          "bottom": "chinos",
+          "bottomColor": 2,
+          "feet": "dress",
+          "glasses": true,
+          "neck": "chain"
+        }
+      },
+      "Rafa": {
+        "sheet": "characters",
+        "origin": [
+          480,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 42,
+        "config": {
+          "name": "Rafa",
+          "age": 42,
+          "build": "heavy",
+          "height": "average",
+          "skin": 3,
+          "hair": "buzz",
+          "hairColor": 0,
+          "beard": "goatee",
+          "top": "tshirt",
+          "topColor": 8,
+          "outer": "none",
+          "bottom": "shorts",
+          "bottomColor": 3,
+          "feet": "trainers",
+          "head": "cap",
+          "headColor": 1
+        }
+      },
+      "Bo": {
+        "sheet": "characters",
+        "origin": [
+          560,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 29,
+        "config": {
+          "name": "Bo",
+          "age": 29,
+          "build": "athletic",
+          "height": "tall",
+          "skin": 5,
+          "hair": "ponytail",
+          "hairColor": 10,
+          "top": "tank",
+          "topColor": 1,
+          "outer": "denim",
+          "outerColor": 11,
+          "bottom": "jeans",
+          "bottomColor": 1,
+          "feet": "boots",
+          "bag": "backpack",
+          "freckles": true
+        }
+      },
+      "Alex": {
+        "sheet": "characters",
+        "origin": [
+          0,
+          128
+        ],
+        "frame": [
+          16,
+          32
+        ],
+        "anchor": [
+          8,
+          32
+        ],
+        "age": 35,
+        "config": {
+          "name": "Alex",
+          "age": 35,
+          "build": "average",
+          "height": "average",
+          "skin": 2,
+          "hair": "short",
+          "hairColor": 5,
+          "top": "tshirt",
+          "topColor": 0,
+          "outer": "parka",
+          "outerColor": 4,
+          "bottom": "jeans",
+          "bottomColor": 10,
+          "feet": "boots",
+          "head": "none",
+          "bag": "none",
+          "neck": "none",
+          "neckColor": 12
+        }
+      }
+    },
+    "layers": {
+      "hair_back": {
+        "sheet": "character_layers",
+        "origin": [
+          0,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "body": {
+        "sheet": "character_layers",
+        "origin": [
+          80,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "bottom": {
+        "sheet": "character_layers",
+        "origin": [
+          160,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "feet": {
+        "sheet": "character_layers",
+        "origin": [
+          240,
+          0
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "top": {
+        "sheet": "character_layers",
+        "origin": [
+          0,
+          128
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "outer": {
+        "sheet": "character_layers",
+        "origin": [
+          80,
+          128
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "bag": {
+        "sheet": "character_layers",
+        "origin": [
+          160,
+          128
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "hands": {
+        "sheet": "character_layers",
+        "origin": [
+          240,
+          128
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "hair": {
+        "sheet": "character_layers",
+        "origin": [
+          0,
+          256
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "features": {
+        "sheet": "character_layers",
+        "origin": [
+          80,
+          256
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "neck": {
+        "sheet": "character_layers",
+        "origin": [
+          160,
+          256
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "head": {
+        "sheet": "character_layers",
+        "origin": [
+          240,
+          256
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      },
+      "face": {
+        "sheet": "character_layers",
+        "origin": [
+          0,
+          384
+        ],
+        "frame": [
+          16,
+          32
+        ]
+      }
+    },
+    "layerOrder": [
+      "hair_back",
+      "body",
+      "bottom",
+      "feet",
+      "top",
+      "outer",
+      "bag",
+      "hands",
+      "hair",
+      "features",
+      "neck",
+      "head",
+      "face"
+    ]
+  },
+  "generator": {
+    "source": "../src/characters.js",
+    "function": "characterLayers",
+    "builds": [
+      "slim",
+      "average",
+      "athletic",
+      "stocky",
+      "heavy"
+    ],
+    "heights": [
+      "short",
+      "average",
+      "tall"
+    ],
+    "skinTones": [
+      "#f7e3d6",
+      "#f1cfb8",
+      "#e3b494",
+      "#c9945f",
+      "#ab7347",
+      "#8b5734",
+      "#653c24",
+      "#452818"
+    ],
+    "hairStyles": [
+      "bald",
+      "buzz",
+      "short",
+      "side_part",
+      "undercut",
+      "curly_short",
+      "bob",
+      "shoulder",
+      "long",
+      "ponytail",
+      "bun",
+      "braids",
+      "afro",
+      "dreadlocks",
+      "mohawk"
+    ],
+    "hairColors": [
+      "#1e1c22",
+      "#2c2d31",
+      "#6e6a66",
+      "#9c968e",
+      "#ece6d8",
+      "#5e3f29",
+      "#7d5536",
+      "#8e4a32",
+      "#cfa95f",
+      "#e0c486",
+      "#d97a9a",
+      "#4f7f99",
+      "#3f6b5a",
+      "#76546e",
+      "#a85e3c"
+    ],
+    "clothingColors": [
+      "#ece6d8",
+      "#2c2d31",
+      "#4b4c53",
+      "#9c968e",
+      "#b98f47",
+      "#8e4a32",
+      "#c27a52",
+      "#2f5246",
+      "#5f8f7a",
+      "#966644",
+      "#355f78",
+      "#6fa0b8",
+      "#e8b83a",
+      "#d97a9a",
+      "#a39d90",
+      "#8d939b"
+    ],
+    "slots": {
+      "head": [
+        "none",
+        "beanie",
+        "cap"
+      ],
+      "face": [
+        "none",
+        "sunglasses"
+      ],
+      "neck": [
+        "none",
+        "scarf",
+        "chain"
+      ],
+      "top": [
+        "tshirt",
+        "shirt",
+        "blouse",
+        "sweater",
+        "tank"
+      ],
+      "outer": [
+        "none",
+        "hoodie",
+        "denim",
+        "leather",
+        "parka",
+        "blazer"
+      ],
+      "bottom": [
+        "jeans",
+        "chinos",
+        "skirt",
+        "shorts",
+        "trackpants"
+      ],
+      "feet": [
+        "trainers",
+        "boots",
+        "dress"
+      ],
+      "hands": [
+        "none",
+        "gloves"
+      ],
+      "bag": [
+        "none",
+        "backpack",
+        "tote"
+      ]
+    },
+    "beards": [
+      "none",
+      "stubble",
+      "moustache",
+      "goatee",
+      "short",
+      "full"
+    ],
+    "features": [
+      "freckles",
+      "glasses",
+      "beautyMark"
+    ]
+  },
+  "palette": {
+    "ink": [
+      "#1e1c22",
+      "#2c2d31"
+    ],
+    "asphalt": [
+      "#36373c",
+      "#414248",
+      "#4b4c53",
+      "#585a61"
+    ],
+    "stone": [
+      "#6e6a66",
+      "#85807a",
+      "#9c968e",
+      "#b2aba1",
+      "#c7c0b4"
+    ],
+    "cobble": [
+      "#554c46",
+      "#73685f",
+      "#867a6f",
+      "#978a7d",
+      "#ab9d8e"
+    ],
+    "ochre": [
+      "#7a5a2e",
+      "#9c7638",
+      "#b98f47",
+      "#cfa95f",
+      "#e0c486"
+    ],
+    "brick": [
+      "#6e3626",
+      "#8e4a32",
+      "#a85e3c",
+      "#c27a52"
+    ],
+    "green": [
+      "#2f5246",
+      "#3f6b5a",
+      "#5f8f7a",
+      "#86b39c"
+    ],
+    "wood": [
+      "#5e3f29",
+      "#7d5536",
+      "#966644",
+      "#ab7b52",
+      "#c29164"
+    ],
+    "tile": [
+      "#a39d90",
+      "#c2bcae",
+      "#d9d4c7",
+      "#e8e3d8"
+    ],
+    "grass": [
+      "#3e5429",
+      "#4c6632",
+      "#5d7a3e",
+      "#728f4a",
+      "#8aa65a"
+    ],
+    "water": [
+      "#355f78",
+      "#4f7f99",
+      "#6fa0b8",
+      "#a9cfe0"
+    ],
+    "steel": [
+      "#5a5e64",
+      "#8d939b",
+      "#c4c9ce"
+    ],
+    "yellow": [
+      "#e8b83a",
+      "#f4d47a"
+    ],
+    "white": [
+      "#ece6d8",
+      "#f8f5ee"
+    ],
+    "glass": [
+      "#8fb8c9",
+      "#c4dde6"
+    ],
+    "glow": "#f6d58e",
+    "pink": "#d97a9a",
+    "skin": [
+      "#f7e3d6",
+      "#f1cfb8",
+      "#e3b494",
+      "#c9945f",
+      "#ab7347",
+      "#8b5734",
+      "#653c24",
+      "#452818"
+    ]
+  },
+  "sources": "../SOURCES.md"
+}
