@@ -12,6 +12,11 @@ const BEARDS: Array[String] = ["short_beard", "full_beard", "goatee"]
 ## Taller than this (cm) and slim: the tall body.
 const TALL_CM: int = 180
 
+## Hair darker than this merges with the outline.
+const MIN_HAIR_V: float = 0.2
+## Colours closer than this (RGB distance) read as one at 16 px.
+const MIN_DISTANCE: float = 0.18
+
 static var _cache: Dictionary = {}
 
 
@@ -26,12 +31,35 @@ static func texture(people: Dictionary, content: ContentDB, appearance: Appearan
 		PersonDrawer2D.worn_color(content, outfit, top_slot),
 		PersonDrawer2D.worn_color(content, outfit, "bottom"),
 	]
+	colors = readable(colors)
 	var key := base
 	for c: Color in colors:
 		key += "|" + c.to_html(false)
 	if not _cache.has(key):
 		_cache[key] = ImageTexture.create_from_image(recolor(bases[base]["image"], bases[base]["mask"], colors))
 	return _cache[key]
+
+
+## Keeps a look readable at 16 px: very dark hair is lifted off the black outline, hair that
+## matches the top is shaded apart from it, and trousers too close to the top get darker
+## (or lighter, when both are dark). `colors` is skin, hair, top, bottom.
+static func readable(colors: Array[Color]) -> Array[Color]:
+	var out: Array[Color] = colors.duplicate()
+	var hair: Color = out[1]
+	if hair.v < MIN_HAIR_V:
+		hair = Color.from_hsv(hair.h, hair.s, MIN_HAIR_V)
+	if _distance(hair, out[2]) < MIN_DISTANCE:
+		hair = hair.darkened(0.35) if hair.v > 0.35 else hair.lightened(0.35)
+	out[1] = hair
+	var bottom: Color = out[3]
+	if _distance(bottom, out[2]) < MIN_DISTANCE:
+		bottom = bottom.darkened(0.4) if bottom.v > 0.3 else bottom.lightened(0.3)
+	out[3] = bottom
+	return out
+
+
+static func _distance(a: Color, b: Color) -> float:
+	return Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()
 
 
 ## Which base body suits a person (only the bases the set has): a long hair, b long hair,

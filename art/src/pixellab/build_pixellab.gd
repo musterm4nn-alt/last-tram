@@ -15,6 +15,8 @@ const OUT: String = "res://art/export/pixellab/"
 const PX: int = 16
 const FRAME: int = 44
 const DIRS: Array[String] = ["south", "east", "north", "west"]
+## The row every body's standing feet end on (exclusive), so all bodies share one ground line.
+const BASELINE: int = 39
 ## Shade steps a recoloured pixel snaps to (multiples of its colour's brightness).
 const SHADES: Array[float] = [0.55, 0.7, 0.85, 1.0, 1.15]
 ## How much of the original brightness differences to keep, by group (skin, hair, top, bottom).
@@ -112,6 +114,25 @@ func _build_people(spec: Dictionary) -> void:
 ## idle) and <name>_mask.png, which marks each pixel's colour group for recolouring in the
 ## game: red = group (1 skin, 2 hair, 3 top, 4 bottom; 0 keeps its colour), green = its
 ## brightness relative to the group's average, halved.
+## Shifts a whole base sheet up or down so its standing (idle) frames' feet end on row
+## BASELINE, the same for every body (the game anchors every sheet at the same feet point).
+func _to_baseline(sheet: Image, walk: int, idle: int) -> Image:
+	var ends: Array[int] = []
+	for row: int in DIRS.size():
+		for f: int in range(walk, walk + idle):
+			ends.append(sheet.get_region(Rect2i(f * FRAME, row * FRAME, FRAME, FRAME)).get_used_rect().end.y)
+	ends.sort()
+	var shift := BASELINE - ends[ends.size() / 2]
+	if shift == 0:
+		return sheet
+	var out := Image.create_empty(sheet.get_width(), sheet.get_height(), false, Image.FORMAT_RGBA8)
+	for row: int in DIRS.size():
+		for f: int in walk + idle:
+			var src := Rect2i(f * FRAME, row * FRAME, FRAME, FRAME)
+			out.blit_rect(sheet, src.intersection(Rect2i(src.position - Vector2i(0, shift), src.size)), src.position + Vector2i(0, maxi(shift, 0)))
+	return out
+
+
 func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 	var out := Image.create_empty(FRAME * (walk + idle), FRAME * DIRS.size(), false, Image.FORMAT_RGBA8)
 	for row: int in DIRS.size():
@@ -123,6 +144,7 @@ func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 			var frame := Image.load_from_file(path)
 			frame.convert(Image.FORMAT_RGBA8)
 			out.blit_rect(frame, Rect2i(0, 0, FRAME, FRAME), Vector2i(f * FRAME, row * FRAME))
+	out = _to_baseline(out, walk, idle)
 	out.save_png(ProjectSettings.globalize_path(OUT + "%s.png" % base["name"]))
 	var rules: Array = base["rules"]
 	var hair_rows: int = int(base.get("dark_hair_rows", 0))
