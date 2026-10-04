@@ -24,6 +24,41 @@ func _process(_delta: float) -> void:
 		queue_redraw()
 
 
+## The parts of quadrant `quadrant` (0 NW, 1 NE, 2 SW, 3 SE) of a thin wall or doorway cell
+## that are ground, not wall (WallLayer2D: the band and its edge fill the middle 8 px, with
+## arms to the walled neighbours in `arms`, and a 2-px face under east-west runs), in cell
+## pixels, as 4-px blocks.
+static func ground_rects(arms: int, quadrant: int) -> Array[Rect2i]:
+	var block := ViewConfig.TILE_PX / 4
+	var out: Array[Rect2i] = []
+	for by: int in range((quadrant / 2) * 2, (quadrant / 2) * 2 + 2):
+		for bx: int in range((quadrant % 2) * 2, (quadrant % 2) * 2 + 2):
+			var mid_x := bx == 1 or bx == 2
+			var mid_y := by == 1 or by == 2
+			var band := (mid_x and mid_y) \
+					or (mid_x and by == 0 and arms & WallShapes.ARM_N != 0) \
+					or (mid_x and by == 3 and arms & WallShapes.ARM_S != 0) \
+					or (mid_y and bx == 3 and arms & WallShapes.ARM_E != 0) \
+					or (mid_y and bx == 0 and arms & WallShapes.ARM_W != 0)
+			if band:
+				continue
+			if by == 3 and _under_face(arms, bx):
+				# The narrow face under an east-west run (2 px) belongs to the wall too.
+				out.append(Rect2i(bx * block, by * block + 2, block, block - 2))
+			else:
+				out.append(Rect2i(bx * block, by * block, block, block))
+	return out
+
+
+## True when WallLayer2D draws the narrow face (the 2 px below the band) over column block `bx`.
+static func _under_face(arms: int, bx: int) -> bool:
+	var west := arms & WallShapes.ARM_W != 0
+	var east := arms & WallShapes.ARM_E != 0
+	if arms & WallShapes.ARM_S != 0:
+		return (bx == 0 and west) or (bx == 3 and east)
+	return (bx == 1 or bx == 2) or (bx == 0 and west) or (bx == 3 and east)
+
+
 func _draw() -> void:
 	var interiors := Interiors.current
 	if Session.sim == null or not interiors.shuts_out_street(Session.command_mode):
@@ -40,8 +75,8 @@ func _draw() -> void:
 			elif not dark and run_start >= 0:
 				draw_rect(Rect2(run_start * px, y * px, (x - run_start) * px, px), shade)
 				run_start = -1
-	# The outer halves of the open building's thin walls show the street: darken those too.
-	var half := px / 2
+	# The outer halves of the open building's thin walls show the street: darken that ground,
+	# but not the wall band itself, so outer walls show at full thickness (T-0090).
 	for id: int in interiors.revealed:
 		for cell: Vector3i in interiors.cells(id):
 			var kind := WallShapes.kind(grid, cell)
@@ -54,9 +89,11 @@ func _draw() -> void:
 				draw_rect(Rect2(cell.x * px + from, cell.y * px, px - from, px), shade)
 			if kind != WallShapes.THIN and kind != WallShapes.DOORWAY:
 				continue
+			var arms := WallShapes.arms(grid, cell)
 			for q: int in 4:
 				if not interiors.is_open(WallShapes.quadrant_ground(grid, cell, q)):
-					draw_rect(Rect2(cell.x * px + (q % 2) * half, cell.y * px + (q / 2) * half, half, half), shade)
+					for rect: Rect2i in ground_rects(arms, q):
+						draw_rect(Rect2(Vector2(cell.x * px, cell.y * px) + Vector2(rect.position), Vector2(rect.size)), shade)
 	# Beyond the town's edge too, so the camera never shows a lit border.
 	var size := Vector2(grid.width, grid.height) * px
 	var margin := 4096.0
