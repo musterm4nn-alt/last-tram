@@ -90,7 +90,13 @@ for the placeholders). Branches: `art/kenney` and `art/chatgpt` deleted (kept as
    style, build and clothing shape come only from the body (3 for now); eyes sometimes pick
    up the hair colour. PixelLab's `create_character_state` and `transfer_outfit` cost 20–40
    generations each (and outfit transfer needs a paid tier), so variety comes from bodies +
-   recolouring, not from them. **The trial is used up (35 of 40; 5 left).**
+   recolouring, not from them. **The first trial account is used up (40 of 40; the last 5 made the Späti
+   counter, see the branch README).** The owner has more PixelLab accounts and will
+   switch the MCP to the next one (they run `claude mcp remove pixellab` and `claude mcp add
+   ...` with the new token themselves; never handle tokens). Tools load at session start, so
+   a new session is needed after a switch. Characters live in the account that made them:
+   finish each body (create + walk + idle = 9 generations) within one account; a 40-generation
+   trial fits 4 bodies. Larger map objects cost more (96×64 = 5).
    Proposed production (needs the owner's OK and a paid PixelLab plan; they check the
    price): about 8 bodies covering the hair silhouettes and builds (72 generations), then
    sit, use and sleep animations per body (custom v3, about 1 generation per direction:
