@@ -14,13 +14,15 @@ var name: String = ""
 var errors: Array[String] = []
 ## Optional colours of thin walls (T-0085): any of "top", "edge", "face", "glass".
 var thin_walls: Dictionary = {}
+## Optional generated character designs; empty sets keep the appearance-based drawer.
+var characters: CharacterSprites2D = CharacterSprites2D.new()
 ## Optional roof tile (T-0086): {"sheet", "cell": Vector2i, "variants"} like a terrain.
 var _roof: Dictionary = {}
 
 var _sheets: Dictionary[String, Texture2D] = {}
-## terrain id -> {"sheet": String, "cell": Vector2i, "variants": int}
+## Terrain id -> native sheet cell or a cached source texture, variants and optional pattern.
 var _terrain: Dictionary[String, Dictionary] = {}
-## object def id -> {"sheet": String, "rects": Array[Rect2i]} (1 rect, or 4 by rotation)
+## Object def id -> sheet, 1 or 4 source rects, and optional logical drawing size.
 var _objects: Dictionary[String, Dictionary] = {}
 
 
@@ -45,8 +47,12 @@ func terrain_tile(terrain_id: String, cell: Vector2i) -> Dictionary:
 		return {}
 	var entry: Dictionary = _terrain[terrain_id]
 	var px := ViewConfig.TILE_PX
-	var tile: Vector2i = entry["cell"] + Vector2i(variant_index(cell, int(entry["variants"])), 0)
-	return {"texture": _sheets[entry["sheet"]], "region": Rect2i(tile * px, Vector2i(px, px))}
+	var pattern: Vector2i = entry.get("pattern", Vector2i.ONE)
+	var origin: Vector2i = entry.get("pattern_origin", Vector2i.ZERO)
+	var local := Vector2i(posmod(cell.x - origin.x, pattern.x), posmod(cell.y - origin.y, pattern.y))
+	var tile: Vector2i = entry["cell"] + Vector2i(variant_index(cell, int(entry["variants"])) * pattern.x, 0) + local
+	var texture: Texture2D = entry["texture"] if entry.has("texture") else _sheets[entry["sheet"]]
+	return {"texture": texture, "region": Rect2i(tile * px, Vector2i(px, px))}
 
 
 ## The roof tile at a map cell: {"texture", "region"}, or {} (then the view draws shingles).
@@ -58,14 +64,14 @@ func roof_tile(cell: Vector2i) -> Dictionary:
 	return {"texture": _sheets[_roof["sheet"]], "region": Rect2i(tile * px, Vector2i(px, px))}
 
 
-## The sprite for an object def at a rotation (0-3): {"texture": Texture2D, "region": Rect2i}, or {}.
+## The sprite at a rotation (0-3): texture, source region and logical size; {} if unmapped.
 func object_sprite(def_id: String, rotation: int) -> Dictionary:
 	if not _objects.has(def_id):
 		return {}
 	var entry: Dictionary = _objects[def_id]
 	var rects: Array[Rect2i] = entry["rects"]
 	var region: Rect2i = rects[0] if rects.size() == 1 else rects[posmod(rotation, 4)]
-	return {"texture": _sheets[entry["sheet"]], "region": region}
+	return {"texture": _sheets[entry["sheet"]], "region": region, "size": entry.get("size", region.size)}
 
 
 ## Which of `variants` tiles a map cell uses: a fixed hash, the same on every run.
@@ -111,6 +117,8 @@ func _read(data: Dictionary, content: ContentDB, reader: ContentReader, path: St
 		var objects := reader.read_obj(data, "objects", path)
 		for def_id: Variant in objects:
 			_read_object(str(def_id), objects[def_id], content, reader, path)
+	if data.has("characters"):
+		characters.read(reader.read_obj(data, "characters", path), _sheets, reader, path)
 
 
 func _read_terrain(terrain_id: String, value: Variant, content: ContentDB, reader: ContentReader, path: String) -> void:
@@ -122,6 +130,11 @@ func _read_terrain(terrain_id: String, value: Variant, content: ContentDB, reade
 		reader.error("%s: must be an object" % ctx)
 		return
 	var d: Dictionary = value
+	if d.has("source_rects") and terrain_id != "roof":
+		var adapted := SourceTiles2D.read(d, _sheets, reader, ctx)
+		if not adapted.is_empty():
+			_terrain[terrain_id] = adapted
+		return
 	var texture := _sheet(d, reader, ctx)
 	var cell := reader.read_coordinates(d, "cell", ctx, 2)
 	var variants: int = reader.read_int(d, "variants", ctx) if d.has("variants") else 1
@@ -174,7 +187,16 @@ func _read_object(def_id: String, value: Variant, content: ContentDB, reader: Co
 			return
 		rects.append(rect)
 	if texture != null:
-		_objects[def_id] = {"sheet": d["sheet"], "rects": rects}
+		var entry := {"sheet": d["sheet"], "rects": rects}
+		if d.has("size"):
+			var size := reader.read_coordinates(d, "size", ctx, 2)
+			if size.is_empty():
+				return
+			if size[0] < 1 or size[1] < 1 or size[0] > 256 or size[1] > 256:
+				reader.error("%s: size must be between 1x1 and 256x256 pixels" % ctx)
+				return
+			entry["size"] = Vector2i(size[0], size[1])
+		_objects[def_id] = entry
 
 
 ## The loaded sheet named by d["sheet"], or null (with an error).

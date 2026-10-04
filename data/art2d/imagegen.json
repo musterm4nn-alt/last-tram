@@ -1,0 +1,1771 @@
+{
+	"_doc": "Selectable owner-requested Imagegen art trial. Original PNGs are preserved; terrain is sampled into 16px textures in memory. Characters are fixed generated designs for this trial, not layered appearance art.",
+	"name": "Imagegen · Altstadt trial",
+	"sheets": {
+		"terrain": "res://art/export/imagegen/atlases/terrain.png",
+		"architecture": "res://art/export/imagegen/atlases/architecture.png",
+		"small-props": "res://art/export/imagegen/atlases/small-props.png",
+		"furniture": "res://art/export/imagegen/atlases/furniture.png",
+		"commercial": "res://art/export/imagegen/atlases/commercial.png",
+		"character_player": "res://art/export/imagegen/characters/walk-player.png",
+		"character_commuter": "res://art/export/imagegen/characters/walk-commuter.png",
+		"character_resident": "res://art/export/imagegen/characters/walk-resident.png",
+		"character_worker": "res://art/export/imagegen/characters/walk-worker.png"
+	},
+	"terrain": {
+		"floor_wood": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					0,
+					0,
+					314,
+					314
+				]
+			]
+		},
+		"floor_tile": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					314,
+					0,
+					313,
+					314
+				]
+			]
+		},
+		"floor_stone": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					627,
+					0,
+					314,
+					314
+				]
+			]
+		},
+		"sidewalk": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					941,
+					0,
+					313,
+					314
+				]
+			]
+		},
+		"cobblestone": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					0,
+					314,
+					314,
+					313
+				],
+				[
+					941,
+					941,
+					313,
+					313
+				]
+			]
+		},
+		"road": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					314,
+					314,
+					313,
+					313
+				]
+			]
+		},
+		"tram_track": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					627,
+					314,
+					314,
+					313
+				]
+			]
+		},
+		"crossing": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					941,
+					314,
+					313,
+					313
+				]
+			]
+		},
+		"grass": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					0,
+					627,
+					314,
+					314
+				]
+			]
+		},
+		"hedge": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					314,
+					627,
+					313,
+					314
+				]
+			]
+		},
+		"water": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					627,
+					627,
+					314,
+					314
+				],
+				[
+					627,
+					941,
+					314,
+					313
+				]
+			]
+		},
+		"bridge": {
+			"sheet": "terrain",
+			"source_rects": [
+				[
+					941,
+					627,
+					313,
+					314
+				]
+			]
+		},
+		"wall": {
+			"sheet": "architecture",
+			"source_rects": [
+				[
+					0,
+					113,
+					314,
+					105
+				]
+			]
+		},
+		"window": {
+			"sheet": "architecture",
+			"source_rects": [
+				[
+					0,
+					1028,
+					312,
+					110
+				]
+			]
+		},
+		"door": {
+			"sheet": "architecture",
+			"source_rects": [
+				[
+					628,
+					1017,
+					311,
+					126
+				]
+			]
+		},
+		"stairs": {
+			"sheet": "small-props",
+			"source_rects": [
+				[
+					964,
+					941,
+					242,
+					254
+				]
+			],
+			"background": {
+				"sheet": "terrain",
+				"rect": [
+					627,
+					0,
+					314,
+					314
+				]
+			}
+		},
+		"tree": {
+			"sheet": "furniture",
+			"source_rects": [
+				[
+					991,
+					358,
+					205,
+					236
+				]
+			],
+			"background": {
+				"sheet": "terrain",
+				"rect": [
+					0,
+					627,
+					314,
+					314
+				]
+			}
+		},
+		"fountain": {
+			"sheet": "furniture",
+			"source_rects": [
+				[
+					41,
+					638,
+					273,
+					265
+				]
+			],
+			"background": {
+				"sheet": "terrain",
+				"rect": [
+					0,
+					314,
+					314,
+					313
+				]
+			},
+			"pattern": [
+				2,
+				2
+			],
+			"pattern_origin": [
+				31,
+				28
+			]
+		}
+	},
+	"objects": {
+		"atm": {
+			"sheet": "small-props",
+			"rect": [
+				1014,
+				331,
+				141,
+				296
+			],
+			"size": [
+				12,
+				26
+			]
+		},
+		"bar_counter": {
+			"sheet": "commercial",
+			"rect": [
+				302,
+				89,
+				651,
+				228
+			],
+			"size": [
+				64,
+				22
+			]
+		},
+		"barber_chair": {
+			"sheet": "small-props",
+			"rect": [
+				78,
+				941,
+				192,
+				265
+			],
+			"size": [
+				16,
+				22
+			]
+		},
+		"bed_double": {
+			"sheet": "furniture",
+			"size": [
+				30,
+				32
+			],
+			"rects": [
+				[
+					52,
+					41,
+					253,
+					270
+				],
+				[
+					52,
+					41,
+					253,
+					270
+				],
+				[
+					963,
+					941,
+					258,
+					256
+				],
+				[
+					52,
+					41,
+					253,
+					270
+				]
+			]
+		},
+		"bench": {
+			"sheet": "furniture",
+			"size": [
+				32,
+				17
+			],
+			"rects": [
+				[
+					44,
+					444,
+					261,
+					136
+				],
+				[
+					44,
+					444,
+					261,
+					136
+				],
+				[
+					646,
+					1039,
+					272,
+					135
+				],
+				[
+					44,
+					444,
+					261,
+					136
+				]
+			]
+		},
+		"cafe_counter": {
+			"sheet": "commercial",
+			"rect": [
+				385,
+				414,
+				485,
+				210
+			],
+			"size": [
+				48,
+				21
+			]
+		},
+		"cafe_table": {
+			"sheet": "small-props",
+			"rect": [
+				695,
+				371,
+				180,
+				239
+			],
+			"size": [
+				15,
+				20
+			]
+		},
+		"clothes_rack": {
+			"sheet": "furniture",
+			"rect": [
+				661,
+				432,
+				243,
+				145
+			],
+			"size": [
+				32,
+				19
+			]
+		},
+		"desk": {
+			"sheet": "small-props",
+			"rect": [
+				355,
+				363,
+				239,
+				221
+			],
+			"size": [
+				16,
+				15
+			]
+		},
+		"fridge": {
+			"sheet": "small-props",
+			"rect": [
+				110,
+				46,
+				133,
+				257
+			],
+			"size": [
+				14,
+				28
+			]
+		},
+		"imbiss_counter": {
+			"sheet": "commercial",
+			"rect": [
+				701,
+				700,
+				478,
+				204
+			],
+			"size": [
+				48,
+				20
+			]
+		},
+		"kitchen_table": {
+			"sheet": "furniture",
+			"rect": [
+				654,
+				148,
+				258,
+				135
+			],
+			"size": [
+				32,
+				17
+			]
+		},
+		"notice_case": {
+			"sheet": "small-props",
+			"rect": [
+				126,
+				627,
+				98,
+				314
+			],
+			"size": [
+				8,
+				26
+			]
+		},
+		"police_desk": {
+			"sheet": "furniture",
+			"rect": [
+				354,
+				429,
+				256,
+				166
+			],
+			"size": [
+				32,
+				21
+			]
+		},
+		"pub_table": {
+			"sheet": "furniture",
+			"rect": [
+				965,
+				146,
+				256,
+				138
+			],
+			"size": [
+				32,
+				17
+			]
+		},
+		"service_board": {
+			"sheet": "small-props",
+			"rect": [
+				369,
+				630,
+				210,
+				311
+			],
+			"size": [
+				16,
+				24
+			]
+		},
+		"shower": {
+			"sheet": "small-props",
+			"rect": [
+				692,
+				42,
+				187,
+				261
+			],
+			"size": [
+				14,
+				20
+			]
+		},
+		"sink": {
+			"sheet": "small-props",
+			"rect": [
+				997,
+				81,
+				176,
+				211
+			],
+			"size": [
+				13,
+				16
+			]
+		},
+		"sofa": {
+			"sheet": "furniture",
+			"size": [
+				32,
+				18
+			],
+			"rects": [
+				[
+					347,
+					129,
+					267,
+					150
+				],
+				[
+					347,
+					129,
+					267,
+					150
+				],
+				[
+					348,
+					1011,
+					263,
+					147
+				],
+				[
+					347,
+					129,
+					267,
+					150
+				]
+			]
+		},
+		"spaeti_counter": {
+			"sheet": "commercial",
+			"rect": [
+				76,
+				701,
+				476,
+				203
+			],
+			"size": [
+				48,
+				20
+			]
+		},
+		"stove": {
+			"sheet": "small-props",
+			"rect": [
+				398,
+				83,
+				146,
+				209
+			],
+			"size": [
+				11,
+				16
+			]
+		},
+		"street_lamp": {
+			"sheet": "small-props",
+			"size": [
+				12,
+				38
+			],
+			"rects": [
+				[
+					746,
+					941,
+					78,
+					254
+				],
+				[
+					746,
+					941,
+					78,
+					254
+				],
+				[
+					749,
+					657,
+					72,
+					231
+				],
+				[
+					746,
+					941,
+					78,
+					254
+				]
+			]
+		},
+		"tram_stop": {
+			"sheet": "commercial",
+			"rect": [
+				56,
+				989,
+				1144,
+				182
+			],
+			"size": [
+				96,
+				15
+			]
+		},
+		"tv": {
+			"sheet": "small-props",
+			"rect": [
+				76,
+				382,
+				199,
+				245
+			],
+			"size": [
+				16,
+				20
+			]
+		},
+		"vestry_chair": {
+			"sheet": "small-props",
+			"rect": [
+				717,
+				649,
+				137,
+				292
+			],
+			"size": [
+				10,
+				22
+			]
+		},
+		"wardrobe": {
+			"sheet": "small-props",
+			"size": [
+				16,
+				27
+			],
+			"rects": [
+				[
+					992,
+					627,
+					185,
+					314
+				],
+				[
+					314,
+					662,
+					224,
+					228
+				],
+				[
+					992,
+					627,
+					185,
+					314
+				],
+				[
+					314,
+					662,
+					224,
+					228
+				]
+			]
+		},
+		"washing_machine": {
+			"sheet": "small-props",
+			"rect": [
+				388,
+				941,
+				170,
+				239
+			],
+			"size": [
+				16,
+				22
+			]
+		}
+	},
+	"characters": {
+		"player": {
+			"sheet": "character_player",
+			"fps": 8,
+			"frames": [
+				{
+					"rect": [
+						101,
+						40,
+						131,
+						253
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						410,
+						38,
+						125,
+						250
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						721,
+						37,
+						136,
+						256
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1037,
+						38,
+						125,
+						250
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						87,
+						345,
+						144,
+						248
+					],
+					"size": [
+						14,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						423,
+						342,
+						119,
+						256
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						717,
+						345,
+						140,
+						251
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1049,
+						342,
+						121,
+						256
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						96,
+						654,
+						135,
+						259
+					],
+					"size": [
+						13,
+						25
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						409,
+						653,
+						126,
+						254
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						721,
+						653,
+						138,
+						260
+					],
+					"size": [
+						13,
+						25
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1036,
+						653,
+						126,
+						254
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						91,
+						964,
+						138,
+						251
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						413,
+						964,
+						110,
+						252
+					],
+					"size": [
+						10,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						714,
+						964,
+						144,
+						247
+					],
+					"size": [
+						14,
+						23
+					],
+					"offset": [
+						-8,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1036,
+						964,
+						114,
+						251
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				}
+			]
+		},
+		"commuter": {
+			"sheet": "character_commuter",
+			"fps": 8,
+			"frames": [
+				{
+					"rect": [
+						144,
+						59,
+						125,
+						253
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						432,
+						59,
+						117,
+						250
+					],
+					"size": [
+						11,
+						23
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						700,
+						60,
+						119,
+						252
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						983,
+						59,
+						116,
+						250
+					],
+					"size": [
+						11,
+						23
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						143,
+						347,
+						129,
+						262
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						444,
+						347,
+						88,
+						257
+					],
+					"size": [
+						8,
+						24
+					],
+					"offset": [
+						-4,
+						-24
+					]
+				},
+				{
+					"rect": [
+						689,
+						347,
+						133,
+						262
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						995,
+						347,
+						85,
+						257
+					],
+					"size": [
+						8,
+						24
+					],
+					"offset": [
+						-4,
+						-24
+					]
+				},
+				{
+					"rect": [
+						137,
+						643,
+						136,
+						257
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						432,
+						643,
+						124,
+						249
+					],
+					"size": [
+						12,
+						23
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						688,
+						643,
+						136,
+						257
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						982,
+						643,
+						123,
+						251
+					],
+					"size": [
+						11,
+						23
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						140,
+						928,
+						135,
+						262
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						453,
+						929,
+						93,
+						259
+					],
+					"size": [
+						9,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						688,
+						929,
+						140,
+						262
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-8,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1002,
+						929,
+						92,
+						259
+					],
+					"size": [
+						9,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				}
+			]
+		},
+		"resident": {
+			"sheet": "character_resident",
+			"fps": 8,
+			"frames": [
+				{
+					"rect": [
+						104,
+						46,
+						138,
+						266
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						414,
+						46,
+						136,
+						263
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						703,
+						45,
+						135,
+						266
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1012,
+						46,
+						139,
+						263
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						91,
+						347,
+						145,
+						264
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						421,
+						347,
+						113,
+						264
+					],
+					"size": [
+						10,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						696,
+						347,
+						143,
+						264
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1032,
+						347,
+						110,
+						264
+					],
+					"size": [
+						10,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						103,
+						648,
+						133,
+						260
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						415,
+						645,
+						135,
+						263
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						703,
+						645,
+						135,
+						263
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1017,
+						645,
+						132,
+						263
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						101,
+						942,
+						143,
+						265
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						418,
+						941,
+						119,
+						266
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						703,
+						941,
+						144,
+						266
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-7,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1030,
+						941,
+						113,
+						266
+					],
+					"size": [
+						10,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				}
+			]
+		},
+		"worker": {
+			"sheet": "character_worker",
+			"fps": 8,
+			"frames": [
+				{
+					"rect": [
+						100,
+						48,
+						125,
+						247
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						416,
+						48,
+						114,
+						247
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						719,
+						48,
+						124,
+						247
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1039,
+						48,
+						116,
+						246
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						89,
+						354,
+						127,
+						244
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						412,
+						353,
+						116,
+						245
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						715,
+						353,
+						127,
+						244
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1039,
+						353,
+						116,
+						244
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-5,
+						-24
+					]
+				},
+				{
+					"rect": [
+						97,
+						665,
+						122,
+						243
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						415,
+						664,
+						115,
+						240
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						721,
+						661,
+						122,
+						247
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1039,
+						661,
+						116,
+						243
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						98,
+						964,
+						125,
+						244
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						412,
+						964,
+						116,
+						244
+					],
+					"size": [
+						11,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						722,
+						964,
+						134,
+						244
+					],
+					"size": [
+						13,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				},
+				{
+					"rect": [
+						1032,
+						964,
+						118,
+						244
+					],
+					"size": [
+						12,
+						24
+					],
+					"offset": [
+						-6,
+						-24
+					]
+				}
+			]
+		}
+	},
+	"thin_walls": {
+		"top": "#d1b893",
+		"edge": "#45352c",
+		"face": "#7b624a",
+		"glass": "#47949b"
+	}
+}

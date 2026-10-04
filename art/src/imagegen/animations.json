@@ -1,0 +1,1566 @@
+{
+  "format_version": 1,
+  "fps": 8,
+  "loop": true,
+  "logical_canvas_px": [
+    32,
+    32
+  ],
+  "foot_pivot_px": [
+    16,
+    28
+  ],
+  "collision_footprint_cells": [
+    1,
+    1
+  ],
+  "direction_order": [
+    "south",
+    "west",
+    "north",
+    "east"
+  ],
+  "frame_note": "Per-frame source rectangles and logical offsets align the head; use them rather than slicing the raw sheet into equal squares. PNG artwork is unchanged.",
+  "characters": {
+    "player": {
+      "name": "Player · navy",
+      "file": "characters/walk-player.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "logical_pixels_per_source_pixel": 0.09504950495049505,
+      "row_boundaries_y_px": [
+        0,
+        318,
+        626,
+        938,
+        1254
+      ],
+      "frames": [
+        {
+          "id": "player_south_0",
+          "direction": "south",
+          "phase": 0,
+          "source_rect_px": [
+            101,
+            40,
+            131,
+            253
+          ],
+          "render_size_px": [
+            12.4515,
+            24.0475
+          ],
+          "offset_px": [
+            9.8693,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_south_1",
+          "direction": "south",
+          "phase": 1,
+          "source_rect_px": [
+            410,
+            38,
+            125,
+            250
+          ],
+          "render_size_px": [
+            11.8812,
+            23.7624
+          ],
+          "offset_px": [
+            9.9644,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_south_2",
+          "direction": "south",
+          "phase": 2,
+          "source_rect_px": [
+            721,
+            37,
+            136,
+            256
+          ],
+          "render_size_px": [
+            12.9267,
+            24.3327
+          ],
+          "offset_px": [
+            9.4416,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_south_3",
+          "direction": "south",
+          "phase": 3,
+          "source_rect_px": [
+            1037,
+            38,
+            125,
+            250
+          ],
+          "render_size_px": [
+            11.8812,
+            23.7624
+          ],
+          "offset_px": [
+            9.9644,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_west_0",
+          "direction": "west",
+          "phase": 0,
+          "source_rect_px": [
+            87,
+            345,
+            144,
+            248
+          ],
+          "render_size_px": [
+            13.6871,
+            23.5723
+          ],
+          "offset_px": [
+            9.4891,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_west_1",
+          "direction": "west",
+          "phase": 1,
+          "source_rect_px": [
+            423,
+            342,
+            119,
+            256
+          ],
+          "render_size_px": [
+            11.3109,
+            24.3327
+          ],
+          "offset_px": [
+            11.295,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_west_2",
+          "direction": "west",
+          "phase": 2,
+          "source_rect_px": [
+            717,
+            345,
+            140,
+            251
+          ],
+          "render_size_px": [
+            13.3069,
+            23.8574
+          ],
+          "offset_px": [
+            9.8693,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_west_3",
+          "direction": "west",
+          "phase": 3,
+          "source_rect_px": [
+            1049,
+            342,
+            121,
+            256
+          ],
+          "render_size_px": [
+            11.501,
+            24.3327
+          ],
+          "offset_px": [
+            11.2475,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_north_0",
+          "direction": "north",
+          "phase": 0,
+          "source_rect_px": [
+            96,
+            654,
+            135,
+            259
+          ],
+          "render_size_px": [
+            12.8317,
+            24.6178
+          ],
+          "offset_px": [
+            9.3941,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_north_1",
+          "direction": "north",
+          "phase": 1,
+          "source_rect_px": [
+            409,
+            653,
+            126,
+            254
+          ],
+          "render_size_px": [
+            11.9762,
+            24.1426
+          ],
+          "offset_px": [
+            9.8693,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_north_2",
+          "direction": "north",
+          "phase": 2,
+          "source_rect_px": [
+            721,
+            653,
+            138,
+            260
+          ],
+          "render_size_px": [
+            13.1168,
+            24.7129
+          ],
+          "offset_px": [
+            9.4891,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_north_3",
+          "direction": "north",
+          "phase": 3,
+          "source_rect_px": [
+            1036,
+            653,
+            126,
+            254
+          ],
+          "render_size_px": [
+            11.9762,
+            24.1426
+          ],
+          "offset_px": [
+            9.8693,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_east_0",
+          "direction": "east",
+          "phase": 0,
+          "source_rect_px": [
+            91,
+            964,
+            138,
+            251
+          ],
+          "render_size_px": [
+            13.1168,
+            23.8574
+          ],
+          "offset_px": [
+            9.0614,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_east_1",
+          "direction": "east",
+          "phase": 1,
+          "source_rect_px": [
+            413,
+            964,
+            110,
+            252
+          ],
+          "render_size_px": [
+            10.4554,
+            23.9525
+          ],
+          "offset_px": [
+            10.202,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_east_2",
+          "direction": "east",
+          "phase": 2,
+          "source_rect_px": [
+            714,
+            964,
+            144,
+            247
+          ],
+          "render_size_px": [
+            13.6871,
+            23.4772
+          ],
+          "offset_px": [
+            8.4911,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "player_east_3",
+          "direction": "east",
+          "phase": 3,
+          "source_rect_px": [
+            1036,
+            964,
+            114,
+            251
+          ],
+          "render_size_px": [
+            10.8356,
+            23.8574
+          ],
+          "offset_px": [
+            9.8218,
+            4
+          ],
+          "duration_ms": 125
+        }
+      ],
+      "walk_cycles": {
+        "south": {
+          "frame_indices": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "west": {
+          "frame_indices": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "north": {
+          "frame_indices": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "east": {
+          "frame_indices": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        }
+      }
+    },
+    "commuter": {
+      "name": "Commuter · burgundy",
+      "file": "characters/walk-commuter.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "logical_pixels_per_source_pixel": 0.0933852140077821,
+      "row_boundaries_y_px": [
+        0,
+        329,
+        626,
+        914,
+        1254
+      ],
+      "frames": [
+        {
+          "id": "commuter_south_0",
+          "direction": "south",
+          "phase": 0,
+          "source_rect_px": [
+            144,
+            59,
+            125,
+            253
+          ],
+          "render_size_px": [
+            11.6732,
+            23.6265
+          ],
+          "offset_px": [
+            9.7432,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_south_1",
+          "direction": "south",
+          "phase": 1,
+          "source_rect_px": [
+            432,
+            59,
+            117,
+            250
+          ],
+          "render_size_px": [
+            10.9261,
+            23.3463
+          ],
+          "offset_px": [
+            10.3502,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_south_2",
+          "direction": "south",
+          "phase": 2,
+          "source_rect_px": [
+            700,
+            60,
+            119,
+            252
+          ],
+          "render_size_px": [
+            11.1128,
+            23.5331
+          ],
+          "offset_px": [
+            10.3502,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_south_3",
+          "direction": "south",
+          "phase": 3,
+          "source_rect_px": [
+            983,
+            59,
+            116,
+            250
+          ],
+          "render_size_px": [
+            10.8327,
+            23.3463
+          ],
+          "offset_px": [
+            10.537,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_west_0",
+          "direction": "west",
+          "phase": 0,
+          "source_rect_px": [
+            143,
+            347,
+            129,
+            262
+          ],
+          "render_size_px": [
+            12.0467,
+            24.4669
+          ],
+          "offset_px": [
+            10.4436,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_west_1",
+          "direction": "west",
+          "phase": 1,
+          "source_rect_px": [
+            444,
+            347,
+            88,
+            257
+          ],
+          "render_size_px": [
+            8.2179,
+            24.0
+          ],
+          "offset_px": [
+            12.0311,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_west_2",
+          "direction": "west",
+          "phase": 2,
+          "source_rect_px": [
+            689,
+            347,
+            133,
+            262
+          ],
+          "render_size_px": [
+            12.4202,
+            24.4669
+          ],
+          "offset_px": [
+            10.2101,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_west_3",
+          "direction": "west",
+          "phase": 3,
+          "source_rect_px": [
+            995,
+            347,
+            85,
+            257
+          ],
+          "render_size_px": [
+            7.9377,
+            24.0
+          ],
+          "offset_px": [
+            12.1245,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_north_0",
+          "direction": "north",
+          "phase": 0,
+          "source_rect_px": [
+            137,
+            643,
+            136,
+            257
+          ],
+          "render_size_px": [
+            12.7004,
+            24.0
+          ],
+          "offset_px": [
+            9.3696,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_north_1",
+          "direction": "north",
+          "phase": 1,
+          "source_rect_px": [
+            432,
+            643,
+            124,
+            249
+          ],
+          "render_size_px": [
+            11.5798,
+            23.2529
+          ],
+          "offset_px": [
+            10.07,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_north_2",
+          "direction": "north",
+          "phase": 2,
+          "source_rect_px": [
+            688,
+            643,
+            136,
+            257
+          ],
+          "render_size_px": [
+            12.7004,
+            24.0
+          ],
+          "offset_px": [
+            9.4163,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_north_3",
+          "direction": "north",
+          "phase": 3,
+          "source_rect_px": [
+            982,
+            643,
+            123,
+            251
+          ],
+          "render_size_px": [
+            11.4864,
+            23.4397
+          ],
+          "offset_px": [
+            10.1634,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_east_0",
+          "direction": "east",
+          "phase": 0,
+          "source_rect_px": [
+            140,
+            928,
+            135,
+            262
+          ],
+          "render_size_px": [
+            12.607,
+            24.4669
+          ],
+          "offset_px": [
+            8.6693,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_east_1",
+          "direction": "east",
+          "phase": 1,
+          "source_rect_px": [
+            453,
+            929,
+            93,
+            259
+          ],
+          "render_size_px": [
+            8.6848,
+            24.1868
+          ],
+          "offset_px": [
+            11.3774,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_east_2",
+          "direction": "east",
+          "phase": 2,
+          "source_rect_px": [
+            688,
+            929,
+            140,
+            262
+          ],
+          "render_size_px": [
+            13.0739,
+            24.4669
+          ],
+          "offset_px": [
+            8.3424,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "commuter_east_3",
+          "direction": "east",
+          "phase": 3,
+          "source_rect_px": [
+            1002,
+            929,
+            92,
+            259
+          ],
+          "render_size_px": [
+            8.5914,
+            24.1868
+          ],
+          "offset_px": [
+            11.4708,
+            4
+          ],
+          "duration_ms": 125
+        }
+      ],
+      "walk_cycles": {
+        "south": {
+          "frame_indices": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "west": {
+          "frame_indices": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "north": {
+          "frame_indices": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "east": {
+          "frame_indices": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        }
+      }
+    },
+    "resident": {
+      "name": "Resident · sage",
+      "file": "characters/walk-resident.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "logical_pixels_per_source_pixel": 0.09090909090909091,
+      "row_boundaries_y_px": [
+        0,
+        329,
+        628,
+        924,
+        1254
+      ],
+      "frames": [
+        {
+          "id": "resident_south_0",
+          "direction": "south",
+          "phase": 0,
+          "source_rect_px": [
+            104,
+            46,
+            138,
+            266
+          ],
+          "render_size_px": [
+            12.5455,
+            24.1818
+          ],
+          "offset_px": [
+            9.7273,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_south_1",
+          "direction": "south",
+          "phase": 1,
+          "source_rect_px": [
+            414,
+            46,
+            136,
+            263
+          ],
+          "render_size_px": [
+            12.3636,
+            23.9091
+          ],
+          "offset_px": [
+            9.6818,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_south_2",
+          "direction": "south",
+          "phase": 2,
+          "source_rect_px": [
+            703,
+            45,
+            135,
+            266
+          ],
+          "render_size_px": [
+            12.2727,
+            24.1818
+          ],
+          "offset_px": [
+            9.8636,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_south_3",
+          "direction": "south",
+          "phase": 3,
+          "source_rect_px": [
+            1012,
+            46,
+            139,
+            263
+          ],
+          "render_size_px": [
+            12.6364,
+            23.9091
+          ],
+          "offset_px": [
+            9.6364,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_west_0",
+          "direction": "west",
+          "phase": 0,
+          "source_rect_px": [
+            91,
+            347,
+            145,
+            264
+          ],
+          "render_size_px": [
+            13.1818,
+            24.0
+          ],
+          "offset_px": [
+            9.1818,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_west_1",
+          "direction": "west",
+          "phase": 1,
+          "source_rect_px": [
+            421,
+            347,
+            113,
+            264
+          ],
+          "render_size_px": [
+            10.2727,
+            24.0
+          ],
+          "offset_px": [
+            11.1818,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_west_2",
+          "direction": "west",
+          "phase": 2,
+          "source_rect_px": [
+            696,
+            347,
+            143,
+            264
+          ],
+          "render_size_px": [
+            13.0,
+            24.0
+          ],
+          "offset_px": [
+            9.0909,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_west_3",
+          "direction": "west",
+          "phase": 3,
+          "source_rect_px": [
+            1032,
+            347,
+            110,
+            264
+          ],
+          "render_size_px": [
+            10.0,
+            24.0
+          ],
+          "offset_px": [
+            11.1818,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_north_0",
+          "direction": "north",
+          "phase": 0,
+          "source_rect_px": [
+            103,
+            648,
+            133,
+            260
+          ],
+          "render_size_px": [
+            12.0909,
+            23.6364
+          ],
+          "offset_px": [
+            9.9091,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_north_1",
+          "direction": "north",
+          "phase": 1,
+          "source_rect_px": [
+            415,
+            645,
+            135,
+            263
+          ],
+          "render_size_px": [
+            12.2727,
+            23.9091
+          ],
+          "offset_px": [
+            9.8182,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_north_2",
+          "direction": "north",
+          "phase": 2,
+          "source_rect_px": [
+            703,
+            645,
+            135,
+            263
+          ],
+          "render_size_px": [
+            12.2727,
+            23.9091
+          ],
+          "offset_px": [
+            9.8636,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_north_3",
+          "direction": "north",
+          "phase": 3,
+          "source_rect_px": [
+            1017,
+            645,
+            132,
+            263
+          ],
+          "render_size_px": [
+            12.0,
+            23.9091
+          ],
+          "offset_px": [
+            10.0,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_east_0",
+          "direction": "east",
+          "phase": 0,
+          "source_rect_px": [
+            101,
+            942,
+            143,
+            265
+          ],
+          "render_size_px": [
+            13.0,
+            24.0909
+          ],
+          "offset_px": [
+            9.3182,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_east_1",
+          "direction": "east",
+          "phase": 1,
+          "source_rect_px": [
+            418,
+            941,
+            119,
+            266
+          ],
+          "render_size_px": [
+            10.8182,
+            24.1818
+          ],
+          "offset_px": [
+            10.0455,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_east_2",
+          "direction": "east",
+          "phase": 2,
+          "source_rect_px": [
+            703,
+            941,
+            144,
+            266
+          ],
+          "render_size_px": [
+            13.0909,
+            24.1818
+          ],
+          "offset_px": [
+            9.3636,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "resident_east_3",
+          "direction": "east",
+          "phase": 3,
+          "source_rect_px": [
+            1030,
+            941,
+            113,
+            266
+          ],
+          "render_size_px": [
+            10.2727,
+            24.1818
+          ],
+          "offset_px": [
+            10.5455,
+            4
+          ],
+          "duration_ms": 125
+        }
+      ],
+      "walk_cycles": {
+        "south": {
+          "frame_indices": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "west": {
+          "frame_indices": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "north": {
+          "frame_indices": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "east": {
+          "frame_indices": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        }
+      }
+    },
+    "worker": {
+      "name": "Neighbor · mustard",
+      "file": "characters/walk-worker.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "logical_pixels_per_source_pixel": 0.09836065573770492,
+      "row_boundaries_y_px": [
+        0,
+        324,
+        629,
+        936,
+        1254
+      ],
+      "frames": [
+        {
+          "id": "worker_south_0",
+          "direction": "south",
+          "phase": 0,
+          "source_rect_px": [
+            100,
+            48,
+            125,
+            247
+          ],
+          "render_size_px": [
+            12.2951,
+            24.2951
+          ],
+          "offset_px": [
+            9.9016,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_south_1",
+          "direction": "south",
+          "phase": 1,
+          "source_rect_px": [
+            416,
+            48,
+            114,
+            247
+          ],
+          "render_size_px": [
+            11.2131,
+            24.2951
+          ],
+          "offset_px": [
+            10.2459,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_south_2",
+          "direction": "south",
+          "phase": 2,
+          "source_rect_px": [
+            719,
+            48,
+            124,
+            247
+          ],
+          "render_size_px": [
+            12.1967,
+            24.2951
+          ],
+          "offset_px": [
+            9.7541,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_south_3",
+          "direction": "south",
+          "phase": 3,
+          "source_rect_px": [
+            1039,
+            48,
+            116,
+            246
+          ],
+          "render_size_px": [
+            11.4098,
+            24.1967
+          ],
+          "offset_px": [
+            10.3443,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_west_0",
+          "direction": "west",
+          "phase": 0,
+          "source_rect_px": [
+            89,
+            354,
+            127,
+            244
+          ],
+          "render_size_px": [
+            12.4918,
+            24.0
+          ],
+          "offset_px": [
+            9.6557,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_west_1",
+          "direction": "west",
+          "phase": 1,
+          "source_rect_px": [
+            412,
+            353,
+            116,
+            245
+          ],
+          "render_size_px": [
+            11.4098,
+            24.0984
+          ],
+          "offset_px": [
+            10.541,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_west_2",
+          "direction": "west",
+          "phase": 2,
+          "source_rect_px": [
+            715,
+            353,
+            127,
+            244
+          ],
+          "render_size_px": [
+            12.4918,
+            24.0
+          ],
+          "offset_px": [
+            9.6066,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_west_3",
+          "direction": "west",
+          "phase": 3,
+          "source_rect_px": [
+            1039,
+            353,
+            116,
+            244
+          ],
+          "render_size_px": [
+            11.4098,
+            24.0
+          ],
+          "offset_px": [
+            10.541,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_north_0",
+          "direction": "north",
+          "phase": 0,
+          "source_rect_px": [
+            97,
+            665,
+            122,
+            243
+          ],
+          "render_size_px": [
+            12.0,
+            23.9016
+          ],
+          "offset_px": [
+            9.6557,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_north_1",
+          "direction": "north",
+          "phase": 1,
+          "source_rect_px": [
+            415,
+            664,
+            115,
+            240
+          ],
+          "render_size_px": [
+            11.3115,
+            23.6066
+          ],
+          "offset_px": [
+            10.3443,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_north_2",
+          "direction": "north",
+          "phase": 2,
+          "source_rect_px": [
+            721,
+            661,
+            122,
+            247
+          ],
+          "render_size_px": [
+            12.0,
+            24.2951
+          ],
+          "offset_px": [
+            9.6557,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_north_3",
+          "direction": "north",
+          "phase": 3,
+          "source_rect_px": [
+            1039,
+            661,
+            116,
+            243
+          ],
+          "render_size_px": [
+            11.4098,
+            23.9016
+          ],
+          "offset_px": [
+            10.2951,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_east_0",
+          "direction": "east",
+          "phase": 0,
+          "source_rect_px": [
+            98,
+            964,
+            125,
+            244
+          ],
+          "render_size_px": [
+            12.2951,
+            24.0
+          ],
+          "offset_px": [
+            9.8033,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_east_1",
+          "direction": "east",
+          "phase": 1,
+          "source_rect_px": [
+            412,
+            964,
+            116,
+            244
+          ],
+          "render_size_px": [
+            11.4098,
+            24.0
+          ],
+          "offset_px": [
+            10.2951,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_east_2",
+          "direction": "east",
+          "phase": 2,
+          "source_rect_px": [
+            722,
+            964,
+            134,
+            244
+          ],
+          "render_size_px": [
+            13.1803,
+            24.0
+          ],
+          "offset_px": [
+            10.1475,
+            4
+          ],
+          "duration_ms": 125
+        },
+        {
+          "id": "worker_east_3",
+          "direction": "east",
+          "phase": 3,
+          "source_rect_px": [
+            1032,
+            964,
+            118,
+            244
+          ],
+          "render_size_px": [
+            11.6066,
+            24.0
+          ],
+          "offset_px": [
+            10.1475,
+            4
+          ],
+          "duration_ms": 125
+        }
+      ],
+      "walk_cycles": {
+        "south": {
+          "frame_indices": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "west": {
+          "frame_indices": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "north": {
+          "frame_indices": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        },
+        "east": {
+          "frame_indices": [
+            12,
+            13,
+            14,
+            15
+          ],
+          "fps": 8,
+          "loop": true,
+          "duration_ms": 500
+        }
+      }
+    }
+  }
+}

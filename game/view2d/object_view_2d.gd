@@ -105,7 +105,8 @@ func _draw() -> void:
 		_draw_placeholder(rect, def)
 	else:
 		var region: Rect2i = sprite["region"]
-		draw_texture_rect_region(sprite["texture"], sprite_rect(rect, region.size), Rect2(region))
+		var size: Vector2i = sprite.get("size", region.size)
+		draw_texture_rect_region(sprite["texture"], sprite_rect(rect, size), Rect2(region))
 	if show_slots:
 		for i: int in obj.slot_count(Session.content):
 			var slot_cell: Vector3i = obj.slot_cell(Session.content, i)

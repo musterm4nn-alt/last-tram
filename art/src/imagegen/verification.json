@@ -1,0 +1,209 @@
+{
+  "generated_with": "built-in image_gen",
+  "environment_asset_regions": 69,
+  "unique_map_object_types": 27,
+  "object_placements": 204,
+  "legend_entries": 20,
+  "character_sheets": 4,
+  "walk_cycles": 16,
+  "walk_frames": 64,
+  "maps": [
+    {
+      "floor": 0,
+      "width_cells": 72,
+      "height_cells": 44,
+      "source_unchanged": true
+    },
+    {
+      "floor": 1,
+      "width_cells": 72,
+      "height_cells": 44,
+      "source_unchanged": true
+    },
+    {
+      "floor": 2,
+      "width_cells": 72,
+      "height_cells": 44,
+      "source_unchanged": true
+    }
+  ],
+  "walk_checks": {
+    "player": {
+      "south": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "west": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "north": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "east": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      }
+    },
+    "commuter": {
+      "south": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "west": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "north": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "east": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      }
+    },
+    "resident": {
+      "south": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "west": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "north": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "east": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      }
+    },
+    "worker": {
+      "south": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "west": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "north": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      },
+      "east": {
+        "frames": 4,
+        "distinct_source_frames": 4
+      }
+    }
+  },
+  "pngs": [
+    {
+      "file": "atlases/architecture.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 1023150,
+      "sha256": "c10c70b40e233d20b18e385c60c108aac0476ed3216eb438138ec3268c4b0d7f"
+    },
+    {
+      "file": "atlases/commercial.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 962698,
+      "sha256": "43eab38a55317973bdea4d84abcdbc14d4858860a6abd6f98202f6de7273485d"
+    },
+    {
+      "file": "atlases/furniture.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 944038,
+      "sha256": "e28e860e66cb9adb265eca3c87191ed90780ef885ddeb293fc08a014dc544274"
+    },
+    {
+      "file": "atlases/small-props.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 955140,
+      "sha256": "24614825bcad335f1fe0aefb9cae8d634e9ff03ecb4972d3d6a0783175b0cdc9"
+    },
+    {
+      "file": "atlases/terrain.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": false,
+      "transparent_pixels": 0,
+      "sha256": "2f6a9b91d682fcc578e24440c58422fcc5b5aedd03a96a8d6284c788a9991b21"
+    },
+    {
+      "file": "characters/walk-commuter.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 1211001,
+      "sha256": "e6a4363673ab211e904b19462dfde693133d143233aca4bef5711ea23e027c99"
+    },
+    {
+      "file": "characters/walk-player.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 1167128,
+      "sha256": "6378a4c0e2c5fb3207be61b55b0eec048cfaae65c802a001b727902dd621110e"
+    },
+    {
+      "file": "characters/walk-resident.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 1121228,
+      "sha256": "24efaff8a425fc9a85e99fd33da0b90b6007f7b3ec09a661ba92bee904272346"
+    },
+    {
+      "file": "characters/walk-worker.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "has_alpha": true,
+      "transparent_pixels": 1179513,
+      "sha256": "d8dd2ac3aa522d88b79be81383b34f18759f2bdedd1471e64d6637fb560d0acd"
+    }
+  ],
+  "png_processing": "Original generated PNG bytes copied unchanged; only metadata and HTML/CSS preview authored.",
+  "engine_integration": "Not run; no engine supplied.",
+  "preview_ui": {
+    "visible_loops": 16,
+    "pause_verified": true,
+    "speeds_verified_fps": [
+      5,
+      8,
+      12
+    ],
+    "final_playback": "running at 8 fps",
+    "screenshot": "walking-preview.jpg"
+  }
+}

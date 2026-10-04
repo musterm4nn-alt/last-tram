@@ -1,0 +1,1974 @@
+{
+  "format_version": 1,
+  "game": "Last Tram",
+  "map_cell_size_px": 16,
+  "sampling": "nearest-neighbor",
+  "png_note": "Original generated 1254-pixel source atlases. These are source regions, not pre-exported 16-pixel PNG tiles. Use the supplied source rectangles and logical draw boxes.",
+  "rotation_convention": {
+    "0": "south",
+    "1": "west",
+    "2": "north",
+    "3": "east",
+    "relative_rotation": "(placement.rotation - asset.base_rotation) modulo 4, clockwise quarter turns"
+  },
+  "atlases": {
+    "terrain": {
+      "file": "atlases/terrain.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": false,
+      "layout": [
+        4,
+        4
+      ]
+    },
+    "architecture": {
+      "file": "atlases/architecture.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "layout": [
+        4,
+        4
+      ]
+    },
+    "small-props": {
+      "file": "atlases/small-props.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "layout": [
+        4,
+        4
+      ]
+    },
+    "furniture": {
+      "file": "atlases/furniture.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "layout": [
+        4,
+        4
+      ]
+    },
+    "commercial": {
+      "file": "atlases/commercial.png",
+      "size_px": [
+        1254,
+        1254
+      ],
+      "alpha": true,
+      "layout": "four horizontal bands; two objects in third band",
+      "band_boundaries_y_px": [
+        0,
+        365,
+        662,
+        946,
+        1254
+      ]
+    }
+  },
+  "assets": {
+    "floor_wood": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "floor_tile": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        314,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        314,
+        0,
+        313,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "floor_stone": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        627,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        627,
+        0,
+        314,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "sidewalk": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        941,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        941,
+        0,
+        313,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "cobblestone": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        0,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        0,
+        314,
+        314,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "road": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        314,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        314,
+        314,
+        313,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "tram_track_horizontal": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        627,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        627,
+        314,
+        314,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "crossing": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        941,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        941,
+        314,
+        313,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "grass": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        0,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        0,
+        627,
+        314,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "hedge": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        314,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        314,
+        627,
+        313,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "water": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        627,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        627,
+        627,
+        314,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "bridge": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        941,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        941,
+        627,
+        313,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "tram_track_vertical": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        0,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        0,
+        941,
+        314,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "road_marked": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        314,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        314,
+        941,
+        313,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "water_alt": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        627,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        627,
+        941,
+        314,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "cobblestone_alt": {
+      "atlas": "terrain",
+      "source_cell_px": [
+        941,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        941,
+        941,
+        313,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_horizontal": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        0,
+        113,
+        314,
+        105
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_vertical": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        314,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        436,
+        0,
+        70,
+        311
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_east_south": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        627,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        736,
+        108,
+        202,
+        203
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_west_south": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        941,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        947,
+        108,
+        200,
+        203
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_east_north": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        0,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        94,
+        317,
+        218,
+        221
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 2
+    },
+    "wall_west_north": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        314,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        316,
+        317,
+        217,
+        221
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 2
+    },
+    "wall_west_east_south": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        627,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        629,
+        419,
+        309,
+        203
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_west_east_north": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        941,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        947,
+        317,
+        304,
+        206
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 2
+    },
+    "wall_north_south_east": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        0,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        113,
+        628,
+        197,
+        302
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_north_south_west": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        314,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        319,
+        628,
+        196,
+        313
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_cross": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        627,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        629,
+        628,
+        311,
+        302
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "wall_pillar": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        941,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        1052,
+        729,
+        92,
+        212
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "window_horizontal": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        0,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        0,
+        1028,
+        312,
+        110
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "window_vertical": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        314,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        426,
+        941,
+        90,
+        306
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "door_horizontal": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        627,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        628,
+        1017,
+        311,
+        126
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "door_vertical": {
+      "atlas": "architecture",
+      "source_cell_px": [
+        941,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        1047,
+        941,
+        103,
+        306
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "stretch",
+      "base_rotation": 0
+    },
+    "fridge": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        110,
+        46,
+        133,
+        257
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "stove": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        314,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        398,
+        83,
+        146,
+        209
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "shower": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        627,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        692,
+        42,
+        187,
+        261
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "sink": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        941,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        997,
+        81,
+        176,
+        211
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "tv": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        0,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        76,
+        382,
+        199,
+        245
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "desk": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        314,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        355,
+        363,
+        239,
+        221
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "cafe_table": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        627,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        695,
+        371,
+        180,
+        239
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "atm": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        941,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        1014,
+        331,
+        141,
+        296
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "notice_case": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        0,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        126,
+        627,
+        98,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "service_board": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        314,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        369,
+        630,
+        210,
+        311
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "vestry_chair": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        627,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        717,
+        649,
+        137,
+        292
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "wardrobe": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        941,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        992,
+        627,
+        185,
+        314
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "barber_chair": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        0,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        78,
+        941,
+        192,
+        265
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "washing_machine": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        314,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        388,
+        941,
+        170,
+        239
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "street_lamp": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        627,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        746,
+        941,
+        78,
+        254
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "stairs": {
+      "atlas": "small-props",
+      "source_cell_px": [
+        941,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        964,
+        941,
+        242,
+        254
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "bed_double": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        52,
+        41,
+        253,
+        270
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ],
+      "draw_box_px": [
+        32,
+        32
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "sofa": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        314,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        347,
+        129,
+        267,
+        150
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "kitchen_table": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        627,
+        0,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        654,
+        148,
+        258,
+        135
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "pub_table": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        941,
+        0,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        965,
+        146,
+        256,
+        138
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "bench": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        0,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        44,
+        444,
+        261,
+        136
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "police_desk": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        314,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        354,
+        429,
+        256,
+        166
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "clothes_rack": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        627,
+        314,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        661,
+        432,
+        243,
+        145
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "tree": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        941,
+        314,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        991,
+        358,
+        205,
+        236
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "fountain": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        0,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        41,
+        638,
+        273,
+        265
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ],
+      "draw_box_px": [
+        32,
+        32
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "wardrobe_west": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        314,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        314,
+        662,
+        224,
+        228
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 1
+    },
+    "street_lamp_north": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        627,
+        627,
+        314,
+        314
+      ],
+      "source_trimmed_px": [
+        749,
+        657,
+        72,
+        231
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 2
+    },
+    "door_open_horizontal": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        941,
+        627,
+        313,
+        314
+      ],
+      "source_trimmed_px": [
+        972,
+        675,
+        247,
+        266
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "door_open_alt": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        0,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        62,
+        964,
+        223,
+        210
+      ],
+      "footprint_cells": [
+        1,
+        1
+      ],
+      "draw_box_px": [
+        16,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "sofa_north": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        314,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        348,
+        1011,
+        263,
+        147
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 2
+    },
+    "bench_north": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        627,
+        941,
+        314,
+        313
+      ],
+      "source_trimmed_px": [
+        646,
+        1039,
+        272,
+        135
+      ],
+      "footprint_cells": [
+        2,
+        1
+      ],
+      "draw_box_px": [
+        32,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 2
+    },
+    "bed_double_north": {
+      "atlas": "furniture",
+      "source_cell_px": [
+        941,
+        941,
+        313,
+        313
+      ],
+      "source_trimmed_px": [
+        963,
+        941,
+        258,
+        256
+      ],
+      "footprint_cells": [
+        2,
+        2
+      ],
+      "draw_box_px": [
+        32,
+        32
+      ],
+      "fit": "contain",
+      "base_rotation": 2
+    },
+    "bar_counter": {
+      "atlas": "commercial",
+      "source_cell_px": [
+        0,
+        0,
+        1254,
+        365
+      ],
+      "source_trimmed_px": [
+        302,
+        89,
+        651,
+        228
+      ],
+      "footprint_cells": [
+        4,
+        1
+      ],
+      "draw_box_px": [
+        64,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "cafe_counter": {
+      "atlas": "commercial",
+      "source_cell_px": [
+        0,
+        365,
+        1254,
+        297
+      ],
+      "source_trimmed_px": [
+        385,
+        414,
+        485,
+        210
+      ],
+      "footprint_cells": [
+        3,
+        1
+      ],
+      "draw_box_px": [
+        48,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 2
+    },
+    "spaeti_counter": {
+      "atlas": "commercial",
+      "source_cell_px": [
+        0,
+        662,
+        627,
+        284
+      ],
+      "source_trimmed_px": [
+        76,
+        701,
+        476,
+        203
+      ],
+      "footprint_cells": [
+        3,
+        1
+      ],
+      "draw_box_px": [
+        48,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "imbiss_counter": {
+      "atlas": "commercial",
+      "source_cell_px": [
+        627,
+        662,
+        627,
+        284
+      ],
+      "source_trimmed_px": [
+        701,
+        700,
+        478,
+        204
+      ],
+      "footprint_cells": [
+        3,
+        1
+      ],
+      "draw_box_px": [
+        48,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    },
+    "tram_stop": {
+      "atlas": "commercial",
+      "source_cell_px": [
+        0,
+        946,
+        1254,
+        308
+      ],
+      "source_trimmed_px": [
+        56,
+        989,
+        1144,
+        182
+      ],
+      "footprint_cells": [
+        6,
+        1
+      ],
+      "draw_box_px": [
+        96,
+        16
+      ],
+      "fit": "contain",
+      "base_rotation": 0
+    }
+  },
+  "object_type_ids": [
+    "atm",
+    "bar_counter",
+    "barber_chair",
+    "bed_double",
+    "bench",
+    "cafe_counter",
+    "cafe_table",
+    "clothes_rack",
+    "desk",
+    "fridge",
+    "imbiss_counter",
+    "kitchen_table",
+    "notice_case",
+    "police_desk",
+    "pub_table",
+    "service_board",
+    "shower",
+    "sink",
+    "sofa",
+    "spaeti_counter",
+    "stove",
+    "street_lamp",
+    "tram_stop",
+    "tv",
+    "vestry_chair",
+    "wardrobe",
+    "washing_machine"
+  ],
+  "terrain_legend": {
+    " ": {
+      "kind": "none",
+      "base": null
+    },
+    "#": {
+      "kind": "wall",
+      "base": null,
+      "overlay": "wall_horizontal",
+      "autotile": "wall_neighbor_mask"
+    },
+    "W": {
+      "kind": "wall",
+      "base": null,
+      "overlay": "window_horizontal",
+      "vertical_overlay": "window_vertical"
+    },
+    "D": {
+      "kind": "floor",
+      "base": "floor_wood",
+      "overlay": "door_open_horizontal",
+      "vertical_overlay": "door_open_horizontal",
+      "vertical_overlay_rotation": 1,
+      "floor_note": "Use the neighboring room floor when it differs from wood."
+    },
+    ".": {
+      "kind": "floor",
+      "base": "floor_wood"
+    },
+    "_": {
+      "kind": "floor",
+      "base": "floor_tile"
+    },
+    "s": {
+      "kind": "floor",
+      "base": "floor_stone"
+    },
+    ",": {
+      "kind": "sidewalk",
+      "base": "sidewalk"
+    },
+    ":": {
+      "kind": "sidewalk",
+      "base": "cobblestone"
+    },
+    "=": {
+      "kind": "road",
+      "base": "road"
+    },
+    "+": {
+      "kind": "rail",
+      "base": "tram_track_horizontal",
+      "vertical_variant": "tram_track_vertical"
+    },
+    "z": {
+      "kind": "road",
+      "base": "crossing"
+    },
+    "\"": {
+      "kind": "grass",
+      "base": "grass"
+    },
+    "h": {
+      "kind": "grass",
+      "base": "hedge"
+    },
+    "T": {
+      "kind": "grass",
+      "base": "grass",
+      "overlay": "tree"
+    },
+    "~": {
+      "kind": "water",
+      "base": "water",
+      "alternate": "water_alt"
+    },
+    "b": {
+      "kind": "sidewalk",
+      "base": "bridge"
+    },
+    "-": {
+      "kind": "none",
+      "base": null
+    },
+    "^": {
+      "kind": "floor",
+      "base": "floor_stone",
+      "overlay": "stairs"
+    },
+    "f": {
+      "kind": "water",
+      "base": "water",
+      "overlay": "fountain",
+      "overlay_group_cells": [
+        2,
+        2
+      ],
+      "group_note": "Place one fountain over the four-cell connected block, rather than four fountain sprites."
+    }
+  },
+  "wall_autotile": {
+    "neighbor_bits": {
+      "east": 1,
+      "south": 2,
+      "west": 4,
+      "north": 8
+    },
+    "connected_chars": [
+      "#",
+      "W",
+      "D"
+    ],
+    "mask_to_asset": {
+      "0": "wall_pillar",
+      "1": "wall_horizontal",
+      "2": "wall_vertical",
+      "3": "wall_east_south",
+      "4": "wall_horizontal",
+      "5": "wall_horizontal",
+      "6": "wall_west_south",
+      "7": "wall_west_east_south",
+      "8": "wall_vertical",
+      "9": "wall_east_north",
+      "10": "wall_vertical",
+      "11": "wall_north_south_east",
+      "12": "wall_west_north",
+      "13": "wall_west_east_north",
+      "14": "wall_north_south_west",
+      "15": "wall_cross"
+    },
+    "note": "Single-neighbor ends use the corresponding straight piece."
+  },
+  "source_placements": "source/object-placements.json",
+  "source_maps": [
+    "source/floor-0.txt",
+    "source/floor-1.txt",
+    "source/floor-2.txt"
+  ]
+}

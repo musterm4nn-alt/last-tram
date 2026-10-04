@@ -32,3 +32,25 @@ the placeholder, and the problem is printed as a warning. Loaded by `game/view2d
   where a wall shows its face (the top wall of a room), so draw them as faces.
 - `roof` (optional, T-0086): `{ "sheet": ..., "cell": [x, y], "variants": n }`, like a
   terrain: the tile drawn over closed buildings. Without it the view draws shingles.
+
+## Generated source sheets (T-0091)
+
+`--art=imagegen` tries the owner's generated environment and four fixed character designs.
+The source PNGs remain unchanged under `art/export/imagegen/`; prompts and original
+manifests are under `art/src/imagegen/`. The standard `custom` set remains the default.
+
+- Terrain may use `source_rects: [[x, y, w, h], ...]` instead of `cell`. Each source region
+  is sampled with nearest-neighbour into a cached 16-pixel tile; the list provides variants.
+- `pattern: [w, h]` samples one source region into a multi-cell image. `pattern_origin`
+  sets its phase in map cells; the Imagegen fountain uses a 2 × 2 pattern at [31, 28].
+- `background: {"sheet": ..., "rect": [...]}` places an existing source tile under alpha,
+  such as grass below a tree or stone below stairs. It repeats once per logical cell.
+- Objects may specify a positive logical `size: [w, h]`. Their source `rect`/`rects` can
+  then be high resolution, while the sprite still anchors at its footprint's bottom.
+- `characters` maps design names to `{ "sheet": ..., "fps": 8, "frames": [...] }`.
+  Each of the 16 frames is `{ "rect": [x,y,w,h], "size": [w,h], "offset": [x,y] }`;
+  the offset is relative to the person's feet. Rows are south, west, north, east, four
+  phases each. `player` is the player design, and other designs are assigned by person id.
+  Stopped people use phase 1; actual movement advances walking, running doubles its rate,
+  and pause freezes the last pose. Fixed designs are for this visual trial and do not
+  reflect every appearance or outfit option.
