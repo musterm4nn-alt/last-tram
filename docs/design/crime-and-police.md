@@ -48,6 +48,10 @@ and there are no sexual-violence mechanics.
   the suspect while they can see them and arrests them when they catch up: a fine of €50
   per severity point (cash, then the bank, which can go below zero), the case closed, a
   criminal record. Then they walk back to the desk. A call ends with the officer's shift.
+- **Pickpocketing (T-0096):** "Pick their pocket" on anyone standing still. If they don't
+  notice (likelier the more they trust you), you take half their cash, at most €40, and they
+  never learn who it was; bystanders can still see. If they notice, you get nothing, they
+  think much less of you, and they are a witness who may call the police.
 - **Getting away (T-0095):** officers run a little slower than a running player. An officer
   who loses sight of you searches around where they last saw you for 10 minutes, then gives
   up; your stars then fade after 6 hours instead of 48, unless an officer spots you again

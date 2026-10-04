@@ -7,3 +7,7 @@ var id: String = ""
 var name: String = ""
 ## How serious it is, 1 (trespassing) to 8 (killing): police priority, fines, jail time.
 var severity: int = 1
+## Theft of cash from a person target (T-0096; "steals_cash" in data): this share of their
+## cash, at most steal_max cents. 0 = the crime takes no cash.
+var steal_share: float = 0.0
+var steal_max: int = 0

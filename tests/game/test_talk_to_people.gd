@@ -37,7 +37,7 @@ func test_a_person_menu_lists_the_social_interactions() -> void:
 	var setup := _pair(Vector3i(3, 1, 0))
 	var other: Person = setup[2]
 	assert_eq(InteractionMenu.entries(setup[0], other.id),
-		["Mira Kovač", "Chat", "Tell a joke", "Compliment", "Insult", "Argue", "Flirt"] as Array[String])
+		["Mira Kovač", "Chat", "Tell a joke", "Compliment", "Insult", "Argue", "Flirt", "Pick their pocket"] as Array[String])
 
 
 func test_choosing_from_a_person_menu_queues_it_on_them() -> void:

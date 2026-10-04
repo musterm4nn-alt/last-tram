@@ -70,6 +70,8 @@ static func route_to(sim: Sim, actor: Person, target: Person) -> Array[Vector3i]
 static func acceptance(sim: Sim, actor: Person, target: Person, def: InteractionDef) -> float:
 	var social := def.social
 	var view := Social.relationship(target, actor.id)
+	if social.kind == "sneaky":  # unnoticed more easily by someone who trusts the actor (T-0096)
+		return logistic(social.base + (view.trust if view != null else 0.0) / 50.0)
 	var friendship := view.friendship if view != null else 0.0
 	var familiarity := view.familiarity if view != null else 0.0
 	var romance := view.romance if view != null else 0.0
@@ -105,13 +107,16 @@ static func logistic(x: float) -> float:
 
 
 ## Rolls the outcome of `def` (stream "social"), applies it to both people and emits
-## &"social_exchange". Returns the outcome id.
+## &"social_exchange". Returns the outcome id. Empty relationship deltas and an empty memory
+## leave no trace (T-0096).
 static func resolve(sim: Sim, actor: Person, target: Person, def: InteractionDef) -> String:
 	var chance := acceptance(sim, actor, target, def)
 	var outcome_id := "success" if sim.rng.stream("social").randf() < chance else "fail"
 	var outcome: SocialOutcomeDef = def.social.outcomes[outcome_id]
-	Social.change(sim, actor, target.id, outcome.actor)
-	Social.change(sim, target, actor.id, outcome.target)
+	if not outcome.actor.is_empty():
+		Social.change(sim, actor, target.id, outcome.actor)
+	if not outcome.target.is_empty():
+		Social.change(sim, target, actor.id, outcome.target)
 	if not outcome.actor_moodlet.is_empty():
 		Social.add_moodlet(sim, actor, outcome.actor_moodlet)
 	if not outcome.target_moodlet.is_empty():
@@ -119,8 +124,9 @@ static func resolve(sim: Sim, actor: Person, target: Person, def: InteractionDef
 	for need_id: String in outcome.target_needs:
 		target.needs[need_id] = clampf(float(target.needs.get(need_id, 0.0)) + outcome.target_needs[need_id], 0.0, 100.0)
 	var salience := absf(outcome.valence) + MEMORY_SALIENCE
-	Social.remember(sim, actor, outcome.memory, [target.id] as Array[int], outcome.valence, salience)
-	Social.remember(sim, target, outcome.memory, [actor.id] as Array[int], outcome.valence, salience)
+	if not outcome.memory.is_empty():  # an unnoticed sneaky act leaves no memory (T-0096)
+		Social.remember(sim, actor, outcome.memory, [target.id] as Array[int], outcome.valence, salience)
+		Social.remember(sim, target, outcome.memory, [actor.id] as Array[int], outcome.valence, salience)
 	if outcome_id == "success" and def.social.kind == "friendly":
 		Discoveries.share_clues(sim, actor, target)
 	var place := sim.content.place_at(actor.cell())

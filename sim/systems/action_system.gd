@@ -273,8 +273,9 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		person.action_queue.remove_at(0)
 		if def.work:
 			Jobs.end_shift(sim, person, action, true)
+		var outcome := ""
 		if def.target == "person":
-			Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
+			outcome = Conversations.resolve(sim, person, sim.world.get_person(action.target_id), def)
 		if def.target == "place":
 			PlaceActions.finish(sim, person, action)
 		if def.launders:
@@ -287,7 +288,7 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		if not def.finish_moodlet.is_empty():
 			Social.add_moodlet(sim, person, def.finish_moodlet)
 		if not def.crime.is_empty():
-			Crimes.commit(sim, person, def.crime, action.target_id)
+			Crimes.commit(sim, person, def.crime, action.target_id, outcome)
 		if def.cash_out > 0:
 			Money.withdraw(sim, person, def.cash_out)  # false (nothing happens) if the bank emptied
 		var home := Groceries.home_household(sim, person) if def.adds_groceries > 0 else null
