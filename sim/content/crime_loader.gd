@@ -36,6 +36,15 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		reader.error("%s: police heat_hours and severity_per_level must be 1 or more" % path)
 	if police.fine_per_severity < 0 or police.arrest_range < 0.5 or police.arrest_range > 3.0:
 		reader.error("%s: police fine_per_severity must be 0 or more and arrest_range 0.5 to 3" % path)
+	var t := reader.read_obj(root, "temptation", path)
+	var temptation := db.temptation_rules
+	for key: String in ["honesty_below", "broke_below", "cooldown_hours"]:
+		temptation.set(key, reader.read_int(t, key, path + ": temptation"))
+	for key: String in ["steal_bonus", "risk_per_witness", "risk_per_officer"]:
+		temptation.set(key, reader.read_num(t, key, path + ": temptation"))
+	if temptation.cooldown_hours < 1 or temptation.risk_per_witness < 0.0 or temptation.risk_per_officer < 0.0 \
+			or temptation.honesty_below < Personality.MIN_VALUE or temptation.honesty_below > Personality.MAX_VALUE:
+		reader.error("%s: temptation needs cooldown_hours 1 or more, risks 0 or more and honesty_below within -100..100" % path)
 	for entry: Variant in reader.read_arr(root, "crimes", path):
 		if not entry is Dictionary:
 			reader.error("%s: every crime must be an object" % path)

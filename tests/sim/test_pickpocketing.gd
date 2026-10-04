@@ -153,10 +153,13 @@ func test_bad_theft_content_is_reported() -> void:
 	assert_true("\n".join(reader.errors).contains("steals_cash needs a share above 0 and up to 1"), "\n".join(reader.errors))
 
 
-func test_free_will_never_picks_a_pocket() -> void:
+## Free will offers it only to the tempted (T-0097: test_npc_crime.gd); an honest resident
+## with money never considers it.
+func test_free_will_never_picks_a_pocket_for_the_honest() -> void:
 	var sim := _sim()
 	var thief := _victim(sim, Vector3i(2, 1, 0), 0)
+	thief.wallet.bank = 10000
 	_victim(sim, Vector3i(3, 1, 0), 3000)
 	thief.needs["social"] = 0.0
 	for option: AutonomyOption in Autonomy.candidates(sim, thief):
-		assert_ne(option.interaction_id, "pickpocket", "not on their own (yet)")
+		assert_ne(option.interaction_id, "pickpocket")

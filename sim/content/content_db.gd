@@ -41,6 +41,8 @@ var crimes: Dictionary[String, CrimeDef] = {}
 var witness_rules: WitnessRules = WitnessRules.new()
 ## Reporting and the wanted level (T-0093).
 var police_rules: PoliceRules = PoliceRules.new()
+## When residents commit crimes on their own (T-0097; "temptation" in data/crimes.json).
+var temptation_rules: TemptationRules = TemptationRules.new()
 var skill_rules: SkillRules = SkillRules.new()
 ## The player's possible backgrounds (T-0075), by id, and the one used without a choice.
 var backgrounds: Dictionary[String, BackgroundDef] = {}
