@@ -122,26 +122,50 @@ func _build_base(base: Dictionary, walk: int, idle: int) -> void:
 	for row: int in DIRS.size():
 		for f: int in walk + idle:
 			tops[Vector2i(f, row)] = out.get_region(Rect2i(f * FRAME, row * FRAME, FRAME, FRAME)).get_used_rect().position.y
-	var sums: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0]
-	var counts: Array[int] = [0, 0, 0, 0, 0]
+	var groups: Dictionary = {}
 	for y: int in out.get_height():
 		for x: int in out.get_width():
-			var c := out.get_pixel(x, y)
-			if c.a >= 0.5:
-				var g := _pixel_group(out, x, y, rules, hair_rows, tops)
-				sums[g] += c.v
-				counts[g] += 1
+			if out.get_pixel(x, y).a >= 0.5:
+				groups[Vector2i(x, y)] = _pixel_group(out, x, y, rules, hair_rows, tops)
+	_despeckle(groups)
+	var sums: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0]
+	var counts: Array[int] = [0, 0, 0, 0, 0]
+	for at: Vector2i in groups:
+		var g: int = groups[at]
+		sums[g] += out.get_pixelv(at).v
+		counts[g] += 1
 	var mask := Image.create_empty(out.get_width(), out.get_height(), false, Image.FORMAT_RGBA8)
 	for y: int in out.get_height():
 		for x: int in out.get_width():
 			var c := out.get_pixel(x, y)
 			if c.a < 0.5:
 				continue
-			var g := _pixel_group(out, x, y, rules, hair_rows, tops)
+			var g: int = groups[Vector2i(x, y)]
 			var ratio := 0.0 if g == 0 else c.v / (sums[g] / counts[g])
 			mask.set_pixel(x, y, Color8(g * 50, clampi(int(ratio * 127.5), 0, 255), 0, 255))
 	mask.save_png(ProjectSettings.globalize_path(OUT + "%s_mask.png" % base["name"]))
 	print("%s: skin %d, hair %d, top %d, bottom %d, kept %d px" % [base["name"], counts[1], counts[2], counts[3], counts[4], counts[0]])
+
+
+## A lone pixel of a recoloured group whose four neighbours all share one other recoloured
+## group joins it (stray pixels from shading that crosses a colour rule).
+func _despeckle(groups: Dictionary) -> void:
+	var changes: Dictionary = {}
+	for at: Vector2i in groups:
+		var g: int = groups[at]
+		if g == 0:
+			continue
+		var other := -1
+		for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: int = groups.get(at + d, 0)
+			if n == 0 or n == g or (other >= 0 and n != other):
+				other = -2
+				break
+			other = n
+		if other > 0:
+			changes[at] = other
+	for at: Vector2i in changes:
+		groups[at] = changes[at]
 
 
 ## A pixel's group: near-black pixels inside the outline within `hair_rows` rows of the
@@ -157,16 +181,18 @@ func _pixel_group(image: Image, x: int, y: int, rules: Array, hair_rows: int, to
 				inside = false
 		if inside:
 			return 2
-	return _group(c, rules)
+	return _group(c, rules, y % FRAME - int(tops[Vector2i(x / FRAME, y / FRAME)]))
 
 
 ## The first rule that matches: [group, h_min, h_max, s_min, s_max, v_min, v_max] (hue in
-## degrees; h_min > h_max wraps through red). 0 when none does.
-func _group(c: Color, rules: Array) -> int:
+## degrees; h_min > h_max wraps through red), optionally with [row_min, row_max]: rows from
+## the top of the figure (0 = the top of the head). 0 when none does.
+func _group(c: Color, rules: Array, row: int) -> int:
 	var h := c.h * 360.0
 	for rule: Array in rules:
 		var hue_ok: bool = (h >= rule[1] and h <= rule[2]) if rule[1] <= rule[2] else (h >= rule[1] or h <= rule[2])
-		if hue_ok and c.s >= rule[3] and c.s <= rule[4] and c.v >= rule[5] and c.v <= rule[6]:
+		var row_ok: bool = rule.size() < 9 or (row >= rule[7] and row <= rule[8])
+		if hue_ok and row_ok and c.s >= rule[3] and c.s <= rule[4] and c.v >= rule[5] and c.v <= rule[6]:
 			return int(rule[0])
 	return 0
 

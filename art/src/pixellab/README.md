@@ -44,3 +44,11 @@ position, `dark_hair_rows`), `base_e` 09ae7578-… (ponytail, green sweater, jea
 slim, grey hair, long navy coat; custom proportions). `PeopleSprites.base_for` picks: tied
 hair → e, long hair → b, curly → d, heavy/beard/bald → c, slim and 180 cm+ → g, women
 otherwise → f, else a. Second account: 36 of 40 used.
+
+## Tidied colour maps (4 October)
+
+Rules may carry a row range (rows from the top of the figure): eyes in the head rows keep
+their colour (they were read as trousers), the blonde body's pale face highlights are skin,
+the tall body's legs below the coat are trousers, the long-haired body's hair stops at the
+shoulders, and the ponytail body's cheeks follow the skin. `_despeckle` gives a lone stray
+pixel its neighbours' group.
