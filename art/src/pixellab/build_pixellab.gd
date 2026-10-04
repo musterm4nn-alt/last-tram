@@ -63,6 +63,11 @@ func _build_objects(specs: Array, palette: Dictionary) -> void:
 		image = image.get_region(image.get_used_rect())
 		var dark: Array = []
 		var main: Array = []
+		if not spec.get("lock", true):
+			out.blit_rect(image, Rect2i(Vector2i.ZERO, image.get_size()), Vector2i(x + (int(spec["size"][0]) - image.get_width()) / 2, int(spec["size"][1]) - image.get_height()))
+			print("%s: rect [%d, 0, %d, %d]" % [spec["raw"], x, int(spec["size"][0]), int(spec["size"][1])])
+			x += int(spec["size"][0])
+			continue
 		for key: String in _colors(image, Rect2i(Vector2i.ZERO, image.get_size())):
 			(dark if Color(key).v < 0.3 else main).append(key)
 		var mapping: Dictionary = {}

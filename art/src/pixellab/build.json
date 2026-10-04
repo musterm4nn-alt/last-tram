@@ -97,6 +97,14 @@
 				"shadow",
 				"steel0"
 			]
+		},
+		{
+			"raw": "spaeti_counter",
+			"size": [
+				66,
+				42
+			],
+			"lock": false
 		}
 	],
 	"people": {

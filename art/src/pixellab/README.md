@@ -26,3 +26,12 @@ pixel into skin, hair, top, bottom (or keep), with its shade. In the game,
 `PeopleSprites` picks a base from the appearance (long hair → b; stocky, heavy or a beard
 → c; else a) and paints the groups in the person's skin, hair, outer-or-top and bottom
 colours, cached per look.
+
+## Objects: the Späti counter (4 October)
+
+`spaeti_counter` (map object 05af111d-…, style-matched to route B's floor tiles, 96×64
+canvas): crowded shelves, counter and till, 66×42 px, not palette-locked (`"lock": false`)
+so the goods keep their colours. **It cost 5 generations** (a 96×64 canvas; the 64×64 bench
+cost 1). Too wide for the 3-cell counter, and the shelves hide the clerk behind them: in
+production, split into back shelves (under people) and the counter front. The first trial
+account is used up (40 of 40).

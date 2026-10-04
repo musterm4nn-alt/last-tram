@@ -252,6 +252,15 @@
 				96,
 				40
 			]
+		},
+		"spaeti_counter": {
+			"sheet": "pl_objects",
+			"rect": [
+				32,
+				0,
+				66,
+				42
+			]
 		}
 	},
 	"people": {

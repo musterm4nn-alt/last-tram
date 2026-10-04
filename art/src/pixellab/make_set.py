@@ -19,6 +19,7 @@ for pair in wang:
 art["wang"] = wang
 art["sheets"]["pl_objects"] = "res://art/export/pixellab/objects.png"
 art["objects"]["bench"] = {"sheet": "pl_objects", "rect": [0, 0, 32, 24]}
+art["objects"]["spaeti_counter"] = {"sheet": "pl_objects", "rect": [32, 0, 66, 42]}
 art["people"] = {"bases": {b[3:]: [b, b + "_mask"] for b in art["sheets"] if b.startswith("pl_base_") and not b.endswith("_mask")},
                  "frame": [44, 44], "feet": [22, 38], "walk": 4, "idle": 4}
 json.dump(art, open("data/art2d/pixellab.json", "w"), indent="\t")
@@ -34,6 +35,7 @@ for key in art["sheets"]:
         mix["sheets"][key] = art["sheets"][key]
 mix["objects"] = dict(b["objects"])
 mix["objects"]["bench"] = art["objects"]["bench"]
+mix["objects"]["spaeti_counter"] = art["objects"]["spaeti_counter"]
 mix["people"] = art["people"]
 json.dump(mix, open("data/art2d/pixellab_mix.json", "w"), indent="\t")
 print("wrote data/art2d/pixellab_mix.json")
