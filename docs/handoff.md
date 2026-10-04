@@ -9,12 +9,13 @@ started. For the next Claude Code session (the architect and builder, Opus), whi
 
 ## Start here (next local session)
 
-**4 October: art is pinned; M4 has started.** The owner paused the art work ("put a pin in
+**4 October: art is pinned; M4 is under way (T-0091 to T-0094 merged).** The owner paused the art work ("put a pin in
 the art") and asked to keep building the game. State of the art, for when it resumes: route
 B is the default look (D35, T-0088), wall fixes T-0089/T-0090 are merged; PixelLab
 characters (7 recoloured bodies) and the GPT kit sit on the test branches `art/pixellab-test`
 and `art/gpt-test` (see "Seven bodies done" below; the owner has more PixelLab trial
-accounts and switches them themselves). Not started: D36, characters in `main`.
+accounts and switches them themselves). Not started: the characters decision (now **D37**:
+D36 went to the police), characters in `main`.
 
 **M4 so far (crime → witness → report → police → consequences):**
 - T-0091 crimes on the record: `data/crimes.json`, `InteractionDef.crime`, `Incident`,
@@ -25,22 +26,25 @@ accounts and switches them themselves). Not started: D36, characters in `main`.
 - T-0093 reports and wanted level: `Police.maybe_report` (chance 0.1 + 0.2 × severity, less
   for friends), `Police.wanted_level` (ceil(severities in the last 48 h / 2), max 5), HUD
   "Wanted ★☆☆☆☆" and a notice.
+- T-0094 police response (D36): `PoliceSystem` + `PoliceTask` (`World.police_tasks`); the
+  nearest on-duty officer runs to the reported crime, follows the suspect in sight
+  (`Police.can_see`), arrests within `arrest_range`: `Money.fine` (may overdraw the bank),
+  `Incident.closed_tick`, `Person.record`; then walks back to the desk. The officer keeps the
+  work action and shift while on a call (`ActionSystem` exemption, `Jobs.hidden` false).
+  Police shifts are weekdays 6-22 only. Seen in passing: `TierSystem` promoting someone to
+  active at a minute boundary costs them that minute's walk (not fixed; maybe a small ticket).
+  Playbook: `play-police` (You) and the plan stop `m4-next-2` added.
 
 **Next tickets (M4), in order:**
-1. **T-0094 police response:** officers are residents with the police job (`data/jobs.json`
-   has police, the police desk is in `workplaces.json`); a reported incident dispatches the
-   nearest on-duty officer to the perpetrator's last known cell; at wanted level 1+, an
-   officer within sight walks to the perpetrator and arrests when adjacent (a command or
-   system in `sim/crime/`): a fine from cash then bank (`Money`, ledger reason "fine"), the
-   reported incidents closed (`Incident.closed`), `Person.record` set, a notice. Wanted level
-   ignores closed incidents. Test the full chain end to end and through save/load.
-2. **T-0095 the player can flee:** running breaks line of sight; officers give up after a
-   search (heat cools); jail (time skip) for severity 4+.
-3. **T-0096 more crimes:** pickpocketing (person target, cash), trespassing (private lots),
+1. **T-0095 the player can flee:** officers run as fast as a running player, so escape is
+   only by breaking line of sight (walls, doors, going indoors); at `last_seen` without sight
+   the officer searches nearby for a while, then gives up (`go_back`); being out of sight
+   cools heat faster; jail (time skip) for severity 4+. Decide night/weekend police cover.
+2. **T-0096 more crimes:** pickpocketing (person target, cash), trespassing (private lots),
    then burglary at night.
-4. **T-0097 NPC crime:** desperate residents (broke, hungry) may shoplift; `simrun` reports
+3. **T-0097 NPC crime:** desperate residents (broke, hungry) may shoplift; `simrun` reports
    crimes per day.
-5. Gossip of "saw_crime" memories, the Späti refusing to serve known thieves, health and
+4. Gossip of "saw_crime" memories, the Späti refusing to serve known thieves, health and
    fights later.
 `game/main.gd` is at 338 of 350 lines: move launch-option handling out before adding options.
 
