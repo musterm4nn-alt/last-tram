@@ -52,6 +52,12 @@ and there are no sexual-violence mechanics.
   notice (likelier the more they trust you), you take half their cash, at most €40, and they
   never learn who it was; bystanders can still see. If they notice, you get nothing, they
   think much less of you, and they are a witness who may call the police.
+- **Trespassing and burglary (T-0098):** stopping in someone else's home, or in a shop more
+  than 30 minutes after closing time, is trespassing (once per visit); walking through,
+  standing in the doorway, working there and police on a call don't count. "Search for
+  valuables" at the wardrobe in someone else's home is a burglary: it takes a fifth of the
+  savings of the household's richest member (at most €200). Residents who are awake and can
+  see you are witnesses; sleeping ones aren't, and the night shortens sight.
 - **Getting away (T-0095):** officers run a little slower than a running player. An officer
   who loses sight of you searches around where they last saw you for 10 minutes, then gives
   up; your stars then fade after 6 hours instead of 48, unless an officer spots you again

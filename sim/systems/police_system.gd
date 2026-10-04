@@ -1,6 +1,7 @@
 class_name PoliceSystem
 extends SimSystem
-## The police on the street (T-0094, D36). Every step, each officer on a call chases their
+## The police on the street (T-0094, D36), and noticing trespassers (T-0098: Trespass.check
+## first each minute, so a reported trespass is answered the same minute). Every step, each officer on a call chases their
 ## suspect (Police.chase: follow while in sight, arrest when close, walk back afterwards).
 ## Every minute, calls end for officers whose shift is over, officers whose suspect is no
 ## longer wanted walk back, and each sought person (wanted, not lost: T-0095) nobody is after
@@ -14,6 +15,7 @@ func step(sim: Sim) -> void:
 
 
 func on_minute(sim: Sim) -> void:
+	Trespass.check(sim)
 	for task: PoliceTask in _tasks(sim):
 		var officer := sim.world.get_person(task.officer_id)
 		if officer == null or not Jobs.working(sim, officer):

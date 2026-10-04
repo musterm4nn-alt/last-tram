@@ -1,5 +1,5 @@
 {
-	"_doc": "Home interactions for the M1 flat (T-0011). Same rules as basics.json; without \"advertise\", an interaction advertises its finish_needs (T-0077).",
+	"_doc": "Home interactions for the M1 flat (T-0011). Same rules as basics.json; without \"advertise\", an interaction advertises its finish_needs (T-0077). \"trespass\": true (T-0098) marks a break-in: offered only in someone else's home (burgle: burglary at their wardrobe).",
 	"interactions": [
 		{
 			"id": "cook_meal",
@@ -109,6 +109,19 @@
 				"wardrobe"
 			],
 			"duration_minutes": 2,
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {}
+		},
+		{
+			"id": "burgle",
+			"name": "Search for valuables",
+			"crime": "burglary",
+			"trespass": true,
+			"object_tags": [
+				"wardrobe"
+			],
+			"duration_minutes": 5,
 			"need_rates": {},
 			"finish_needs": {},
 			"advertise": {}

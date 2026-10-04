@@ -130,7 +130,8 @@ art/                      art sources and exports (after the art gate)
 - Today: Tier → Action → Movement → Needs → Social → Work → Police → Economy → Autonomy
   (see the comment on `Sim.default_systems()`). `WorkSystem` goes before free will
   (obligations first: leaving for a shift, settling shifts, missed shifts); `PoliceSystem`
-  (D36) sends on-duty officers after wanted people and runs their chases and arrests;
+  (D36) sends on-duty officers after wanted people and runs their chases and arrests, and
+  first notices trespassers (`Trespass.check`, T-0098);
   `EconomySystem` runs the weekly cycle (benefit, rent, wages); `AutonomySystem` goes last,
   after the minute's needs have changed. Crimes, witnesses and reports are not a system:
   they happen when a crime interaction finishes (`Crimes.commit`).
