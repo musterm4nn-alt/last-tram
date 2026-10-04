@@ -19,6 +19,7 @@ static func commit(sim: Sim, person: Person, crime_id: String, target_id: int) -
 	incident.tick = sim.clock.tick
 	sim.world.incidents[incident.id] = incident
 	Witnesses.record(sim, incident)
+	Police.maybe_report(sim, incident)
 	sim.emit_event(&"crime_committed", {"incident_id": incident.id, "crime_id": crime_id, "person_id": person.id})
 	return incident
 
