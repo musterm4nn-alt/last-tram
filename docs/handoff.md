@@ -80,15 +80,24 @@ for the placeholders). Branches: `art/kenney` and `art/chatgpt` deleted (kept as
 `pixellab-test` ticked, T-0088 stops added, `play-style-b` (You) and the plan stop
 `pixellab-characters` added; `art-pick` is the owner's to tick.
 
-1. **Plan the characters with PixelLab** (Playbook `pixellab-characters`). The open question:
-   residents vary (skin, hair, build, clothes: `data/appearance/`, `data/clothing/`), but
-   PixelLab draws one fixed look per character. Try `create_character_state` and
-   `transfer_outfit` (and v3 with a reference image) on the test resident with the trial's
-   **19 generations left** (one job at a time); decide between layered sheets (art.md) and a
-   pool of generated residents; record it (D36), update art.md, then write tickets for real
-   character sprites alongside M4 (the view's `PersonView2D._draw_sprite` on the test branch
-   is the starting point; `PersonDrawer2D` stays the fallback). Ask the owner before buying
-   PixelLab credits.
+1. **Characters with PixelLab: tested (4 October), waiting for the owner's go.** On
+   `art/pixellab-test` (README there): three PixelLab **base bodies** (short hair and hoodie;
+   long hair and skirt; heavy, bald and bearded), each with walk and idle in 4 directions
+   (9 generations per body), plus a **colour mask** per body (skin, hair, top, bottom).
+   `PeopleSprites` picks a body from the appearance and paints it in the person's own skin,
+   hair and clothing colours, cached per look. In game the Altmarkt at dusk shows clearly
+   different residents; `out/lineup.png`-style renders show 6 looks per body. Limits: hair
+   style, build and clothing shape come only from the body (3 for now); eyes sometimes pick
+   up the hair colour. PixelLab's `create_character_state` and `transfer_outfit` cost 20–40
+   generations each (and outfit transfer needs a paid tier), so variety comes from bodies +
+   recolouring, not from them. **The trial is used up (35 of 40; 5 left).**
+   Proposed production (needs the owner's OK and a paid PixelLab plan; they check the
+   price): about 8 bodies covering the hair silhouettes and builds (72 generations), then
+   sit, use and sleep animations per body (custom v3, about 1 generation per direction:
+   ~12 per body), plus objects; Opus draws small overlays (glasses, caps, beanies, bags)
+   per direction for free. Then record **D36**, update art.md's character spec (bodies +
+   masks instead of fully layered sprites), and write the tickets: `PeopleSprites` into
+   `main` with tests (base choice, recolour, cache), the creator preview, overlays.
 2. The owner's M3 playtest (`play-m3`), `play-night`, `play-roofs` and `play-style-b` are
    still to come: turn what they find into tickets first.
 3. `game/main.gd` is at 338 of 350 lines: move launch-option handling into its own class
