@@ -9,6 +9,41 @@ started. For the next Claude Code session (the architect and builder, Opus), whi
 
 ## Start here (next local session)
 
+**4 October: art is pinned; M4 has started.** The owner paused the art work ("put a pin in
+the art") and asked to keep building the game. State of the art, for when it resumes: route
+B is the default look (D35, T-0088), wall fixes T-0089/T-0090 are merged; PixelLab
+characters (7 recoloured bodies) and the GPT kit sit on the test branches `art/pixellab-test`
+and `art/gpt-test` (see "Seven bodies done" below; the owner has more PixelLab trial
+accounts and switches them themselves). Not started: D36, characters in `main`.
+
+**M4 so far (crime → witness → report → police → consequences):**
+- T-0091 crimes on the record: `data/crimes.json`, `InteractionDef.crime`, `Incident`,
+  `World.incidents`, `Crimes.commit`; "Pocket a snack" at the Späti commits shoplifting.
+  Save v20. Free will never picks crime interactions (yet).
+- T-0092 witnesses: `Witnesses.find/record` (range 8, 5 at night; awake; line of sight
+  through cells, walls/doors/hedges block); "saw_crime" memories; `Incident.witnesses`.
+- T-0093 reports and wanted level: `Police.maybe_report` (chance 0.1 + 0.2 × severity, less
+  for friends), `Police.wanted_level` (ceil(severities in the last 48 h / 2), max 5), HUD
+  "Wanted ★☆☆☆☆" and a notice.
+
+**Next tickets (M4), in order:**
+1. **T-0094 police response:** officers are residents with the police job (`data/jobs.json`
+   has police, the police desk is in `workplaces.json`); a reported incident dispatches the
+   nearest on-duty officer to the perpetrator's last known cell; at wanted level 1+, an
+   officer within sight walks to the perpetrator and arrests when adjacent (a command or
+   system in `sim/crime/`): a fine from cash then bank (`Money`, ledger reason "fine"), the
+   reported incidents closed (`Incident.closed`), `Person.record` set, a notice. Wanted level
+   ignores closed incidents. Test the full chain end to end and through save/load.
+2. **T-0095 the player can flee:** running breaks line of sight; officers give up after a
+   search (heat cools); jail (time skip) for severity 4+.
+3. **T-0096 more crimes:** pickpocketing (person target, cash), trespassing (private lots),
+   then burglary at night.
+4. **T-0097 NPC crime:** desperate residents (broke, hungry) may shoplift; `simrun` reports
+   crimes per day.
+5. Gossip of "saw_crime" memories, the Späti refusing to serve known thieves, health and
+   fights later.
+`game/main.gd` is at 338 of 350 lines: move launch-option handling out before adding options.
+
 **Update, 3 October (local session):** steps 1–3 of the old list are done (`main` pulled; the
 `m3` tag was already on GitHub, on `57917c9`, the handoff commit right after the sign-off;
 the owner hasn't played M3 yet and said "go on with art"). The owner approved the art plan
