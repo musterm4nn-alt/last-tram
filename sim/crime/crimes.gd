@@ -6,8 +6,11 @@ extends RefCounted
 
 
 ## Records `crime_id` committed by `person` against `target_id` (a person or object, or 0)
-## where the person stands. Returns the new incident.
-static func commit(sim: Sim, person: Person, crime_id: String, target_id: int) -> Incident:
+## where the person stands. Returns the new incident. With a person target, `outcome` is how
+## the sneaky act went (T-0096): "fail" means the victim noticed (they become a witness and
+## nothing is taken); otherwise they didn't, and a crime that steals cash takes it
+## (&"stolen" {person_id, victim_id, amount, incident_id}, also when their pockets were empty).
+static func commit(sim: Sim, person: Person, crime_id: String, target_id: int, outcome: String = "") -> Incident:
 	var incident := Incident.new()
 	incident.id = sim.world.new_id()
 	incident.crime_id = crime_id
@@ -18,7 +21,16 @@ static func commit(sim: Sim, person: Person, crime_id: String, target_id: int) -
 	incident.lot_id = lot.id if lot != null else 0
 	incident.tick = sim.clock.tick
 	sim.world.incidents[incident.id] = incident
-	Witnesses.record(sim, incident)
+	var victim := sim.world.get_person(target_id)
+	var unaware: Array[int] = []
+	if victim != null and outcome != "fail":
+		unaware.append(victim.id)
+		var crime := sim.content.crime(crime_id)
+		if crime != null and crime.steal_share > 0.0:
+			var amount := mini(floori(victim.wallet.cash * crime.steal_share), crime.steal_max)
+			incident.stolen = Money.steal(sim, victim, person, amount, crime_id)
+			sim.emit_event(&"stolen", {"person_id": person.id, "victim_id": victim.id, "amount": incident.stolen, "incident_id": incident.id})
+	Witnesses.record(sim, incident, unaware)
 	Police.maybe_report(sim, incident)
 	sim.emit_event(&"crime_committed", {"incident_id": incident.id, "crime_id": crime_id, "person_id": person.id})
 	return incident

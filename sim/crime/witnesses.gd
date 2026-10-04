@@ -8,10 +8,14 @@ extends RefCounted
 const MEMORY_KIND: String = "saw_crime"
 
 
-## Finds the witnesses of `incident`, records them on it and gives each the memory.
-static func record(sim: Sim, incident: Incident) -> void:
+## Finds the witnesses of `incident`, records them on it and gives each the memory. People in
+## `unaware` don't count (a victim who didn't notice, T-0096).
+static func record(sim: Sim, incident: Incident, unaware: Array[int] = []) -> void:
 	var rules := sim.content.witness_rules
-	var found := find(sim, incident.cell, incident.perpetrator_id)
+	var found := PackedInt32Array()
+	for id: int in find(sim, incident.cell, incident.perpetrator_id):
+		if not unaware.has(id):
+			found.append(id)
 	incident.witnesses = found
 	for id: int in found:
 		var witness := sim.world.get_person(id)

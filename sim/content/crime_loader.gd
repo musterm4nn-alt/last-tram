@@ -48,6 +48,12 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 		if def.id.is_empty() or db.crimes.has(def.id):
 			reader.error("%s: empty or duplicate crime id '%s'" % [path, def.id])
 			continue
+		if entry.has("steals_cash"):
+			var steal := reader.read_obj(entry, "steals_cash", ctx)
+			def.steal_share = reader.read_num(steal, "share", ctx + " steals_cash")
+			def.steal_max = reader.read_int(steal, "max", ctx + " steals_cash")
+			if def.steal_share <= 0.0 or def.steal_share > 1.0 or def.steal_max < 1:
+				reader.error("%s: steals_cash needs a share above 0 and up to 1, and a max of 1 or more" % ctx)
 		if def.severity < 1 or def.severity > MAX_SEVERITY:
 			reader.error("%s: severity must be 1 to %d" % [ctx, MAX_SEVERITY])
 			continue

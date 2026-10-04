@@ -1,5 +1,5 @@
 {
-	"_doc": "Things people do to each other (T-0038): target \"person\", 1-3 minutes next to them. social.kind (friendly, mean, romantic) and base set how easily it lands (Conversations.acceptance); success/fail say what changes: actor = the actor's view of the target, target = the target's view of the actor, moodlets, the target's one-off need gains, and the memory both keep. Everyone in the game is an adult; romance fades to black (M6).",
+	"_doc": "Things people do to each other (T-0038): target \"person\", 1-3 minutes next to them. social.kind (friendly, mean, romantic) and base set how easily it lands (Conversations.acceptance); success/fail say what changes: actor = the actor's view of the target, target = the target's view of the actor, moodlets, the target's one-off need gains, and the memory both keep. Everyone in the game is an adult; romance fades to black (M6). kind sneaky (T-0096): done behind the target's back, success = unnoticed (more likely the more they trust the actor); an empty memory and empty deltas leave no trace.",
 	"interactions": [
 		{
 			"id": "chat", "skill_xp": { "charisma": 120 },
@@ -347,6 +347,44 @@
 				}
 			},
 			"remote": true
+		},
+		{
+			"id": "pickpocket",
+			"name": "Pick their pocket",
+			"target": "person",
+			"crime": "pickpocketing",
+			"duration_minutes": 1,
+			"need_rates": {},
+			"finish_needs": {},
+			"advertise": {},
+			"social": {
+				"kind": "sneaky",
+				"base": 0.4,
+				"success": {
+					"actor": {},
+					"target": {},
+					"actor_moodlet": "",
+					"target_moodlet": "",
+					"target_needs": {},
+					"memory": "",
+					"valence": 0
+				},
+				"fail": {
+					"actor": {
+						"familiarity": 2
+					},
+					"target": {
+						"familiarity": 2,
+						"friendship": -20,
+						"trust": -25
+					},
+					"actor_moodlet": "",
+					"target_moodlet": "nearly_robbed",
+					"target_needs": {},
+					"memory": "caught_pickpocketing",
+					"valence": -40
+				}
+			}
 		}
 	]
 }

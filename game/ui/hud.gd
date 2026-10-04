@@ -134,6 +134,9 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return social_notice(data, player_id, content, sim)
 	if event.get("type") == &"rent_unpaid":
 		return rent_notice(event, sim)
+	var crime := CrimeNotices.notice(event, player_id, sim)
+	if not crime.is_empty():
+		return crime
 	if event.get("type") in [&"evicted", &"moved_in", &"rent_flat_refused"]:
 		return HousingApp.notice(event, sim)
 	if event.get("type") in [&"clue_learned", &"discovery_uncovered", &"searched"]:
@@ -152,18 +155,6 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return career
 	if event.get("type") == &"path_failed":
 		return "Can't get there"
-	if event.get("type") == &"crime_reported":
-		return "Someone called the police on you"
-	if event.get("type") == &"police_dispatched":
-		return "The police are looking for you"
-	if event.get("type") == &"police_searching":
-		return "The police lost sight of you"
-	if event.get("type") == &"police_gave_up":
-		return "The police gave up looking for you"
-	if event.get("type") == &"police_spotted":
-		return "The police spotted you again"
-	if event.get("type") == &"arrested":
-		return "Arrested: fined %s. It's on your record now." % Money.format(int(data.get("fine", 0)))
 	var reason := String(data.get("reason", ""))
 	if event.get("type") in [&"action_failed", &"action_refused"] and (FAIL_REASONS.has(reason) or Requirements.TEXT.has(reason)):
 		var interaction_id := String(data.get("interaction_id", ""))
@@ -282,6 +273,8 @@ static func social_notice(data: Dictionary, player_id: int, content: ContentDB, 
 	var label := interaction.name if interaction != null else String(data.get("interaction_id", ""))
 	var actor_id := int(data.get("actor_id", 0))
 	var target_id := int(data.get("target_id", 0))
+	if interaction != null and interaction.social != null and interaction.social.kind == "sneaky":
+		return CrimeNotices.sneaky(data, player_id, sim)
 	if actor_id == player_id:
 		var other := sim.world.get_person(target_id) if sim != null else null
 		var verdict := "went well" if data.get("outcome") == "success" else "didn't go well"

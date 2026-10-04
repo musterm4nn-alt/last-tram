@@ -105,3 +105,24 @@ func test_police_notices() -> void:
 	assert_eq(Hud.notice_for_event({"type": &"police_gave_up", "data": {"person_id": 7, "officer_id": 9}}, 7), "The police gave up looking for you")
 	assert_eq(Hud.notice_for_event({"type": &"police_spotted", "data": {"person_id": 7, "officer_id": 9}}, 7), "The police spotted you again")
 	assert_eq(Hud.notice_for_event({"type": &"police_gave_up", "data": {"person_id": 8, "officer_id": 7}}, 7), "")
+
+
+func test_pickpocket_notices() -> void:
+	var sim := SimFactory.from_rows(content(), [":@::"])
+	var player := sim.world.player()
+	var anna := Person.new()
+	anna.id = sim.world.new_id()
+	anna.first_name = "Anna"
+	anna.last_name = "Weber"
+	sim.world.add_person(anna)
+	var stolen := func(thief: int, victim: int, amount: int) -> Dictionary:
+		return {"type": &"stolen", "data": {"person_id": thief, "victim_id": victim, "amount": amount, "incident_id": 1}}
+	assert_eq(Hud.notice_for_event(stolen.call(player.id, anna.id, 1500), player.id, content(), sim), "You lifted €15.00 from Anna Weber")
+	assert_eq(Hud.notice_for_event(stolen.call(player.id, anna.id, 0), player.id, content(), sim), "Their pockets were empty")
+	assert_eq(Hud.notice_for_event(stolen.call(anna.id, player.id, 700), player.id, content(), sim), "Someone picked your pocket: €7.00 gone")
+	assert_eq(Hud.notice_for_event(stolen.call(anna.id, 999, 700), player.id, content(), sim), "")
+	var exchange := func(actor: int, target: int, outcome: String) -> Dictionary:
+		return {"type": &"social_exchange", "data": {"actor_id": actor, "target_id": target, "interaction_id": "pickpocket", "outcome": outcome}}
+	assert_eq(Hud.notice_for_event(exchange.call(player.id, anna.id, "fail"), player.id, content(), sim), "Anna Weber caught you!")
+	assert_eq(Hud.notice_for_event(exchange.call(player.id, anna.id, "success"), player.id, content(), sim), "", "the theft notice says it")
+	assert_eq(Hud.notice_for_event(exchange.call(anna.id, player.id, "fail"), player.id, content(), sim), "Anna Weber tried to rob you!")

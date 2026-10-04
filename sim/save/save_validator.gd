@@ -104,6 +104,7 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 		s.integer(incident.get("reported_tick", -1), "world.incidents[].reported_tick", -1)
 		s.integer(incident.get("closed_tick", -1), "world.incidents[].closed_tick", -1)
 		s.integer(incident.get("lost_tick", -1), "world.incidents[].lost_tick", -1)
+		s.integer(incident.get("stolen", 0), "world.incidents[].stolen")
 		s.vector(incident.get("cell"), "world.incidents[].cell", 3, true)
 		for id: Variant in s.list(incident.get("witnesses", []), "world.incidents[].witnesses"):
 			s.integer(id, "world.incidents[].witnesses[]", 1)

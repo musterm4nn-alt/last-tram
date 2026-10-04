@@ -33,7 +33,7 @@ func test_social_interactions_load_and_only_people_offer_them() -> void:
 	var ids: Array[String] = []
 	for def: InteractionDef in Interactions.offered_by_person(sim, setup[1].id, setup[2].id):
 		ids.append(def.id)
-	assert_eq(ids, ["chat", "joke", "compliment", "insult", "argue", "flirt"] as Array[String])
+	assert_eq(ids, ["chat", "joke", "compliment", "insult", "argue", "flirt", "pickpocket"] as Array[String])
 	assert_true(Interactions.offered_by_person(sim, setup[1].id, setup[1].id).is_empty(), "not with yourself")
 	var full := SimFactory.new_game(content(), 1)
 	for id: int in full.world.objects:

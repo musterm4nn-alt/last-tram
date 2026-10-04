@@ -12,6 +12,8 @@ const SOURCES: PackedStringArray = ["start", "wage", "benefit", "pension", "foun
 const SINKS: PackedStringArray = ["purchase", "rent", "bill", "fine"]
 ## The reason on both statement entries of a withdrawal (it moves money, the ledger stays).
 const ATM: String = "atm"
+## The reason on both statement entries of a theft (T-0096; money moves between people).
+const THEFT: String = "theft"
 
 
 ## Adds `amount` to the account from outside (wages, benefit...). False, with no change, for a
@@ -59,6 +61,16 @@ static func fine(sim: Sim, person: Person, amount: int, detail: String = "") -> 
 		_change(sim, person, BANK, from_cash - amount, "fine", detail)
 	sim.world.ledger.add_sink("fine", amount)
 	return true
+
+
+## A theft (T-0096): up to `amount` of `victim`'s cash goes into `thief`'s pocket. The ledger
+## doesn't change. Returns the cents taken (0 when they had no cash).
+static func steal(sim: Sim, victim: Person, thief: Person, amount: int, detail: String = "") -> int:
+	var taken := clampi(amount, 0, maxi(victim.wallet.cash, 0)) if victim != null and thief != null else 0
+	if taken > 0:
+		_change(sim, victim, CASH, -taken, THEFT, detail)
+		_change(sim, thief, CASH, taken, THEFT, detail)
+	return taken
 
 
 ## The cash machine: moves `amount` from the bank to cash. The ledger doesn't change. False

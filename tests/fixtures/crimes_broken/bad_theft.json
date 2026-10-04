@@ -1,0 +1,36 @@
+{
+	"_doc": "T-0096 test fixture: a theft share out of range.",
+	"witness": {
+		"day_range": 8,
+		"night_range": 5,
+		"night_from": 21,
+		"night_until": 6,
+		"memory_valence": -40,
+		"memory_salience": 70
+	},
+	"police": {
+		"report_base": 0.1,
+		"report_per_severity": 0.2,
+		"friend_report_factor": 0.3,
+		"friend_at": 30,
+		"heat_hours": 48,
+		"severity_per_level": 2,
+		"fine_per_severity": 5000,
+		"arrest_range": 1.0,
+		"officer_run_speed": 8.0,
+		"search_minutes": 10,
+		"search_radius": 6,
+		"lost_heat_hours": 6
+	},
+	"crimes": [
+		{
+			"id": "pickpocketing",
+			"name": "Pickpocketing",
+			"severity": 2,
+			"steals_cash": {
+				"share": 1.5,
+				"max": 4000
+			}
+		}
+	]
+}

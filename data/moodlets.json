@@ -11,6 +11,7 @@
 		{ "id": "had_a_laugh", "name": "Had a laugh", "value": 10, "duration_hours": 4 },
 		{ "id": "flattered", "name": "Flattered", "value": 8, "duration_hours": 6 },
 		{ "id": "insulted", "name": "Insulted", "value": -15, "duration_hours": 8 },
+		{ "id": "nearly_robbed", "name": "Nearly robbed", "value": -15, "duration_hours": 6 },
 		{ "id": "argued", "name": "Had an argument", "value": -12, "duration_hours": 6 },
 		{ "id": "awkward", "name": "Awkward moment", "value": -5, "duration_hours": 2 },
 		{ "id": "rejected", "name": "Rejected", "value": -10, "duration_hours": 6 },

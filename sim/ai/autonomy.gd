@@ -117,6 +117,8 @@ static func _unwalked(sim: Sim, person: Person) -> Array[Dictionary]:
 	for other: Person in _nearby_people(sim, person):
 		var bound := 0 if Conversations.adjacent(person, other) else maxi(0, _chebyshev(here, other.cell()) - 1)
 		for def: InteractionDef in Interactions.offered_by_person(sim, person.id, other.id):
+			if not def.crime.is_empty():  # no pickpocketing on their own yet (T-0096)
+				continue
 			out.append({
 				"object_id": other.id, "interaction_id": def.id, "near": true, "person": true, "bound": bound, "order": out.size(),
 				"base": Utility.need_score(person, def, sim.content) * Routines.score_factor(sim, person, def)
