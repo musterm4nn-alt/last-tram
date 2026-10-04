@@ -80,7 +80,12 @@ for the placeholders). Branches: `art/kenney` and `art/chatgpt` deleted (kept as
 `pixellab-test` ticked, T-0088 stops added, `play-style-b` (You) and the plan stop
 `pixellab-characters` added; `art-pick` is the owner's to tick.
 
-1. **Characters with PixelLab: tested (4 October), waiting for the owner's go.** On
+1. **Seven bodies done (4 October, second PixelLab account, 36 of 40 used + a daily bonus
+   of 5):** curly hair (d), ponytail (e), short-haired woman (f), tall slim man (g) joined
+   a, b, c; `PeopleSprites.base_for` picks by hair style, build, beard, height and gender
+   (branch README). Next: the owner's approval of the look (art rule), then D36, art.md and
+   the tickets below. Details of the earlier test:
+   **Characters with PixelLab: tested (4 October), waiting for the owner's go.** On
    `art/pixellab-test` (README there): three PixelLab **base bodies** (short hair and hoodie;
    long hair and skirt; heavy, bald and bearded), each with walk and idle in 4 directions
    (9 generations per body), plus a **colour mask** per body (skin, hair, top, bottom).
