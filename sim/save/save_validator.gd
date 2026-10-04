@@ -94,6 +94,13 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 			s.integer(totals[reason], "world.ledger.%s.%s" % [key, str(reason)])
 	for id: Variant in s.list(world.get("looted_discoveries", []), "world.looted_discoveries"):
 		s.text(id, "world.looted_discoveries[]")
+	for entry: Variant in s.list(world.get("incidents", []), "world.incidents"):
+		var incident := s.dictionary(entry, "world.incidents[]")
+		s.integer(incident.get("id"), "world.incidents[].id", 1)
+		s.text(incident.get("crime_id"), "world.incidents[].crime_id")
+		for key: String in ["perpetrator_id", "target_id", "lot_id", "tick"]:
+			s.integer(incident.get(key), "world.incidents[].%s" % key)
+		s.vector(incident.get("cell"), "world.incidents[].cell", 3, true)
 	var tiers := s.dictionary(world.get("tiers", {}), "world.tiers")
 	if not String(tiers.get("mode", TierSettings.TIERED)) in [TierSettings.TIERED, TierSettings.FULL]:
 		s.reject("world.tiers.mode", "unknown tier mode")

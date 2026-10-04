@@ -98,6 +98,8 @@ static func _unwalked(sim: Sim, person: Person) -> Array[Dictionary]:
 		if bound < 0:
 			continue
 		for def: InteractionDef in Interactions.offered_by(sim, id):
+			if not def.crime.is_empty():  # people don't commit crimes on their own yet (M4)
+				continue
 			if not near and not (going_out and def.routine == "out") and not errand(sim, person, def):
 				continue
 			if def.adds_groceries > 0 and not restock_needed(sim, person):

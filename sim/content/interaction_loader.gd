@@ -88,6 +88,10 @@ static func load_file(db: ContentDB, reader: ContentReader, path: String) -> voi
 			def.launders = reader.read_bool(d, "launders", ctx)
 		if d.has("homeless_only"):
 			def.homeless_only = reader.read_bool(d, "homeless_only", ctx)
+		if d.has("crime"):
+			def.crime = reader.read_str(d, "crime", ctx)
+			if db.crime(def.crime) == null:
+				reader.error("%s: unknown crime '%s'" % [ctx, def.crime])
 		if d.has("work"):
 			def.work = reader.read_bool(d, "work", ctx)
 		if d.has("time_skip"):

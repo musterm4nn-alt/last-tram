@@ -285,6 +285,8 @@ static func _progress(sim: Sim, person: Person, action: Action) -> void:
 		Presentations.on_finish(sim, person, action, def)
 		if not def.finish_moodlet.is_empty():
 			Social.add_moodlet(sim, person, def.finish_moodlet)
+		if not def.crime.is_empty():
+			Crimes.commit(sim, person, def.crime, action.target_id)
 		if def.cash_out > 0:
 			Money.withdraw(sim, person, def.cash_out)  # false (nothing happens) if the bank emptied
 		var home := Groceries.home_household(sim, person) if def.adds_groceries > 0 else null
