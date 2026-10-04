@@ -85,3 +85,12 @@ func test_place_text_nobody_serving() -> void:
 	assert_eq(Hud.place_text(sim, player), "Späti Kaya (closed, opens 08:00)", "closed says closed")
 	player.pos = Vector2(30.5, 30.5)
 	assert_eq(Hud.place_text(sim, player), "Altmarkt", "nobody serves the square")
+
+
+## T-0093
+func test_wanted_text() -> void:
+	assert_eq(Hud.wanted_text(0), "")
+	assert_eq(Hud.wanted_text(2), "Wanted ★★☆☆☆")
+	assert_eq(Hud.wanted_text(5), "Wanted ★★★★★")
+	assert_eq(Hud.notice_for_event({"type": &"crime_reported", "data": {"person_id": 7}}, 7), "Someone called the police on you")
+	assert_eq(Hud.notice_for_event({"type": &"crime_reported", "data": {"person_id": 8}}, 7), "")

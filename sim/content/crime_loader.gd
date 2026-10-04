@@ -17,6 +17,14 @@ static func load(db: ContentDB, reader: ContentReader, path: String) -> void:
 	rules.memory_salience = reader.read_num(w, "memory_salience", path + ": witness")
 	if rules.day_range < 1 or rules.night_range < 1 or rules.night_from > 23 or rules.night_until > 23:
 		reader.error("%s: witness ranges must be 1 or more and hours 0-23" % path)
+	var p := reader.read_obj(root, "police", path)
+	var police := db.police_rules
+	for key: String in ["report_base", "report_per_severity", "friend_report_factor", "friend_at"]:
+		police.set(key, reader.read_num(p, key, path + ": police"))
+	police.heat_hours = reader.read_int(p, "heat_hours", path + ": police")
+	police.severity_per_level = reader.read_int(p, "severity_per_level", path + ": police")
+	if police.heat_hours < 1 or police.severity_per_level < 1:
+		reader.error("%s: police heat_hours and severity_per_level must be 1 or more" % path)
 	for entry: Variant in reader.read_arr(root, "crimes", path):
 		if not entry is Dictionary:
 			reader.error("%s: every crime must be an object" % path)

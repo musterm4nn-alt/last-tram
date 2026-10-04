@@ -39,6 +39,8 @@ var skills: Dictionary[String, SkillDef] = {}
 var crimes: Dictionary[String, CrimeDef] = {}
 ## How people notice crimes (T-0092).
 var witness_rules: WitnessRules = WitnessRules.new()
+## Reporting and the wanted level (T-0093).
+var police_rules: PoliceRules = PoliceRules.new()
 var skill_rules: SkillRules = SkillRules.new()
 ## The player's possible backgrounds (T-0075), by id, and the one used without a choice.
 var backgrounds: Dictionary[String, BackgroundDef] = {}

@@ -16,6 +16,9 @@ var cell: Vector3i = Vector3i.ZERO
 var lot_id: int = 0
 ## Sim tick it happened at.
 var tick: int = 0
+## Who called the police (0 = nobody) and when (T-0093; -1 = not reported).
+var reported_by: int = 0
+var reported_tick: int = -1
 ## Who saw it, ascending ids (T-0092).
 var witnesses: PackedInt32Array = PackedInt32Array()
 
@@ -30,6 +33,8 @@ func to_dict() -> Dictionary:
 		"lot_id": lot_id,
 		"tick": tick,
 		"witnesses": Array(witnesses),
+		"reported_by": reported_by,
+		"reported_tick": reported_tick,
 	}
 
 
@@ -43,6 +48,8 @@ static func from_dict(d: Dictionary) -> Incident:
 	incident.cell = Vector3i(int(c[0]), int(c[1]), int(c[2]))
 	incident.lot_id = int(d["lot_id"])
 	incident.tick = int(d["tick"])
+	incident.reported_by = int(d.get("reported_by", 0))
+	incident.reported_tick = int(d.get("reported_tick", -1))
 	for id: Variant in d.get("witnesses", []):
 		incident.witnesses.append(int(id))
 	return incident

@@ -100,6 +100,8 @@ static func _world(world: Dictionary, s: SaveSchema, version: int, tick: int, co
 		s.text(incident.get("crime_id"), "world.incidents[].crime_id")
 		for key: String in ["perpetrator_id", "target_id", "lot_id", "tick"]:
 			s.integer(incident.get(key), "world.incidents[].%s" % key)
+		s.integer(incident.get("reported_by", 0), "world.incidents[].reported_by")
+		s.integer(incident.get("reported_tick", -1), "world.incidents[].reported_tick", -1)
 		s.vector(incident.get("cell"), "world.incidents[].cell", 3, true)
 		for id: Variant in s.list(incident.get("witnesses", []), "world.incidents[].witnesses"):
 			s.integer(id, "world.incidents[].witnesses[]", 1)

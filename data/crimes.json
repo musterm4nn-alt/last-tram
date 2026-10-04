@@ -1,6 +1,7 @@
 {
-	"_doc": "Kinds of crime (T-0091, docs/design/crime-and-police.md). severity 1-8 sets police priority and punishment. An interaction commits one with \"crime\": \"<id>\"; each crime committed is saved as an incident. Only shoplifting has an interaction so far. witness (T-0092): people see a crime within day_range cells (night_range from night_from to night_until o'clock) on the same floor, awake, with nothing that blocks sight in between; each remembers it (saw_crime, memory_valence, memory_salience).",
+	"_doc": "Kinds of crime (T-0091, docs/design/crime-and-police.md). severity 1-8 sets police priority and punishment. An interaction commits one with \"crime\": \"<id>\"; each crime committed is saved as an incident. Only shoplifting has an interaction so far. witness (T-0092): people see a crime within day_range cells (night_range from night_from to night_until o'clock) on the same floor, awake, with nothing that blocks sight in between; each remembers it (saw_crime, memory_valence, memory_salience). police (T-0093): each witness reports with chance report_base + report_per_severity x severity (max 0.95), x friend_report_factor if their friendship with the perpetrator is >= friend_at; reported crimes count towards the wanted level for heat_hours game hours: level = ceil(sum of severities / severity_per_level), max 5.",
 	"witness": { "day_range": 8, "night_range": 5, "night_from": 21, "night_until": 6, "memory_valence": -40, "memory_salience": 70 },
+	"police": { "report_base": 0.1, "report_per_severity": 0.2, "friend_report_factor": 0.3, "friend_at": 30, "heat_hours": 48, "severity_per_level": 2 },
 	"crimes": [
 		{ "id": "trespassing", "name": "Trespassing", "severity": 1 },
 		{ "id": "shoplifting", "name": "Shoplifting", "severity": 2 },

@@ -11,6 +11,7 @@ const MINIMAP_PX_PER_CELL: float = 4.0
 var _clock_label: Label
 var _money_label: Label
 var _place_label: Label
+var _wanted_label: Label
 var _mode_label: Label
 var _hint_label: Label
 var _notice_label: Label
@@ -151,6 +152,8 @@ static func notice_for_event(event: Dictionary, player_id: int, content: Content
 		return career
 	if event.get("type") == &"path_failed":
 		return "Can't get there"
+	if event.get("type") == &"crime_reported":
+		return "Someone called the police on you"
 	var reason := String(data.get("reason", ""))
 	if event.get("type") in [&"action_failed", &"action_refused"] and (FAIL_REASONS.has(reason) or Requirements.TEXT.has(reason)):
 		var interaction_id := String(data.get("interaction_id", ""))
@@ -172,6 +175,8 @@ func _ready() -> void:
 	_clock_label = _label(box, 20)
 	_money_label = _label(box, 14)
 	_place_label = _label(box, 14)
+	_wanted_label = _label(box, 14)
+	_wanted_label.modulate = Color("#e8b83a")
 	_mode_label = _label(box, 14)
 	_mode_label.text = "Command mode"
 	_mode_label.modulate = ViewConfig.PLAYER_MARKER_COLOR
@@ -240,6 +245,8 @@ func _process(delta: float) -> void:
 	_clock_label.text = "Day %d   %s   %s" % [Session.sim.clock.day() + 1, Session.sim.clock.format(), speed_text]
 	_money_label.text = money_text(Session.sim.world.player())
 	_place_label.text = place_text(Session.sim, Session.sim.world.player())
+	_wanted_label.text = wanted_text(Police.wanted_level(Session.sim, Session.sim.world.player_id))
+	_wanted_label.visible = not _wanted_label.text.is_empty()
 	_mode_label.text = mode_text(Session.viewed_level, Session.sim.world.player())
 	if _notice_time_left > 0.0:
 		_notice_time_left -= delta
@@ -249,6 +256,13 @@ func _process(delta: float) -> void:
 func _on_command_mode_changed(on: bool) -> void:
 	_mode_label.visible = on
 	_hint_label.text = hint_text(on)
+
+
+## The wanted level as stars, "Wanted ★★☆☆☆"; "" at 0 (T-0093).
+static func wanted_text(level: int) -> String:
+	if level <= 0:
+		return ""
+	return "Wanted " + "★".repeat(level) + "☆".repeat(Police.MAX_LEVEL - level)
 
 
 ## How a social exchange went, when the player took part: "Chat with Mira Kovač: went well",
