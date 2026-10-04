@@ -45,6 +45,13 @@ func _draw() -> void:
 	for id: int in interiors.revealed:
 		for cell: Vector3i in interiors.cells(id):
 			var kind := WallShapes.kind(grid, cell)
+			var trim := WallShapes.face_trim(grid, cell)
+			# A corner's trimmed strip shows the street too (T-0089).
+			if trim & WallShapes.ARM_W and not interiors.is_open(cell + Vector3i(-1, 0, 0)):
+				draw_rect(Rect2(cell.x * px, cell.y * px, WallLayer2D.BAND_FROM - 1, px), shade)
+			if trim & WallShapes.ARM_E and not interiors.is_open(cell + Vector3i(1, 0, 0)):
+				var from := WallLayer2D.BAND_FROM + WallLayer2D.BAND + 1
+				draw_rect(Rect2(cell.x * px + from, cell.y * px, px - from, px), shade)
 			if kind != WallShapes.THIN and kind != WallShapes.DOORWAY:
 				continue
 			for q: int in 4:

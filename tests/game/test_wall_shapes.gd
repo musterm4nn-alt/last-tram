@@ -70,3 +70,23 @@ func test_glass_follows_the_straight_run() -> void:
 	assert_true(WallLayer2D.runs_across(WallShapes.ARM_E), "end of an east-west wall")
 	assert_false(WallLayer2D.runs_across(WallShapes.ARM_S), "end of a north-south wall")
 	assert_true(WallLayer2D.runs_across(0), "alone: east-west")
+
+
+## T-0089: a corner's face is trimmed back to the thin wall below it on its open side only.
+func test_face_trim_at_corners() -> void:
+	var grid := _grid()
+	assert_eq(WallShapes.face_trim(grid, Vector3i(1, 1, 0)), WallShapes.ARM_W, "top-left corner: the square side")
+	assert_eq(WallShapes.face_trim(grid, Vector3i(3, 1, 0)), 0, "top wall over the room")
+	assert_eq(WallShapes.face_trim(grid, Vector3i(4, 6, 0)), 0, "free-standing wall")
+	assert_eq(WallShapes.face_trim(grid, Vector3i(1, 3, 0)), 0, "a thin wall is never trimmed")
+	var flat := SimFactory.from_rows(content(), PackedStringArray([
+		":::::::",
+		":#####:",
+		":#...#:",
+		":##.###",
+		":#....:",
+		":#####:",
+	])).world.grid
+	assert_eq(WallShapes.face_trim(flat, Vector3i(5, 1, 0)), WallShapes.ARM_E, "top-right corner")
+	assert_eq(WallShapes.face_trim(flat, Vector3i(1, 3, 0)), WallShapes.ARM_W, "junction with the west wall")
+	assert_eq(WallShapes.face_trim(flat, Vector3i(5, 3, 0)), 0, "a wall continues to the east")

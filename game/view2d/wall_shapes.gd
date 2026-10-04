@@ -46,6 +46,23 @@ static func kind(grid: WorldGrid, cell: Vector3i) -> int:
 	return NONE
 
 
+## Which sides (ARM_E, ARM_W) of a FACE cell to trim back to the thin wall's edge (T-0089): a
+## face with a thin wall or doorway below it is a corner or junction, and on a side with no
+## wall beside it (the street, a yard) the full-width face would stick out past that wall.
+static func face_trim(grid: WorldGrid, cell: Vector3i) -> int:
+	if kind(grid, cell) != FACE:
+		return 0
+	var below := kind(grid, cell + Vector3i(0, 1, 0))
+	if below != THIN and below != DOORWAY:
+		return 0
+	var mask := 0
+	if not _walled(grid, cell + Vector3i(1, 0, 0)):
+		mask |= ARM_E
+	if not _walled(grid, cell + Vector3i(-1, 0, 0)):
+		mask |= ARM_W
+	return mask
+
+
 ## Bitmask (ARM_N, ARM_E, ARM_S, ARM_W) of the neighbours that are walls, windows or doors.
 static func arms(grid: WorldGrid, cell: Vector3i) -> int:
 	var mask := 0
